@@ -11,20 +11,20 @@ include Deft
 
 template( 'lucie-vmsetup/hello' ) do |template|
   template.template_type = NoteTemplate
-  template.short_description_ja = 'Lucie VM ‚ÌƒZƒbƒgƒAƒbƒvƒEƒBƒU[ƒh‚Ö‚æ‚¤‚±‚»'
+  template.short_description_ja = 'Lucie VM ¤Î¥»¥Ã¥È¥¢¥Ã¥×¥¦¥£¥¶¡¼¥É¤Ø¤è¤¦¤³¤½'
   template.extended_description_ja = (<<-DESCRIPTION_JA)
-  ‚±‚ÌƒEƒBƒU[ƒh‚Å‚ÍALucie ‚ğ—p‚¢‚½ VM ƒZƒbƒgƒAƒbƒv‚Ìİ’è‚ğ“ü—Í‚µ‚Ü‚·B
-  İ’è‰Â”\‚È€–Ú‚ÍA
-   o •K—v‚È VM ‚Ì‘ä”
-   o ŠO•”ƒlƒbƒgƒ[ƒN‚Ö‚ÌÚ‘±
-   o VM ‚Åg—p‚·‚éƒƒ‚ƒŠ—e—Ê
-   o VM ‚Åg—p‚·‚éƒn[ƒhƒfƒBƒXƒN—e—Ê
-   o g—p‚·‚é VM ‚Ìí—Ş
-   o VM ‚ÖƒCƒ“ƒXƒg[ƒ‹‚·‚é Linux ƒfƒBƒXƒgƒŠƒrƒ…[ƒVƒ‡ƒ“‚Ìí—Ş
-   o VM ‚ÖƒCƒ“ƒXƒg[ƒ‹‚·‚éƒ\ƒtƒgƒEƒFƒA‚Ìí—Ş
-  ‚Å‚·B©•ª‚ª VM ã‚Å‘–‚ç‚¹‚½‚¢ƒWƒ‡ƒu‚Ì“Á«‚É‚æ‚Á‚Äİ’è‚ğŒˆ‚ß‚Ä‚­‚¾‚³‚¢B
+  ¤³¤Î¥¦¥£¥¶¡¼¥É¤Ç¤Ï¡¢Lucie ¤òÍÑ¤¤¤¿ VM ¥»¥Ã¥È¥¢¥Ã¥×¤ÎÀßÄê¤òÆşÎÏ¤·¤Ş¤¹¡£
+  ÀßÄê²ÄÇ½¤Ê¹àÌÜ¤Ï¡¢
+   o É¬Í×¤Ê VM ¤ÎÂæ¿ô
+   o ³°Éô¥Í¥Ã¥È¥ï¡¼¥¯¤Ø¤ÎÀÜÂ³
+   o VM ¤Ç»ÈÍÑ¤¹¤ë¥á¥â¥êÍÆÎÌ
+   o VM ¤Ç»ÈÍÑ¤¹¤ë¥Ï¡¼¥É¥Ç¥£¥¹¥¯ÍÆÎÌ
+   o »ÈÍÑ¤¹¤ë VM ¤Î¼ïÎà
+   o VM ¤Ø¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë Linux ¥Ç¥£¥¹¥È¥ê¥Ó¥å¡¼¥·¥ç¥ó¤Î¼ïÎà
+   o VM ¤Ø¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¥½¥Õ¥È¥¦¥§¥¢¤Î¼ïÎà
+  ¤Ç¤¹¡£¼«Ê¬¤¬ VM ¾å¤ÇÁö¤é¤»¤¿¤¤¥¸¥ç¥Ö¤ÎÆÃÀ­¤Ë¤è¤Ã¤ÆÀßÄê¤ò·è¤á¤Æ¤¯¤À¤µ¤¤¡£
 
-  uŸ‚Öv‚ğƒNƒŠƒbƒN‚·‚é‚ÆƒEƒBƒU[ƒh‚ğŠJn‚µ‚Ü‚·B
+  ¡Ö¼¡¤Ø¡×¤ò¥¯¥ê¥Ã¥¯¤¹¤ë¤È¥¦¥£¥¶¡¼¥É¤ò³«»Ï¤·¤Ş¤¹¡£
   DESCRIPTION_JA
 end
 
@@ -37,12 +37,12 @@ end
 template( 'lucie-vmsetup/num-nodes' ) do |template|
   template.template_type = SelectTemplate
   template.choices = ['4', '8', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '52', '56', '60', '64']
-  template.short_description_ja = 'VM ƒm[ƒh‚Ì‘ä”'
+  template.short_description_ja = 'VM ¥Î¡¼¥É¤ÎÂæ¿ô'
   template.extended_description_ja = (<<-DESCRIPTION_JA)
-  g—p‚µ‚½‚¢ VM ‚Ì‘ä”‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B
+  »ÈÍÑ¤·¤¿¤¤ VM ¤ÎÂæ¿ô¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£
 
-  ¼‰ªŒ¤ PrestoIII ƒNƒ‰ƒXƒ^‚Å’ñ‹Ÿ‚Å‚«‚é VM ƒNƒ‰ƒXƒ^‚Ìƒm[ƒh”‚ÍA4 ‘ä` 64 ‘ä‚Æ‚È‚Á‚Ä‚¢‚Ü‚·B
-  ‘¼‚ÌƒWƒ‡ƒu‚Ö‰e‹¿‚ğ—^‚¦‚È‚¢‚æ‚¤‚ÉAƒWƒ‡ƒuÀs‚É *Å’áŒÀ* •K—v‚È‘ä”‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B
+  ¾¾²¬¸¦ PrestoIII ¥¯¥é¥¹¥¿¤ÇÄó¶¡¤Ç¤­¤ë VM ¥¯¥é¥¹¥¿¤Î¥Î¡¼¥É¿ô¤Ï¡¢4 Âæ¡Á 64 Âæ¤È¤Ê¤Ã¤Æ¤¤¤Ş¤¹¡£
+  Â¾¤Î¥¸¥ç¥Ö¤Ø±Æ¶Á¤òÍ¿¤¨¤Ê¤¤¤è¤¦¤Ë¡¢¥¸¥ç¥Ö¼Â¹Ô¤Ë *ºÇÄã¸Â* É¬Í×¤ÊÂæ¿ô¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£
   DESCRIPTION_JA
 end
 
@@ -54,11 +54,11 @@ end
 template( 'lucie-vmsetup/use-network' ) do |template|
   template.template_type = BooleanTemplate
   template.default = 'false'
-  template.short_description_ja = 'VM ‚ÌŠO•”ƒlƒbƒgƒ[ƒN‚Ö‚ÌÚ‘±'
+  template.short_description_ja = 'VM ¤Î³°Éô¥Í¥Ã¥È¥ï¡¼¥¯¤Ø¤ÎÀÜÂ³'
   template.extended_description_ja = (<<-DESCRIPTION_JA)
-  ƒWƒ‡ƒuÀs‚É VM ‚ÍŠO•”ƒlƒbƒgƒ[ƒN‚ÖÚ‘±‚·‚é•K—v‚ª‚ ‚è‚Ü‚·‚©H
-  ‚±‚ÌƒIƒvƒVƒ‡ƒ“‚ğƒIƒ“‚É‚·‚é‚ÆAGRAM ‚ª©“®“I‚ÉŠe VM ‚É˜A‘±‚µ‚½ IP ƒAƒhƒŒƒX‚Æ MAC ƒAƒhƒŒƒX‚ğŠ„‚è“–‚ÄA
-  Lucie ‚ğ‚·‚×‚Ä‚Ìƒlƒbƒgƒ[ƒNŠÖŒW‚Ìİ’è‚ğs‚¢‚Ü‚·B
+  ¥¸¥ç¥Ö¼Â¹Ô»ş¤Ë VM ¤Ï³°Éô¥Í¥Ã¥È¥ï¡¼¥¯¤ØÀÜÂ³¤¹¤ëÉ¬Í×¤¬¤¢¤ê¤Ş¤¹¤«¡©
+  ¤³¤Î¥ª¥×¥·¥ç¥ó¤ò¥ª¥ó¤Ë¤¹¤ë¤È¡¢GRAM ¤¬¼«Æ°Åª¤Ë³Æ VM ¤ËÏ¢Â³¤·¤¿ IP ¥¢¥É¥ì¥¹¤È MAC ¥¢¥É¥ì¥¹¤ò³ä¤êÅö¤Æ¡¢
+  Lucie ¤ò¤¹¤Ù¤Æ¤Î¥Í¥Ã¥È¥ï¡¼¥¯´Ø·¸¤ÎÀßÄê¤ò¹Ô¤¤¤Ş¤¹¡£
   DESCRIPTION_JA
 end
 
@@ -69,26 +69,26 @@ end
 
 template( 'lucie-vmsetup/ip' ) do |template|
   template.template_type = NoteTemplate
-  template.short_description_ja = 'VM ‚Ì IP ƒAƒhƒŒƒX'
+  template.short_description_ja = 'VM ¤Î IP ¥¢¥É¥ì¥¹'
   template.extended_description_ja = (<<-DESCRIPTION_JA)
-  ˆÈ‰º‚Ì‚æ‚¤‚ÉƒzƒXƒg–¼AIP ƒAƒhƒŒƒXAMAC ƒAƒhƒŒƒX‚ğŠ„‚èU‚è‚Ü‚µ‚½B
-  g—p‰Â”\‚È VM ‚Í pad000 - pad003 ‚Ì 4 ƒm[ƒh‚Å‚·B
+  °Ê²¼¤Î¤è¤¦¤Ë¥Û¥¹¥ÈÌ¾¡¢IP ¥¢¥É¥ì¥¹¡¢MAC ¥¢¥É¥ì¥¹¤ò³ä¤ê¿¶¤ê¤Ş¤·¤¿¡£
+  »ÈÍÑ²ÄÇ½¤Ê VM ¤Ï pad000 - pad003 ¤Î 4 ¥Î¡¼¥É¤Ç¤¹¡£
   
-   ƒzƒXƒg–¼: pad000
-   IP ƒAƒhƒŒƒX: 168.220.98.30
-   MAC ƒAƒhƒŒƒX: 00:50:56:01:02:02
+   ¥Û¥¹¥ÈÌ¾: pad000
+   IP ¥¢¥É¥ì¥¹: 168.220.98.30
+   MAC ¥¢¥É¥ì¥¹: 00:50:56:01:02:02
 
-   ƒzƒXƒg–¼: pad001
-   IP ƒAƒhƒŒƒX: 163.220.98.31
-   MAC ƒAƒhƒŒƒX: 00:50:56:01:02:03
+   ¥Û¥¹¥ÈÌ¾: pad001
+   IP ¥¢¥É¥ì¥¹: 163.220.98.31
+   MAC ¥¢¥É¥ì¥¹: 00:50:56:01:02:03
 
-   ƒzƒXƒg–¼: pad002
-   IP ƒAƒhƒŒƒX: 163.220.98.32
-   MAC ƒAƒhƒŒƒX: 00:50:56:01:02:04
+   ¥Û¥¹¥ÈÌ¾: pad002
+   IP ¥¢¥É¥ì¥¹: 163.220.98.32
+   MAC ¥¢¥É¥ì¥¹: 00:50:56:01:02:04
 
-   ƒzƒXƒg–¼: pad003
-   IP ƒAƒhƒŒƒX: 163.220.98.33
-   MAC ƒAƒhƒŒƒX: 00:50:56:01:02:05
+   ¥Û¥¹¥ÈÌ¾: pad003
+   IP ¥¢¥É¥ì¥¹: 163.220.98.33
+   MAC ¥¢¥É¥ì¥¹: 00:50:56:01:02:05
   DESCRIPTION_JA
 end
 
@@ -100,12 +100,12 @@ end
 template( 'lucie-vmsetup/memory-size' ) do |template|
   template.template_type = SelectTemplate
   template.choices = ['64', '128', '192', '256', '320', '384', '448', '512', '576', '640']
-  template.short_description_ja = 'VM ƒm[ƒh‚Ìƒƒ‚ƒŠ—e—Ê'
+  template.short_description_ja = 'VM ¥Î¡¼¥É¤Î¥á¥â¥êÍÆÎÌ'
   template.extended_description_ja = (<<-DESCRIPTION_JA)
-  g—p‚µ‚½‚¢ VM ˆê‘ä‚ ‚½‚è‚Ìƒƒ‚ƒŠ—e—Ê‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B’PˆÊ‚Í MB ‚Å‚·B
+  »ÈÍÑ¤·¤¿¤¤ VM °ìÂæ¤¢¤¿¤ê¤Î¥á¥â¥êÍÆÎÌ¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£Ã±°Ì¤Ï MB ¤Ç¤¹¡£
 
-  ¼‰ªŒ¤ PrestoIII ƒNƒ‰ƒXƒ^‚Å’ñ‹Ÿ‚Å‚«‚é VM ƒNƒ‰ƒXƒ^‚Ì‚Pƒm[ƒh‚ ‚½‚è‚Ìƒƒ‚ƒŠ—e—Ê‚Í 640 MB ‚Ü‚Å‚Æ‚È‚Á‚Ä‚¢‚Ü‚·B
-  ‘¼‚ÌƒWƒ‡ƒu‚Ö‰e‹¿‚ğ—^‚¦‚È‚¢‚æ‚¤‚ÉAƒWƒ‡ƒuÀs‚É *Å’áŒÀ* •K—v‚Èƒƒ‚ƒŠ—e—Ê‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B
+  ¾¾²¬¸¦ PrestoIII ¥¯¥é¥¹¥¿¤ÇÄó¶¡¤Ç¤­¤ë VM ¥¯¥é¥¹¥¿¤Î£±¥Î¡¼¥É¤¢¤¿¤ê¤Î¥á¥â¥êÍÆÎÌ¤Ï 640 MB ¤Ş¤Ç¤È¤Ê¤Ã¤Æ¤¤¤Ş¤¹¡£
+  Â¾¤Î¥¸¥ç¥Ö¤Ø±Æ¶Á¤òÍ¿¤¨¤Ê¤¤¤è¤¦¤Ë¡¢¥¸¥ç¥Ö¼Â¹Ô¤Ë *ºÇÄã¸Â* É¬Í×¤Ê¥á¥â¥êÍÆÎÌ¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£
   DESCRIPTION_JA
 end
 
@@ -117,12 +117,12 @@ end
 template( 'lucie-vmsetup/harddisk-size' ) do |template|
   template.template_type = SelectTemplate
   template.choices = ['1', '2', '3', '4']
-  template.short_description_ja = 'VM ƒm[ƒh‚Ìƒn[ƒhƒfƒBƒXƒN—e—Ê'  
+  template.short_description_ja = 'VM ¥Î¡¼¥É¤Î¥Ï¡¼¥É¥Ç¥£¥¹¥¯ÍÆÎÌ'  
   template.extended_description_ja = (<<-DESCRIPTION_JA)
-  g—p‚µ‚½‚¢ VM ˆê‘ä‚ ‚½‚è‚Ìƒn[ƒhƒfƒBƒXƒN—e—Ê‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B’PˆÊ‚Í GB ‚Å‚·B
+  »ÈÍÑ¤·¤¿¤¤ VM °ìÂæ¤¢¤¿¤ê¤Î¥Ï¡¼¥É¥Ç¥£¥¹¥¯ÍÆÎÌ¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£Ã±°Ì¤Ï GB ¤Ç¤¹¡£
 
-  ¼‰ªŒ¤ PrestoIII ƒNƒ‰ƒXƒ^‚Å’ñ‹Ÿ‚Å‚«‚é VM ƒNƒ‰ƒXƒ^‚Ì‚Pƒm[ƒh‚ ‚½‚è‚Ìƒn[ƒhƒfƒBƒXƒN—e—Ê‚Í 4GB ‚Ü‚Å‚Æ‚È‚Á‚Ä‚¢‚Ü‚·B
-  ‘¼‚ÌƒWƒ‡ƒu‚Ö‰e‹¿‚ğ—^‚¦‚È‚¢‚æ‚¤‚ÉAƒWƒ‡ƒuÀs‚É *Å’áŒÀ* •K—v‚Èƒn[ƒhƒfƒBƒXƒN—e—Ê‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B
+  ¾¾²¬¸¦ PrestoIII ¥¯¥é¥¹¥¿¤ÇÄó¶¡¤Ç¤­¤ë VM ¥¯¥é¥¹¥¿¤Î£±¥Î¡¼¥É¤¢¤¿¤ê¤Î¥Ï¡¼¥É¥Ç¥£¥¹¥¯ÍÆÎÌ¤Ï 4GB ¤Ş¤Ç¤È¤Ê¤Ã¤Æ¤¤¤Ş¤¹¡£
+  Â¾¤Î¥¸¥ç¥Ö¤Ø±Æ¶Á¤òÍ¿¤¨¤Ê¤¤¤è¤¦¤Ë¡¢¥¸¥ç¥Ö¼Â¹Ô¤Ë *ºÇÄã¸Â* É¬Í×¤Ê¥Ï¡¼¥É¥Ç¥£¥¹¥¯ÍÆÎÌ¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£
   DESCRIPTION_JA
 end
 
@@ -134,17 +134,17 @@ end
 template( 'lucie-vmsetup/vm-type' ) do |template|
   template.template_type = SelectTemplate
   template.choices = ['xen', 'colinux', 'vmware']
-  template.short_description_ja = 'g—p‚·‚é VM ‚Ìí—Ş'
+  template.short_description_ja = '»ÈÍÑ¤¹¤ë VM ¤Î¼ïÎà'
   template.extended_description_ja = (<<-DESCRIPTION_JA)
-  ƒWƒ‡ƒuÀs‚Ég—p‚·‚é VM À‘•‚Ìí—Ş‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢
+  ¥¸¥ç¥Ö¼Â¹Ô¤Ë»ÈÍÑ¤¹¤ë VM ¼ÂÁõ¤Î¼ïÎà¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤
   .
-  ¼‰ªŒ¤ PrestoIII ƒNƒ‰ƒXƒ^‚Å’ñ‹Ÿ‚Å‚«‚é VM À‘•‚Í 
-  'Xen (ƒPƒ“ƒuƒŠƒbƒW‘å)', 'colinux (www.colinux.org)', 'vmware (VMware, Inc.)' ‚Ì 3 í—Ş‚Å‚·B
-  ‚»‚ê‚¼‚ê‚Ì“Á’¥‚ÍˆÈ‰º‚Ì’Ê‚è‚Å‚·B
-   o Xen: Disk I/O ‚ª”äŠr“I‚‘¬‚Å‚·B
-   o coLinux: Network I/O ‚ª”äŠr“I‚‘¬‚Å‚·B
-   o vmware: CPU ‚ª”äŠr“I‚‘¬‚Å‚·B
-  ƒWƒ‡ƒu‚ÌŒvZ“à—e‚É‡‚Á‚½ VM À‘•‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B
+  ¾¾²¬¸¦ PrestoIII ¥¯¥é¥¹¥¿¤ÇÄó¶¡¤Ç¤­¤ë VM ¼ÂÁõ¤Ï 
+  'Xen (¥±¥ó¥Ö¥ê¥Ã¥¸Âç)', 'colinux (www.colinux.org)', 'vmware (VMware, Inc.)' ¤Î 3 ¼ïÎà¤Ç¤¹¡£
+  ¤½¤ì¤¾¤ì¤ÎÆÃÄ§¤Ï°Ê²¼¤ÎÄÌ¤ê¤Ç¤¹¡£
+   o Xen: Disk I/O ¤¬Èæ³ÓÅª¹âÂ®¤Ç¤¹¡£
+   o coLinux: Network I/O ¤¬Èæ³ÓÅª¹âÂ®¤Ç¤¹¡£
+   o vmware: CPU ¤¬Èæ³ÓÅª¹âÂ®¤Ç¤¹¡£
+  ¥¸¥ç¥Ö¤Î·×»»ÆâÍÆ¤Ë¹ç¤Ã¤¿ VM ¼ÂÁõ¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£
   DESCRIPTION_JA
 end
 
@@ -156,16 +156,16 @@ end
 template( 'lucie-vmsetup/distro' ) do |template|
   template.template_type = SelectTemplate
   template.choices = ['debian (woody)', 'debian (sarge)', 'redhat7.3']
-  template.short_description_ja = 'g—p‚·‚éƒfƒBƒXƒgƒŠƒrƒ…[ƒVƒ‡ƒ“'
+  template.short_description_ja = '»ÈÍÑ¤¹¤ë¥Ç¥£¥¹¥È¥ê¥Ó¥å¡¼¥·¥ç¥ó'
   template.extended_description_ja = (<<-DESCRIPTION_JA)
-  VM ‚ÉƒCƒ“ƒXƒg[ƒ‹‚µ‚Äg—p‚·‚é Linux ƒfƒBƒXƒgƒŠƒrƒ…[ƒVƒ‡ƒ“‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢
+  VM ¤Ë¥¤¥ó¥¹¥È¡¼¥ë¤·¤Æ»ÈÍÑ¤¹¤ë Linux ¥Ç¥£¥¹¥È¥ê¥Ó¥å¡¼¥·¥ç¥ó¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤
   .
-  ¼‰ªŒ¤ PrestoIII ƒNƒ‰ƒXƒ^‚Å’ñ‹Ÿ‚Å‚«‚é Linux ƒfƒBƒXƒgƒŠƒrƒ…[ƒVƒ‡ƒ“‚Í 
-  'Debian (woody)', 'Debian (sarge)', 'Redhat 7.3' ‚Ì 3 í—Ş‚Å‚·B
-  ‚»‚ê‚¼‚ê‚Ì“Á’¥‚ÍˆÈ‰º‚Ì’Ê‚è‚Å‚·B
-   o Debian GNU/Linux (woody): Debian ‚ÌˆÀ’è”Å‚Å‚·B
-   o Debian GNU/Linux (sarge): Debian ‚ÌŠJ”­”Å‚Å‚·B”äŠr“IV‚µ‚¢ƒpƒbƒP[ƒW‚àŠÜ‚Ü‚ê‚Ü‚·B
-   o RedHat 7.3: RedHat ‚ÌˆÀ’è”Å‚Å‚·B
+  ¾¾²¬¸¦ PrestoIII ¥¯¥é¥¹¥¿¤ÇÄó¶¡¤Ç¤­¤ë Linux ¥Ç¥£¥¹¥È¥ê¥Ó¥å¡¼¥·¥ç¥ó¤Ï 
+  'Debian (woody)', 'Debian (sarge)', 'Redhat 7.3' ¤Î 3 ¼ïÎà¤Ç¤¹¡£
+  ¤½¤ì¤¾¤ì¤ÎÆÃÄ§¤Ï°Ê²¼¤ÎÄÌ¤ê¤Ç¤¹¡£
+   o Debian GNU/Linux (woody): Debian ¤Î°ÂÄêÈÇ¤Ç¤¹¡£
+   o Debian GNU/Linux (sarge): Debian ¤Î³«È¯ÈÇ¤Ç¤¹¡£Èæ³ÓÅª¿·¤·¤¤¥Ñ¥Ã¥±¡¼¥¸¤â´Ş¤Ş¤ì¤Ş¤¹¡£
+   o RedHat 7.3: RedHat ¤Î°ÂÄêÈÇ¤Ç¤¹¡£
   DESCRIPTION_JA
 end
 
@@ -183,17 +183,17 @@ end
 
 template( 'lucie-vmsetup/application' ) do |template|
   template.template_type = StringTemplate
-  template.short_description_ja = 'g—p‚·‚éƒAƒvƒŠƒP[ƒVƒ‡ƒ“'
+  template.short_description_ja = '»ÈÍÑ¤¹¤ë¥¢¥×¥ê¥±¡¼¥·¥ç¥ó'
   template.extended_description_ja = (<<-DESCRIPTION_JA)
-  VM ‚ÉƒCƒ“ƒXƒg[ƒ‹‚µ‚Äg—p‚·‚éƒ\ƒtƒgƒEƒFƒAƒpƒbƒP[ƒW‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+  VM ¤Ë¥¤¥ó¥¹¥È¡¼¥ë¤·¤Æ»ÈÍÑ¤¹¤ë¥½¥Õ¥È¥¦¥§¥¢¥Ñ¥Ã¥±¡¼¥¸¤òÆşÎÏ¤·¤Æ¤¯¤À¤µ¤¤
 
-  ¼‰ªŒ¤ PrestoIII ƒNƒ‰ƒXƒ^‚ÅƒfƒtƒHƒ‹ƒg‚ÅƒCƒ“ƒXƒg[ƒ‹‚³‚ê‚éƒ\ƒtƒgƒEƒFƒAƒpƒbƒP[ƒW‚ÍˆÈ‰º‚Ì’Ê‚è‚Å‚·B
-   o Šî–{ƒpƒbƒP[ƒW: fileutils, findutils ‚È‚Ç‚ÌŠî–{“I‚Èƒ†[ƒeƒBƒŠƒeƒB
-   o ƒVƒFƒ‹: tcsh, bash, zsh ‚È‚Ç‚ÌƒVƒFƒ‹
-   o ƒlƒbƒgƒ[ƒNƒf[ƒ‚ƒ“: ssh ‚â rsh, ftp ‚È‚Ç‚Ìƒf[ƒ‚ƒ“
-  ã‹L‚É’Ç‰Á‚µ‚ÄƒCƒ“ƒXƒg[ƒ‹‚µ‚½‚¢ƒpƒbƒP[ƒW‚ğƒRƒ“ƒ}‹æØ‚è‚Å“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B
+  ¾¾²¬¸¦ PrestoIII ¥¯¥é¥¹¥¿¤Ç¥Ç¥Õ¥©¥ë¥È¤Ç¥¤¥ó¥¹¥È¡¼¥ë¤µ¤ì¤ë¥½¥Õ¥È¥¦¥§¥¢¥Ñ¥Ã¥±¡¼¥¸¤Ï°Ê²¼¤ÎÄÌ¤ê¤Ç¤¹¡£
+   o ´ğËÜ¥Ñ¥Ã¥±¡¼¥¸: fileutils, findutils ¤Ê¤É¤Î´ğËÜÅª¤Ê¥æ¡¼¥Æ¥£¥ê¥Æ¥£
+   o ¥·¥§¥ë: tcsh, bash, zsh ¤Ê¤É¤Î¥·¥§¥ë
+   o ¥Í¥Ã¥È¥ï¡¼¥¯¥Ç¡¼¥â¥ó: ssh ¤ä rsh, ftp ¤Ê¤É¤Î¥Ç¡¼¥â¥ó
+  ¾åµ­¤ËÄÉ²Ã¤·¤Æ¥¤¥ó¥¹¥È¡¼¥ë¤·¤¿¤¤¥Ñ¥Ã¥±¡¼¥¸¤ò¥³¥ó¥Ş¶èÀÚ¤ê¤ÇÆşÎÏ¤·¤Æ¤¯¤À¤µ¤¤¡£
   
-  —á: ruby, python, blast2
+  Îã: ruby, python, blast2
   DESCRIPTION_JA
 end
 

@@ -11,21 +11,21 @@ include Lucie::Config
 
 # ------------------------- ホストの定義.
 
-Host.new do |host|
+host do |host|
   host.name = 'cluster_node00'
   host.alias = 'Cluster Node #00'
   host.address = '192.168.0.1'
   host.mac_address = '00:0C:29:41:88:F0'
 end
 
-Host.new do |host|
+host do |host|
   host.name = 'cluster_node01'
   host.alias = 'Cluster Node #01'
   host.address = '192.168.0.2'
   host.mac_address = '00:0C:29:41:88:F1'
 end
 
-Host.new do |host|
+host do |host|
   host.name = 'cluster_node02'
   host.alias = 'Cluster Node #02'
   host.address = '192.168.0.3'
@@ -34,7 +34,7 @@ end
 
 # ------------------------- ホストグループの定義.
 
-HostGroup.new do |group|
+host_group do |group|
   group.name = 'presto_cluster'
   group.alias = 'Presto Cluster'
   group.members = [Host['cluster_node00'], Host['cluster_node01'], Host['cluster_node02']]    
@@ -42,7 +42,7 @@ end
 
 # ------------------------- パッケージサーバの定義.
 
-PackageServer.new do |pkgserver|
+package_server do |pkgserver|
   pkgserver.name         = 'debian_mirror'
   pkgserver.alias       = 'Local Debian Repository Mirror'
   pkgserver.uri          = 'http://192.168.1.100/debian/'
@@ -50,7 +50,7 @@ end
 
 # ------------------------- DHCP サーバの定義.
 
-DHCPServer.new do |dhcp_server|
+dhcp_server do |dhcp_server|
   dhcp_server.name            = 'dhcp'
   dhcp_server.alias          = 'Cluster DHCP Server'
   dhcp_server.nis_domain_name = 'yp.titech.ac.jp'
@@ -63,7 +63,7 @@ end
 
 # ------------------------- インストーラの定義.
 
-Installer.new do |installer|
+installer do |installer|
   installer.name                 = 'presto_installer'
   installer.alias               = 'Presto Cluster Installer'
   installer.address              = '192.168.1.200'

@@ -19,7 +19,7 @@ class TC_NoteState < Test::Unit::TestCase
   #    def transit( aDebconfContext )
   #      super aDebconfContext
   #      aDebconfContext.current_question = Deft::Question['lucie/caution']
-  #      aDebconfContext.current_state = DebconfContext::STATES['lucie/caution']
+  #      aDebconfContext.current_state = Deft::ConcreteState['lucie/caution']
   #    end
   #  end
   public

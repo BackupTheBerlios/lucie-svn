@@ -67,7 +67,7 @@ question( 'lucie-vmsetup/vmpool-server-ip' =>
 proc do |user_input|
   unless /\A\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\Z/=~ user_input
     subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: IP アドレス形式"
-    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "IP アドレスの形式が正しくありません : \#{get('lucie-vmsetup/vmpool-server-ip')}"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "IP アドレスの形式が正しくありません : #{get('lucie-vmsetup/vmpool-server-ip')}"
       'lucie-vmsetup/error-backup'
   else
     subst 'lucie-vmsetup/vmpool-server-confirmation', 'vmpool-server-ip', user_input 
@@ -90,7 +90,7 @@ question( 'lucie-vmsetup/vmpool-server-port' =>
 proc do |user_input|
   unless /\\A\\d+\\Z/=~ user_input
     subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: ポート番号形式"
-    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "ポート番号の形式が正しくありません : \#{get('lucie-vmsetup/vmpool-server-port')}"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "ポート番号の形式が正しくありません : #{get('lucie-vmsetup/vmpool-server-port')}"
       'lucie-vmsetup/error-backup'
   else
     subst 'lucie-vmsetup/vmpool-server-confirmation', 'vmpool-server-port', user_input 
@@ -193,7 +193,7 @@ proc do |user_input|
       'lucie-vmsetup/error-backup'
   elsif user_input.to_i > $num_nodes_upperbound
     subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードの台数"
-    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードの台数が上限の \#{$num_nodes_upperbound} 台を越えています。"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードの台数が上限の #{$num_nodes_upperbound} 台を越えています。"
       'lucie-vmsetup/error-backup'
   else
     subst 'lucie-vmsetup/confirmation', 'num_nodes', user_input
@@ -277,7 +277,7 @@ proc do |user_input|
       'lucie-vmsetup/error-backup'
   elsif user_input.to_i > $memory_size_upperbound
     subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードのメモリサイズ"
-    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードのメモリサイズが上限の \#{$memory_size_upperbound} MB を越えています。"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードのメモリサイズが上限の #{$memory_size_upperbound} MB を越えています。"
       'lucie-vmsetup/error-backup'
   else
     subst 'lucie-vmsetup/confirmation', 'memory_size', user_input
@@ -308,7 +308,7 @@ proc do |user_input|
       'lucie-vmsetup/error-backup'
   elsif user_input.to_i > $harddisk_size_upperbound
     subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードのハードディスク容量"
-    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードのハードディスク容量が上限の \#{$harddisk_size_upperbound} GB を越えています。"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードのハードディスク容量が上限の #{$harddisk_size_upperbound} GB を越えています。"
       'lucie-vmsetup/error-backup'
   else
     subst 'lucie-vmsetup/confirmation', 'harddisk_size', user_input	

@@ -1,0 +1,49 @@
+digraph TopLevel {
+    compound = true
+    bgcolor = lightcyan1
+    fontname = Arial
+    fontsize = 8
+    label = "lib/lucie/command-line-options.rb"
+    node [
+        fontname = Arial,
+        fontsize = 8,
+        color = black
+    ]
+
+    Singleton [
+        URL = "classes/Singleton.html",
+        shape = box,
+        label = "Singleton"
+    ]
+
+    Singleton -> Lucie__CommandLineOptions [
+
+    ]
+
+    subgraph cluster_Lucie {
+        fillcolor = palegreen1
+        URL = "classes/Lucie.html"
+        fontname = Arial
+        color = blue
+        label = "Lucie"
+        style = filled
+        Lucie [
+            shape = plaintext,
+            height = 0.01,
+            width = 0.01,
+            label = ""
+        ]
+
+        Lucie__CommandLineOptions [
+            fontcolor = black,
+            URL = "classes/Lucie/CommandLineOptions.html",
+            shape = ellipse,
+            color = palegoldenrod,
+            style = filled,
+            label = "CommandLineOptions"
+        ]
+
+    }
+
+}
+

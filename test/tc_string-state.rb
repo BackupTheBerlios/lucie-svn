@@ -17,19 +17,19 @@ class TC_StringState < Test::Unit::TestCase
   #  class Lucie__Overview < Lucie::StringState
   #    public
   #    def transit( aDebconfContext )
-  #      aDebconfContext.current_state = Lucie__Caution
+  #      aDebconfContext.current_state = aDebconfContext::STATES['lucie/caution']
   #    end
   #  end
   public
   def test_marshal
     question = Mock.new( 'lucie/overview' )
-    question.__next( :next_question ) do || 'lucie/caution' end  
-    question.__next( :name ) do || 'lucie/overview' end    
+    question.__next( :name ) do || 'lucie/overview' end 
+    question.__next( :next_question ) do || 'lucie/caution' end       
     line = Lucie::StringState::marshal( question ).split("\n")
     assert_match /class Lucie__Overview < Lucie::StringState/, line[0]
     assert_match /public/, line[1]
     assert_match /def transit\( aDebconfContext \)/, line[2]
-    assert_match /aDebconfContext.current_state = Lucie__Caution/, line[3]
+    assert_match /aDebconfContext.current_state = aDebconfContext::STATES\['lucie\/caution'\]/, line[3]
     assert_match /end/, line[4]
     assert_match /end/, line[5]
     question.__verify

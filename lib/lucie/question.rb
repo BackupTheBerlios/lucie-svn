@@ -81,13 +81,6 @@ module Lucie
       @actions = []
       @name = nameString
     end
-
-    # ¿–â€–Ú‚ğ‚ ‚ç‚í‚·ƒNƒ‰ƒX–¼‚Ì’è‹`•”•ª‚ğ•Ô‚·
-    # —á: 'PackageInformation < TextState'
-    public
-    def klass
-      return @name.split(/\//)[1].to_pascal_style + ' < ' + @question_type.to_s
-    end
   end
 end
 

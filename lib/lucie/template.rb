@@ -48,6 +48,7 @@ module Lucie
     def_delegator :@hash, :size
     
     TEMPLATES = {}
+    NOTE = 'NOTE'.freeze
     SELECT = 'SELECT'.freeze
     
     # Template が定義されていれば定義されているテンプレート、そうでなければ nil を返します

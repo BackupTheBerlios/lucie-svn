@@ -16,6 +16,12 @@ class TC_Template < Test::Unit::TestCase
     @templates = Lucie::Template::parse( test_template_data )
   end
   
+  # NOTE 定数が定義されていることを確認
+  public
+  def test_const_NOTE_defined
+    assert Lucie::Template.const_defined?( :NOTE ), 'NOTE 定数が定義されていない'
+  end
+  
   # 登録されているテンプレートが空のときに、
   # template_defined? が nil を返すことを確認
   public

@@ -16,6 +16,12 @@ class TC_Template < Test::Unit::TestCase
     @templates = Lucie::Template::parse( test_template_data )
   end
   
+  # BOOLEAN 定数が定義されていることを確認
+  public
+  def test_const_BOOLEAN_defined
+    assert Lucie::Template.const_defined?( :BOOLEAN ), 'BOOLEAN 定数が定義されていない'
+  end
+  
   # STRING 定数が定義されていることを確認
   public
   def test_const_STRING_defined

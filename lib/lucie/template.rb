@@ -48,6 +48,7 @@ module Lucie
     def_delegator :@hash, :size
     
     TEMPLATES = {}
+    BOOLEAN = 'BOOLEAN'.freeze
     STRING = 'STRING'.freeze
     NOTE = 'NOTE'.freeze
     SELECT = 'SELECT'.freeze

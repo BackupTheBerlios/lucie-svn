@@ -106,7 +106,7 @@ module Deft
     end   
     
     # Question から対応する Concrete State を表す Ruby コードを文字列で返す
-    private
+    public
     def marshal_concrete_state
       return Deft::State.marshal_concrete_state( self )
     end

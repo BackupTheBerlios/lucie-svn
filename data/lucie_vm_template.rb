@@ -88,7 +88,7 @@ end
 
 question( 'lucie-vmsetup/vmpool-server-port' => 
 proc do |user_input|
-  unless /\\A\\d+\\Z/=~ user_input
+  unless /\A\d+\Z/=~ user_input
     subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: ポート番号形式"
     subst 'lucie-vmsetup/error-backup', 'extended_error_message', "ポート番号の形式が正しくありません : #{get('lucie-vmsetup/vmpool-server-port')}"
       'lucie-vmsetup/error-backup'

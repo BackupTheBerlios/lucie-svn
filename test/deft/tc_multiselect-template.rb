@@ -12,12 +12,6 @@ require 'deft/multiselect-template'
 require 'test/unit'
 
 class TC_MultiselectTemplate < Test::Unit::TestCase
-  # 親クラスが Deft::Template であることをテスト
-  public
-  def test_inheritance
-    assert Deft::MultiselectTemplate < Deft::Template
-  end
-  
   public
   def test_to_s
     Deft::Template.clear

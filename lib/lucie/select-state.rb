@@ -15,20 +15,6 @@ module Lucie
   
   class SelectState < State
     #--
-    # TODO : State クラスに引き上げる    
-    #++  
-    public
-    def initialize( aQuestion )
-      @question = aQuestion
-    end
-    
-    public
-    def transit( aDebconfContext )
-      input @question.priority, @question.name
-      go
-    end
-    
-    #--
     # FIXME : 生成されるクラスを singleton にする
     #++
     def self.marshal( aQuestion )  

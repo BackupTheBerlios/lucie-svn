@@ -16,12 +16,18 @@ module Lucie
   # TODO: 各 ConcreteState は特異オブジェクトにする。
   #++  
   class State    
+    public
+    def initialize( aQuestion )
+      @question = aQuestion
+    end
+    
     # 次の State に遷移する
     public
     def transit( aDebconfContext )
-      raise NotImplementedError, 'abstract method'
+      input @question.priority, @question.name
+      go
     end
-    
+
     # Ruby のスクリプトを返す
     public
     def self.marshal( aQuestion )
@@ -37,7 +43,7 @@ module Lucie
       when StringTemplate
         require 'lucie/string-state'
         eval StringState.marshal( aQuestion )
-        return eval( "#{aQuestion.name.to_state_class_name}.new" )        
+        return eval( "#{aQuestion.name.to_state_class_name}.new( aQuestion )" )        
       when MultiselectTemplate
         require 'lucie/multiselect-state'
         eval MultiselectState.marshal( aQuestion )
@@ -49,7 +55,7 @@ module Lucie
       when NoteTemplate
         require 'lucie/note-state'
         eval NoteState.marshal( aQuestion )
-        return eval( "#{aQuestion.name.to_state_class_name}.new" )
+        return eval( "#{aQuestion.name.to_state_class_name}.new( aQuestion )" )
       when BooleanTemplate
         require 'lucie/boolean-state'
         eval BooleanState.marshal( aQuestion )
@@ -57,7 +63,7 @@ module Lucie
       when TextTemplate
         require 'lucie/text-state'
         eval TextState.marshal( aQuestion )
-        return eval( "#{aQuestion.name.to_state_class_name}.new" )
+        return eval( "#{aQuestion.name.to_state_class_name}.new( aQuestion )" )
       else
         raise "This shouldn't happen!"
       end

@@ -15,20 +15,6 @@ module Lucie
   
   class StringState < State
     #--
-    # TODO : State クラスに引き上げる    
-    #++  
-    public
-    def initialize( aQuestion )
-      @question = aQuestion
-    end
-    
-    public
-    def transit( aDebconfContext )
-      input @question.priority, @question.name
-      go
-    end
-    
-    #--
     # FIXME : 生成されるクラスを singleton にする
     #++
     def self.marshal( aQuestion )
@@ -36,6 +22,7 @@ module Lucie
       class #{aQuestion.name.to_state_class_name} < Lucie::StringState
         public
         def transit( aDebconfContext )
+          super aDebconfContext
           aDebconfContext.current_state = aDebconfContext::STATES['#{aQuestion.next_question}']
         end
       end

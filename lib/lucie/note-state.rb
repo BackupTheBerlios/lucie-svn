@@ -15,23 +15,6 @@ module Lucie
   
   class NoteState < State
     #--
-    # FIXME : State クラスへ引き上げ
-    #++  
-    public
-    def initialize( aQuestion )
-      @question = aQuestion
-    end
-
-    #--
-    # FIXME : State クラスへ引き上げ
-    #++      
-    public
-    def transit( aDebconfContext )
-      input @question.priority, @question.name
-      go
-    end
-    
-    #--
     # FIXME : 生成されるクラスを singleton にする
     #++
     def self.marshal( aQuestion ) 

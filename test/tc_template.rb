@@ -45,14 +45,18 @@ class TC_Template < Test::Unit::TestCase
       template.template_type = Lucie::Template::SELECT
       template.choices = ['CHOICE #1', 'CHOICE #2', 'CHOICE #3']
       template.description = (<<-DESCRIPTION)
-      A Description for Unit Test
+A Description for Unit Test
       DESCRIPTION
+      template.description_ja = (<<-DESCRIPTION_JA)
+ユニットテスト用の Description
+      DESCRIPTION_JA
     end
     
     template.register
     assert_equal Lucie::Template::SELECT, template['Type']
     assert_equal 'CHOICE #1, CHOICE #2, CHOICE #3', template['Choices']
     assert_equal "A Description for Unit Test\n", template['Description']
+    assert_equal "ユニットテスト用の Description\n", template['Description-ja']
   end
   
   public

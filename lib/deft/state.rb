@@ -51,7 +51,8 @@ module Deft
     public
     def transit( aDebconfContext )   
       input aDebconfContext.current_state.priority, aDebconfContext.current_state.name
-      go
+      rc = go
+      aDebconfContext.backup if rc == 30 
     end
     
     # +aQuestion+ を表す concrete class の Ruby スクリプトを文字列で返す
@@ -62,7 +63,11 @@ module Deft
         class #{aQuestion.state_class_name} < Deft::State
           public
           def transit( aDebconfContext )
-            super aDebconfContext
+            current_state = aDebconfContext.current_state
+            super( aDebconfContext )
+            unless ( current_state == aDebconfContext.current_state ) 
+              return aDebconfContext.current_state
+            end
             aDebconfContext.current_state = nil
             return nil
           end
@@ -76,7 +81,11 @@ module Deft
         class #{aQuestion.state_class_name} < Deft::State
           public
           def transit( aDebconfContext )
-            super aDebconfContext
+            current_state = aDebconfContext.current_state
+            super( aDebconfContext )
+            unless ( current_state == aDebconfContext.current_state ) 
+              return aDebconfContext.current_state
+            end
             aDebconfContext.current_state = Deft::ConcreteState['#{aQuestion.next_question}']
           end
         end
@@ -95,7 +104,11 @@ module Deft
       class #{aQuestion.state_class_name} < Deft::State
         public
         def transit( aDebconfContext )
-          super aDebconfContext
+          current_state = aDebconfContext.current_state
+          super( aDebconfContext )
+          unless ( current_state == aDebconfContext.current_state ) 
+            return aDebconfContext.current_state
+          end
           aDebconfContext.current_state = #{current_state}
         end
         

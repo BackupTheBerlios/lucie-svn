@@ -15,14 +15,15 @@ template( 'lucie-vmsetup/hello' ) do |template|
   template.extended_description_ja = (<<-DESCRIPTION_JA)
   このウィザードでは、Lucie を用いた VM セットアップの設定を入力します。
   設定可能な項目は、
-  o 必要な VM の台数
-  o 外部ネットワークへの接続
-  o VM で使用するメモリ容量
-  o VM で使用するハードディスク容量
-  o 使用する VM の種類
-  o VM へインストールする Linux ディストリビューションの種類
-  o VM へインストールするソフトウェアの種類
+   o 必要な VM の台数
+   o 外部ネットワークへの接続
+   o VM で使用するメモリ容量
+   o VM で使用するハードディスク容量
+   o 使用する VM の種類
+   o VM へインストールする Linux ディストリビューションの種類
+   o VM へインストールするソフトウェアの種類
   です。自分が VM 上で走らせたいジョブの特性によって設定を決めてください。
+
   「次へ」をクリックするとウィザードを開始します。
   DESCRIPTION_JA
 end

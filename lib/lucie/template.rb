@@ -130,6 +130,12 @@ module Lucie
       @hash['Type'] = typeString
     end
     
+    # テンプレートの 'Type:' を返します
+    public
+    def template_type
+      return @hash['Type']
+    end
+    
     # テンプレートの 'Choices:' を指定します
     public
     def choices=( choicesArray )

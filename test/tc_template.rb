@@ -54,6 +54,7 @@ A Description for Unit Test
     
     template.register
     assert_equal Lucie::Template::SELECT, template['Type']
+    assert_equal Lucie::Template::SELECT, template.template_type
     assert_equal 'CHOICE #1, CHOICE #2, CHOICE #3', template['Choices']
     assert_equal "A Description for Unit Test\n", template['Description']
     assert_equal "ユニットテスト用の Description\n", template['Description-ja']

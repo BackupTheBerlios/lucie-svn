@@ -63,9 +63,21 @@ class String
   # 'pascal_style' => 'PascalStyle' ‚Ì‚æ‚¤‚É•ÏŠ·
   public
   def to_pascal_style
-    self.split('_').collect do |each| 
-      each.capitalize 
-    end.join
+    if self.include?('_')
+      return self.split('_').collect do |each| 
+        each.capitalize 
+      end.join
+    else
+      return self.capitalize
+    end
+  end
+  
+  # 'lucie/hello-world' => 'Lucie__HelloWorld' ‚Ì‚æ‚¤‚É•ÏŠ·
+  public
+  def to_state_class_name
+    return self.gsub('-', '_').split('/').map do |each|
+      each.to_pascal_style
+    end.join('__')
   end
 end
 

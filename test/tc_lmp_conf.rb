@@ -15,7 +15,7 @@ require 'test/unit'
 class TC_LMP_Conf < Test::Unit::TestCase
   public
   def setup
-    require 'test/lmp_conf/lucie-vm'
+    require 'test/lmp_conf/lucie_vm_template'
   end
   
   ###################################################################################################

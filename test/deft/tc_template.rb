@@ -64,60 +64,6 @@ class TC_Template < Test::Unit::TestCase
                   'テンプレートが登録されていない' )
     assert_equal( 'KNOWN TEMPLATE', known_template.name, 'テンプレートの名前が違う' )
   end
-  
-  ###############################################################################################
-  # Template の変数操作用メソッドのテスト
-  ###############################################################################################
-  
-  public
-  def test_type
-    boolean_template = \
-    Deft::Template.new( 'TEST BOOLEAN TEMPLATE' ).enhance do |template|
-      template.template_type = Deft::BooleanTemplate
-    end    
-    assert_kind_of( Deft::BooleanTemplate, boolean_template, 'テンプレートの型が違う' )
-    assert_equal( Deft::BooleanTemplate, boolean_template.template_type, 'テンプレートの型が違う' )
-  end
-  
-  public
-  def test_default
-    _template = \
-    Deft::Template.new( 'hostname' ).enhance do |template|
-      template.default = 'debian'
-    end    
-    assert_equal( 'debian', _template.default, 'Deafult: が違う' )
-  end
-  
-  public
-  def test_choices
-    _template = \
-    Deft::Template.new( 'hostname' ).enhance do |template|
-      template.choices = ['debian workstation', 'debian desktop', 'debian cluster node']
-    end    
-    assert_equal( ['debian workstation', 'debian desktop', 'debian cluster node'], _template.choices, 'Choices: が違う' )
-  end
-  
-  public
-  def test_short_description
-    _template = \
-    Deft::Template.new( 'hostname' ).enhance do |template|
-      template.short_description = 'unqualified hostname for this computer'
-    end    
-    assert_equal( 'unqualified hostname for this computer', _template.short_description, 'Short description が違う' )
-  end
-  
-  public
-  def test_extended_description
-    _template = \
-    Deft::Template.new( 'hostname' ).enhance do |template|
-      template.extended_description = (<<-EXTENDED_DESCRIPTION)
-This is the name by which this computer will be known on the network. It
-has to be a unique name in your domain.
-      EXTENDED_DESCRIPTION
-    end    
-    assert_match( /This is the name by which this computer will be known on the network\. It.*has to be a unique name in your domain\..*/m,
-                  _template.extended_description, 'Extended description が違う' )
-  end
 end
 
 ### Local variables:

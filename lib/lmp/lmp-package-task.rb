@@ -5,8 +5,9 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'lmp/builder'
+require 'rubygems'
 require 'rake/packagetask'
+require 'lmp/builder'
 
 module Rake
   # Specification に基づいて LMP をビルドするタスク。

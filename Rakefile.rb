@@ -32,7 +32,7 @@ Rake::RDocTask.new( :rdoc ) do |rdoc|
   rdoc.title = 'Lucie documentation'
   rdoc.rdoc_dir = 'doc'
   rdoc.options << '--line-numbers' << '--inline-source' << '--charset' << 'sjis' << '--diagram'
-  rdoc.rdoc_files.include( 'lib/lucie/*.rb', 'lib/lucie/rake/*.rb' )
+  rdoc.rdoc_files.include( 'lib/*.rb', 'lib/lucie/*.rb', 'lib/lucie/rake/*.rb' )
 end
 
 ### Local variables:

@@ -134,7 +134,7 @@ module Rake
     
     private
     def copy_lucie_files
-      sh %{ruby -pi -e "gsub(/^root:x:/, 'root:#{@root_password}:')" #{nfsroot('etc/passwd')}
+      sh %{ruby -pi -e "gsub(/^root::/, 'root:#{@root_password}:')" #{nfsroot('etc/passwd')}}
     end
     
     private

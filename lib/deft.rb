@@ -54,6 +54,12 @@ class DeftApp
           puts each.name
         end
       end
+      if @command_line_options.question
+        puts '“o˜^‚³‚ê‚Ä‚¢‚éŽ¿–â‚ÌƒŠƒXƒg'
+        Deft::Question.questions.each do |each|
+          puts each.name
+        end
+      end
     rescue Exception => e
       STDERR.puts e.message
     end

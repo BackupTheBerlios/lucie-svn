@@ -25,6 +25,33 @@ module Lucie
       required_attribute :name
       required_attribute :alias
       required_attribute :uri
+      
+      # ------------------------- Special accessor behaviours (overwriting default).
+      
+      REGEXP_PRINTABLE = /\A[ -~]+\z/
+
+      overwrite_accessor :name= do |_name|
+        unless (_name.nil?) || ( /\A[\w\-_]+\z/ =~ _name)
+          raise InvalidAttributeException, "Invalid attribute for name: #{_name}"
+        end
+        @name = _name
+      end
+      
+      overwrite_accessor :alias= do |_alias|
+        unless (_alias.nil?) || ( REGEXP_PRINTABLE =~ _alias)
+          raise InvalidAttributeException, "Invalid attribute for alias: #{_alias}"
+        end
+        @alias = _alias
+      end
+
+      overwrite_accessor :uri= do |_uri|
+        unless (_uri.nil?) || ( /\A(http|ftp)\:\/\/[\w\-_.\/]+\Z/ =~ _uri)
+          # FIXME: http ÇæÇØÇ≈ÇÊÇ¢ÅH
+          raise InvalidAttributeException, "Invalid attribute for uri: #{_uri}"
+        end
+        @uri = _uri
+      end
+    
     end
   end
 end

@@ -30,6 +30,69 @@ module Lucie
       required_attribute :subnet
       required_attribute :dns
       required_attribute :domain_name
+
+      # ------------------------- Special accessor behaviours (overwriting default).
+
+      REGEXP_PRINTABLE = /\A[ -~]+\z/
+      REGEXP_IPADDR = /\A((0|[1-9]\d{0,2})\.){3}(0|[1-9]\d{0,2})\z/ # FIXME: もっと厳密にやる？
+#      REGEXP_IPADDR = /\A(0|[1-9]\d{0,2})(\.\1){3}\z/ # 後方参照の使い方間違ってる？
+
+      overwrite_accessor :name= do |_name|
+        unless (_name.nil?) || ( /\A[\w\-_]+\z/ =~ _name)
+          raise InvalidAttributeException, "Invalid attribute for name: #{_name}"
+        end
+        @name = _name
+      end
+
+      overwrite_accessor :alias= do |_alias|
+        unless (_alias.nil?) || ( REGEXP_PRINTABLE =~ _alias)
+          raise InvalidAttributeException, "Invalid attribute for alias: #{_alias}"
+        end
+        @alias = _alias
+      end
+
+      overwrite_accessor :nis_domain_name= do |_nis_domain_name|
+        unless (_nis_domain_name.nil?) || ( /\A[\w\-_.]+\Z/ =~ _nis_domain_name)
+          raise InvalidAttributeException, "Invalid attribute for nis_domain_name: #{_nis_domain_name}"
+        end
+        @nis_domain_name = _nis_domain_name
+      end
+
+      overwrite_accessor :gateway= do |_gateway|
+        unless (_gateway.nil?) || ( REGEXP_IPADDR =~ _gateway)
+          raise InvalidAttributeException, "Invalid attribute for gateway: #{_gateway}"     
+        end
+        @gateway = _gateway
+      end 
+
+      overwrite_accessor :address= do |_address|
+        unless (_address.nil?) || ( REGEXP_IPADDR =~ _address)
+          raise InvalidAttributeException, "Invalid attribute for address: #{_address}"     
+        end
+        @address = _address
+      end 
+
+      overwrite_accessor :subnet= do |_subnet|
+        unless (_subnet.nil?) || ( REGEXP_IPADDR =~ _subnet)
+          raise InvalidAttributeException, "Invalid attribute for subnet: #{_subnet}"     
+        end
+        @subnet = _subnet
+      end 
+
+      overwrite_accessor :dns= do |_dns|
+        unless (_dns.nil?) || ( REGEXP_IPADDR =~ _dns)
+          raise InvalidAttributeException, "Invalid attribute for dns: #{_dns}"     
+        end
+        @dns = _dns
+      end 
+
+      overwrite_accessor :domain_name= do |_domain_name|
+        unless (_domain_name.nil?) || ( /\A[\w\-_.]+\z/ =~ _domain_name)
+          raise InvalidAttributeException, "Invalid attribute for domain_name: #{_domain_name}"
+        end
+        @domain_name = _domain_name
+      end
+
     end
   end
 end

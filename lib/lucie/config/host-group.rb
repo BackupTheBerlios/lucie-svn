@@ -25,6 +25,39 @@ module Lucie
       required_attribute :name
       required_attribute :alias
       required_attribute :members
+
+      # ------------------------- Special accessor behaviours (overwriting default).
+
+      REGEXP_PRINTABLE = /\A[ -~]+\z/
+
+      overwrite_accessor :name= do |_name|
+        unless (_name.nil?) || ( /\A[\w\-_]+\z/ =~ _name)
+          raise InvalidAttributeException, "Invalid attribute for name: #{_name}"
+        end
+        @name = _name
+      end
+
+      overwrite_accessor :alias= do |_alias|
+        unless (_alias.nil?) || ( REGEXP_PRINTABLE =~ _alias)
+          raise InvalidAttributeException, "Invalid attribute for alias: #{_alias}"
+        end
+        @alias = _alias
+      end
+
+      overwrite_accessor :members= do |_members|
+        if (!_members.nil?)
+          if (_members.is_a?(Array))
+            _members.each do |i|
+              unless i.instance_of?(Lucie::Config::Host)
+                raise InvalidAttributeException, "Invalid attribute for members: #{_members}"
+              end
+            end
+          else
+            raise InvalidAttributeException, "Invalid attribute for members: #{_members}"
+          end        
+        end
+        @members = _members
+      end
     end
   end
 end

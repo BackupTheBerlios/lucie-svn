@@ -16,26 +16,6 @@ class TC_Template < Test::Unit::TestCase
   def setup
     @templates = Lucie::Template::parse( test_template_data )
   end
-  
-  ###################################################################################################
-  # 定数のテスト
-  ###################################################################################################
-  
-  # MULTISELECT 定数が定義されていることを確認
-  public
-  def test_const_MULTISELECT_defined  
-    assert Lucie::Template.const_defined?( :MULTISELECT ), 'MULTISELECT 定数が定義されていない'
-  end
-  
-  # SELECT 定数が定義されていることを確認
-  public
-  def test_const_SELECT_defined
-    assert Lucie::Template.const_defined?( :SELECT ), 'SELECT 定数が定義されていない'
-  end
-
-  ###################################################################################################
-  # それ以外のテスト
-  ###################################################################################################  
 
   public
   def test_templates

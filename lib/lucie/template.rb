@@ -49,8 +49,6 @@ module Lucie
     def_delegator :@hash, :size
     
     TEMPLATES = {}
-    SELECT = 'SELECT'.freeze
-    MULTISELECT = 'MULTISELECT'.freeze
     
     public
     def self.[] ( templateNameString )
@@ -63,7 +61,6 @@ module Lucie
       return TEMPLATES[templateName]
     end
 
-    # Template ‚ð“o˜^‚µ‚Ü‚·
     private
     def register
       puts "Template #{@name} ‚ð“o˜^" if $trace

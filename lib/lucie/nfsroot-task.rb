@@ -160,6 +160,8 @@ DPkg
 };
         APT_CONF
       end
+      dpkg_divert '/etc/dhcp3/dhclient-script' rescue nil
+      dpkg_divert '/etc/dhcp3/dhclient.conf' rescue nil      
     end
     
     private

@@ -159,7 +159,7 @@ module Rake
     private
     def add_additional_packages
       puts "Adding additional packages to nfsroot."
-      sh_log %{chroot #{@dir} apt-get -y --fix-missing install dhcp3-client}, sh_option, &apt_block
+      sh_log %{chroot #{@dir} apt-get -y --fix-missing install dhcp3-client ruby1.8 rake}, sh_option, &apt_block
       sh_log %{chroot #{@dir} apt-get clean}, sh_option, &apt_block
     end
     

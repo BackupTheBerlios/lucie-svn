@@ -13,20 +13,20 @@ require 'lucie/time-stamp'
 
 # 新しいテンプレートを登録します
 def template( nameString, &block )
-  return Lucie::Template.define_template( nameString, &block )
+  return Deft::Template.define_template( nameString, &block )
 end
 
-module Lucie
+module Deft
   
-  update(%q$LastChangedDate$)
+  Lucie.update(%q$LastChangedDate$)
   
   # Debconf 用 templates ファイルを生成する Template を定義します。
   #
   # Example:
   #
   #   template( 'lucie/overview' ) do |template|
-  #     template.type = Text
-  #     template.description = (<<-DESCRIPTION)
+  #     template.type = TextTemplate
+  #     template.description_ja = (<<-DESCRIPTION)
   #     この Lucie 設定パッケージは、以下のパッケージをインストール・設定するような
   #     Lucie の設定を生成します。
   # 
@@ -50,7 +50,8 @@ module Lucie
     attr_accessor :short_description
     attr_accessor :extended_description
     attr_accessor :short_description_ja
-    attr_accessor :extended_description_ja    
+    attr_accessor :extended_description_ja
+    attr_accessor :template_type    
     
     def_delegator :@variable, :[]
     def_delegator :@variable, :size
@@ -75,6 +76,13 @@ module Lucie
       @actions.each { |each| result = each.call( self ) }
       if @template_type
         _template = @template_type.new( self )
+        _template.template_type = @template_type
+        _template.default = @default
+        _template.choices = @choices
+        _template.short_description = @short_description
+        _template.extended_description = @extended_description
+        _template.short_description_ja = @short_description_ja
+        _template.extended_description_ja = @extended_description_ja        
         TEMPLATES[@name] = _template      
         return _template
       else
@@ -121,19 +129,7 @@ module Lucie
       @actions << block if block_given?
       return register
     end
-    
-    # テンプレートの 'Type:' を指定します
-    public
-    def template_type=( typeClass )
-      @template_type = typeClass
-    end
-    
-    # テンプレートの 'Type:' を返します
-    public
-    def template_type
-      return self.class
-    end
-               
+                  
     private
     def format_extended_description( descriptionString )
       return descriptionString.unindent_auto.split("\n").map do |each|

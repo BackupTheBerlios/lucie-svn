@@ -7,6 +7,8 @@
 # License::  GPL2
 
 require 'English'
+require 'lucie/config'
+require 'lucie/installer-base-task'
 require 'lucie/command-line-options'
 require 'lucie/time-stamp'
 require 'rake'
@@ -35,9 +37,7 @@ module Lucie
       end
       do_option
       begin
-        tasks = collect_tasks
-        load_rakefile
-        tasks.each do |task_name| Task[task_name].invoke end
+        installer_base_task.invoke
       rescue Exception => ex
         puts "lucie-setup aborted!"
         puts ex.message
@@ -56,37 +56,11 @@ module Lucie
       return true if (/mswin32\Z/=~ RUBY_PLATFORM)
       return (not (ENV['USER'] != 'root'))
     end
-    
-    #--
-    # FIXME : ロードのパスを直す (コマンドラインオプションで指定可能に？)
-    #++
-    private
-    def load_rakefile
-      Dir.glob( 'lib/lucie/rake/*.rb' ).each do |each|
-        load each
-      end
-    end
-    
-    # Collect the list of tasks on the command line.  If no tasks are
-    # give, return a list containing only the default task.
-    # Environmental assignments are processed at this time as well.
-    #--
-    # FIXME : コマンドラインオプションで実行するタスクを選べるようにする
-    #++
-    private
-    def collect_tasks
-      tasks = []
-      tasks.push("default") if tasks.size == 0
-      return tasks
-    end
-    
+       
     private
     def do_option
       @commandline_options = CommandLineOptions.instance
-      @commandline_options.parse ARGV.dup
-      
-      $template_directory = @commandline_options.template_directory
-      $template_lucie_directory = $template_directory + "/lucie/"
+      @commandline_options.parse ARGV.dup      
       if @commandline_options.help
         help
         exit
@@ -95,7 +69,45 @@ module Lucie
         puts VERSION_STRING
         exit
       end
-      exit(0) if @commandline_options.list_resource
+      load_configuration
+      if @commandline_options.list_resource
+        list_resource 
+        exit
+      end
+    end
+    
+    private
+    def installer_base_task
+      installer = Config::Installer[@commandline_options.installer_name]
+      Rake::InstallerBaseTask.new( installer.name ) do |installer_base|
+        installer_base.dir = File.join( @commandline_options.installer_base_dir, installer.name )
+        installer_base.distribution = installer.distribution
+        installer_base.distribution_version = installer.distribution_version
+      end
+      return Task[installer.name]
+    end
+    
+    private
+    def list_resource
+      case @commandline_options.list_resource
+      when 'host'
+        Config::Host.list.each_value do |each| puts each end
+      when 'host_group'
+        Config::HostGroup.list.each_value do |each| puts each end    
+      when 'package_server'
+        Config::PackageServer.list.each_value do |each| puts each end 
+      when 'dhcp_server'
+        Config::DHCPServer.list.each_value do |each| puts each end  
+      when 'installer'
+        Config::Installer.list.each_value do |each| puts each end 
+      else
+        # TODO: 例外を raise
+      end
+    end
+    
+    private
+    def load_configuration
+      require File.join( @commandline_options.config_dir, 'resource.rb' )
     end
     
     private

@@ -24,7 +24,7 @@ module Lucie
     
     public
     def transit( aDebconfContext )
-      input @priority, @question
+      input @question.priority, @question.name
       go
     end
     

@@ -17,10 +17,13 @@ def template( nameString, &block )
 end
 
 module Deft  
-  # Debconf 用 templates ファイルを生成する Template を定義します。
+  # Debconf 用 templates ファイルを生成する Template を定義する。
   #
   # Example:
   #
+  #   require 'deft/template'
+  #
+  #   include Deft
   #   template( 'lucie/overview' ) do |template|
   #     template.type = TextTemplate
   #     template.description_ja = (<<-DESCRIPTION)
@@ -50,13 +53,13 @@ module Deft
     attr_accessor :extended_description_ja
     attr_accessor :template_type        
     
-    # テンプレートを名前で探します。見つからない場合には nil を返します
+    # テンプレートを名前で探す。見つからない場合には nil を返す。
     public
     def self.[] ( templateNameString )
       return TEMPLATES[templateNameString]
     end
     
-    # Template が定義されていれば定義されているテンプレート、そうでなければ nil を返します
+    # Template が定義されていれば定義されているテンプレート、そうでなければ nil を返す。
     public
     def self.template_defined?( templateName )
       return TEMPLATES[templateName]
@@ -75,13 +78,13 @@ module Deft
       end
     end
     
-    # 登録されているテンプレートのリストを返します
+    # 登録されているテンプレートのリストを返す
     public
     def self.templates
       return TEMPLATES.values
     end
     
-    # 現在登録されている Template をクリアします
+    # 現在登録されている Template をクリアする
     public
     def self.clear
       TEMPLATES.clear
@@ -93,8 +96,8 @@ module Deft
       return template.enhance( &block )
     end
     
-    # Template を lookup し、もしすでに同名の Template が存在すればそれを返します。
-    # 存在しない場合、新たに登録します。
+    # Template を lookup し、もしすでに同名の Template が存在すればそれを返す。
+    # 存在しない場合、新たに登録する。
     public
     def self.lookup( nameString )
       return TEMPLATES[nameString] ||= self.new( nameString )
@@ -105,14 +108,19 @@ module Deft
     def initialize( nameString )
       @actions = []
       @name = nameString
-      @variable = {}
     end
     
-    # テンプレートをブロックを用いてエンハンスします。self を返します。
+    # テンプレートをブロックを用いてエンハンスする。self を返す。
     public
     def enhance( &block )
       @actions << block if block_given?
       return register
+    end
+    
+    # デバッグ用
+    public
+    def inspect
+      return "#<Deft::Template: @name=\"#{@name}\">"
     end
   end
 end

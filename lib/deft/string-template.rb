@@ -17,7 +17,7 @@ module Deft
     # StringTemplate をあらわす String オブジェクトを返す
     public
     def to_s
-      return template_string( 'string' )
+      return template_string( 'string', 'default' )
     end
   end
 end

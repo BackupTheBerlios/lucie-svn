@@ -69,9 +69,28 @@ question( 'lucie-vmsetup/use-network' ) do |question|
 end
 
 template( 'lucie-vmsetup/ip' ) do |template|
-  template.template_type = StringTemplate
-  template.short_description_ja = 'ノードの ip アドレス'
-  template.extended_description_ja = 'ノードの IP アドレスは？'
+  template.template_type = NoteTemplate
+  template.short_description_ja = 'VM の IP アドレス'
+  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  以下のようにホスト名、IP アドレス、MAC アドレスを割り振りました。
+  使用可能な VM は pad000 - pad003 の 4 ノードです。
+  
+   ホスト名: pad000
+   IP アドレス: 168.220.98.30
+   MAC アドレス: 00:50:56:01:02:02
+
+   ホスト名: pad001
+   IP アドレス: 163.220.98.31
+   MAC アドレス: 00:50:56:01:02:03
+
+   ホスト名: pad002
+   IP アドレス: 163.220.98.32
+   MAC アドレス: 00:50:56:01:02:04
+
+   ホスト名: pad003
+   IP アドレス: 163.220.98.33
+   MAC アドレス: 00:50:56:01:02:05
+  DESCRIPTION_JA
 end
 
 question( 'lucie-vmsetup/ip' ) do |question|

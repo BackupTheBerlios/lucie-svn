@@ -8,13 +8,13 @@
 $LOAD_PATH.unshift './lib'
 
 require 'mock'
-require 'lucie/boolean-state'
+require 'deft/boolean-state'
 require 'test/unit'
 
 class TC_NoteState < Test::Unit::TestCase
   # 以下のようなクラスをあらわす文字列が返されることを確認
   #
-  #  class LucieVmsetup__UseNetwork < Lucie::BooleanState
+  #  class LucieVmsetup__UseNetwork < Deft::BooleanState
   #    public
   #    def transit( aDebconfContext )
   #      super aDebconfContext
@@ -27,8 +27,8 @@ class TC_NoteState < Test::Unit::TestCase
     question.__next( :name ) do || 'lucie-vmsetup/use-network' end
     question.__next( :name ) do || 'lucie-vmsetup/use-network' end
   
-    line = Lucie::BooleanState::marshal( question ).split("\n")
-    assert_match /class LucieVmsetup__UseNetwork < Lucie::BooleanState/, line[0]
+    line = Deft::BooleanState::marshal( question ).split("\n")
+    assert_match /class LucieVmsetup__UseNetwork < Deft::BooleanState/, line[0]
     assert_match /public/, line[1]
     assert_match /def transit\( aDebconfContext \)/, line[2]
     assert_match /super aDebconfContext/, line[3]

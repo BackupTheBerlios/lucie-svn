@@ -5,21 +5,18 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'lucie/string'
 require 'lucie/state'
+require 'lucie/string'
 require 'lucie/time-stamp'
 
-module Lucie
+module Deft
   
-  update(%q$Date$)
+  Lucie.update(%q$Date$)
   
   class BooleanState < State
-    #--
-    # FIXME : ¶¬‚³‚ê‚éƒNƒ‰ƒX‚ð singleton ‚É‚·‚é
-    #++
     def self.marshal( aQuestion )  
       return ( <<-CLASS_DEFINITION ).unindent_auto
-      class #{aQuestion.name.to_state_class_name} < Lucie::BooleanState
+      class #{aQuestion.name.to_state_class_name} < Deft::BooleanState
         public
         def transit( aDebconfContext )
           super aDebconfContext

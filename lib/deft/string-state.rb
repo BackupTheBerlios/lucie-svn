@@ -21,7 +21,7 @@ module Deft
         public
         def transit( aDebconfContext )
           super aDebconfContext
-          next_question = aDebconfContext.next_question[get( '#{aQuestion.name}' )]
+          next_question = aDebconfContext.next_question(get( '#{aQuestion.name}' ))
           aDebconfContext.current_question = Deft::Question[next_question]
           aDebconfContext.current_state    = Deft::ConcreteState[next_question]
         end

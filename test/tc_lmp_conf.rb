@@ -18,23 +18,23 @@ class TC_LMP_Conf < Test::Unit::TestCase
   end
   
   ###################################################################################################
-  # タスク 'lucie-vmsetup/hello' のテスト
+  # テンプレート 'lucie-vmsetup/hello' のテスト
   ###################################################################################################
   
-  # タスク 'lucie-vmsetup/hello' が登録されていることを確認
+  # テンプレート 'lucie-vmsetup/hello' が登録されていることを確認
   public
   def test_template_hello_registered
     assert Lucie::Template.template_defined?( 'lucie-vmsetup/hello' )
   end
   
-  # タスク 'lucie-vmsetup/hello' の 'Type:' フィールドが正しく設定されているかどうかを確認
+  # テンプレート 'lucie-vmsetup/hello' の 'Type:' フィールドが正しく設定されているかどうかを確認
   public
   def test_template_hello_type
     assert_equal Template::NOTE, Lucie::Template.lookup( 'lucie-vmsetup/hello' ).template_type
     assert_equal Template::NOTE, Lucie::Template.lookup( 'lucie-vmsetup/hello' )['Type']
   end
   
-  # タスク 'lucie-vmsetup/hello' の 'Description:' フィールドが正しく設定されているかどうかを確認
+  # テンプレート 'lucie-vmsetup/hello' の 'Description:' フィールドが正しく設定されているかどうかを確認
   public
   def test_template_hello_description
     assert_equal (<<-DESCRIPTION), Lucie::Template.lookup( 'lucie-vmsetup/hello' ).description
@@ -47,7 +47,7 @@ Welcome to Lucie VM setup wizard.
     DESCRIPTION
   end
   
-  # タスク 'lucie-vmsetup/hello' の 'Description-ja:' フィールドが正しく設定されているかどうかを確認
+  # テンプレート 'lucie-vmsetup/hello' の 'Description-ja:' フィールドが正しく設定されているかどうかを確認
   public
   def test_template_hello_description_ja
     assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/hello' ).description_ja
@@ -61,23 +61,23 @@ Lucie VM のセットアップウィザードへようこそ
   end
   
   ###################################################################################################
-  # タスク 'lucie-vmsetup/num-nodes' のテスト
+  # テンプレート 'lucie-vmsetup/num-nodes' のテスト
   ###################################################################################################
   
-  # タスク 'lucie-vmsetup/num-nodes' が登録されていることを確認
+  # テンプレート 'lucie-vmsetup/num-nodes' が登録されていることを確認
   public
   def test_template_num_nodes_registered
     assert Lucie::Template.template_defined?( 'lucie-vmsetup/num-nodes' )
   end
   
-  # タスク 'lucie-vmsetup/num-nodes' の 'Type:' フィールドが正しく設定されているかどうかを確認
+  # テンプレート 'lucie-vmsetup/num-nodes' の 'Type:' フィールドが正しく設定されているかどうかを確認
   public
   def test_template_num_nodes_type
     assert_equal Template::STRING, Lucie::Template.lookup( 'lucie-vmsetup/num-nodes' ).template_type
-    # assert_equal Template::NOTE, Lucie::Template.lookup( 'lucie-vmsetup/hello' )['Type']
+    assert_equal Template::STRING, Lucie::Template.lookup( 'lucie-vmsetup/num-nodes' )['Type']
   end
   
-  # タスク 'lucie-vmsetup/num-nodes' の 'Description-ja:' フィールドが正しく設定されているかどうかを確認
+  # テンプレート 'lucie-vmsetup/num-nodes' の 'Description-ja:' フィールドが正しく設定されているかどうかを確認
   public
   def test_template_hello_description_ja
     assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/num-nodes' ).description_ja
@@ -87,6 +87,39 @@ VM ノード台数の選択です
     assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/num-nodes' )['Description-ja']
 VM ノード台数の選択です
 使用したい VM の台数を入れてください
+    DESCRIPTION_JA
+  end
+  
+  ###################################################################################################
+  # テンプレート 'lucie-vmsetup/use-network' のテスト
+  ###################################################################################################
+  
+  # テンプレート 'lucie-vmsetup/use-network' が登録されていることを確認
+  public
+  def test_template_use_network_registered
+    assert Lucie::Template.template_defined?( 'lucie-vmsetup/use-network' )
+  end
+  
+  # テンプレート 'lucie-vmsetup/use-network' の 'Type:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_use_network_type
+    assert_equal Template::BOOLEAN, Lucie::Template.lookup( 'lucie-vmsetup/use-network' ).template_type
+    assert_equal Template::BOOLEAN, Lucie::Template.lookup( 'lucie-vmsetup/use-network' )['Type']
+  end
+  
+  # テンプレート 'lucie-vmsetup/use-network' の 'Default:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_use_network_default
+    assert_equal 'no', Lucie::Template.lookup( 'lucie-vmsetup/use-network' ).default
+    assert_equal 'no', Lucie::Template.lookup( 'lucie-vmsetup/use-network' )['Default']
+  end
+  
+  # テンプレート 'lucie-vmsetup/use-network' の 'Description-ja:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_use_network_description_ja
+    assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/use-network' ).description_ja
+ノードのネットワーク
+ノードはネットワークにつながりますか？
     DESCRIPTION_JA
   end
 end

@@ -29,6 +29,15 @@ VM ノード台数の選択です
   DESCRIPTION_JA
 end.register
 
+template( 'lucie-vmsetup/use-network' ) do |template|
+  template.template_type = Template::BOOLEAN
+  template.default = 'no'
+  template.description_ja = (<<-DESCRIPTION_JA)
+ノードのネットワーク
+ノードはネットワークにつながりますか？
+  DESCRIPTION_JA
+end.register
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

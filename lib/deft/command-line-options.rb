@@ -24,19 +24,22 @@ module Deft
     attr :template
     attr :trace 
     attr :version
+    attr :question
 
     module OptionList
       OPTION_LIST = [
-        [ '--ruby-code',  '-r',   'question name', \
+      [ '--ruby-code',  '-r',   'question name', \
           'show concrete state definition in Ruby code.' ],
-        [ '--trace',          '-T',   nil, \
+      [ '--trace',          '-T',   nil, \
           'displays lots on internal stuff.' ],
-        [ '--help',           '-h',   nil, \
+      [ '--help',           '-h',   nil, \
           "you're looking at it." ],
-        [ '--version',        '-v',   nil, \
+      [ '--version',        '-v',   nil, \
           "display  lucie-setup's version and exit." ],
-        [ '--template',        '-t',   nil, \
+      [ '--template',        '-t',   nil, \
           'show all the registered templates and exit.' ],
+      [ '--question',        '-q',   nil, \
+          'show all the registered questions and exit.' ],
       ]
 
       public
@@ -67,6 +70,8 @@ module Deft
 
         getopt_long.each do |option, argument|
           case option
+          when '--question'
+            @question = true
           when '--template'
             @template = true
           when '--ruby-code'
@@ -89,7 +94,7 @@ module Deft
       return '[CommandLineOptions: ' +
       ["trace=#{@trace.inspect}", "help=#{@help.inspect}",
        "version=#{@version.inspect}", "ruby-code=#{@ruby_code.inspect}",
-       "template=#{@template.inspect}"].join(', ') + ']'
+       "template=#{@template.inspect}", "question=#{@question.inspect}"].join(', ') + ']'
     end
     
     private
@@ -98,6 +103,7 @@ module Deft
       @template = false
       @trace = false
       @version = false
+      @question = false
     end
   end
 end

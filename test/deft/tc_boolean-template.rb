@@ -5,7 +5,6 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-$KCODE = 'SJIS'
 $LOAD_PATH.unshift './lib'
 
 require 'deft/boolean-template'

@@ -23,7 +23,7 @@ module Lucie
         public
         def transit( aDebconfContext )
           super aDebconfContext
-          aDebconfContext.current_state = aDebconfContext::STATES['#{aQuestion.next_question}']
+          aDebconfContext.current_state = DebconfContext::STATES['#{aQuestion.next_question}']
         end
       end
       CLASS_DEFINITION

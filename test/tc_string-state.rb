@@ -30,9 +30,10 @@ class TC_StringState < Test::Unit::TestCase
     assert_match /class Lucie__Overview < Lucie::StringState/, line[0]
     assert_match /public/, line[1]
     assert_match /def transit\( aDebconfContext \)/, line[2]
-    assert_match /aDebconfContext.current_state = aDebconfContext::STATES\['lucie\/caution'\]/, line[3]
-    assert_match /end/, line[4]
+    assert_match /super aDebconfContext/, line[3]
+    assert_match /aDebconfContext.current_state = DebconfContext::STATES\['lucie\/caution'\]/, line[4]
     assert_match /end/, line[5]
+    assert_match /end/, line[6]
     question.__verify
   end
 end

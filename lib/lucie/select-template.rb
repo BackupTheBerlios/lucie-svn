@@ -22,14 +22,7 @@ module Lucie
       template_string += "Type: select\n"
       template_string += "Choices: #{choices}\n"
       template_string += "Default: #{default}\n" if default
-      if description
-        template_string += "Description: #{short_description}\n"
-        template_string += long_description + "\n"
-      end      
-      if description_ja
-        template_string += "Description-ja: #{short_description_ja}\n" 
-        template_string += long_description_ja
-      end
+      template_string += description_string
     end
   end
 end

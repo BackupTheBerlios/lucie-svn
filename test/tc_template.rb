@@ -27,7 +27,7 @@ class TC_Template < Test::Unit::TestCase
     assert_equal 'TEST/TEMPLATE#3', Lucie::Template.templates[2].name, 'テンプレートの名前が違う'
     assert_kind_of Lucie::BooleanTemplate, Lucie::Template.templates[2], 'テンプレートの型が違う'
   end
-
+  
   # 登録されているテンプレートが空のときに、
   # template_defined? が nil を返すことを確認
   public
@@ -56,7 +56,7 @@ class TC_Template < Test::Unit::TestCase
     Lucie::Template.clear
     assert_equal 0, Lucie::Template::TEMPLATES.size, 'TEMPLATES がクリアされていない'
   end
-
+  
   # lookup のテスト (未知のテンプレート)
   public
   def test_lookup_unknown_template

@@ -60,20 +60,20 @@ module Lucie
     def self.template_defined?( templateName )
       return TEMPLATES[templateName]
     end
-
+    
     private
     def register
       puts "Template #{@name} を登録" if $trace
       @actions.each { |each| result = each.call( self ) }
       return self
     end
-      
+    
     # 登録されているテンプレートのリストを返します
     public
     def self.templates
       return TEMPLATES.values
     end
-
+    
     # 現在登録されている Template をクリアします
     public
     def self.clear
@@ -163,7 +163,7 @@ module Lucie
     def description
       return @hash['Description']
     end
-
+    
     # テンプレートの 'Description-ja:' を指定します
     def description_ja=( descriptionString )
       @hash['Description-ja'] = descriptionString.unindent_auto
@@ -183,27 +183,41 @@ module Lucie
     def default
       return @hash['Default']
     end
-
+    
     private
     def long_description
       return format_long_description( description )
     end
-
+    
     private 
     def long_description_ja
       return format_long_description( description_ja )
     end
-
+    
     private
     def short_description_ja
       description_ja.split("\n")[0]
     end
-
+    
     private
     def short_description
       description.split("\n")[0]
     end
-
+    
+    private
+    def description_string
+      _description = ''
+      if description
+        _description += "Description: #{short_description}\n"
+        _description += long_description + "\n"
+      end      
+      if description_ja
+        _description += "Description-ja: #{short_description_ja}\n" 
+        _description += long_description_ja
+      end
+      return _description
+    end
+    
     private
     def format_long_description( descriptionString )
       return descriptionString.split("\n")[1..-1].map do |each|
@@ -213,11 +227,11 @@ module Lucie
         else
           " #{each}"
         end
-        end.join("\n")
-      end
+      end.join("\n")
     end
+  end
 end
-
+  
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

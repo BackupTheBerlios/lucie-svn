@@ -5,7 +5,6 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-ENV["DEBIAN_HAS_FRONTEND"] = 'true' # debconf/client.rb ‚ÌƒGƒ‰[‚ğ‰ñ”ğ
 $LOAD_PATH.unshift './lib'
 
 require 'mock'

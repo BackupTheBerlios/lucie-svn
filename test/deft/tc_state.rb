@@ -60,10 +60,10 @@ class TC_State < Test::Unit::TestCase
   public
   def test_marshal_next_string   
     question = Mock.new( '#<Question (Mock)>' )
-    question.__next( :next_question ) do "lucie-vmsetup/next" end 
-    question.__next( :next_question ) do "lucie-vmsetup/next" end  
-    question.__next( :next_question ) do "'lucie-vmsetup/next'" end
-    question.__next( :next_question ) do "'lucie-vmsetup/next'" end
+    question.__next( :next_question ) do 'lucie-vmsetup/next' end 
+    question.__next( :next_question ) do 'lucie-vmsetup/next' end  
+    question.__next( :next_question ) do 'lucie-vmsetup/next' end
+    question.__next( :next_question ) do 'lucie-vmsetup/next' end
     question.__next( :state_class_name ) do 'Deft::State::LucieVmsetup__UseNetwork' end     
     
     list = Deft::State::marshal_concrete_state( question )

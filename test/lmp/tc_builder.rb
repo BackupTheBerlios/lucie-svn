@@ -19,7 +19,14 @@ class TC_Builder < Test::Unit::TestCase
     spec.__next( :builddir ) do 'test/lmp/build' end
     spec.__next( :name ) do 'lmp-test' end 
     spec.__next( :readme ) do end 
-    spec.__next( :changelog ) do end
+    spec.__next( :changelog ) do <<-CHANGELOG
+lmp-test (0.1-1) unstable; urgency=low
+
+  * Initial Release.
+  
+ -- Yasuhito TAKAMIYA <takamiya@matsulab.is.titech.ac.jp> Mon, 26 Jul 2004 15:28:39 +0900
+    CHANGELOG
+    end
     spec.__next( :config ) do end
     spec.__next( :control ) do end
     spec.__next( :copyright ) do end

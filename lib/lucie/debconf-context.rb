@@ -1,4 +1,3 @@
-#!/usr/bin/ruby -I/home/takamiya/eclipse/workspace/Lucie/lib
 #
 # $Id$
 #

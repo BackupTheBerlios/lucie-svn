@@ -12,52 +12,45 @@ require 'debconf/client'
 require 'test/unit'
 
 class TC_Client < Test::Unit::TestCase
-  # parse_response ¤ÎÊÖ¤êÃÍ¤ò³ÎÇ§
   public
   def test_parse_response
     assert_equal( 'RESPONSE', Debconf::Client.parse_response( '0 RESPONSE' ),
-                  'parse_response ¤ÎÊÖ¤êÃÍ¤¬Àµ¤·¤¯¤Ê¤¤')
-    # ÊÖ¤êÃÍ 30-99 ¤ÇÂÐ±þ¤¹¤ëÃÍ¤¬ÊÖ¤ë¤³¤È¤ò³ÎÇ§
+                  'parse_response ‚Ì•Ô‚è’l‚ªˆá‚¤')
     assert_equal( 30, Debconf::Client.parse_response( '30 RESPONSE' ),
-                  'parse_response ¤ÎÊÖ¤êÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' ) # ¶­³¦¾ò·ï
+                  'parse_response ‚Ì•Ô‚è’l‚ªˆá‚¤' )
     assert_equal( 35, Debconf::Client.parse_response( '35 RESPONSE' ),
-                  'parse_response ¤ÎÊÖ¤êÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' )
+                  'parse_response ‚Ì•Ô‚è’l‚ªˆá‚¤' )
     assert_equal( 99, Debconf::Client.parse_response( '99 RESPONSE' ), 
-                  'parse_response ¤ÎÊÖ¤êÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' ) # ¶­³¦¾ò·ï
+                  'parse_response ‚Ì•Ô‚è’l‚ªˆá‚¤' )
   end
   
-  # Debconf ¤Î GO ¥³¥Þ¥ó¥É¤ò³ÎÇ§
   public
   def test_go
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdout_mock.__next( :print ) do |command| 
-      assert_equal( "GO\n", command, 'È¯¹Ô¤µ¤ì¤¿¥³¥Þ¥ó¥É¤¬Àµ¤·¤¯¤Ê¤¤' )
+      assert_equal( "GO\n", command, 'request •¶Žš—ñ‚ªˆá‚¤' )
     end
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
     $stdin_mock.__next( :gets ) do '0' end    
     Debconf::Client.go
   end
   
-  # Debconf ¤Î GET ¥³¥Þ¥ó¥É¤ò³ÎÇ§
   public
   def test_get
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdout_mock.__next( :print ) do |command| 
-      assert_equal( "GET QUESTION\n", command, 
-                    'È¯¹Ô¤µ¤ì¤¿¥³¥Þ¥ó¥É¤¬Àµ¤·¤¯¤Ê¤¤' )
+      assert_equal( "GET QUESTION\n", command, 'request •¶Žš—ñ‚ªˆá‚¤' )
     end
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
     $stdin_mock.__next( :gets ) do '0' end    
     Debconf::Client.get( 'QUESTION' )
   end
   
-  # Debconf ¤Î SET ¥³¥Þ¥ó¥É¤ò³ÎÇ§
   public
   def test_set
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdout_mock.__next( :print ) do |command| 
-      assert_equal( "SET QUESTION true\n", command, 
-                    'È¯¹Ô¤µ¤ì¤¿¥³¥Þ¥ó¥É¤¬Àµ¤·¤¯¤Ê¤¤' )
+      assert_equal( "SET QUESTION true\n", command, 'request •¶Žš—ñ‚ªˆá‚¤' )
     end
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
     $stdin_mock.__next( :gets ) do '0' end    

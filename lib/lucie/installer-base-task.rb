@@ -7,28 +7,7 @@
 
 require 'rake'
 require 'rake/tasklib'
-
-require 'open3'
-require 'log4r'
-include Log4r
-
-$lucie_log = Logger.new( 'lucie-setup' )
-$lucie_log.outputters = FileOutputter.new( 'lucie-setup', 
-                                           {:filename=>'/var/log/lucie-setup.log'} )
-
-module FileUtils
-  def sh_log(*cmd, &block)
-    if Hash === cmd.last then
-      options = cmd.pop
-    else
-      options = {}
-    end
-    fu_check_options options, :noop, :verbose
-    $lucie_log.info cmd.join(" ")
-    fu_output_message cmd.join(" ") if options[:verbose]
-    IO.popen(cmd.join(' '), &block) unless options[:noop]
-  end
-end
+require 'lucie/logger'
 
 module Rake
   #
@@ -119,12 +98,12 @@ module Rake
               STDERR.print ' ' * line_length, "\r"
               STDERR.print line, "\r"
               line_length = line.length
-              $lucie_log.info line
+              logger.info line
             when /^E: /
-              $lucie_log.error line 
+              logger.error line 
               raise DebootstrapExecutionError, line
             else
-              $lucie_log.warn line 
+              logger.warn line 
             end
           end
         end
@@ -135,6 +114,11 @@ module Rake
       end
     end
     
+    private
+    def logger
+      return Lucie::Logger::instance
+    end 
+
     private
     def sh_option
        return {:verbose => false} 

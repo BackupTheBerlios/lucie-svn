@@ -23,7 +23,7 @@ class TC_StateTransitHashState < Test::Unit::TestCase
       template.short_description_ja = 'スタート'
       template.extended_description_ja = 'スタート'
     end    
-    question( 'start' => { 'true' => 'true-state', 'false' => 'false-state' } ) do |question|
+    question( 'start' => { 'true' => 'true', 'false' => 'false' } ) do |question|
       question.priority = Deft::Question::PRIORITY_MEDIUM
       question.first_question = true
     end
@@ -75,8 +75,7 @@ class TC_StateTransitHashState < Test::Unit::TestCase
     $stdin_mock.__next( :gets ) do '0 true' end
         
     @debconf_context.transit
-    assert_equal( Deft::ConcreteState['true-state'], 
-                  @debconf_context.current_state )
+    assert_equal( Deft::ConcreteState['true'], @debconf_context.current_state )
     
     $stdout_mock.__verify
     $stdin_mock.__verify
@@ -104,8 +103,7 @@ class TC_StateTransitHashState < Test::Unit::TestCase
     $stdin_mock.__next( :gets ) do '0 false' end
         
     @debconf_context.transit
-    assert_equal( Deft::ConcreteState['false-state'], 
-                  @debconf_context.current_state )
+    assert_equal( Deft::ConcreteState['false'], @debconf_context.current_state )
     
     $stdout_mock.__verify
     $stdin_mock.__verify

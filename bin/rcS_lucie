@@ -70,6 +70,17 @@ end
 sh %{mount2dir /tmp/target #{fstab}}
 
 # task extrbase
+require '/etc/lucie/resource.rb'
+require 'lucie/config'
+
+installer = Lucie::Config::Installer[$installer_name]
+base_tgz = File.join( '/var/tmp', installer.distribution + '_' + installer.distribution_version + '.tgz')
+puts "Unpcking Debian base archive"
+sh %{gzip -dc #{base_tgz} | tar -C /tmp/target -xpf -}
+# now we can copy fstab
+sh %{[ -f /tmp/target/etc/fstab ] && mv /tmp/target/etc/fstab /tmp/target/etc/fstab.old}
+cp fstab, '/tmp/target/etc/fstab', :preserve => true
+
 # task mirror
 # task updatebase
 # task instsoft

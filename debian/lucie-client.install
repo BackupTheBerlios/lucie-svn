@@ -10,3 +10,4 @@ debian/tmp/usr/lib/lucie/start-stop-daemon
 debian/tmp/usr/lib/lucie/dhclient-script
 debian/tmp/usr/lib/lucie/dhclient-perl
 debian/tmp/usr/share/lucie/etc/dhclient.conf
+debian/tmp/usr/lib/ruby/1.8/*

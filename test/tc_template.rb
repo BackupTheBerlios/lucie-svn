@@ -7,6 +7,7 @@
 
 $LOAD_PATH.unshift './lib'
 
+require 'lucie/boolean-template'
 require 'lucie/template'
 require 'test/unit'
 
@@ -26,18 +27,6 @@ class TC_Template < Test::Unit::TestCase
     assert Lucie::Template.const_defined?( :MULTISELECT ), 'MULTISELECT 定数が定義されていない'
   end
   
-  # BOOLEAN 定数が定義されていることを確認
-  public
-  def test_const_BOOLEAN_defined
-    assert Lucie::Template.const_defined?( :BOOLEAN ), 'BOOLEAN 定数が定義されていない'
-  end
-  
-  # STRING 定数が定義されていることを確認
-  public
-  def test_const_STRING_defined
-    assert Lucie::Template.const_defined?( :STRING ), 'STRING 定数が定義されていない'
-  end
-
   # NOTE 定数が定義されていることを確認
   public
   def test_const_NOTE_defined
@@ -51,57 +40,22 @@ class TC_Template < Test::Unit::TestCase
   end
 
   ###################################################################################################
-  # String への変換のテスト
-  ###################################################################################################
-  
-  # Template オブジェクトの to_s のテスト
-  public
-  def test_to_s
-    Lucie::Template.clear
-    test_template = template( 'TEST/TEMPLATE' ) do |template|
-      template.template_type = Lucie::Template::SELECT
-      template.choices = ['CHOICE #1', 'CHOICE #2', 'CHOICE #3']
-      template.default = 'CHOICE #1'
-      template.description = (<<-DESCRIPTION)
-A Description for Unit Test
-This is a description for Unit Test.
-
-Abobe is null line.
-      DESCRIPTION
-      template.description_ja = (<<-DESCRIPTION_JA)
-ユニットテスト用の Description-ja
-これはユニットテスト用の Description-ja です。
-
-上の行は空行です。
-      DESCRIPTION_JA
-    end.register
-    
-    assert_match /^Template: TEST\/TEMPLATE/,  test_template.to_s
-    assert_match /^Type: SELECT/, test_template.to_s
-    assert_match /^Choices: CHOICE #1, CHOICE #2, CHOICE #3/, test_template.to_s
-    assert_match /^Description: A Description for Unit Test/, test_template.to_s
-    assert_match /^ This is a description for Unit Test./, test_template.to_s
-    assert_match /^ Abobe is null line./, test_template.to_s
-    
-    assert_match /^Description-ja: ユニットテスト用の Description-ja/, test_template.to_s
-    assert_match /^ これはユニットテスト用の Description-ja です。/, test_template.to_s
-    assert_match /^ 上の行は空行です。/, test_template.to_s
-  end
-  
-  ###################################################################################################
   # それ以外のテスト
   ###################################################################################################  
 
   public
   def test_templates
     Lucie::Template.clear
-    template 'TEST/TEMPLATE#1'
-    template 'TEST/TEMPLATE#2'
-    template 'TEST/TEMPLATE#3'
+    template 'TEST/TEMPLATE#1', Lucie::BooleanTemplate
+    template 'TEST/TEMPLATE#2', Lucie::BooleanTemplate
+    template 'TEST/TEMPLATE#3', Lucie::BooleanTemplate
     assert_equal 3, Lucie::Template.templates.size
     assert_equal 'TEST/TEMPLATE#1', Lucie::Template.templates[0].name
+    assert_kind_of Lucie::BooleanTemplate, Lucie::Template.templates[0]
     assert_equal 'TEST/TEMPLATE#2', Lucie::Template.templates[1].name
+    assert_kind_of Lucie::BooleanTemplate, Lucie::Template.templates[1]
     assert_equal 'TEST/TEMPLATE#3', Lucie::Template.templates[2].name
+    assert_kind_of Lucie::BooleanTemplate, Lucie::Template.templates[2]
   end
 
   # 登録されているテンプレートが空のときに、
@@ -116,41 +70,13 @@ Abobe is null line.
   public
   def test_template_defined_success
     Lucie::Template.clear
-    template( 'TEST TEMPLATE' )
+    template( 'TEST TEMPLATE', Lucie::BooleanTemplate )
     assert Lucie::Template.template_defined?( 'TEST TEMPLATE' )
   end
   
   public
-  def test_template_with_block
-    Lucie::Template.clear
-    template = template( 'TEST/TEMPLATE' ) do |template|
-      template.template_type = Lucie::Template::SELECT
-      template.choices = ['CHOICE #1', 'CHOICE #2', 'CHOICE #3']
-      template.default = 'CHOICE #1'
-      template.description = (<<-DESCRIPTION)
-A Description for Unit Test
-      DESCRIPTION
-      template.description_ja = (<<-DESCRIPTION_JA)
-ユニットテスト用の Description
-      DESCRIPTION_JA
-    end
-    
-    template.register
-    assert_equal Lucie::Template::SELECT, template['Type']
-    assert_equal Lucie::Template::SELECT, template.template_type
-    assert_equal 'CHOICE #1, CHOICE #2, CHOICE #3', template['Choices']
-    assert_equal 'CHOICE #1, CHOICE #2, CHOICE #3', template.choices
-    assert_equal 'CHOICE #1', template['Default']
-    assert_equal 'CHOICE #1', template.default
-    assert_equal "A Description for Unit Test\n", template['Description']
-    assert_equal "A Description for Unit Test\n", template.description
-    assert_equal "ユニットテスト用の Description\n", template['Description-ja']
-    assert_equal "ユニットテスト用の Description\n", template.description_ja
-  end
-  
-  public
   def test_template
-    assert_kind_of Lucie::Template, template( 'LUCIE/OVERVIEW' )
+    assert_kind_of Lucie::BooleanTemplate, template( 'LUCIE/OVERVIEW', Lucie::BooleanTemplate )
   end
   
   # clear のテスト
@@ -165,8 +91,8 @@ A Description for Unit Test
   public
   def test_lookup_unknown_template
     Lucie::Template::clear
-    template = Lucie::Template::lookup( 'UNKNOWN TEMPLATE' )
-    assert_kind_of Lucie::Template, template
+    template = Lucie::Template::lookup( 'UNKNOWN TEMPLATE', Lucie::BooleanTemplate )
+    assert_kind_of Lucie::BooleanTemplate, template
     assert_equal 'UNKNOWN TEMPLATE', template.name, 'テンプレートが登録されていない'
   end
   
@@ -174,8 +100,8 @@ A Description for Unit Test
   public
   def test_lookup_known_template
     Lucie::Template::clear
-    template = template( 'KNOWN TEMPLATE' )
-    assert_equal template, Lucie::Template::lookup( 'KNOWN TEMPLATE' ), 'テンプレートが登録されていない'
+    template = template( 'KNOWN TEMPLATE', Lucie::BooleanTemplate )
+    assert_equal template, Lucie::Template::lookup( 'KNOWN TEMPLATE', Lucie::BooleanTemplate ), 'テンプレートが登録されていない'
   end
   
   # パーズ結果のテンプレート数が合っているかテスト

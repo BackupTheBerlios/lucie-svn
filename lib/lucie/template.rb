@@ -5,13 +5,15 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+$KCODE = 'SJIS'
+
 require 'forwardable'
 require 'lucie/string'
 require 'lucie/time-stamp'
 
 # 新しいテンプレートを登録します
-def template( nameString, &block )
-  Lucie::Template.define_template nameString, &block
+def template( nameString, templateType, &block )
+  return Lucie::Template.define_template( nameString, templateType, &block )
 end
 
 module Lucie
@@ -47,64 +49,29 @@ module Lucie
     def_delegator :@hash, :size
     
     TEMPLATES = {}
-    BOOLEAN = 'BOOLEAN'.freeze
-    STRING = 'STRING'.freeze
     NOTE = 'NOTE'.freeze
     SELECT = 'SELECT'.freeze
     MULTISELECT = 'MULTISELECT'.freeze
     
+    public
+    def self.[] ( templateNameString )
+      return TEMPLATES[templateNameString]
+    end
+    
     # Template が定義されていれば定義されているテンプレート、そうでなければ nil を返します
     public
     def self.template_defined?( templateName )
-      TEMPLATES[templateName]
+      return TEMPLATES[templateName]
     end
 
     # Template を登録します
-    public
+    private
     def register
       puts "Template #{@name} を登録" if $trace
       @actions.each { |each| result = each.call( self ) }
       return self
     end
-    
-    # Template をあらわす String オブジェクトを返します
-    #--
-    # FIXME : Multiselect < Template などのサブクラス化
-    #++
-    public
-    def to_s
-      template_string = "Template: #{name}\n" + "Type: #{template_type}\n"
-      template_string += "Choices: #{choices}\n" if choices
       
-      if description
-        short_description = description.split("\n")[0]
-        template_string += "Description: #{short_description}\n"
-        template_string += description.split("\n")[1..-1].map do |each|
-          case each
-          when /\A\S*\Z/
-          ' .'
-          else
-          ' ' + each
-          end
-        end.join("\n")
-        template_string += "\n"
-      end
-      
-      if description_ja
-        short_description_ja = description_ja.split("\n")[0]
-        template_string += "Description-ja: #{short_description_ja}\n" 
-        template_string += description_ja.split("\n")[1..-1].map do |each|
-          case each
-          when /\A\s*\Z/
-          ' .'
-          else
-          ' ' + each
-          end
-        end.join("\n")
-        template_string += "\n"
-      end
-    end
-    
     # 登録されているテンプレートのリストを返します
     public
     def self.templates
@@ -118,16 +85,17 @@ module Lucie
     end
     
     private
-    def self.define_template( nameString, &block )
-      template = lookup( nameString )
-      return template.enhance( &block )
+    def self.define_template( nameString, templateType, &block )
+      template = lookup( nameString, templateType )
+      template.enhance( &block )
+      return template
     end
     
     # Template を lookup し、もしすでに同名の Template が存在すればそれを返します。
     # 存在しない場合、新たに登録します。
     public
-    def self.lookup( nameString )
-      return TEMPLATES[nameString] ||= self.new( nameString )
+    def self.lookup( nameString, templateType )
+      return TEMPLATES[nameString] ||= templateType.new( nameString )
     end
     
     # template 文字列をパースし、Template オブジェクトのハッシュ (キー:テンプレート名) を返します
@@ -168,19 +136,14 @@ module Lucie
     public
     def enhance( &block )
       @actions << block if block_given?
+      register
       return self
-    end
-    
-    # テンプレートの 'Type:' を指定します
-    public
-    def template_type=( typeString )
-      @hash['Type'] = typeString
     end
     
     # テンプレートの 'Type:' を返します
     public
     def template_type
-      return @hash['Type']
+      return self.class
     end
     
     # テンプレートの 'Choices:' を指定します
@@ -224,7 +187,39 @@ module Lucie
     def default
       return @hash['Default']
     end
-  end
+
+    private
+    def long_description
+      return format_long_description( description )
+    end
+
+    private 
+    def long_description_ja
+      return format_long_description( description_ja )
+    end
+
+    private
+    def short_description_ja
+      description_ja.split("\n")[0]
+    end
+
+    private
+    def short_description
+      description.split("\n")[0]
+    end
+
+    private
+    def format_long_description( descriptionString )
+      return descriptionString.split("\n")[1..-1].map do |each|
+        case each
+        when /\A\s*\Z/
+          ' .'
+        else
+          " #{each}"
+        end
+        end.join("\n")
+      end
+    end
 end
 
 ### Local variables:

@@ -30,53 +30,6 @@ module Lucie
         template_string += long_description_ja
       end
     end
-    
-    #--
-    # FIXME : Lucie::Template クラスへ移動
-    #++
-    private
-    def long_description
-      return format_long_description( description )
-    end
-    
-    #--
-    # FIXME : Lucie::Template クラスへ移動
-    #++
-    private 
-    def long_description_ja
-      return format_long_description( description_ja )
-    end
-    
-    #--
-    # FIXME : Lucie::Template クラスへ移動
-    #++
-    private
-    def short_description_ja
-      description_ja.split("\n")[0]
-    end
-    
-    #--
-    # FIXME : Lucie::Template クラスへ移動
-    #++
-    private
-    def short_description
-      description.split("\n")[0]
-    end
-    
-    #--
-    # FIXME : Lucie::Template クラスへ移動
-    #++
-    private
-    def format_long_description( descriptionString )
-      return descriptionString.split("\n")[1..-1].map do |each|
-        case each
-        when /\A\s*\Z/
-          ' .'
-        else
-          " #{each}"
-        end
-      end.join("\n")
-    end
   end
 end
 

@@ -80,6 +80,15 @@ template( 'lucie-vmsetup/distro' ) do |template|
   DESCRIPTION_JA
 end.register
 
+template( 'lucie-vmsetup/application' ) do |template|
+  template.template_type = Template::MULTISELECT
+  template.choices = ['ruby', 'perl', 'java']
+  template.description_ja = (<<-DESCRIPTION_JA)
+使用するアプリケーションの選択
+使用するアプリケーションを選択してください
+  DESCRIPTION_JA
+end.register
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

@@ -257,6 +257,39 @@ VM ノード台数の選択です
 使用するディストリビューションを選択してください
     DESCRIPTION_JA
   end
+  
+  ###################################################################################################
+  # テンプレート 'lucie-vmsetup/application' のテスト
+  ###################################################################################################
+  
+  # テンプレート 'lucie-vmsetup/application' が登録されていることを確認
+  public
+  def test_template_application_registered
+    assert Lucie::Template.template_defined?( 'lucie-vmsetup/application' )
+  end
+  
+  # テンプレート 'lucie-vmsetup/application' の 'Type:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_application_type
+    assert_equal Template::MULTISELECT, Lucie::Template.lookup( 'lucie-vmsetup/application' ).template_type
+    assert_equal Template::MULTISELECT, Lucie::Template.lookup( 'lucie-vmsetup/application' )['Type']
+  end
+  
+  # テンプレート 'lucie-vmsetup/application' の 'Choices:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_application_choices
+    assert_equal 'ruby, perl, java', Lucie::Template.lookup( 'lucie-vmsetup/application' ).choices
+    assert_equal 'ruby, perl, java', Lucie::Template.lookup( 'lucie-vmsetup/application' )['Choices']
+  end
+
+  # テンプレート 'lucie-vmsetup/application' の 'Description-ja:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_application_description_ja
+    assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/application' ).description_ja
+使用するアプリケーションの選択
+使用するアプリケーションを選択してください
+    DESCRIPTION_JA
+  end
 end
 
 ### Local variables:

@@ -17,6 +17,47 @@ class TC_Builder < Test::Unit::TestCase
     spec = Mock.new( '[SPEC]' )
     spec.__next( :builddir ) do 'test/lmp/build' end
     spec.__next( :builddir ) do 'test/lmp/build' end
+    spec.__next( :name ) do 'lmp-test' end
+    spec.__next( :packages ) do <<-PACKAGES
+autoconf
+automake
+autoproject
+binutils
+bison
+c2man
+cflow
+cpp
+cpp-2.95
+cpp-3.2
+cpp-3.3
+cutils
+cvs 
+cxref
+flex
+g++
+g++-2.95
+g++-3.0
+g++-3.3
+gcc
+gcc-2.95
+gcc-3.0
+gcc-3.3
+gdb
+gettext
+glibc-doc
+indent
+libtool
+liwc
+ltrace
+make 
+manpages-dev
+nowebm
+patch
+stl-manual
+strace
+    PACKAGES
+    end
+    spec.__next( :builddir ) do 'test/lmp/build' end
     spec.__next( :name ) do 'lmp-test' end 
     spec.__next( :readme ) do end 
     spec.__next( :changelog ) do <<-CHANGELOG
@@ -159,6 +200,7 @@ binary: binary-indep binary-arch
     
     assert( FileTest.directory?( 'test/lmp/build' ), 'ビルドディレクトリができていない' )
     assert( FileTest.directory?( 'test/lmp/build/lmp-test/debian' ), 'debian ディレクトリができていない' )
+    assert( FileTest.exists?( 'test/lmp/build/lmp-test/packages' ), 'packages ファイルができていない' )
     test_debian_package_file( 'README.Debian' )
     test_debian_package_file( 'changelog' )
     test_debian_package_file( 'config' )

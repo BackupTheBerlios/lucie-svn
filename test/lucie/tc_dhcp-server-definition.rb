@@ -11,6 +11,11 @@ require 'lucie/config/dhcp-server'
 
 class TC_DHCPServerDefinition < Test::Unit::TestCase
   public
+  def teardown
+    Lucie::Config::DHCPServer.clear
+  end
+  
+  public
   def test_accessor
     dhcp_server = Lucie::Config::DHCPServer.new do |dhcp_server|
       dhcp_server.name            = 'dhcp'

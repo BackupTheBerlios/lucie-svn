@@ -12,6 +12,11 @@ require 'lucie/config/installer'
 
 class TC_InstallerDefinition < Test::Unit::TestCase
   public
+  def teardown
+    Lucie::Config::Installer.clear
+  end
+  
+  public
   def test_accessor
     package_server = Mock.new( '#<PackageServer (Mock)>' )
     dhcp_server = Mock.new( '#<DHCPServer (Mock)>' )

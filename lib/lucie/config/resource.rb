@@ -111,9 +111,9 @@ module Lucie
       # 新しいリソースオブジェクトを返す
       public
       def initialize # :yield: self
-        set_default_values
-        register
+        set_default_values        
         yield self if block_given?
+        register
       end
 
       # すべての属性にデフォルト値をセットする。
@@ -129,7 +129,7 @@ module Lucie
       
       private
       def register
-        self.class.list << self
+        self.class.list[name] = self
       end
       
       # 即値以外はオブジェクトを dup する

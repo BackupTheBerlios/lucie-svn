@@ -12,6 +12,11 @@ require 'test/unit'
 
 class TC_PackageServerDefinition < Test::Unit::TestCase
   public
+  def teardown
+    Lucie::Config::PackageServer.clear
+  end
+  
+  public
   def test_accessor
     pkgserver = Lucie::Config::PackageServer.new do |pkgserver|
       pkgserver.name         = 'debian_mirror'

@@ -12,6 +12,11 @@ require 'test/unit'
 
 class TC_HostGroupDefinition < Test::Unit::TestCase
   public
+  def teardown
+    Lucie::Config::HostGroup.clear
+  end
+  
+  public
   def test_accessor
     group = Lucie::Config::HostGroup.new do |group|
       group.name = 'presto_cluster'

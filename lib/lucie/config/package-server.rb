@@ -11,7 +11,7 @@ module Lucie
   module Config
     class PackageServer < Resource
       # 登録されている Host のリスト
-      @@list = []
+      @@list = {}
       
       # アトリビュート名のリスト: [:name, :version, ...]
       @@required_attributes = []

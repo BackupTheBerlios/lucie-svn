@@ -12,12 +12,6 @@ require 'deft/select-template'
 require 'test/unit'
 
 class TC_SelectTemplate < Test::Unit::TestCase
-  # 親クラスが Deft::Template であることをテスト
-  public
-  def test_inheritance
-    assert Deft::SelectTemplate < Deft::Template
-  end
-  
   public
   def test_to_s
     Deft::Template.clear

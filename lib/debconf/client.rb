@@ -39,40 +39,44 @@ module Debconf
       "unregister", "subst", "previous_module", "fset",
       "fget", "purge", "metaget", "version", "clear"
     ]
-
-    def parse_ret( ret )
-      if /(\d+)( (.*))?/ =~ ret then
-        case $1
-        when "0"
-          ret = $3
-        when "10".."19"
-          raise Debconf::Exception::InvalidParametersException
-        when "20".."29"
-          raise Debconf::Error::SyntaxError, ret
-        when "30".."39"
+    
+    # Debconf からのレスポンスをパーズする
+    def parse_response( responseString )
+      if /(\d+)( (.*))?/ =~ responseString
+        case $1.to_i
+        when 0
+          responseString = $3
+        when 10..19
+          raise Exception::InvalidParametersException
+        when 20..29
+          raise Error::SyntaxError, responseString
+        when 30..99
           ## TODO: needs command specific routines (delegator?)
-          nil
+          return nil
+        when 100..109
+          raise Error::InternalError
         else
-          raise Debconf::Exception::UnknownReturnValueException, ret
+          raise Exception::UnknownReturnValueException, responseString
         end
       else
-        raise InternalRubyError
+        raise Error::InternalRubyError
       end
-      return ret
+      return responseString
     end
+    module_function :parse_response
 
     STDOUT.sync = true
     STDIN.sync  = true
   
     COMMANDS.each do |command|
       eval(<<-COMMAND_METHOD)
-        def #{command} ( *args )
+        def #{command}( *args )
           stdout = $stdout_mock ? $stdout_mock : STDOUT
-          stdin  = $stdin_mock  ? $stdin_mock  : STDIN
-          
+          stdin  = $stdin_mock  ? $stdin_mock  : STDIN          
           stdout.print( (\"#{command.upcase} \" + args.join(' ')).rstrip + \"\n\" )
-          parse_ret stdin.gets.chomp
+          parse_response stdin.gets.chomp
         end
+        module_function :#{command}
       COMMAND_METHOD
     end
   end

@@ -69,15 +69,15 @@ module Debconf
     STDIN.sync  = true
   
     COMMANDS.each do |command|
-      eval(<<-COMMAND_METHOD)
+      eval %-
         def #{command}( *args )
           stdout = $stdout_mock ? $stdout_mock : STDOUT
           stdin  = $stdin_mock  ? $stdin_mock  : STDIN          
-          stdout.print((\"#{command.upcase} \" + args.join(' ')).rstrip+\"\n\")
+          stdout.print(("#{command.upcase} " + args.join(' ')).rstrip + "\n")
           parse_response stdin.gets.chomp
         end
         module_function :#{command}
-      COMMAND_METHOD
+      -
     end
   end
 end

@@ -99,9 +99,15 @@ question( 'lucie-vmsetup/ip' ) do |question|
 end
 
 template( 'lucie-vmsetup/memory-size' ) do |template|
-  template.template_type = StringTemplate
-  template.short_description_ja = 'ノードのメモリ容量'
-  template.extended_description_ja = '使用したいメモリ容量を入力してください (単位: MB)'
+  template.template_type = SelectTemplate
+  template.choices = ['64', '128', '192', '256', '320', '384', '448', '512', '576', '640']
+  template.short_description_ja = 'VM ノードのメモリ容量'
+  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  使用したい VM 一台あたりのメモリ容量を選択してください。単位は MB です。
+
+  松岡研 PrestoIII クラスタで提供できる VM クラスタの１ノードあたりのメモリ容量は 640 MB までとなっています。
+  他のジョブへ影響を与えないように、ジョブ実行に *最低限* 必要なメモリ容量を選択してください。
+  DESCRIPTION_JA
 end
 
 question( 'lucie-vmsetup/memory-size' ) do |question|

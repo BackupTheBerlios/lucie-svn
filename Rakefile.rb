@@ -41,7 +41,7 @@ Rake::RDocTask.new( :rdoc ) do |rdoc|
   rdoc.title = 'Lucie documentation'
   rdoc.rdoc_dir = 'doc'
   rdoc.options << '--line-numbers' << '--inline-source' << '--charset' << 'sjis' << '--diagram'
-  rdoc.rdoc_files.include( 'lib/*.rb', 'lib/deft/*.rb', 'lib/lucie/*.rb', 'lib/lmp/*.rb', 'lib/lucie/rake/*.rb' )
+  rdoc.rdoc_files.include( 'lib/*.rb', 'lib/debconf/*.rb', 'lib/deft/*.rb', 'lib/lucie/*.rb', 'lib/lmp/*.rb', 'lib/lucie/rake/*.rb' )
 end
 
 # templates ‚Ì¶¬ -------------------------------------------------------------

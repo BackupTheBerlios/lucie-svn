@@ -51,7 +51,7 @@ end
 
 Rake::RDocTask.new( :rdoc ) do |rdoc|
   rdoc.title = 'Lucie documentation'
-  rdoc.rdoc_dir = 'doc'
+  rdoc.rdoc_dir = 'doc/rdoc'
   rdoc.options << '--line-numbers' 
   rdoc.options << '--inline-source' 
   rdoc.options << '--charset' << 'sjis' 

@@ -7,12 +7,12 @@
 
 $KCODE = 'SJIS'
 
-require 'lucie/template'
+require 'deft/template'
 require 'lucie/time-stamp'
 
-module Lucie
+module Deft
   
-  update(%q$LastChangedDate$)
+  Lucie.update(%q$LastChangedDate$)
   
   # string タイプの Template をあらわすクラス
   class StringTemplate < Template

@@ -7,12 +7,12 @@
 
 $KCODE = 'SJIS'
 
-require 'lucie/template'
+require 'deft/template'
 require 'lucie/time-stamp'
 
-module Lucie
+module Deft
   
-  update(%q$LastChangedDate$)
+  Lucie.update(%q$LastChangedDate$)
   
   # boolean タイプの Template をあらわすクラス
   class BooleanTemplate < Template

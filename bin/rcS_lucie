@@ -29,4 +29,20 @@ mkdir '/tmp/var/log'
 mkdir '/tmp/var/lock'
 mkdir '/tmp/var/spool'
 
+
+# init
+
+# directory where temporary log files are stored.
+$logdir = '/tmp/lucie'
+mkdir_p '/tmp/lucie'
+
+sh %{grep -q '[[:space:]]sysfs' /proc/filesystems && mount -t sysfs sysfs /sys} rescue nil
+sh %{ifup lo} rescue nil
+sh %{[ -x /sbin/portmap ] && /sbin/portmap} rescue nil
+sh %{mount -t devpts devpts /dev/pts}
+# add other options for nfs mount of /dev/root to root-path in dhcpd.conf
+sh %{mount -o remount,noatime,ro /dev/root /}
+sh %{cat /proc/kmsg >/dev/tty4 &}
+sh %{dmesg > #{File.join($logdir, 'dmesg.log')}}
+
 sleep 10

@@ -17,7 +17,7 @@ require 'singleton'
 
 module Lucie
   
-  update(%q$Date$) 
+  update(%q$Date$)
   
   ##############################################################################
   # Lucie main application object.  When invoking +lucie-setup+ from the command

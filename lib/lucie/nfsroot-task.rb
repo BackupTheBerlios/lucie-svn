@@ -105,6 +105,8 @@ module Rake
       ln_s  '/tmp/binding', nfsroot('var/yp/binding') rescue nil
       rmdir nfsroot('var/log/ksymoops') rescue nil
       ln_s  '/dev/null', nfsroot('var/log/ksymoops')
+      sh %{echo "iface lo inet loopback" > #{nfsroot( 'etc/network/interfaces' )}}
+      sh %{echo "*.* /tmp/lucie/syslog.log" > #{nfsroot( 'etc/syslog.conf' )}}
     end
     
     private

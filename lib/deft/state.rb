@@ -5,73 +5,67 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+require 'debconf/client'
 require 'lucie/time-stamp'
+require 'singleton'
 
-module Lucie
+include Debconf::ConfModule
+
+module Deft
   
-  update(%q$Date$)
+  Lucie.update(%q$Date$)
   
-  # 状態遷移表から State パターンの各 ConcreteState クラスを生成する。
-  #--
-  # TODO: 各 ConcreteState は特異オブジェクトにする。
-  #++  
+  # Question オブジェクトから State パターンの各 concrete state クラスを生成するクラス。
+  # また、すべての concrete state クラスの親となるクラス。
   class State    
-    public
-    def initialize( aQuestion )
-      @question = aQuestion
-    end
+    include Singleton
     
     # 次の State に遷移する
     public
-    def transit( aDebconfContext )
-      input @question.priority, @question.name
-      go
+    def transit( aDebconfContext )  
+      stdout = aDebconfContext.stdout
+      stdin = aDebconfContext.stdin    
+      input stdout, stdin, aDebconfContext.current_question.priority, aDebconfContext.current_question.name
+      go stdout, stdin
     end
-
-    # Ruby のスクリプトを返す
+    
+    # +aQuestion+ を表す concrete class の Ruby スクリプトを文字列で返す
     public
-    def self.marshal( aQuestion )
+    def self.marshal_concrete_state( aQuestion )
       raise NotImplementedError, 'abstract method'
     end
     
+    # +aQuestion+ を表す concrete state のインスタンスを返す
     #--
-    # FIXME : ポリモルフィズム
+    # FIXME : 相互参照しちゃってるので Question クラスへ移動する
     #++
     public
-    def self.define_state( aQuestion )
-      case aQuestion.template
-      when StringTemplate
-        require 'lucie/string-state'
-        eval StringState.marshal( aQuestion )
-        return eval( "#{aQuestion.name.to_state_class_name}.new( aQuestion )" )        
-      when MultiselectTemplate
-        require 'lucie/multiselect-state'
-        eval MultiselectState.marshal( aQuestion )
-        return eval( "#{aQuestion.name.to_state_class_name}.new( aQuestion )" )      
-      when SelectTemplate
-        require 'lucie/select-state'
-        eval SelectState.marshal( aQuestion )
-        return eval( "#{aQuestion.name.to_state_class_name}.new( aQuestion )" )     
-      when NoteTemplate
-        require 'lucie/note-state'
-        eval NoteState.marshal( aQuestion )
-        return eval( "#{aQuestion.name.to_state_class_name}.new( aQuestion )" )
-      when BooleanTemplate
-        require 'lucie/boolean-state'
-        eval BooleanState.marshal( aQuestion )
-        return eval( "#{aQuestion.name.to_state_class_name}.new( aQuestion )" )      
-      when TextTemplate
-        require 'lucie/text-state'
-        eval TextState.marshal( aQuestion )
-        return eval( "#{aQuestion.name.to_state_class_name}.new( aQuestion )" )
-      else
-        raise "This shouldn't happen!"
+    def self.concrete_state( aQuestion )
+      require 'deft/boolean-state'
+      require 'deft/multiselect-state'
+      require 'deft/note-state'
+      require 'deft/password-state'
+      require 'deft/select-state'
+      require 'deft/string-state'
+      require 'deft/text-state'
+      eval aQuestion.template.__send__( :marshal, aQuestion )
+      return eval( "#{state_class_name( aQuestion.name )}.instance" ) 
+    end
+    
+    # 質問名 => concrete state クラス名へ変換
+    # 
+    # 例 : 'lucie/hello-world' => 'Lucie__HelloWorld'
+    #
+    public
+    def self.state_class_name( questionNameString )
+      return questionNameString.gsub('-', '_').split('/').map do |each|
+        each.to_pascal_style
+        end.join('__')
       end
     end
   end
-end
-
-### Local variables:
-### mode: Ruby
-### indent-tabs-mode: nil
-### End:
+  
+  ### Local variables:
+  ### mode: Ruby
+  ### indent-tabs-mode: nil
+  ### End:

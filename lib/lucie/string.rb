@@ -5,9 +5,9 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'lucie/time-stamp'
+require 'time-stamp'
 
-Lucie::update(%q$LastChangedDate$)
+update(%q$LastChangedDate$)
 
 # 標準の String クラスにインデント系のメソッドを追加
 class String
@@ -70,14 +70,20 @@ class String
     else
       return self.capitalize
     end
-  end
+  end  
   
-  # 'lucie/hello-world' => 'Lucie__HelloWorld' のように変換
+  # 長いリテラルを RFC822 に合うようにフォーマットする。
+  # Debconf のテンプレートの extended description に用いる。    
   public
-  def to_state_class_name
-    return self.gsub('-', '_').split('/').map do |each|
-      each.to_pascal_style
-    end.join('__')
+  def to_rfc822
+    return unindent_auto.split("\n").map do |each|
+      case each
+      when /\A\s*\Z/
+          ' .'
+      else
+          " #{each}"
+      end
+    end.join("\n")
   end
 end
 

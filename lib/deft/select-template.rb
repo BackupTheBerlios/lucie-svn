@@ -19,6 +19,18 @@ module Deft
     def to_s
       return template_string( 'select', 'default', 'choices' )
     end
+    
+    # テンプレートの型を返す
+    public
+    def template_type
+      return 'select'
+    end
+    
+    # デバッグ用
+    public
+    def inspect
+      return "#<Deft::SelectTemplate: @name=\"#{@name}\">"
+    end
   end
 end
 

@@ -19,6 +19,28 @@ module Deft
     def to_s
       return template_string( 'note' )
     end
+    
+    # テンプレートの型を返す
+    public
+    def template_type
+      return 'note'
+    end
+   
+    public 
+    def choices=( choicesString ) # :nodoc:
+      raise Deft::Exception::InvalidAttributeException
+    end
+    
+    public 
+    def default=( defaultString ) # :nodoc:
+      raise Exception::InvalidAttributeException
+    end
+    
+    # デバッグ用
+    public
+    def inspect
+      return "#<Deft::NoteTemplate: @name=\"#{@name}\">"
+    end
   end
 end
 

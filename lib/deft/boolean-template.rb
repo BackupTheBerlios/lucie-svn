@@ -19,6 +19,23 @@ module Deft
     def to_s
       return template_string( 'boolean', 'default' )
     end
+    
+    # テンプレートの型を返す
+    public
+    def template_type
+      return 'boolean'
+    end
+    
+    public
+    def choices=( choicesString ) # :nodoc:
+      raise Deft::Exception::InvalidAttributeException
+    end
+    
+    # デバッグ用
+    public
+    def inspect
+      return "#<Deft::BooleanTemplate: @name=\"#{@name}\">"
+    end
   end
 end
 

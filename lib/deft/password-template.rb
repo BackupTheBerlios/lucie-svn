@@ -19,6 +19,23 @@ module Deft
     def to_s
       return template_string( 'password' )
     end
+    
+    # テンプレートの型を返す
+    public
+    def template_type
+      return 'password'
+    end
+    
+    public
+    def choices=( choicesString ) # :nodoc:
+      raise Deft::Exception::InvalidAttributeException
+    end
+    
+    # デバッグ用
+    public
+    def inspect
+      return "#<Deft::PasswordTemplate: @name=\"#{@name}\">"
+    end
   end
 end
 

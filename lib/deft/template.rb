@@ -5,6 +5,13 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+require 'deft/password-template'
+require 'deft/multiselect-template'
+require 'deft/string-template'
+require 'deft/boolean-template'
+require 'deft/note-template'
+require 'deft/select-template'
+require 'deft/text-template'
 require 'forwardable'
 require 'lucie/string'
 require 'time-stamp'
@@ -16,7 +23,12 @@ def template( nameString, &block )
   return Deft::Template.define_template( nameString, &block )
 end
 
-module Deft  
+module Deft
+  module Exception
+    class UnknownTemplateTypeException < ::Exception; end
+    class InvalidAttributeException < ::Exception; end
+  end
+     
   # Debconf 用 templates ファイルを生成する Template を定義する。
   #
   # Example:
@@ -25,7 +37,7 @@ module Deft
   #
   #   include Deft
   #   template( 'lucie/overview' ) do |template|
-  #     template.type = TextTemplate
+  #     template.type = 'text'
   #     template.description_ja = (<<-DESCRIPTION)
   #     この Lucie 設定パッケージは、以下のパッケージをインストール・設定するような
   #     Lucie の設定を生成します。
@@ -37,21 +49,26 @@ module Deft
   #     ...
   #     DESCRIPTION
   #   end
-  #
-  #--
-  # TODO: substによる動的テンプレート生成 (debconf spec を参照) をサポート
-  #++
   class Template
+    extend Forwardable
+    
     TEMPLATES = {}
     
-    attr :name
-    attr_accessor :default
-    attr_accessor :choices
-    attr_accessor :short_description
-    attr_accessor :extended_description
-    attr_accessor :short_description_ja
-    attr_accessor :extended_description_ja
-    attr_accessor :template_type        
+    attr_reader :name
+    def_delegator :@template, :extended_description_ja=
+    def_delegator :@template, :extended_description_ja        
+    def_delegator :@template, :short_description_ja=
+    def_delegator :@template, :short_description_ja
+    def_delegator :@template, :extended_description=
+    def_delegator :@template, :extended_description 
+    def_delegator :@template, :short_description=
+    def_delegator :@template, :short_description    
+    def_delegator :@template, :choices=
+    def_delegator :@template, :choices
+    def_delegator :@template, :default= 
+    def_delegator :@template, :default
+    def_delegator :@template, :template_type=
+    def_delegator :@template, :template_type     
     
     # テンプレートを名前で探す。見つからない場合には nil を返す。
     public
@@ -69,10 +86,9 @@ module Deft
     def register
       @actions.each { |each| result = each.call( self ) }
       puts "Template #{@name} (#{@template_type}) を登録" if $trace
-      if @template_type
-        _template = @template_type.new( self )       
-        TEMPLATES[@name] = _template      
-        return _template
+      if @template     
+        TEMPLATES[@name] = @template      
+        return @template
       else
         return self
       end
@@ -101,6 +117,21 @@ module Deft
     public
     def self.lookup( nameString )
       return TEMPLATES[nameString] ||= self.new( nameString )
+    end
+    
+    public
+    def template_type=( templateTypeString )
+      template_table = { 'text'        => Deft::TextTemplate,
+                         'select'      => Deft::SelectTemplate,
+                         'note'        => Deft::NoteTemplate,
+                         'boolean'     => Deft::BooleanTemplate,
+                         'string'      => Deft::StringTemplate,
+                         'multiselect' => Deft::MultiselectTemplate,
+                         'password'    => Deft::PasswordTemplate }
+      if template_table[templateTypeString].nil?
+        raise Exception::UnknownTemplateTypeException, templateTypeString
+      end
+      @template = template_table[templateTypeString].new( @name )
     end
     
     # あたらしい Template オブジェクトを返す

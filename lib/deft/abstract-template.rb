@@ -13,26 +13,24 @@ update(%q$LastChangedDate$)
 module Deft
   # すべてのテンプレートの親クラス
   class AbstractTemplate
-    extend Forwardable
-    
-    def_delegator :@template, :name
-    def_delegator :@template, :template_type
-    def_delegator :@template, :default
-    def_delegator :@template, :choices
-    def_delegator :@template, :short_description
-    def_delegator :@template, :extended_description
-    def_delegator :@template, :short_description_ja
-    def_delegator :@template, :extended_description_ja
+    attr_reader :name
+    attr_accessor :choices
+    attr_accessor :extended_description_ja
+    attr_accessor :extended_description
+    attr_accessor :short_description_ja
+    attr_accessor :short_description
+    attr_accessor :default
     
     # 新しい abstractTemplate オブジェクトを返す
     public
-    def initialize( aTemplate )
-      @template = aTemplate
+    def initialize( nameString )
+      @name = nameString
     end
     
+    # デバッグ用
     public
     def inspect
-      return "#<Deft::AbstractTemplate: @template=\"#{@template}\">"
+      return "#<Deft::AbstractTemplate: @name=\"#{@name}\">"
     end
     
     # 文字列に変換する

@@ -26,6 +26,15 @@ module Lucie
       required_attribute :alias
       required_attribute :address
       required_attribute :mac_address
+      
+      # ------------------------- Special accessor behaviours (overwriting default).
+      
+      overwrite_accessor :name= do |name|
+        unless (name.nil?) or ( /\A[\w\-_]+\Z/=~ name)
+          raise InvalidAttributeException, "Invalid attribute for name: #{name}"
+        end
+        @name = name
+      end
     end
   end
 end

@@ -70,7 +70,7 @@ module Lucie
         module_eval %-
           @@required_attributes.include? :#{name}
         -
-      end    
+      end
       
       # ------------------------- Infrastructure class methods.
 
@@ -114,7 +114,14 @@ module Lucie
           @@required_attributes << :#{args.first}
         -
         attribute( *args )
-      end
+      end      
+            
+      # 属性の中にはアクセスされたときに特別な動作を要求するものがある。
+      # このメソッドで動作を設定できる。
+      def self.overwrite_accessor(name, &block)
+        remove_method name
+        define_method(name, &block)
+      end   
       
       # 新しいリソースオブジェクトを返す
       public
@@ -159,6 +166,8 @@ module Lucie
         end
       end
     end
+    
+    class InvalidAttributeException < ::Exception; end
   end
 end
 

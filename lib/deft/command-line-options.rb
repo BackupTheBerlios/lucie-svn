@@ -1,4 +1,3 @@
-# = commandline option handling classes and modules.
 #
 # $Id$
 #
@@ -11,9 +10,9 @@ require 'getoptlong'
 require 'lucie/time-stamp'
 require 'singleton'
 
-module Lucie
+module Deft
 
-  update(%q$Date$)
+  Lucie.update(%q$Date$)
 
   ####################################################################
   # We handle the parsing of options, and subsequently as a singleton
@@ -22,28 +21,16 @@ module Lucie
   class CommandLineOptions #:nodoc:
     include Singleton
     
-    attr :debug 
     attr :help 
-    attr :installer_name
-    attr :list_resource 
-    attr :make_floppy 
-    attr :skip_verification
-    attr :ui_type 
+    attr :ruby_code
+    attr :trace 
     attr :version
 
     module OptionList # :nodoc:
       OPTION_LIST = [
-        [ "--ui-type",        "-u",  "`console' or `gtk'", \
-          "set user interface type." ],
-        [ "--make-floppy",    "-f",  nil, \
-          "make a Lucie boot floppy." ],
-        [ "--installer-name", "-i",  "installer name", \
-          "specify an installer name to setup." ],
-        [ "--skip-verification", "-s",  nil, \
-          "do not verify user configuration." ],
-        [ "--list-resource",  "-r",   "resource type", \
-          "list up registerd resource objects." ],
-        [ "--debug",          "-D",   nil, \
+        [ "--ruby-code",  "-r",   "question name", \
+          "show concrete state definition in Ruby code." ],
+        [ "--trace",          "-T",   nil, \
           "displays lots on internal stuff." ],
         [ "--help",           "-h",   nil, \
           "you're looking at it." ],
@@ -79,18 +66,10 @@ module Lucie
 
         getopt_long.each do |option, argument|
           case option
-          when '--make-floppy'
-            @make_floppy = true
-          when '--ui-type'
-            @ui_type = argument.intern
-          when "--skip-verification"
-            @skip_verification = true
-          when "--list-resource"
-            @list_resource = argument.intern
-          when "--installer-name"
-            @installer_name = argument.intern
-          when "--debug"
-            @debug = true
+          when "--ruby-code"
+            @ruby_code = argument
+          when "--trace"
+            @trace = true
           when "--help"
             @help = true
           when "--version"
@@ -105,20 +84,14 @@ module Lucie
     public
     def inspect
       return "[CommandLineOptions: " +
-      ["debug=#{@debug.inspect}", "help=#{@help.inspect}", "installer-name=#{@installer_name.inspect}",
-      "list-resource=#{@list_resource.inspect}", "make-floppy=#{@make_floppy.inspect}", 
-      "skip-verification=#{@skip_verification.inspect}", "ui-type=#{@ui_type.inspect}", "version=#{@version.inspect}]"].join(', ')
+      ["trace=#{@trace.inspect}", "help=#{@help.inspect}",
+       "version=#{@version.inspect}", "ruby-code=#{@ruby_code.inspect}"].join(', ') + ']'
     end
     
     private
     def set_default_options
-      @debug = false
       @help = false
-      @installer_name = nil
-      @list_resource = nil
-      @make_floppy = false
-      @skip_verification = false
-      @ui_type = :console
+      @trace = false
       @version = false
     end
   end

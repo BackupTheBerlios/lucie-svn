@@ -22,6 +22,9 @@ require 'singleton'
 class DeftApp
   include Singleton
   
+  DEFT_VERSION = '0.0.1'
+  VERSION_STRING = ['deft', DEFT_VERSION, '('+$svn_date+')'].join(' ')
+  
   # +questionNameString+ で表される Question の Ruby コードによる表現を返す
   public
   def ruby_code( questionNameString )
@@ -39,6 +42,7 @@ class DeftApp
     return Deft::Template[templateNameString].to_s
   end
   
+  # DeftApp オブジェクトを返す
   public
   def initialize
     @command_line_options = Deft::CommandLineOptions.instance
@@ -47,30 +51,77 @@ class DeftApp
   # メインルーチン
   public
   def main
-    do_option
+    begin 
+      do_option
+    rescue Exception => ex
+      puts "deft aborted!"
+      puts ex.message
+      if $trace
+        puts ex.backtrace.join("\n")
+      else
+        # puts ex.backtrace.find { |str| str =~ /#{@rakefile}/ } || ""
+      end
+      exit( 1 )
+    end
+  end
+  
+  private
+  def help
+    puts VERSION_STRING
+    puts
+    usage
+    puts
+    puts "Options:"
+    CommandLineOptions::OptionList::OPTION_LIST.each do |long, short, arg, desc|
+      opt = sprintf("%25s", "#{long}, #{short}")
+      oparg = sprintf("%-7s", arg)
+      print "#{opt} #{oparg}"
+      desc = desc.split("\n")
+      if arg.nil? || arg.length < 7
+        puts desc.shift
+      else
+        puts
+      end
+      desc.each do |line|
+        puts(' '*33 + line)
+      end
+      puts
+    end
+  end
+  
+  private
+  def usage
+    puts "Usage: deft {options}"
   end
   
   private
   def do_option    
     @command_line_options.parse ARGV.dup
-    begin
-      if @command_line_options.ruby_code        
-        puts ruby_code( @command_line_options.ruby_code )        
+    if @command_line_options.trace
+      $trace = true
+    end
+    if @command_line_options.version
+      puts VERSION_STRING
+      exit( 0 )
+    end
+    if @command_line_options.help
+      help
+      exit( 0 )
+    end
+    if @command_line_options.ruby_code        
+      puts ruby_code( @command_line_options.ruby_code )        
+    end
+    if @command_line_options.template
+      puts '登録されているテンプレートのリスト:'
+      Deft::Template.templates.each do |each|
+        puts each.name
       end
-      if @command_line_options.template
-        puts '登録されているテンプレートのリスト:'
-        Deft::Template.templates.each do |each|
-          puts each.name
-        end
+    end
+    if @command_line_options.question
+      puts '登録されている質問のリスト:'
+      Deft::Question.questions.each do |each|
+        puts each.name
       end
-      if @command_line_options.question
-        puts '登録されている質問のリスト:'
-        Deft::Question.questions.each do |each|
-          puts each.name
-        end
-      end
-    rescue Exception => e
-      STDERR.puts e.message
     end
   end
 end

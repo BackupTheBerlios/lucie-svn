@@ -133,7 +133,7 @@ title 'Deft'
     BACKEND
     Deft::Question.questions.each do |each|
       unless each.name == each.template.name
-        backend.puts "register '#{each.template.name}', '#{each.name}'"
+        backend.puts "register '#{each.template}', '#{each.name}'"
       end
     end
     backend.print <<-BACKEND

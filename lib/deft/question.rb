@@ -42,6 +42,7 @@ module Deft
     attr_accessor :next_question
     # 最初の質問であるかどうかを表す
     attr_accessor :first_question
+    # 一つ前の質問へ戻る
     attr_accessor :backup
     
     # Question を lookup する。
@@ -68,10 +69,10 @@ module Deft
       case nameDescription
       when String
         question = lookup( nameDescription )
-        question.template = Template[nameDescription] 
+        question.template = nameDescription
       when Hash
         question = lookup( nameDescription.keys[0] )
-        question.template = Template[nameDescription.keys[0]] 
+        question.template = nameDescription.keys[0]
         question.next_question = nameDescription.values[0]
       else
         raise "This shouldn't happen"
@@ -97,7 +98,7 @@ module Deft
       @actions << block if block_given?
       @actions.each { |each| result = each.call( self ) }
       register_concrete_state
-      puts "Question #{@name} (テンプレート : #{@template.name}) を登録" if $trace
+      puts "Question #{@name} (テンプレート : #{@template}) を登録" if $trace
       return self
     end
     

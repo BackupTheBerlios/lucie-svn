@@ -39,6 +39,22 @@ module Deft
       @current_state.transit self
     end
     
+    # “ü—Í‚É‘Î‚·‚éŽŸ‚ÌŽ¿–â‚ð•Ô‚·
+    public
+    def next_question( inputString )
+      next_question = aDebconfContext.current_question.next_question
+      case next_question
+      when String
+        return next_question
+      when Hash
+        return next_question[ inputString ]
+      when Proc
+        return next_question.call( inputString )
+      else
+        "This shouldn't happen"
+      end
+    end
+    
     private
     def register_concrete_state
       Question::QUESTIONS.values.each do |each|

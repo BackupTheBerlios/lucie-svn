@@ -6,18 +6,14 @@
 # License::  GPL2
 
 require 'English'
-require 'lucie'
+require 'deft'
+require 'deft/concrete-state'
+
+update(%q$Date$)
 
 module Deft
-  
-  # FIXME : update メソッドを Deft モジュールへ移動
-  Lucie.update(%q$Date$)
-  
   # Debconf による画面遷移を表すクラス
-  class DebconfContext
-    # Debconf の各画面を表す Concrete State のハッシュ
-    STATES = {}
-    
+  class DebconfContext   
     # 現在の Question オブジェクト
     attr_accessor :current_question
     # 現在の Concrete State
@@ -32,7 +28,7 @@ module Deft
     def initialize
       register_concrete_state
       @current_question = get_start_question
-      @current_state = STATES[@current_question.name]
+      @current_state = ConcreteState[@current_question.name]
       @stdout = STDOUT
       @stdin = STDIN
     end
@@ -45,14 +41,14 @@ module Deft
     
     private
     def register_concrete_state
-      Lucie::Question::QUESTIONS.values.each do |each|
-        STATES[each.name] = each.concrete_state
+      Question::QUESTIONS.values.each do |each|
+        ConcreteState[each.name] = each.concrete_state
       end
     end
     
     private
     def get_start_question
-      Lucie::Question::QUESTIONS.values.each do |each|        
+      Question::QUESTIONS.values.each do |each|        
         return each if each.first_question
       end
     end

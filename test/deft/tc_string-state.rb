@@ -14,11 +14,12 @@ require 'test/unit'
 class TC_StringState < Test::Unit::TestCase
   # 以下のようなクラスをあらわす文字列が返されることを確認
   #
-  #  class Lucie__Overview < Deft::StringState
+  #  class Deft::State::Lucie__Overview < Deft::StringState
   #    public
   #    def transit( aDebconfContext )
   #      super aDebconfContext
-  #      aDebconfContext.current_state = DebconfContext::STATES['lucie/caution']
+  #      aDebconfContext.current_question = Deft::Question['lucie/caution']
+  #      aDebconfContext.current_state    = Deft::ConcreteState['lucie/caution']
   #    end
   #  end
   public

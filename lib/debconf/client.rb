@@ -18,18 +18,6 @@
 #  if not, write to the Free Software Foundation, Inc., 59 Temple Place,
 #  Suite 330, Boston, MA  02111-1307  USA
 
-if ENV["DEBIAN_HAS_FRONTEND"] == nil then
-  args = ""
-  for arg in ARGV
-    args << arg << " "
-  end
-  stdout_dup = STDOUT.clone
-  stdin_dup = STDIN.clone
-  ENV["DEBCONF_RUBY_STDOUT"] = "#{stdout_dup.fileno}"
-  ENV["DEBCONF_RUBY_STDIN"] = "#{stdin_dup.fileno}"
-  exec "/usr/share/debconf/frontend #{$0} #{args}"
-end
-
 module Debconf
 
   ## TODO: need to implement Exception & Error using exception
@@ -45,15 +33,6 @@ module Debconf
   end
 
   module ConfModule
-
-    DEBCONF_OUT = STDOUT.clone
-    STDOUT.reopen(IO.new(ENV["DEBCONF_RUBY_STDOUT"].to_i, "w"))
-    DEBCONF_OUT.sync=true
-    
-    DEBCONF_IN = STDIN.clone
-    STDIN.reopen(IO.new(ENV["DEBCONF_RUBY_STDIN"].to_i, "r"))
-    DEBCONF_IN.sync=true
-
     COMMANDS = [
       "capb", "set", "reset", "title", "input",
       "beginblock", "endblock", "go", "get", "register",
@@ -83,15 +62,12 @@ module Debconf
     end
 
     COMMANDS.each do |command|
-      eval "def #{command} (*args)
-              DEBCONF_OUT.print \"#{command.upcase} \"
-              for s in args
-                DEBCONF_OUT.print s
-                DEBCONF_OUT.print ' '
-              end
-              DEBCONF_OUT.print \"\n\"
-              parse_ret(DEBCONF_IN.gets.chomp)
-            end"
+      eval(<<-COMMAND_METHOD)
+        def #{command} ( outIO, inIO, *args )
+          outIO.print( (\"#{command.upcase} \" + args.join(' ')).rstrip + \"\n\" )
+          parse_ret inIO.gets.chomp
+        end
+      COMMAND_METHOD
     end
   end
 end

@@ -87,6 +87,22 @@ Abobe is null line.
     assert_match /^ これはユニットテスト用の Description-ja です。/, test_template.to_s
     assert_match /^ 上の行は空行です。/, test_template.to_s
   end
+  
+  ###################################################################################################
+  # それ以外のテスト
+  ###################################################################################################  
+
+  public
+  def test_templates
+    Lucie::Template.clear
+    template 'TEST/TEMPLATE#1'
+    template 'TEST/TEMPLATE#2'
+    template 'TEST/TEMPLATE#3'
+    assert_equal 3, Lucie::Template.templates.size
+    assert_equal 'TEST/TEMPLATE#1', Lucie::Template.templates[0].name
+    assert_equal 'TEST/TEMPLATE#2', Lucie::Template.templates[1].name
+    assert_equal 'TEST/TEMPLATE#3', Lucie::Template.templates[2].name
+  end
 
   # 登録されているテンプレートが空のときに、
   # template_defined? が nil を返すことを確認

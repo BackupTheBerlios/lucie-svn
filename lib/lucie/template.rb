@@ -106,6 +106,12 @@ module Lucie
       end
     end
     
+    # 登録されているテンプレートのリストを返します
+    public
+    def self.templates
+      return TEMPLATES.values
+    end
+
     # 現在登録されている Template をクリアします
     public
     def self.clear

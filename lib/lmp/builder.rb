@@ -50,7 +50,7 @@ module LMP
     private 
     def changelog      
       File.open( @debian_dir_path + '/changelog', 'w+' ) do |changelog|
-        changelog.print @spec.changelog
+        changelog.puts @spec.changelog
       end
     end
     

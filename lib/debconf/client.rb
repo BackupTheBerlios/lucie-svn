@@ -63,9 +63,9 @@ module Debconf
 
     COMMANDS.each do |command|
       eval(<<-COMMAND_METHOD)
-        def #{command} ( outIO, inIO, *args )
-          outIO.print( (\"#{command.upcase} \" + args.join(' ')).rstrip + \"\n\" )
-          parse_ret inIO.gets.chomp
+        def #{command} ( *args )
+          STDOUT.print( (\"#{command.upcase} \" + args.join(' ')).rstrip + \"\n\" )
+          parse_ret STDIN.gets.chomp
         end
       COMMAND_METHOD
     end

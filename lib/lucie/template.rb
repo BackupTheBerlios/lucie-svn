@@ -37,7 +37,6 @@ module Lucie
   #   end
   #
   #--
-  # TODO: Description の空行に勝手に '.' をつけてくれるようにする
   # TODO: substによる動的テンプレート生成 (debconf spec を参照) をサポート
   #++
   class Template

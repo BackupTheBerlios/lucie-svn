@@ -22,6 +22,8 @@ module Lucie
   class CommandLineOptions
     include Singleton
     
+    # テンプレートディレクトリ
+    attr :template_directory
     # トレースオプションの ON/OFF
     attr :trace
     # ドライランオプションの ON/OFF
@@ -48,25 +50,27 @@ module Lucie
     #
     module OptionList
       OPTION_LIST = [
-      [ "--trace",             "-t",   nil, \
+      [ "--trace",              "-t",   nil, \
           "Turn on invoke/execute tracing, enable full backtrace." ],
-      [ "--dryrun",            "-n",   nil, \
+      [ "--dryrun",             "-n",   nil, \
           "Do a dry run without executing actions." ],
-      [ "--ui-type",           "-u",   "`console' or `gtk'", \
+      [ "--template-directory", "-p",   "directory path", \
+          "Set installer template directory path." ],
+      [ "--ui-type",            "-u",   "`console' or `gtk'", \
           "Set user interface type." ],
-      [ "--make-floppy",       "-f",   nil, \
+      [ "--make-floppy",        "-f",   nil, \
           "Make a Lucie boot floppy." ],
-      [ "--installer-name",    "-i",   "installer name", \
+      [ "--installer-name",     "-i",   "installer name", \
           "Specify an installer name to setup." ],
-      [ "--skip-verification", "-s",   nil, \
+      [ "--skip-verification",  "-s",   nil, \
           "Do not verify user configuration." ],
-      [ "--list-resource",     "-r",   "resource type", \
+      [ "--list-resource",      "-r",   "resource type", \
           "List up registerd resource objects." ],
-      [ "--debug",             "-D",   nil, \
+      [ "--debug",              "-D",   nil, \
           "Displays lots on internal stuff." ],
-      [ "--help",              "-h",   nil, \
+      [ "--help",               "-h",   nil, \
           "You're looking at it." ],
-      [ "--version",           "-v",   nil, \
+      [ "--version",            "-v",   nil, \
           "Display  lucie-setup's version and exit." ],
       ]
       
@@ -135,13 +139,14 @@ module Lucie
     public
     def inspect
       return "[CommandLineOptions: " +
-      ["debug=#{@debug.inspect}", "help=#{@help.inspect}", "installer-name=#{@installer_name.inspect}",
-      "list-resource=#{@list_resource.inspect}", "make-floppy=#{@make_floppy.inspect}", 
+      ["template-directory=#{@template_directory.inspect}", "trace=#{@trace.inspect}", "dryrun=#{@dryrun.inspect}", "debug=#{@debug.inspect}",
+       "help=#{@help.inspect}", "installer-name=#{@installer_name.inspect}", "list-resource=#{@list_resource.inspect}", "make-floppy=#{@make_floppy.inspect}", 
       "skip-verification=#{@skip_verification.inspect}", "ui-type=#{@ui_type.inspect}", "version=#{@version.inspect}]"].join(', ')
     end
     
     private
     def set_default_options
+      @template_directory = '/var/lib/lucie/template'
       @trace = false
       @dryrun = false
       @debug = false

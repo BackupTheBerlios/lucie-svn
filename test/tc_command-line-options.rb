@@ -23,6 +23,13 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   
   # コマンドラインオプションのデフォルト値のテスト ###################
   
+  # デフォルトで template-directory オプションの値が /var/lib/lucie/template であることをテスト
+  public
+  def test_default_template_directory_option
+    @commandline_options.parse( [] )
+    assert_equal( '/var/lib/lucie/template', @commandline_options.template_directory, "default value for template-directory option was not set to OFF" )
+  end
+  
   # デフォルトで trace オプションがオフであることをテスト
   public
   def test_default_trace_option_is_false
@@ -96,6 +103,11 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   # 実際にコマンドラインオプションをパーズし、値が取得できるかどうかのテスト ##############
   
   public
+  def test_template_directory_option
+    @commandline_options.parse( ['--template-directory="C:\tmp"'] )
+  end
+  
+  public
   def test_parse_trace_option
     @commandline_options.parse( ['--trace'] )
     assert( @commandline_options.trace, "couldn't get value for --trace option" )
@@ -160,15 +172,18 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   # inspect メソッドのテスト
   public
   def test_inspect
-    assert_match( /\A\[CommandLineOptions:\s*(\w+=.*)+\]\Z/, @commandline_options.inspect, "bad format of inspection String" )
-    assert_match( /debug=\S+/, @commandline_options.inspect, "couldn't inspect debug option" )
-    assert_match( /help=\S+/, @commandline_options.inspect, "couldn't inspect help option" )
+    assert_match( /\A\[CommandLineOptions:\s*(\S+=\S+\s*)+\]\Z/, @commandline_options.inspect, "bad format of inspection String" )
+    assert_match( /debug=(true|false)/, @commandline_options.inspect, "couldn't inspect debug option" )
+    assert_match( /help=(true|false)/, @commandline_options.inspect, "couldn't inspect help option" )
     assert_match( /installer-name=\S+/,  @commandline_options.inspect, "couldn't inspect installer-name option" )
     assert_match( /list-resource=\S+/,  @commandline_options.inspect, "couldn't inspect list-resource option" )
-    assert_match( /make-floppy=\S+/,  @commandline_options.inspect, "couldn't inspect make-floppy option" )
-    assert_match( /skip-verification=\S+/,  @commandline_options.inspect, "couldn't inspect skip-verification option" )
-    assert_match( /ui-type=\S+/,  @commandline_options.inspect, "couldn't inspect ui-type option" )
-    assert_match( /version=\S+/,  @commandline_options.inspect, "couldn't inspect version option" )
+    assert_match( /make-floppy=(true|false)/,  @commandline_options.inspect, "couldn't inspect make-floppy option" )
+    assert_match( /skip-verification=(true|false)/,  @commandline_options.inspect, "couldn't inspect skip-verification option" )
+    assert_match( /ui-type=(:console|:gtk)/,  @commandline_options.inspect, "couldn't inspect ui-type option" )
+    assert_match( /version=(true|false)/,  @commandline_options.inspect, "couldn't inspect version option" )
+    assert_match( /dryrun=(true|false)/,  @commandline_options.inspect, "couldn't inspect dryrun option" )
+    assert_match( /trace=(true|false)/,  @commandline_options.inspect, "couldn't inspect trace option" )
+    assert_match( /template-directory=\S+/,  @commandline_options.inspect, "couldn't inspect template-directory option" )
   end
   
   # OptionList::OPTION_LIST の形式が正しいことをテスト

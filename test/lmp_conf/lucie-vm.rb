@@ -46,6 +46,14 @@ template( 'lucie-vmsetup/ip' ) do |template|
   DESCRIPTION_JA
 end.register
 
+template( 'lucie-vmsetup/memory-size' ) do |template|
+  template.template_type = Template::STRING
+  template.description_ja = (<<-DESCRIPTION_JA)
+ノードのメモリ
+使用したいメモリ容量を入力してください (単位: MB)
+  DESCRIPTION_JA
+end.register
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

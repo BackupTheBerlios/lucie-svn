@@ -147,6 +147,32 @@ VM ノード台数の選択です
 ノードの IP アドレスは？
     DESCRIPTION_JA
   end
+  
+  ###################################################################################################
+  # テンプレート 'lucie-vmsetup/memory-size' のテスト
+  ###################################################################################################
+
+  # テンプレート 'lucie-vmsetup/memory-size' が登録されていることを確認
+  public
+  def test_template_memory_size_registered
+    assert Lucie::Template.template_defined?( 'lucie-vmsetup/memory-size' )
+  end
+  
+  # テンプレート 'lucie-vmsetup/memory-size' の 'Type:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_memory_size_type
+    assert_equal Template::STRING, Lucie::Template.lookup( 'lucie-vmsetup/memory-size' ).template_type
+    assert_equal Template::STRING, Lucie::Template.lookup( 'lucie-vmsetup/memory-size' )['Type']
+  end
+  
+  # テンプレート 'lucie-vmsetup/memory-size' の 'Description-ja:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_memory_size_description_ja
+    assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/memory-size' ).description_ja
+ノードのメモリ
+使用したいメモリ容量を入力してください (単位: MB)
+    DESCRIPTION_JA
+  end
 end
 
 ### Local variables:

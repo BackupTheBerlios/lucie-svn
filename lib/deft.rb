@@ -1,3 +1,7 @@
+# = Deft ライブラリのメインファイル
+#
+# LMP 設定ファイルの頭では本ファイル (deft.rb) をかならず require し、
+# template, question などのトップレベル関数を読み込むこと。
 #
 # $Id$
 #
@@ -5,8 +9,13 @@
 # Revision:: $Revision$
 # License::  GPL2
 
+require 'deft/boolean-template'
 require 'deft/command-line-options'
+require 'deft/multiselect-template'
+require 'deft/note-template'
 require 'deft/question'
+require 'deft/select-template'
+require 'deft/string-template'
 require 'deft/template'
 require 'singleton'
 

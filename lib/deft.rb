@@ -114,21 +114,25 @@ class DeftApp
     if @command_line_options.run      
       backend = Tempfile.new( 'deft' )
       backend.print <<-BACKEND
+#!/usr/bin/ruby
+require 'deft/debconf-context'
 require '#{@command_line_options.run}'
+
+STDOUT.sync = true
+STDIN.sync = true
 
 capb  'backup'
 title 'Deft'
-debconf_context = DebconfContext.new  
+debconf_context = Deft::DebconfContext.new  
 loop do 
   rc = debconf_context.transit
   exit 0 if rc.nil?
 end
       BACKEND
       backend.close
-      puts backend.path
       
       require @command_line_options.run
-      File.open( backend.path + '.template', 'w+' ) do |file|
+      File.open( backend.path + '.templates', 'w+' ) do |file|
         Deft::Template.templates.each do |each|
           file.puts NKF.nkf( '-e', each.to_s )
           file.puts 

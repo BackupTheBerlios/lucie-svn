@@ -5,65 +5,30 @@
 # Revision:: $LastChangedRevision: 49 $
 # License::  GPL2
 
+require 'lucie/string'
 require 'lucie/state'
 require 'lucie/time-stamp'
-
-#--
-# FIXME : 以下の一連のメソッドを String クラスに移動
-#++
-
-def minimum_indent( aString )
-  indents = aString.map do |line|
-    untabify( line.rstrip ).slice(/\A */).length
-  end
-  (indents - [0]).min || 0
-end
-
-def unindent( str, n, tabstop = 8 )
-  indent_re = /^ {0,#{n}}/
-  str.map do |line|
-    if tabstop
-      tabify untabify(line, tabstop).sub(indent_re, ''), tabstop
-    else
-      line.sub indent_re, ''
-    end
-  end.join('')
-end
-
-#--
-# NOTE: don't work with UTF-8
-#++
-def tabify( aString, tabstopNum = 8)
-  aString.gsub(/^[ \t]+/) do |sp|
-    ntabs, nspaces = untabify(sp, tabstopNum).length.divmod(tabstopNum)
-    "\t" * ntabs + ' ' * nspaces
-  end
-end
-
-#--
-# NOTE: don't work with UTF-8
-#++
-def untabify( aString, tabstopNum = 8)
-  aString.gsub(/(.*?)\t/n) do $1 + ' ' * (tabstopNum - ($1.length % tabstopNum)) end
-end
-
-def unindent_auto( aString )
-  unindent aString, minimum_indent( aString )
-end
 
 module Lucie
   
   update(%q$Date: 2005-02-07 13:30:20 +0900 (Mon, 07 Feb 2005) $)
   
-  class NoteState < State
+  class NoteState < State      
+    public
+    def transit( aDebconfContext )
+      input @priority, @question
+      go
+    end
+    
     def self.marshal( aQuestion )
-      current_state = aQuestion.next || 'nil'
+      state_class_name = aQuestion.name.to_state_class_name
+      next_question_state = aQuestion.next_question.to_state_class_name || 'nil'
       
-      return unindent_auto( <<-CLASS_DEFINITION )
-      class #{aQuestion.klass}
+      return ( <<-CLASS_DEFINITION ).unindent_auto
+      class #{state_class_name} < Lucie::NoteState
         public
         def transit( aDebconfContext )
-          aDebconfContext.current_state = #{current_state}
+          aDebconfContext.current_state = #{next_question_state}
         end
       end
       CLASS_DEFINITION

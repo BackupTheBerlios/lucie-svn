@@ -12,14 +12,9 @@ require 'lucie/note-state'
 require 'test/unit'
 
 class TC_NoteState < Test::Unit::TestCase
-  public
-  def test_NoteState_inherited_from_State
-    assert( Lucie::NoteState < Lucie::State, "NoteState クラスが State を継承していない" )
-  end
-  
   # 以下のようなクラスをあらわす文字列が返されることを確認
   #
-  #  class Overview < Lucie::NoteState
+  #  class Lucie__Overview < Lucie::NoteState
   #    public
   #    def transit( aDebconfContext )
   #      aDebconfContext.current_state = DebconfContext::PACKAGE_INFORMATION
@@ -27,12 +22,16 @@ class TC_NoteState < Test::Unit::TestCase
   #  end
   public
   def test_marshal
-    question = Mock.new
-    question.__next( :next ) do || 'DebconfContext::PACKAGE_INFORMATION' end
-    question.__next( :klass ) do || 'Overview < Lucie::NoteState' end
-    
-    eval Lucie::NoteState::marshal( question )
-    assert Overview < Lucie::NoteState, "Overview クラスが Lucie::NoteState を継承していない"
+    question = Mock.new( 'lucie/overview' )
+    question.__next( :name ) do || 'lucie/overview' end
+    question.__next( :next_question ) do || 'lucie/caution' end    
+    line = Lucie::NoteState::marshal( question ).split("\n")
+    assert_match /class Lucie__Overview < Lucie::NoteState/, line[0]
+    assert_match /public/, line[1]
+    assert_match /def transit\( aDebconfContext \)/, line[2]
+    assert_match /aDebconfContext.current_state = Lucie__Caution/, line[3]
+    assert_match /end/, line[4]
+    assert_match /end/, line[5]
     question.__verify
   end
 end

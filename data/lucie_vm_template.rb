@@ -116,9 +116,15 @@ question( 'lucie-vmsetup/memory-size' ) do |question|
 end
 
 template( 'lucie-vmsetup/harddisk-size' ) do |template|
-  template.template_type = StringTemplate
-  template.short_description_ja = 'ノードのハードディスク容量'
-  template.extended_description_ja = '使用したいハードディスク容量を入れてください (単位: MB)'
+  template.template_type = SelectTemplate
+  template.choices = ['1', '2', '3', '4']
+  template.short_description_ja = 'VM ノードのハードディスク容量'  
+  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  使用したい VM 一台あたりのハードディスク容量を選択してください。単位は GB です。
+
+  松岡研 PrestoIII クラスタで提供できる VM クラスタの１ノードあたりのハードディスク容量は 4GB までとなっています。
+  他のジョブへ影響を与えないように、ジョブ実行に *最低限* 必要なハードディスク容量を選択してください。
+  DESCRIPTION_JA
 end
 
 question( 'lucie-vmsetup/harddisk-size' ) do |question|

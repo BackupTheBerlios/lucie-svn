@@ -45,6 +45,7 @@ end
 ########
 
 if __FILE__ == $PROGRAM_NAME
+  capb 'backup'
   title "Lucie VM のカスタマイズ"
   debconf_context = DebconfContext.new  
   loop do 

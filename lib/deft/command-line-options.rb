@@ -14,28 +14,29 @@ module Deft
 
   Lucie.update(%q$Date$)
 
-  ####################################################################
   # We handle the parsing of options, and subsequently as a singleton
   # object to be queried for option values
-  # 
-  class CommandLineOptions #:nodoc:
+  class CommandLineOptions
     include Singleton
     
     attr :help 
     attr :ruby_code
+    attr :template
     attr :trace 
     attr :version
 
-    module OptionList # :nodoc:
+    module OptionList
       OPTION_LIST = [
-        [ "--ruby-code",  "-r",   "question name", \
-          "show concrete state definition in Ruby code." ],
-        [ "--trace",          "-T",   nil, \
-          "displays lots on internal stuff." ],
-        [ "--help",           "-h",   nil, \
+        [ '--ruby-code',  '-r',   'question name', \
+          'show concrete state definition in Ruby code.' ],
+        [ '--trace',          '-T',   nil, \
+          'displays lots on internal stuff.' ],
+        [ '--help',           '-h',   nil, \
           "you're looking at it." ],
-        [ "--version",        "-v",   nil, \
+        [ '--version',        '-v',   nil, \
           "display  lucie-setup's version and exit." ],
+        [ '--template',        '-t',   nil, \
+          'show all the registered templates and exit.' ],
       ]
 
       public
@@ -66,13 +67,15 @@ module Deft
 
         getopt_long.each do |option, argument|
           case option
-          when "--ruby-code"
+          when '--template'
+            @template = true
+          when '--ruby-code'
             @ruby_code = argument
-          when "--trace"
+          when '--trace'
             @trace = true
-          when "--help"
+          when '--help'
             @help = true
-          when "--version"
+          when '--version'
             @version = true
           end
         end
@@ -83,14 +86,16 @@ module Deft
 
     public
     def inspect
-      return "[CommandLineOptions: " +
+      return '[CommandLineOptions: ' +
       ["trace=#{@trace.inspect}", "help=#{@help.inspect}",
-       "version=#{@version.inspect}", "ruby-code=#{@ruby_code.inspect}"].join(', ') + ']'
+       "version=#{@version.inspect}", "ruby-code=#{@ruby_code.inspect}",
+       "template=#{@template.inspect}"].join(', ') + ']'
     end
     
     private
     def set_default_options
       @help = false
+      @template = false
       @trace = false
       @version = false
     end

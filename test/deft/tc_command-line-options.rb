@@ -50,7 +50,14 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   def test_default_ruby_code_option_is_false
     @commandline_options.parse( [] )
     assert_nil( @commandline_options.ruby_code, "defalut value for ruby-code was not set to OFF" )
-  end  
+  end
+  
+  # デフォルトで template オプションが false であることをテスト
+  public
+  def test_default_template_option_is_false
+    @commandline_options.parse( [] )
+    assert_equal( false, @commandline_options.template, "defalut value for template was not set to OFF" )
+  end    
   
   # 実際にコマンドラインオプションをパーズし、値が取得できるかどうかのテスト ##############
   
@@ -77,6 +84,12 @@ class TC_CommandLineOptions < Test::Unit::TestCase
     @commandline_options.parse( ['--ruby-code=hello'] )
     assert_equal( 'hello', @commandline_options.ruby_code, "couldn't get value for version option" )
   end
+  
+  public
+  def test_parse_template_option
+    @commandline_options.parse( ['--template'] )
+    assert( @commandline_options.template, "couldn't get value for template option" )
+  end
 
   # その他のテスト ###################################################################
   
@@ -87,6 +100,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
     assert_match( /help=\S+/, @commandline_options.inspect, "couldn't inspect help option" )
     assert_match( /version=\S+/,  @commandline_options.inspect, "couldn't inspect version option" )
     assert_match( /ruby-code=\S+/,  @commandline_options.inspect, "couldn't inspect ruby-code option" )
+    assert_match( /template=\S+/,  @commandline_options.inspect, "couldn't inspect template option" )
   end
 
   public

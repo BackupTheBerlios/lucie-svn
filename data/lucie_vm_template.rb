@@ -12,7 +12,7 @@ include Deft
 # ------------------------- エラー表示用テンプレート/質問 
 
 template( 'lucie-vmsetup/error' ) do |template|
-  template.template_type = NoteTemplate
+  template.template_type = 'note'
   template.short_description_ja = '${short_error_message}'
   template.extended_description_ja = '${extended_error_message}'
 end
@@ -32,7 +32,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/hello' ) do |template|
-  template.template_type = NoteTemplate
+  template.template_type = 'note'
   template.short_description_ja = 'Lucie VM のセットアップウィザードへようこそ'
   template.extended_description_ja = <<-DESCRIPTION_JA
   このウィザードでは、Lucie を用いた VM セットアップの設定を入力します。
@@ -59,7 +59,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/vmpool-server-ip' ) do |template|
-  template.template_type = StringTemplate
+  template.template_type = 'string'
   template.default = '127.0.0.1'
   template.short_description_ja = 'Lucie VM Pool サーバの IP アドレス'
   template.extended_description_ja = 'Lucie VM Pool サーバの IP アドレスを入力してください'
@@ -84,7 +84,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/vmpool-server-port' ) do |template|
-  template.template_type = StringTemplate
+  template.template_type = 'string'
   template.default = '5555'	
   template.short_description_ja = 'Lucie VM Pool サーバのポート番号'
   template.extended_description_ja = 'Lucie VM Pool サーバのポート番号を入力してください'
@@ -109,7 +109,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/vmpool-server-reconnection' ) do |template|
-  template.template_type = BooleanTemplate
+  template.template_type = 'boolean'
   template.short_description_ja = 'Lucie VM Pool サーバへ再接続'
   template.extended_description_ja = <<-DESCRIPTION_JA
   Lucie VM Pool サーバへの接続に失敗しました。
@@ -145,7 +145,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/vmpool-server-confirmation' ) do |template|
-  template.template_type = NoteTemplate
+  template.template_type = 'note'
   template.short_description_ja = 'Lucie VM Pool 情報の確認'
   template.extended_description_ja = <<-DESCRIPTION_JA
   次の設定で Lucie VM Pool サーバに接続します
@@ -182,7 +182,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/num-nodes' ) do |template|
-  template.template_type = StringTemplate
+  template.template_type = 'string'
   template.default = '1'
   template.short_description_ja = 'VM ノードの台数'
   template.extended_description_ja = <<-DESCRIPTION_JA
@@ -216,7 +216,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/use-network' ) do |template|
-  template.template_type = BooleanTemplate
+  template.template_type = 'boolean'
   template.default = 'false'
   template.short_description_ja = 'VM の外部ネットワークへの接続'
   template.extended_description_ja = <<-DESCRIPTION_JA
@@ -239,7 +239,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/ip' ) do |template|
-  template.template_type = NoteTemplate
+  template.template_type = 'note'
   template.short_description_ja = 'VM の IP アドレス'
   template.extended_description_ja = <<-DESCRIPTION_JA
   以下のようにホスト名、IP アドレス、MAC アドレスを割り振りました。
@@ -271,7 +271,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/memory-size' ) do |template|
-  template.template_type = StringTemplate
+  template.template_type = 'string'
   template.short_description_ja = 'VM ノードのメモリサイズ'
   template.extended_description_ja = <<-DESCRIPTION_JA
   使用したい VM 一台あたりのメモリサイズを選択してください。単位は MB です。
@@ -304,7 +304,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/harddisk-size' ) do |template|
-  template.template_type = StringTemplate
+  template.template_type = 'string'
   template.short_description_ja = 'VM ノードのハードディスク容量'  
   template.extended_description_ja = <<-DESCRIPTION_JA
   使用したい VM 一台あたりのハードディスク容量を選択してください。単位は GB です。
@@ -337,7 +337,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/vm-type' ) do |template|
-  template.template_type = SelectTemplate
+  template.template_type = 'select'
   template.choices = '${vm-type}'
   template.short_description_ja = '使用する VM の種類'
   template.extended_description_ja = <<-DESCRIPTION_JA
@@ -358,7 +358,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/distro' ) do |template|
-  template.template_type = SelectTemplate
+  template.template_type = 'select'
   template.choices = '${distro}'
   template.short_description_ja = '使用するディストリビューション'
   template.extended_description_ja = <<-DESCRIPTION_JA
@@ -379,7 +379,7 @@ end
 # ------------------------- 
 
 template( 'lucie-vmsetup/application' ) do |template|
-  template.template_type = StringTemplate
+  template.template_type = 'string'
   template.short_description_ja = '使用するアプリケーション'
   template.extended_description_ja = <<-DESCRIPTION_JA
   VM にインストールして使用するソフトウェアパッケージを入力してください
@@ -407,7 +407,7 @@ end
 # ------------------------- 設定情報の確認
 
 template( 'lucie-vmsetup/confirmation' ) do |template|
-  template.template_type = NoteTemplate
+  template.template_type = 'note'
   template.short_description_ja = '設定情報の確認'
   template.extended_description_ja = <<-DESCRIPTION_JA
   設定情報を確認します。

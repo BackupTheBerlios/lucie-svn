@@ -17,7 +17,8 @@ class TC_NoteState < Test::Unit::TestCase
   #  class LucieVmsetup__UseNetwork < Lucie::BooleanState
   #    public
   #    def transit( aDebconfContext )
-  #      aDebconfContext.current_state = aDebconfContext::STATES[@question.next_question[get( 'lucie-vmsetup/use-network' )]]
+  #      super aDebconfContext
+  #      aDebconfContext.current_state = DebconfContext::STATES[@question.next_question[get( 'lucie-vmsetup/use-network' )]]
   #    end
   #  end
   public

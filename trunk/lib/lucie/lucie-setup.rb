@@ -29,7 +29,7 @@ module Lucie
     LUCIE_VERSION = '0.0.2alpha'
     VERSION_STRING = ['lucie-setup', LUCIE_VERSION, '('+Lucie::svn_date+')'].join(' ')
     
-    # lucie-setup ÇÃÉÅÉCÉìÉãÅ[É`ÉìÇãNìÆ
+    # lucie-setup §Œ•·•§•Û•Î°º•¡•Û§ÚµØ∆∞
     public
     def main
       do_option
@@ -98,12 +98,17 @@ module Lucie
         nfsroot.kernel_package = installer.kernel_package
         nfsroot.kernel_version = installer.kernel_version
         nfsroot.root_password = installer.root_password
-        nfsroot.installer_base = File.join( File.join( @commandline_options.installer_base_dir, installer.name ), 
-          'var/tmp', "#{installer.distribution}_#{installer.distribution_version}.tgz" )
+        nfsroot.installer_base = File.join( @commandline_options.installer_base_dir, 
+                                            installer.name, 'var/tmp', basetgz_filename)
       end
       return Task[installer.name]
     end
     
+    private
+    def basetgz_filename
+      return "#{installer.distribution}_#{installer.distribution_version}.tgz"
+    end
+
     private
     def nfsroot_dir
       return File.join( @commandline_options.nfsroot_dir, installer.name )
@@ -144,7 +149,7 @@ module Lucie
       when 'installer'
         Config::Installer.list.each_value do |each| puts each end 
       else
-        # TODO: ó·äOÇ raise
+        # TODO: Œ„≥∞§Ú raise
       end
     end
     

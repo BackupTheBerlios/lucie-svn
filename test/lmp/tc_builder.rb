@@ -210,7 +210,7 @@ binary: binary-indep binary-arch
     test_debian_package_file( 'rules' )
     test_debian_package_file( 'templates' )
 
-    assert( FileTest.exist?( 'build/lmp-test.deb' ), 'lmp ‚ª‚Å‚«‚Ä‚¢‚È‚¢' )
+    assert( FileTest.exist?( 'test/lmp/build/lmp-test_0.1-1_all.deb' ), 'lmp ‚ª‚Å‚«‚Ä‚¢‚È‚¢' )
   end
   
   private

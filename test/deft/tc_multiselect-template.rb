@@ -8,21 +8,21 @@
 $KCODE = 'SJIS'
 $LOAD_PATH.unshift './lib'
 
-require 'lucie/multiselect-template'
+require 'deft/multiselect-template'
 require 'test/unit'
 
 class TC_MultiselectTemplate < Test::Unit::TestCase
-  # 親クラスが Lucie::Template であることをテスト
+  # 親クラスが Deft::Template であることをテスト
   public
   def test_inheritance
-    assert Lucie::MultiselectTemplate < Lucie::Template
+    assert Deft::MultiselectTemplate < Deft::Template
   end
   
   public
   def test_to_s
-    Lucie::Template.clear
+    Deft::Template.clear
     template( 'TEST/MULTISELECT-TEMPLATE' ) do |template|
-      template.template_type = Lucie::MultiselectTemplate
+      template.template_type = Deft::MultiselectTemplate
       template.choices = ['CHOICE #1', 'CHOICE #1', 'CHOICE #3']
       template.default = 'CHOICE #1'
       template.short_description = 'This is a short description'
@@ -38,7 +38,7 @@ class TC_MultiselectTemplate < Test::Unit::TestCase
       上は空行です
       DESCRIPTION_JA
     end
-    assert /^Template:(.*)^Type:(.*)^Choices:(.*)^Default:(.*)^Description:(.*)^Description-ja:(.*)/m=~ Lucie::Template['TEST/MULTISELECT-TEMPLATE'].to_s
+    assert /^Template:(.*)^Type:(.*)^Choices:(.*)^Default:(.*)^Description:(.*)^Description-ja:(.*)/m=~ Deft::Template['TEST/MULTISELECT-TEMPLATE'].to_s
     assert_match /TEST\/MULTISELECT-TEMPLATE/, $1, 'Template: の値がおかしい'
     assert_match /multiselect/, $2, 'Type: の値がおかしい'
     assert_match /CHOICE #1, CHOICE #1, CHOICE #3/, $3, 'Choices: の値がおかしい'

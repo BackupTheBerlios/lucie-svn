@@ -92,8 +92,8 @@ module Rake
         set_timezone
         make_symlinks
         save_all_packages_list
-	install_kernel_nfsroot
-	setup_dhcp
+        install_kernel_nfsroot
+        setup_dhcp
       end
     end
 
@@ -264,12 +264,12 @@ exit 0
       File.open( nfsroot( 'etc/apt/sources.list' ), 'w+' ) do |file|
         file.puts "deb #{@package_server} #{@distribution_version} main contrib non-free"
         file.puts "deb #{@package_server}-non-US #{@distribution_version}/non-US main contrib non-free"
-	file.puts "# lucie-client package"
-	file.puts "deb http://lucie.sourceforge.net/packages/lucie-client/sarge/ ./"
+        file.puts "# lucie-client package"
+        file.puts "deb http://lucie.sourceforge.net/packages/lucie-client/sarge/ ./"
       end            
       File.open( nfsroot( 'etc/hosts' ), 'w+' ) do |file|
         file.puts "127.0.0.1 localhost"
-	file.puts "66.35.250.209 lucie.sourceforge.net"
+        file.puts "66.35.250.209 lucie.sourceforge.net"
       end   
       cp '/etc/apt/preferences',  nfsroot( 'etc/apt/preferences' ) rescue nil      
     end

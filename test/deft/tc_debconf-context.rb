@@ -11,7 +11,6 @@ require 'mock'
 require 'deft/debconf-context'
 require 'test/unit'
 
-# FIXME : テスト対象を最低限にして、テンプレート/Question の定義をここでやってしまう。
 class TC_DebconfContext < Test::Unit::TestCase  
   public
   def setup

@@ -21,11 +21,9 @@ module Deft
     
     # 次の State に遷移する
     public
-    def transit( aDebconfContext )  
-      stdout = aDebconfContext.stdout
-      stdin = aDebconfContext.stdin    
-      input stdout, stdin, aDebconfContext.current_question.priority, aDebconfContext.current_question.name
-      go stdout, stdin
+    def transit( aDebconfContext )   
+      input aDebconfContext.current_question.priority, aDebconfContext.current_question.name
+      go
     end
     
     # +aQuestion+ を表す concrete class の Ruby スクリプトを文字列で返す

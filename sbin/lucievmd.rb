@@ -1,9 +1,9 @@
 #!/usr/bin/ruby
 #
-# $Id: deft.rb 341 2005-02-26 17:08:19Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $Revision: 341 $
+# Revision:: $Revision$
 # License::  GPL2
 
 require 'socket'

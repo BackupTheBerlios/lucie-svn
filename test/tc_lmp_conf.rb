@@ -122,6 +122,31 @@ VM ノード台数の選択です
 ノードはネットワークにつながりますか？
     DESCRIPTION_JA
   end
+  
+  ###################################################################################################
+  # テンプレート 'lucie-vmsetup/ip' のテスト
+  ###################################################################################################
+
+  # テンプレート 'lucie-vmsetup/ip' が登録されていることを確認
+  public
+  def test_template_ip_registered
+    assert Lucie::Template.template_defined?( 'lucie-vmsetup/ip' )
+  end
+  
+  # テンプレート 'lucie-vmsetup/ip' の 'Type:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_ip_type
+    assert_equal Template::STRING, Lucie::Template.lookup( 'lucie-vmsetup/ip' ).template_type
+    assert_equal Template::STRING, Lucie::Template.lookup( 'lucie-vmsetup/ip' )['Type']
+  end
+  
+  # テンプレート 'lucie-vmsetup/ip' の 'Description-ja:' フィールドが正しく設定されているかどうかを確認
+  def test_template_ip_description_ja
+    assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/ip' ).description_ja
+ノードの ip アドレス
+ノードの IP アドレスは？
+    DESCRIPTION_JA
+  end
 end
 
 ### Local variables:

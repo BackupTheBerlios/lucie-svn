@@ -38,6 +38,14 @@ template( 'lucie-vmsetup/use-network' ) do |template|
   DESCRIPTION_JA
 end.register
 
+template( 'lucie-vmsetup/ip' ) do |template|
+  template.template_type = Template::STRING
+  template.description_ja = (<<-DESCRIPTION_JA)
+ノードの ip アドレス
+ノードの IP アドレスは？
+  DESCRIPTION_JA
+end.register
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

@@ -1,9 +1,9 @@
 # = commandline option handling classes and modules.
 #
-# $Id: command-line-options.rb 14 2005-01-19 06:32:24Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $Revision: 1.13 $
+# Revision:: $Revision$
 # License::  GPL2
 
 require 'English'

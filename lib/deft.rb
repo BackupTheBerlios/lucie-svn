@@ -9,6 +9,9 @@
 # Revision:: $Revision$
 # License::  GPL2
 
+require 'lmp/specification'
+require 'lmp/lmp-package-task'
+
 require 'deft/boolean-template'
 require 'deft/multiselect-template'
 require 'deft/note-template'
@@ -103,6 +106,12 @@ class DeftApp
   end
   
   private
+  def build
+    require "#{@command_line_options.build}"
+    Task['package'].invoke
+  end
+  
+  private
   def do_option    
     @command_line_options.parse ARGV.dup
     if @command_line_options.trace
@@ -114,6 +123,10 @@ class DeftApp
     end
     if @command_line_options.help
       help
+      exit( 0 )
+    end
+    if @command_line_options.build
+      build
       exit( 0 )
     end
     if @command_line_options.run      

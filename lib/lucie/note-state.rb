@@ -13,13 +13,24 @@ module Lucie
   
   update(%q$Date: 2005-02-07 13:30:20 +0900 (Mon, 07 Feb 2005) $)
   
-  class NoteState < State      
+  class NoteState < State
+    #--
+    # FIXME : State クラスへ引き上げ
+    #++  
     public
-    def transit( aDebconfContext )
-      input @priority, @question
-      go
+    def initialize( aQuestion )
+      @question = aQuestion
     end
 
+    #--
+    # FIXME : State クラスへ引き上げ
+    #++      
+    public
+    def transit( aDebconfContext )
+      input @question.priority, @question.name
+      go
+    end
+    
     #--
     # FIXME : 生成されるクラスを singleton にする
     #++
@@ -28,6 +39,7 @@ module Lucie
       class #{aQuestion.name.to_state_class_name} < Lucie::NoteState
         public
         def transit( aDebconfContext )
+          super aDebconfContext
           aDebconfContext.current_state = DebconfContext::STATES['#{aQuestion.next_question}']
         end
       end

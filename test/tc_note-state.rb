@@ -17,7 +17,7 @@ class TC_NoteState < Test::Unit::TestCase
   #  class Lucie__Overview < Lucie::NoteState
   #    public
   #    def transit( aDebconfContext )
-  #      aDebconfContext.current_state = aDebconfContext::STATES['lucie/caution']
+  #      aDebconfContext.current_state = DebconfContext::STATES['lucie/caution']
   #    end
   #  end
   public
@@ -29,9 +29,10 @@ class TC_NoteState < Test::Unit::TestCase
     assert_match /class Lucie__Overview < Lucie::NoteState/, line[0]
     assert_match /public/, line[1]
     assert_match /def transit\( aDebconfContext \)/, line[2]
-    assert_match /aDebconfContext.current_state = DebconfContext::STATES\['lucie\/caution'\]/, line[3]
-    assert_match /end/, line[4]
+    assert_match /super aDebconfContext/, line[3]
+    assert_match /aDebconfContext.current_state = DebconfContext::STATES\['lucie\/caution'\]/, line[4]
     assert_match /end/, line[5]
+    assert_match /end/, line[6]
     question.__verify
   end
 end

@@ -193,6 +193,7 @@ DPkg
       sh %{cp -Rpv /etc/lucie/* #{nfsroot('etc/lucie')}}
       sh %{chroot #{@dir} cp -p /usr/lib/lucie/dhclient-script /etc/dhcp3/}      
       sh %{chroot #{@dir} cp -p /usr/lib/lucie/dhclient-perl /sbin/}      
+      sh %{chroot #{@dir} pwconv}
     end
     
     private

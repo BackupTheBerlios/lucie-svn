@@ -135,6 +135,31 @@ module Rake
     private
     def copy_lucie_files
       sh %{ruby -pi -e "gsub(/^root::/, 'root:#{@root_password}:')" #{nfsroot('etc/passwd')}}
+      File.open( nfsroot( 'etc/apt/apt.conf' ), 'w+' ) do |file|
+        file.print <<-APT_CONF
+APT 
+{
+  Cache-Limit "100000000";
+  Get 
+  {
+     Assume-Yes "true";     
+     Fix-Missing "true";     
+     Show-Upgraded "true";
+     Purge "true";		// really purge! Also removes config files
+     List-Cleanup "true";
+     ReInstall "false";
+  };
+};
+
+DPkg 
+{
+  Options {
+	  "--abort-after=4711";	  // a magic number in cologne ;-)
+	  "--force-confnew";
+	  }
+};
+        APT_CONF
+      end
     end
     
     private

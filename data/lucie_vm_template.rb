@@ -176,10 +176,19 @@ question( 'lucie-vmsetup/distro' ) do |question|
 end
 
 template( 'lucie-vmsetup/application' ) do |template|
-  template.template_type = MultiselectTemplate
-  template.choices = ['ruby', 'perl', 'java']
-  template.short_description_ja = '使用するアプリケーションの選択'
-  template.extended_description_ja = '使用するアプリケーションを選択してください'
+  template.template_type = StringTemplate
+  template.short_description_ja = '使用するアプリケーション'
+  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  VM にインストールして使用するソフトウェアパッケージを入力してください
+
+  松岡研 PrestoIII クラスタでデフォルトでインストールされるソフトウェアパッケージは以下の通りです。
+   o 基本パッケージ: fileutils, findutils などの基本的なユーティリティ
+   o シェル: tcsh, bash, zsh などのシェル
+   o ネットワークデーモン: ssh や rsh, ftp などのデーモン
+  上記に追加してインストールしたいパッケージをコンマ区切りで入力してください。
+  
+  例: ruby, python, blast2
+  DESCRIPTION_JA
 end
 
 question( 'lucie-vmsetup/application' ) do |question|

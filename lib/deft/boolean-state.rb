@@ -13,7 +13,9 @@ module Deft
   
   Lucie.update(%q$Date$)
   
+  # boolean 型テンプレート変数の質問が表示されている状態を表すクラス
   class BooleanState < State
+    # Question オブジェクトから対応する BooleanState クラスの子クラスをあらわす文字列を返す
     def self.marshal( aQuestion )  
       return ( <<-CLASS_DEFINITION ).unindent_auto
       class #{aQuestion.name.to_state_class_name} < Deft::BooleanState

@@ -108,7 +108,7 @@ module Rake
       task name => [installer_base_target]
       
       file installer_base_target do
-        debootstrap_option = "--arch i386 --exclude=#{exclude_packages.join(',')"
+        debootstrap_option = "--arch i386 --exclude=#{exclude_packages.join(',')}"
         puts "Executing debootstrap. This may take a long time."
         sh_log( %{yes '' | LC_ALL=C debootstrap #{debootstrap_option} #{@distribution_version} #{@dir} #{@mirror} 2>&1}, sh_option ) do |rd|
           line_length = 0

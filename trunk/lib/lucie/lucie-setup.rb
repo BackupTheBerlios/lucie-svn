@@ -29,7 +29,7 @@ module Lucie
     LUCIE_VERSION = '0.0.2alpha'
     VERSION_STRING = ['lucie-setup', LUCIE_VERSION, '('+Lucie::svn_date+')'].join(' ')
     
-    # lucie-setup ¤Î¥á¥¤¥ó¥ë¡¼¥Á¥ó¤òµ¯Æ°
+    # lucie-setup ’¤Î’¥á’¥¤’¥ó’¥ë’¡¼’¥Á’¥ó’¤ò’µ¯’Æ°
     public
     def main
       begin
@@ -44,7 +44,7 @@ module Lucie
       end
       begin
         installer_base_task.invoke
-        nfsroot_task.invoke
+        nfsroot_task.invoke unless @commandline_options.installer_base
         puts "lucie-setup finished."
       rescue Exception => ex
         puts "lucie-setup aborted!"

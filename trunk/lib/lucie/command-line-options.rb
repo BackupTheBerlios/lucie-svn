@@ -22,16 +22,17 @@ module Lucie
   class CommandLineOptions #:nodoc:
     include Singleton
     
-    attr :debug 
-    attr :help 
-    attr :installer_name
-    attr :list_resource 
-    attr :version
-    attr :config_dir
-    attr :installer_base_dir
-    attr :nfsroot_dir
-    attr :verbose
-    attr :trace
+    attr_reader :debug 
+    attr_reader :help 
+    attr_reader :installer_name
+    attr_reader :list_resource 
+    attr_reader :version
+    attr_reader :config_dir
+    attr_reader :installer_base_dir
+    attr_reader :nfsroot_dir
+    attr_reader :verbose
+    attr_reader :trace
+    attr_reader :installer_base
 
     module OptionList # :nodoc:
       OPTION_LIST = [
@@ -55,6 +56,8 @@ module Lucie
           "be verbose." ],         
         [ "--trace",              "-t",   nil, \
           "use the debug trace mode."],
+        [ "--installer-base",     "-I",   nil, \
+          "build installer base tarball only."],
       ]
 
       public
@@ -105,6 +108,8 @@ module Lucie
             @verbose = true
           when '--trace'
             @trace = true
+          when '--installer-base'
+            @installer_base = true
           end
         end
       ensure
@@ -124,6 +129,7 @@ module Lucie
       @nfsroot_dir = '/var/lib/lucie/nfsroot'
       @verbose = false
       @trace = false
+      @installer_base = false
     end
   end
 end

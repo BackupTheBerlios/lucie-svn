@@ -5,24 +5,25 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'lucie/state'
+require 'deft/state'
 require 'lucie/string'
-require 'lucie/time-stamp'
+require 'time-stamp'
 
-module Deft
-  
-  Lucie.update(%q$Date$)
-  
+update(%q$Date$)
+
+module Deft  
   # boolean 型テンプレート変数の質問が表示されている状態を表すクラス
   class BooleanState < State
     # Question オブジェクトから対応する BooleanState クラスの子クラスをあらわす文字列を返す
-    def self.marshal( aQuestion )  
+    def self.marshal_concrete_state( aQuestion )  
       return ( <<-CLASS_DEFINITION ).unindent_auto
-      class #{aQuestion.name.to_state_class_name} < Deft::BooleanState
+      class #{aQuestion.state_class_name} < Deft::BooleanState
         public
         def transit( aDebconfContext )
           super aDebconfContext
-          aDebconfContext.current_state = DebconfContext::STATES[@question.next_question[get( '#{aQuestion.name}' )]]
+          next_question = aDebconfContext.current_question.next_question[get( '#{aQuestion.name}' )]
+          aDebconfContext.current_question = Deft::Question[next_question]
+          aDebconfContext.current_state    = Deft::ConcreteState[next_question]
         end
       end
       CLASS_DEFINITION

@@ -55,7 +55,7 @@ class DeftApp
         end
       end
       if @command_line_options.question
-        puts '“o˜^‚³‚ê‚Ä‚¢‚é¿–â‚ÌƒŠƒXƒg'
+        puts '“o˜^‚³‚ê‚Ä‚¢‚é¿–â‚ÌƒŠƒXƒg:'
         Deft::Question.questions.each do |each|
           puts each.name
         end

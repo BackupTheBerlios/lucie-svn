@@ -23,15 +23,12 @@ module Lucie
     #--
     # FIXME : ¶¬‚³‚ê‚éƒNƒ‰ƒX‚ğ singleton ‚É‚·‚é
     #++
-    def self.marshal( aQuestion )
-      state_class_name = aQuestion.name.to_state_class_name
-      next_question_state = aQuestion.next_question.to_state_class_name || 'nil'
-      
+    def self.marshal( aQuestion ) 
       return ( <<-CLASS_DEFINITION ).unindent_auto
-      class #{state_class_name} < Lucie::TextState
+      class #{aQuestion.name.to_state_class_name} < Lucie::TextState
         public
         def transit( aDebconfContext )
-          aDebconfContext.current_state = #{next_question_state}
+          aDebconfContext.current_state = aDebconfContext::STATES['#{aQuestion.next_question}']
         end
       end
       CLASS_DEFINITION

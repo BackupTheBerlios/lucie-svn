@@ -1,0 +1,44 @@
+#
+# $Id: tc_string-state.rb 184 2005-02-16 08:58:36Z takamiya $
+#
+# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Revision:: $LastChangedRevision: 184 $
+# License::  GPL2
+
+$LOAD_PATH.unshift './lib'
+
+require 'deft/password-state'
+require 'mock'
+require 'test/unit'
+
+class TC_PasswordState < Test::Unit::TestCase
+  # 以下のようなクラスをあらわす文字列が返されることを確認
+  #
+  #  class Lucie__Overview < Deft::PasswordState
+  #    public
+  #    def transit( aDebconfContext )
+  #      super aDebconfContext
+  #      aDebconfContext.current_state = DebconfContext::STATES['lucie/caution']
+  #    end
+  #  end
+  public
+  def test_marshal
+    question = Mock.new( 'lucie/overview' )
+    question.__next( :name ) do || 'lucie/overview' end 
+    question.__next( :next_question ) do || 'lucie/caution' end       
+    line = Deft::PasswordState::marshal( question ).split("\n")
+    assert_match /class Lucie__Overview < Deft::PasswordState/, line[0]
+    assert_match /public/, line[1]
+    assert_match /def transit\( aDebconfContext \)/, line[2]
+    assert_match /super aDebconfContext/, line[3]
+    assert_match /aDebconfContext.current_state = DebconfContext::STATES\['lucie\/caution'\]/, line[4]
+    assert_match /end/, line[5]
+    assert_match /end/, line[6]
+    question.__verify
+  end
+end
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

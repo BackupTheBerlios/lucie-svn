@@ -17,6 +17,7 @@ class TC_NoteState < Test::Unit::TestCase
   #  class Lucie__Overview < Lucie::NoteState
   #    public
   #    def transit( aDebconfContext )
+  #      super aDebconfContext
   #      aDebconfContext.current_state = DebconfContext::STATES['lucie/caution']
   #    end
   #  end

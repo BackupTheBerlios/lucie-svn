@@ -18,6 +18,7 @@ module Deft
   class CommandLineOptions
     include Singleton
     
+    attr_reader :input
     attr_reader :help 
     attr_reader :ruby_code
     attr_reader :template
@@ -28,6 +29,8 @@ module Deft
 
     module OptionList
       OPTION_LIST = [
+      [ '--input',          '-i',   'input string', \
+          'emulate users input string.' ],
       [ '--ruby-code',      '-r',   'question name', \
           'show concrete state definition in Ruby code.' ],
       [ '--emulate',        '-e',   'question name', \
@@ -38,9 +41,9 @@ module Deft
           "you're looking at it." ],
       [ '--version',        '-v',   nil, \
           "display  lucie-setup's version and exit." ],
-      [ '--template',        '-t',   nil, \
+      [ '--template',       '-t',   nil, \
           'show all the registered templates and exit.' ],
-      [ '--question',        '-q',   nil, \
+      [ '--question',       '-q',   nil, \
           'show all the registered questions and exit.' ],
       ]
 
@@ -72,6 +75,8 @@ module Deft
 
         getopt_long.each do |option, argument|
           case option
+          when '--input'
+            @input= argument
           when '--emulate'
             @emulate = argument
           when '--question'
@@ -98,7 +103,8 @@ module Deft
       return '[CommandLineOptions: ' +
       ["trace=#{@trace.inspect}", "help=#{@help.inspect}", "emulate=#{@emulate.inspect}",
        "version=#{@version.inspect}", "ruby-code=#{@ruby_code.inspect}",
-       "template=#{@template.inspect}", "question=#{@question.inspect}"].join(', ') + ']'
+       "template=#{@template.inspect}", "question=#{@question.inspect}",
+       "input=#{@input.inspect}"].join(', ') + ']'
     end
     
     private

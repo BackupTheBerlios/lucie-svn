@@ -94,6 +94,7 @@ module Lucie
         nfsroot.dir = nfsroot_dir
         nfsroot.package_server = installer.package_server.uri
         nfsroot.distribution_version = installer.distribution_version
+        nfsroot.kernel_package = installer.kernel_package
         nfsroot.kernel_version = installer.kernel_version
         nfsroot.root_password = installer.root_password
         nfsroot.installer_base = File.join( File.join( @commandline_options.installer_base_dir, installer.name ), 

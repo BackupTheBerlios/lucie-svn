@@ -25,6 +25,7 @@ module Rake
   #     nfsroot.dir = "tmp"
   #     nfsroot.package_server = "http://www.debian.or.jp/debian"
   #     nfsroot.distribution_version = "woody"
+  #     nfsroot.kernel_package = "/etc/lucie/kernel/kernel-image-2.4.27-fai_1_i386.deb"
   #     nfsroot.kernel_version = "2.2.18"
   #     nfsroot.installer_base = "/tmp/presto_cluster/var/tmp/debian_woody.tgz"
   #     installer_base.root_password = "h29SP9GgVbLHE"
@@ -37,6 +38,7 @@ module Rake
   #     nfsroot.dir = "tmp"
   #     nfsroot.package_server = "http://www.debian.or.jp/debian"
   #     nfsroot.distribution_version = "woody"
+  #     nfsroot.kernel_package = "/etc/lucie/kernel/kernel-image-2.4.27-fai_1_i386.deb"
   #     nfsroot.kernel_version = "2.2.18"
   #     nfsroot.installer_base = "/tmp/presto_cluster/var/tmp/debian_woody.tgz"
   #     installer_base.root_password = "h29SP9GgVbLHE"
@@ -50,6 +52,7 @@ module Rake
     attr_accessor :installer_base
     attr_accessor :package_server
     attr_accessor :distribution_version
+    attr_accessor :kernel_package
     attr_accessor :kernel_version
     attr_accessor :root_password
     
@@ -89,7 +92,28 @@ module Rake
         set_timezone
         make_symlinks
         save_all_packages_list
+	install_kernel_nfsroot
+	setup_dhcp
       end
+    end
+
+    private
+    def setup_dhcp
+      cp( nfsroot("boot/vmlinuz-#{@kernel_version}"),
+          "/tftpboot/#{@name}", :preserve => true )
+      cp( "/usr/lib/syslinux/pxelinux.0", "/tftpboot" )
+      mkdir_p( "/tftpboot/pxelinux.cfg" ) rescue nil
+    end
+
+    private
+    def install_kernel_nfsroot
+      rm_rf nfsroot("boot/*-#{@kernel_version}")
+      rm_rf nfsroot("lib/modules/#{@kernel_version}")
+      sh %{echo "do_boot_enable=no" > #{nfsroot('etc/kernel-img.conf')}}
+      sh %{dpkg -x #{@kernel_package} #{@dir}}
+      sh %{umount #{nfsroot('proc')}} rescue nil
+      sh %{chroot #{@dir} update-modules}
+      sh %{chroot #{@dir} depmod -qaF /boot/System.map-#{@kernel_version} #{@kernel_version} || true}
     end
     
     # make little changes to nfsroot. because nfsroot is

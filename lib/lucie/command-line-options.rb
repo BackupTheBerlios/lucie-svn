@@ -26,9 +26,6 @@ module Lucie
     attr :help 
     attr :installer_name
     attr :list_resource 
-    attr :make_floppy 
-    attr :skip_verification
-    attr :ui_type 
     attr :version
     attr :config_dir
     attr :installer_base_dir
@@ -37,14 +34,8 @@ module Lucie
 
     module OptionList # :nodoc:
       OPTION_LIST = [
-        [ "--ui-type",            "-u",  "`console' or `gtk'", \
-          "set user interface type." ],
-        [ "--make-floppy",        "-f",  nil, \
-          "make a Lucie boot floppy." ],
         [ "--installer-name",     "-i",  "installer name", \
           "specify an installer name to setup." ],
-        [ "--skip-verification",  "-s",  nil, \
-          "do not verify user configuration." ],
         [ "--list-resource",      "-r",   "resource type", \
           "list up registerd resource objects." ],
         [ "--debug",              "-D",   nil, \
@@ -91,12 +82,6 @@ module Lucie
         
         getopt_long.each do |option, argument|
           case option
-          when '--make-floppy'
-            @make_floppy = true
-          when '--ui-type'
-            @ui_type = argument.intern
-          when "--skip-verification"
-            @skip_verification = true
           when "--list-resource"
             @list_resource = argument
           when "--installer-name"
@@ -126,8 +111,7 @@ module Lucie
     def inspect
       return "[CommandLineOptions: " +
       ["debug=#{@debug.inspect}", "help=#{@help.inspect}", "installer-name=#{@installer_name.inspect}",
-      "list-resource=#{@list_resource.inspect}", "make-floppy=#{@make_floppy.inspect}", 
-      "skip-verification=#{@skip_verification.inspect}", "ui-type=#{@ui_type.inspect}", "version=#{@version.inspect}]"].join(', ')
+      "list-resource=#{@list_resource.inspect}", "version=#{@version.inspect}]"].join(', ')
     end
     
     private
@@ -136,9 +120,6 @@ module Lucie
       @help = false
       @installer_name = nil
       @list_resource = nil
-      @make_floppy = false
-      @skip_verification = false
-      @ui_type = :console
       @version = false
       @config_dir = '/etc/lucie/'
       @installer_base_dir = '/var/lib/lucie/installer_base'

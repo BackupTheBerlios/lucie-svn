@@ -12,6 +12,27 @@ module LMP
   # LMP メタデータファイルのテンプレートを管理するモジュール
   module Template
     public
+    def config( aSpecification )
+      require 'deft'
+      require 'deft/concrete-state'
+      return <<-CONFIG
+#!/usr/bin/ruby
+require 'deft/debconf-context'
+
+#{aSpecification.deft}
+
+capb  'backup'
+title '#{aSpecification.name}'
+debconf_context = Deft::DebconfContext.new  
+loop do 
+  rc = debconf_context.transit
+  exit 0 if rc.nil?
+end
+      CONFIG
+    end
+    module_function :config
+
+    public
     # (LMP ビルドディレクトリ)/debian/changelog のテンプレート文字列を返す
     def changelog( aSpecification )
       return <<-CHANGELOG

@@ -7,14 +7,14 @@
 
 $LOAD_PATH.unshift './lib'
 
+require 'deft/string-state'
 require 'mock'
-require 'lucie/string-state'
 require 'test/unit'
 
 class TC_StringState < Test::Unit::TestCase
   # 以下のようなクラスをあらわす文字列が返されることを確認
   #
-  #  class Lucie__Overview < Lucie::StringState
+  #  class Lucie__Overview < Deft::StringState
   #    public
   #    def transit( aDebconfContext )
   #      super aDebconfContext
@@ -26,8 +26,8 @@ class TC_StringState < Test::Unit::TestCase
     question = Mock.new( 'lucie/overview' )
     question.__next( :name ) do || 'lucie/overview' end 
     question.__next( :next_question ) do || 'lucie/caution' end       
-    line = Lucie::StringState::marshal( question ).split("\n")
-    assert_match /class Lucie__Overview < Lucie::StringState/, line[0]
+    line = Deft::StringState::marshal( question ).split("\n")
+    assert_match /class Lucie__Overview < Deft::StringState/, line[0]
     assert_match /public/, line[1]
     assert_match /def transit\( aDebconfContext \)/, line[2]
     assert_match /super aDebconfContext/, line[3]

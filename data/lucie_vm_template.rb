@@ -171,7 +171,8 @@ end
 
 question( 'lucie-vmsetup/distro' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = Proc.new do |input|
+  question.next_question = <<-NEXT_QUESTION
+  Proc.new do |input|
     case input
     when 'debian (woody)', 'debian (sarge)'
       'lucie-vmsetup/application'
@@ -179,6 +180,7 @@ question( 'lucie-vmsetup/distro' ) do |question|
       nil
     end
   end
+  NEXT_QUESTION
 end
 
 template( 'lucie-vmsetup/application' ) do |template|

@@ -10,6 +10,18 @@ require 'lucie/config/resource'
 module Lucie
   module Config
     class HostGroup < Resource
+      # 登録されている Host のリスト
+      @@list = []
+      
+      # アトリビュート名のリスト: [:name, :version, ...]
+      @@required_attributes = []
+      
+      # _すべての_ アトリビュート名とデフォルト値のリスト: [[:name, nil], [:version, '0.0.1'], ...]
+      @@attributes = []
+      
+      # アトリビュート名からデフォルト値へのマッピング
+      @@default_value = {}
+      
       required_attribute :name
       required_attribute :alias
       required_attribute :members

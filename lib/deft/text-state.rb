@@ -9,17 +9,16 @@ require 'lucie/string'
 require 'lucie/state'
 require 'lucie/time-stamp'
 
-module Lucie
+module Deft
   
-  update(%q$Date$)
+  Lucie.update(%q$Date$)
   
+  # text 型テンプレート変数の質問が表示されている状態を表すクラス
   class TextState < State
-    #--
-    # FIXME : 生成されるクラスを singleton にする
-    #++
+    # Question オブジェクトから対応する TextState クラスの子クラスをあらわす文字列を返す
     def self.marshal( aQuestion ) 
       return ( <<-CLASS_DEFINITION ).unindent_auto
-      class #{aQuestion.name.to_state_class_name} < Lucie::TextState
+      class #{aQuestion.name.to_state_class_name} < Deft::TextState
         public
         def transit( aDebconfContext )
           super aDebconfContext

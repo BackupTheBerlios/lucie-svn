@@ -19,7 +19,7 @@ class TC_SelectState < Test::Unit::TestCase
   #    def transit( aDebconfContext )
   #      super aDebconfContext
   #      aDebconfContext.current_question = Deft::Question['lucie-vmsetup/distro']
-  #      aDebconfContext.current_state    = DebconfContext::STATES['lucie-vmsetup/distro']
+  #      aDebconfContext.current_state    = Deft::ConcreteState['lucie-vmsetup/distro']
   #    end
   #  end
   public

@@ -1,6 +1,6 @@
 # = Deft ライブラリのメインファイル
 #
-# LMP 設定ファイルの頭では本ファイル (deft.rb) をかならず require し、
+# Deft 設定ファイルの頭では本ファイル (deft.rb) をかならず require し、
 # template, question などのトップレベル関数を読み込むこと。
 #
 # $Id$

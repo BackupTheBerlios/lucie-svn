@@ -114,6 +114,12 @@ module Rake
     
     private
     def set_timezone
+      timezone = `readlink /etc/localtime | sed 's%^/usr/share/zoneinfo/%%'`.chomp
+      File.open( nfsroot('etc/timezone'), 'w+' ) do |file|
+        file.puts timezone
+      end
+      rm_f nfsroot( 'etc/localtime' )
+      ln_sf "/usr/share/zoneinfo/#{timezone}", nfsroot( 'etc/localtime' )
     end
     
     private

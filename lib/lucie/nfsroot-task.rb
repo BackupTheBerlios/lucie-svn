@@ -25,6 +25,7 @@ module Rake
   #     nfsroot.dir = "tmp"
   #     nfsroot.package_server = "http://www.debian.or.jp/debian"
   #     nfsroot.distribution_version = "woody"
+  #     nfsroot.kernel_version = "2.2.18"
   #     nfsroot.installer_base = "/tmp/presto_cluster/var/tmp/debian_woody.tgz"
   #   end
   #
@@ -35,6 +36,7 @@ module Rake
   #     nfsroot.dir = "tmp"
   #     nfsroot.package_server = "http://www.debian.or.jp/debian"
   #     nfsroot.distribution_version = "woody"
+  #     nfsroot.kernel_version = "2.2.18"
   #     nfsroot.installer_base = "/tmp/presto_cluster/var/tmp/debian_woody.tgz"
   #   end
   #
@@ -46,6 +48,7 @@ module Rake
     attr_accessor :installer_base
     attr_accessor :package_server
     attr_accessor :distribution_version
+    attr_accessor :kernel_version
     
     # Nfsroot タスクを作成する。
     public
@@ -181,8 +184,8 @@ exit 0
         file.puts "#UNCONFIGURED FSTAB FOR BASE SYSTEM"
       end
       touch nfsroot( 'etc/raidtab' )
-      mkdir_p nfsroot( 'lib/modules/2.2.18' ) # FIXME: kernel version = '2.2.18'
-      touch nfsroot( 'lib/modules/2.2.18/modules.dep' )
+      mkdir_p nfsroot( "lib/modules/#{@kernel_version}" )
+      touch nfsroot( "lib/modules/#{@kernel_version}/modules.dep" )
       File.open( nfsroot( 'etc/default/ntp-servers' ), 'w+' ) do |file|
         file.puts 'NTPSERVERS=""'
       end

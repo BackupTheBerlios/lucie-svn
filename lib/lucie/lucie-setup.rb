@@ -85,6 +85,7 @@ module Lucie
         nfsroot.dir = File.join( @commandline_options.nfsroot_dir, installer.name )
         nfsroot.package_server = installer.package_server.uri
         nfsroot.distribution_version = installer.distribution_version
+        nfsroot.kernel_version = installer.kernel_version
         nfsroot.installer_base = File.join( File.join( @commandline_options.installer_base_dir, installer.name ), 
           'var/tmp', "#{installer.distribution}_#{installer.distribution_version}.tgz" )
       end

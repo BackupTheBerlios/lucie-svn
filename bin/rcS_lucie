@@ -57,7 +57,7 @@ sh %{hwdetect}
 # ------------------------- task partition.
 
 puts "Partitioning local harddisks"
-sh %{[ ! -s #{$diskvar} ] && setup_harddisks -f #{File.join( '/etc/lucie', $installer_name, 'partition')} -d -X > #{File.join( $logdir, 'format.log' )} 2>&1}
+sh %{[ ! -s #{$diskvar} ] && setup_harddisks -f /etc/lucie/partition -d -X > #{File.join( $logdir, 'format.log' )} 2>&1}
 
 
 # ------------------------- task mountdisks.
@@ -145,7 +145,12 @@ sh %{chroot /tmp/target dpkg --update-avail /tmp/dumpavail}
 rm_f '/tmp/target/tmp/dumpavail'
 
 # task instsoft
+ENV['DEBIAN_FRONTEND']='noninteractive'
+classes = Dir.entries('/etc/lucie/package') - ['.', '..'] # FIXME
+sh %{classes="#{classes.join(' ')}" install_packages}
+
 # task configure
+
 # task finish
 # task chboot
 # save_dmsg

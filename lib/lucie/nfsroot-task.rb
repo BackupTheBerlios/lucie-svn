@@ -159,7 +159,7 @@ module Rake
     private
     def add_additional_packages
       puts "Adding additional packages to nfsroot."
-      sh_log %{chroot #{@dir} apt-get -y --fix-missing install dhcp3-client ruby1.8 rake perl-modules discover}, sh_option, &apt_block
+      sh_log %{chroot #{@dir} apt-get -y --fix-missing install dhcp3-client ruby1.8 rake perl-modules discover libapt-pkg-perl}, sh_option, &apt_block
       sh_log %{chroot #{@dir} apt-get clean}, sh_option, &apt_block
     end
     
@@ -196,7 +196,8 @@ DPkg
       dpkg_divert '/etc/dhcp3/dhclient.conf' rescue nil      
       sh_log %{chroot #{@dir} apt-get install lucie-client}, sh_option, &apt_block
       sh %{chroot #{@dir} cp -p /usr/share/lucie/etc/dhclient.conf /etc/dhcp3/}, sh_option
-      sh %{cp -Rp /etc/lucie/* #{nfsroot('etc/lucie')}}, sh_option
+      cp '/etc/lucie/resource.rb', nfsroot('etc/lucie'), sh_option
+      sh %{cp -Rp /etc/lucie/#{name}/* #{nfsroot('etc/lucie')}}, sh_option
       sh %{chroot #{@dir} cp -p /usr/lib/lucie/dhclient-script /etc/dhcp3/}, sh_option      
       sh %{chroot #{@dir} cp -p /usr/lib/lucie/dhclient-perl /sbin/}, sh_option      
       sh %{chroot #{@dir} pwconv}, sh_option

@@ -17,7 +17,8 @@ class TC_SelectState < Test::Unit::TestCase
   #  class LucieVmsetup__UseNetwork < Lucie::BooleanState
   #    public
   #    def transit( aDebconfContext )
-  #      aDebconfContext.current_state = aDebconfContext::STATES[@question.next_question]
+  #      super aDebconfContext
+  #      aDebconfContext.current_state = DebconfContext::STATES['lucie-vmsetup/distro']
   #    end
   #  end
   public
@@ -30,9 +31,10 @@ class TC_SelectState < Test::Unit::TestCase
     assert_match /class LucieVmsetup__VmType < Lucie::SelectState/, line[0]
     assert_match /public/, line[1]
     assert_match /def transit\( aDebconfContext \)/, line[2]
-    assert_match /aDebconfContext.current_state = aDebconfContext::STATES\['lucie-vmsetup\/distro'\]/, line[3]
-    assert_match /end/, line[4]
+    assert_match /super aDebconfContext/, line[3]
+    assert_match /aDebconfContext.current_state = DebconfContext::STATES\['lucie-vmsetup\/distro'\]/, line[4]
     assert_match /end/, line[5]
+    assert_match /end/, line[6]
     question.__verify
   end
 end

@@ -36,7 +36,8 @@ module Lucie
       class #{aQuestion.name.to_state_class_name} < Lucie::SelectState
         public
         def transit( aDebconfContext )
-          aDebconfContext.current_state = aDebconfContext::STATES['#{aQuestion.next_question}']
+          super aDebconfContext
+          aDebconfContext.current_state = DebconfContext::STATES['#{aQuestion.next_question}']
         end
       end
       CLASS_DEFINITION

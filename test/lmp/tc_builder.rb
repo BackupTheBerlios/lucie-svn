@@ -39,7 +39,7 @@ Standards-Version: 3.6.0
 Package: lmp-test
 Architecture: all
 Description: Lucie メタパッケージのテスト
-Included packages:
+ Included packages:
   o autoconf - automatic configure script builder
   o automake - A tool for generating GNU Standards-compliant Makefiles.
   o autoproject - create a skeleton source package for a new program

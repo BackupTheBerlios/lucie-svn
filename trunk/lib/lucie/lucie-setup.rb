@@ -34,6 +34,9 @@ module Lucie
     def main
       begin
         do_option
+      rescue SystemExit => ex
+        $stderr.puts( ex.message ) unless( ex.success? )
+        exit(0)
       rescue Exception => ex
         puts ex.message
         exit(1)
@@ -141,21 +144,22 @@ module Lucie
     
     private
     def list_resource
-      case @commandline_options.list_resource
-      when 'host'
-        Config::Host.list.each_value do |each| puts each end
-      when 'host_group'
-        Config::HostGroup.list.each_value do |each| puts each end    
-      when 'package_server'
-        Config::PackageServer.list.each_value do |each| puts each end 
-      when 'dhcp_server'
-        Config::DHCPServer.list.each_value do |each| puts each end  
-      when 'installer'
-        Config::Installer.list.each_value do |each| puts each end 
+      klass = resource_name2class[@commandline_options.list_resource]
+      if klass
+        klass.list.each_value do |each| puts each end
       else
         raise( UnknownResourceTypeException,
                "Unknown resource type: '#{@commandline_options.list_resource}'" )
       end
+    end
+
+    private
+    def resource_name2class
+      return { 'host'           => Config::Host,
+               'host_group'     => Config::HostGroup,
+               'package_server' => Config::PackageServer,
+               'dhcp_server'    => Config::DHCPServer,
+               'installer'      => Config::Installer }
     end
     
     private

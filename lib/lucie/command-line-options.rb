@@ -91,6 +91,7 @@ module Lucie
     # コマンドラインオプションをパーズし、オプション値を各インスタンス変数にセットする
     public
     def parse( argvArray )
+      set_default_options
       old_argv = ARGV.dup
       begin
         ARGV.replace argvArray

@@ -12,7 +12,7 @@ require 'rake/rdoctask'
 desc "Default Task"
 task :default => [:testall]
 
-# Test Tasks -------------------------------------------------------------------
+# ------------------------- Test Tasks.
 
 lucie_filelist = FileList['test/lucie/tc_*.rb']
 debconf_filelist = FileList['test/debconf/tc_*.rb']
@@ -47,7 +47,7 @@ Rake::TestTask.new( :test_lmp ) do |t|
   t.verbose = true
 end
 
-# RDoc Tasks -------------------------------------------------------------------
+# ------------------------- RDoc Tasks.
 
 Rake::RDocTask.new( :rdoc ) do |rdoc|
   rdoc.title = 'Lucie documentation'
@@ -59,6 +59,29 @@ Rake::RDocTask.new( :rdoc ) do |rdoc|
   rdoc.rdoc_files.include( 'lib/*.rb', 'lib/debconf/*.rb', 'lib/deft/*.rb', 
                            'lib/lucie/*.rb', 'lib/lucie/config/*.rb', 'lib/lmp/*.rb', 
                            'lib/lucie/rake/*.rb' )
+end
+
+# ------------------------- Installation Tasks.
+
+# Install Lucie using the standard install.rb script.
+
+desc 'Install the application'
+task :install do 
+  ruby 'install.rb'
+end
+
+# ------------------------- Package Tasks.
+
+desc 'Build Debian Packages'
+task :deb do 
+  sh %{debuild || true}
+end
+
+desc 'Upload Debian Packages'
+task :upload => [:deb] do
+  sh %{cd .. && apt-ftparchive packages . | gzip -c9 > Packages.gz}
+  sh %{cd .. && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
+  sh %{cd .. && scp Packages.gz Sources.gz lucie-client*.deb *.dsc *.tar.gz *.build lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/packages/lucie-client/sarge/ }
 end
 
 ### Local variables:

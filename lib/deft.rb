@@ -132,7 +132,7 @@ capb  'backup'
 title 'Deft'
     BACKEND
     Deft::Question.questions.each do |each|
-      unless each.name == each.template.name
+      unless each.name == each.template
         backend.puts "register '#{each.template}', '#{each.name}'"
       end
     end

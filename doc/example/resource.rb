@@ -45,9 +45,7 @@ end
 PackageServer.new do |pkgserver|
   pkgserver.name         = 'debian_mirror'
   pkgserver.alias       = 'Local Debian Repository Mirror'
-  pkgserver.address      = '192.168.1.100'
-  pkgserver.protocol     = 'http'
-  pkgserver.distribution = 'debian'
+  pkgserver.uri          = 'http://192.168.1.100/debian/'
 end
 
 # ------------------------- DHCP サーバの定義.

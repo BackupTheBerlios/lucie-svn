@@ -54,7 +54,7 @@ Rake::RDocTask.new( :rdoc ) do |rdoc|
   rdoc.rdoc_dir = 'doc/rdoc'
   rdoc.options << '--line-numbers' 
   rdoc.options << '--inline-source' 
-  rdoc.options << '--charset' << 'sjis' 
+  rdoc.options << '--charset' << 'eucjp' 
   rdoc.options << '--diagram'
   rdoc.rdoc_files.include( 'lib/*.rb', 'lib/debconf/*.rb', 'lib/deft/*.rb', 
                            'lib/lucie/*.rb', 'lib/lucie/config/*.rb', 'lib/lmp/*.rb', 

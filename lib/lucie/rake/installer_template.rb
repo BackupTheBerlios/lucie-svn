@@ -7,18 +7,19 @@
 
 require 'rake'
 
-$distro = 'woody'
-$template_root_path = 'C:/tmp'
-$template_lucie_directory_path = $template_root_path + "/lucie/"
+# 以下のグローバル変数を設定のこと
+# $distro = 'woody'
+# $template_root_path = 'C:/tmp'
+# $template_lucie_directory_path = $template_root_path + "/lucie/"
 
 desc "インストーラのテンプレートを作成する"
 task :installer_template => [:installer_template_message]
 
-#if FileTest.directory?($template_lucie_directory_path)
-#  task :make_installer_template => [:make_installer_template_message, :remove_old_template_lucie_directory, :create_base]
-#else
-#  task :make_installer_template => [:make_installer_template_message, :create_base]
-#end
+if FileTest.directory?($template_lucie_directory_path)
+  task :installer_template => [:installer_template_message, :kill_old_template_lucie_directory, :create_base]
+else
+  task :installer_template => [:installer_template_message, :create_base]
+end
 
 task :installer_template_message do
   puts "*** STEP 1: Creating a template for Lucie installer images ***"
@@ -26,8 +27,9 @@ task :installer_template_message do
   puts "This operation can take a long time and will need approximately 100MB disk spce in #{$template_lucie_directory_path}."
 end
 
-#desc "古い Lucie のテンプレートディレクトリを消去"
-#task :remove_old_template_lucie_directory => [:remove_old_template_lucie_directory_message, :unmount_pts, :cleanup_installer_rootfs] 
+desc "古い Lucie のテンプレートディレクトリを消去"
+task :kill_old_template_lucie_directory # => [:kill_old_template_lucie_directory_message, :unmount_pts, :cleanup_installer_rootfs] 
+
 #
 #task :remove_old_template_lucie_directory_message do
 #  puts "#{$template_root_path} already exists. Removing #{$template_root_path}."
@@ -56,8 +58,8 @@ end
 #desc "テンプレートの Lucie ディレクトリを作成"
 #directory $template_lucie_directory_path
 #
-#desc "テンプレートのベースを作成する"
-#task :create_base => [$template_lucie_directory_path] do
+desc "テンプレートのベースを作成する"
+task :create_base # => [$template_lucie_directory_path] do
 #  if FileTest.exists?( template_basetgz_path($distro) )
 #    @exec_mediator.command( "tar -C #{$template_root_path} -xzvf #{template_basetgz_path($distro)}" )
 #  elsif @global_option.pkg_dir

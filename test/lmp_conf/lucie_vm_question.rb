@@ -22,7 +22,7 @@ end
 
 question( 'lucie-vmsetup/use-network' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = { true=>'lucie-vmsetup/ip', false=>'lucie-vmsetup/memory-size' }
+  question.next_question = { 'true'=>'lucie-vmsetup/ip', 'false'=>'lucie-vmsetup/memory-size' }
 end
 
 question( 'lucie-vmsetup/ip' ) do |question|

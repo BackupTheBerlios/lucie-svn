@@ -1,8 +1,8 @@
 #
-# $Id: tc_string-state.rb 184 2005-02-16 08:58:36Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 184 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 $LOAD_PATH.unshift './lib'

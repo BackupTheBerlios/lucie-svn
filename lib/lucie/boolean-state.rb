@@ -31,22 +31,12 @@ module Lucie
     #--
     # FIXME : ¶¬‚³‚ê‚éƒNƒ‰ƒX‚ğ singleton ‚É‚·‚é
     #++
-    def self.marshal( aQuestion )
-      next_state_with_true = aQuestion.next_question[true].to_state_class_name || 'nil'
-      next_state_with_false = aQuestion.next_question[false].to_state_class_name || 'nil'      
+    def self.marshal( aQuestion )  
       return ( <<-CLASS_DEFINITION ).unindent_auto
       class #{aQuestion.name.to_state_class_name} < Lucie::BooleanState
         public
         def transit( aDebconfContext )
-          aDebconfContext.current_state = \\
-          case get( @question.name )
-          when 'true'
-            #{next_state_with_true}
-          when 'false'
-            #{next_state_with_false}
-          else
-            raise "This shouldn't happen"
-          end
+          aDebconfContext.current_state = aDebconfContext::STATES[@question.next_question[get( '#{aQuestion.name}' )]]
         end
       end
       CLASS_DEFINITION

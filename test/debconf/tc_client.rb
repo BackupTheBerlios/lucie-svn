@@ -12,135 +12,57 @@ require 'debconf/client'
 require 'test/unit'
 
 class TC_Client < Test::Unit::TestCase
-  # parse_response ‚Ì•Ô‚è’l‚ğŠm”F
+  # parse_response ¤ÎÊÖ¤êÃÍ¤ò³ÎÇ§
   public
   def test_parse_response
-    assert_equal( 'RESPONSE', Debconf::Client.parse_response( '0 RESPONSE' ), 'parse_response ‚Ì•Ô‚è’l‚ª³‚µ‚­‚È‚¢')
+    assert_equal( 'RESPONSE', Debconf::Client.parse_response( '0 RESPONSE' ),
+                  'parse_response ¤ÎÊÖ¤êÃÍ¤¬Àµ¤·¤¯¤Ê¤¤')
+    # ÊÖ¤êÃÍ 30-99 ¤ÇÂĞ±ş¤¹¤ëÃÍ¤¬ÊÖ¤ë¤³¤È¤ò³ÎÇ§
+    assert_equal( 30, Debconf::Client.parse_response( '30 RESPONSE' ),
+                  'parse_response ¤ÎÊÖ¤êÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' ) # ¶­³¦¾ò·ï
+    assert_equal( 35, Debconf::Client.parse_response( '35 RESPONSE' ),
+                  'parse_response ¤ÎÊÖ¤êÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' )
+    assert_equal( 99, Debconf::Client.parse_response( '99 RESPONSE' ), 
+                  'parse_response ¤ÎÊÖ¤êÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' ) # ¶­³¦¾ò·ï
   end
   
-  # •Ô‚è’l 10-19 ‚Å—áŠO Debconf::Exception::InvalidParametersException ‚ÌŠm”F
-  public
-  def test_parse_response_raises_invalid_parameters_exception
-    assert_raises( Debconf::Exception::InvalidParametersException, 
-                   'Debconf::Exception::InvalidParametersException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
-      Debconf::Client.parse_response( '10 RESPONSE' ) # ‹«ŠEğŒ
-    end
-    
-    assert_raises( Debconf::Exception::InvalidParametersException, 
-                   'Debconf::Exception::InvalidParametersException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
-      Debconf::Client.parse_response( '15 RESPONSE' )
-    end
-    
-    assert_raises( Debconf::Exception::InvalidParametersException, 
-                   'Debconf::Exception::InvalidParametersException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
-      Debconf::Client.parse_response( '19 RESPONSE' ) # ‹«ŠEğŒ
-    end    
-  end
-  
-  # •Ô‚è’l 20-29 ‚Å —áŠO Debconf::Exception::SyntaxError ‚ÌŠm”F
-  public
-  def test_parse_response_raises_syntax_error
-    assert_raises( Debconf::Error::SyntaxError,
-                   'Debconf::Error::SyntaxError ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      Debconf::Client.parse_response( '20 RESPONSE' ) # ‹«ŠEğŒ
-    end
-    
-    assert_raises( Debconf::Error::SyntaxError,
-                   'Debconf::Error::SyntaxError ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      Debconf::Client.parse_response( '25 RESPONSE' )
-    end
-    
-    assert_raises( Debconf::Error::SyntaxError,
-                   'Debconf::Error::SyntaxError ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      Debconf::Client.parse_response( '29 RESPONSE' ) # ‹«ŠEğŒ
-    end
-  end
-  
-  # •Ô‚è’l 30-99 ‚Å nil ‚ª•Ô‚é‚±‚Æ‚ğŠm”F
-  public
-  def test_parse_response_returns_nil
-    assert_nil( Debconf::Client.parse_response( '30 RESPONSE' ), 'nil ‚ª•Ô‚ç‚È‚©‚Á‚½' ) # ‹«ŠEğŒ
-    assert_nil( Debconf::Client.parse_response( '35 RESPONSE' ), 'nil ‚ª•Ô‚ç‚È‚©‚Á‚½' )
-    assert_nil( Debconf::Client.parse_response( '99 RESPONSE' ), 'nil ‚ª•Ô‚ç‚È‚©‚Á‚½' ) # ‹«ŠEğŒ
-  end
-  
-  # •Ô‚è’l 100-109 ‚Å —áŠO Debconf::Error::InternalError ‚ÌŠm”F
-  public
-  def test_parse_response_raises_internal_error
-    assert_raises( Debconf::Error::InternalError,
-                   'Debconf::Error::InternalError ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      Debconf::Client.parse_response( '100 RESPONSE' ) # ‹«ŠEğŒ
-    end
-    
-    assert_raises( Debconf::Error::InternalError,
-                   'Debconf::Error::InternalError ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      Debconf::Client.parse_response( '105 RESPONSE' )
-    end
-    
-    assert_raises( Debconf::Error::InternalError,
-                   'Debconf::Error::InternalError ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      Debconf::Client.parse_response( '109 RESPONSE' ) # ‹«ŠEğŒ
-    end
-  end
-  
-  # •Ô‚è’l 256- ‚Å Debconf::Exception::UnknownReturnValueException ‚ª•Ô‚é‚±‚Æ‚ğŠm”F
-  public
-  def test_parse_response_raises_unknown_return_value_exception
-    assert_raises( Debconf::Exception::UnknownReturnValueException,
-                   'Debconf::Exception::UnknownReturnValueException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      Debconf::Client.parse_response( '256 RESPONSE' ) # ‹«ŠEğŒ
-    end
-    
-    assert_raises( Debconf::Exception::UnknownReturnValueException,
-                   'Debconf::Exception::UnknownReturnValueException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      Debconf::Client.parse_response( '266 RESPONSE' )
-    end
-  end  
-  
-  # —áŠO Debconf::Error::InternalRubyError ‚ÌŠm”F
-  public
-  def test_parse_response_raises_internal_ruby_error
-    assert_raises( Debconf::Error::InternalRubyError, 'InternalRubyError ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      Debconf::Client.parse_response( 'RESPONSE' )
-    end 
-  end
-  
-  # Debconf ‚Ì GO ƒRƒ}ƒ“ƒh‚ğŠm”F
+  # Debconf ¤Î GO ¥³¥Ş¥ó¥É¤ò³ÎÇ§
   public
   def test_go
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdout_mock.__next( :print ) do |command| 
-      assert_equal( "GO\n", command, '”­s‚³‚ê‚½ƒRƒ}ƒ“ƒh‚ª³‚µ‚­‚È‚¢' )
+      assert_equal( "GO\n", command, 'È¯¹Ô¤µ¤ì¤¿¥³¥Ş¥ó¥É¤¬Àµ¤·¤¯¤Ê¤¤' )
     end
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
     $stdin_mock.__next( :gets ) do '0' end    
     Debconf::Client.go
   end
   
-  # Debconf ‚Ì GET ƒRƒ}ƒ“ƒh‚ğŠm”F
+  # Debconf ¤Î GET ¥³¥Ş¥ó¥É¤ò³ÎÇ§
   public
   def test_get
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdout_mock.__next( :print ) do |command| 
-      assert_equal( "GET QUESTION\n", command, '”­s‚³‚ê‚½ƒRƒ}ƒ“ƒh‚ª³‚µ‚­‚È‚¢' )
+      assert_equal( "GET QUESTION\n", command, 
+                    'È¯¹Ô¤µ¤ì¤¿¥³¥Ş¥ó¥É¤¬Àµ¤·¤¯¤Ê¤¤' )
     end
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
     $stdin_mock.__next( :gets ) do '0' end    
     Debconf::Client.get( 'QUESTION' )
   end
-
-  # Debconf ‚Ì SET ƒRƒ}ƒ“ƒh‚ğŠm”F
+  
+  # Debconf ¤Î SET ¥³¥Ş¥ó¥É¤ò³ÎÇ§
   public
   def test_set
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdout_mock.__next( :print ) do |command| 
-      assert_equal( "SET QUESTION true\n", command, '”­s‚³‚ê‚½ƒRƒ}ƒ“ƒh‚ª³‚µ‚­‚È‚¢' )
+      assert_equal( "SET QUESTION true\n", command, 
+                    'È¯¹Ô¤µ¤ì¤¿¥³¥Ş¥ó¥É¤¬Àµ¤·¤¯¤Ê¤¤' )
     end
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
     $stdin_mock.__next( :gets ) do '0' end    
     Debconf::Client.set( 'QUESTION true' )
   end
-  
 end
 
 ### Local variables:

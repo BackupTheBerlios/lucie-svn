@@ -21,22 +21,22 @@ class TC_NoteTemplate < Test::Unit::TestCase
   public
   def test_to_s
     Lucie::Template.clear
-    template( 'TEST/NOTE-TEMPLATE', Lucie::NoteTemplate ) do |template|
+    template( 'TEST/NOTE-TEMPLATE' ) do |template|
+      template.template_type = Lucie::NoteTemplate
       template.default = 'no'
-      template.description = (<<-DESCRIPTION)
-      This is a short description
+      template.short_description = 'This is a short description'
+      template.extended_description = (<<-DESCRIPTION)      
       This is a long description
       
       the abobe is a null line
       DESCRIPTION
-      template.description_ja = (<<-DESCRIPTION_JA)
-      これは短いデスクリプションです
+      template.short_description_ja = 'これは短いデスクリプションです'
+      template.extended_description_ja = (<<-DESCRIPTION_JA)      
       これは長いデスクリプションです
       
       上は空行です
       DESCRIPTION_JA
     end
-    
     assert /^Template:(.*)^Type:(.*)^Description:(.*)^Description-ja:(.*)/m=~ Lucie::Template['TEST/NOTE-TEMPLATE'].to_s
     assert_match /TEST\/NOTE-TEMPLATE/, $1, 'Template: の値がおかしい'
     assert_match /note/, $2, 'Type: の値がおかしい'

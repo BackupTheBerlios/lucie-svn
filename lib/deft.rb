@@ -143,7 +143,7 @@ end
 
   private
   def emulate
-    next_question = Question::QUESTIONS[@command_line_options.emulate].next_question
+    next_question = Deft::Question::QUESTIONS[@command_line_options.emulate].next_question
     case next_question
     when String
       puts "`#{@command_line_options.emulate}' => `#{next_question}'"

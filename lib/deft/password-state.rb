@@ -1,28 +1,29 @@
 #
-# $Id: string-state.rb 184 2005-02-16 08:58:36Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 184 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'lucie/state'
+require 'deft/state'
 require 'lucie/string'
-require 'lucie/time-stamp'
+require 'time-stamp'
+  
+update(%q$Date$) 
 
 module Deft
-  
-  Lucie.update(%q$Date: 2005-02-16 17:58:36 +0900 (Wed, 16 Feb 2005) $)
-  
   # password 型テンプレート変数の質問が表示されている状態を表すクラス
   class PasswordState < State
     # Question オブジェクトから対応する PasswordState クラスの子クラスをあらわす文字列を返す
     def self.marshal( aQuestion )
       return ( <<-CLASS_DEFINITION ).unindent_auto
-      class #{aQuestion.name.to_state_class_name} < Deft::PasswordState
+      class #{aQuestion.state_class_name} < Deft::PasswordState
         public
         def transit( aDebconfContext )
           super aDebconfContext
-          aDebconfContext.current_state = DebconfContext::STATES['#{aQuestion.next_question}']
+          next_question = aDebconfContext.next_question[get( '#{aQuestion.name}' )]
+          aDebconfContext.current_question = Deft::Question[next_question]
+          aDebconfContext.current_state    = Deft::ConcreteState[next_question]
         end
       end
       CLASS_DEFINITION

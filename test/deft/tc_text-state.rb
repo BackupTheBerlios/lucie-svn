@@ -12,28 +12,21 @@ require 'deft/text-state'
 require 'test/unit'
 
 class TC_TextState < Test::Unit::TestCase
-  # 以下のようなクラスをあらわす文字列が返されることを確認
-  #
-  #  class Lucie__Overview < Deft::TextState
-  #    public
-  #    def transit( aDebconfContext )
-  #      super aDebconfContext
-  #      aDebconfContext.current_state = DebconfContext::STATES['lucie/caution']
-  #    end
-  #  end
   public
   def test_marshal
     question = Mock.new( 'lucie/overview' )
-    question.__next( :name ) do || 'lucie/overview' end
-    question.__next( :next_question ) do || 'lucie/caution' end    
+    question.__next( :state_class_name ) do 'Deft::State::Lucie__Overview' end
+    question.__next( :name ) do || 'lucie/overview' end 
     line = Deft::TextState::marshal( question ).split("\n")
-    assert_match /class Lucie__Overview < Deft::TextState/, line[0]
+    assert_match /class Deft::State::Lucie__Overview < Deft::TextState/, line[0]
     assert_match /public/, line[1]
     assert_match /def transit\( aDebconfContext \)/, line[2]
     assert_match /super aDebconfContext/, line[3]
-    assert_match /aDebconfContext.current_state = DebconfContext::STATES\['lucie\/caution'\]/, line[4]
-    assert_match /end/, line[5]
-    assert_match /end/, line[6]
+    assert_match /next_question = aDebconfContext\.next_question\[get\( 'lucie\/overview' \)\]/, line[4]
+    assert_match /aDebconfContext\.current_question = Deft::Question\[next_question\]/, line[5]
+    assert_match /aDebconfContext\.current_state\s*= Deft::ConcreteState\[next_question\]/, line[6]
+    assert_match /end/, line[7]
+    assert_match /end/, line[8]
     question.__verify
   end
 end

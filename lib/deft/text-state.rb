@@ -6,23 +6,24 @@
 # License::  GPL2
 
 require 'lucie/string'
-require 'lucie/state'
-require 'lucie/time-stamp'
+require 'deft/state'
+require 'time-stamp'
+
+update(%q$Date$)
 
 module Deft
-  
-  Lucie.update(%q$Date$)
-  
   # text 型テンプレート変数の質問が表示されている状態を表すクラス
   class TextState < State
     # Question オブジェクトから対応する TextState クラスの子クラスをあらわす文字列を返す
     def self.marshal( aQuestion ) 
       return ( <<-CLASS_DEFINITION ).unindent_auto
-      class #{aQuestion.name.to_state_class_name} < Deft::TextState
+      class #{aQuestion.state_class_name} < Deft::TextState
         public
         def transit( aDebconfContext )
           super aDebconfContext
-          aDebconfContext.current_state = DebconfContext::STATES['#{aQuestion.next_question}']
+          next_question = aDebconfContext.next_question[get( '#{aQuestion.name}' )]
+          aDebconfContext.current_question = Deft::Question[next_question]
+          aDebconfContext.current_state    = Deft::ConcreteState[next_question]
         end
       end
       CLASS_DEFINITION

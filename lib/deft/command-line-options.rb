@@ -18,6 +18,7 @@ module Deft
   class CommandLineOptions
     include Singleton
     
+    attr_reader :build
     attr_reader :run
     attr_reader :input
     attr_reader :help 
@@ -48,6 +49,8 @@ module Deft
           'show all the registered templates and exit.' ],
       [ '--question',       '-q',   nil, \
           'show all the registered questions and exit.' ],
+      [ '--build',          '-b',   'file path', \
+          'build lmp using template/question definition file.'],
       ]
 
       public
@@ -78,6 +81,8 @@ module Deft
 
         getopt_long.each do |option, argument|
           case option
+          when '--build'
+            @build = argument
           when '--run'
             @run = argument
           when '--input'
@@ -109,7 +114,7 @@ module Deft
       ["trace=#{@trace.inspect}", "help=#{@help.inspect}", "emulate=#{@emulate.inspect}",
        "version=#{@version.inspect}", "ruby-code=#{@ruby_code.inspect}",
        "template=#{@template.inspect}", "question=#{@question.inspect}",
-       "input=#{@input.inspect}", "run=#{@run.inspect}"].join(', ') + ']'
+       "input=#{@input.inspect}", "run=#{@run.inspect}", "build=#{@build.inspect}"].join(', ') + ']'
     end
     
     private

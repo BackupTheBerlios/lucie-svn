@@ -8,21 +8,21 @@
 $KCODE = 'SJIS'
 $LOAD_PATH.unshift './lib'
 
-require 'lucie/string-template'
+require 'deft/string-template'
 require 'test/unit'
 
 class TC_StringTemplate < Test::Unit::TestCase
-  # 親クラスが Lucie::Template であることをテスト
+  # 親クラスが Deft::Template であることをテスト
   public
   def test_inheritance
-    assert Lucie::StringTemplate < Lucie::Template
+    assert Deft::StringTemplate < Deft::Template
   end
   
   public
   def test_to_s
-    Lucie::Template.clear
+    Deft::Template.clear
     template( 'TEST/STRING-TEMPLATE' ) do |template|
-      template.template_type = Lucie::StringTemplate
+      template.template_type = Deft::StringTemplate
       template.default = 'default'
       template.short_description = 'This is a short description'
       template.extended_description = (<<-DESCRIPTION)
@@ -37,7 +37,7 @@ class TC_StringTemplate < Test::Unit::TestCase
       上は空行です
       DESCRIPTION_JA
     end
-    assert /^Template:(.*)^Type:(.*)^Default:(.*)^Description:(.*)^Description-ja:(.*)/m=~ Lucie::Template['TEST/STRING-TEMPLATE'].to_s
+    assert /^Template:(.*)^Type:(.*)^Default:(.*)^Description:(.*)^Description-ja:(.*)/m=~ Deft::Template['TEST/STRING-TEMPLATE'].to_s
     assert_match /TEST\/STRING-TEMPLATE/, $1, 'Template: の値がおかしい'
     assert_match /string/, $2, 'Type: の値がおかしい'
     assert_match /default/, $3, 'Default: の値がおかしい'

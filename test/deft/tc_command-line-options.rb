@@ -140,14 +140,14 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   
   public
   def test_parse_template_option
-    @commandline_options.parse( ['--template'] )
-    assert( @commandline_options.template, "couldn't get value for template option" )
+    @commandline_options.parse( ['--template=foo/bar'] )
+    assert_equal( 'foo/bar', @commandline_options.template, "couldn't get value for template option" )
   end
   
   public
   def test_parse_question_option
-    @commandline_options.parse( ['--question'] )
-    assert( @commandline_options.question, "couldn't get value for question option" )
+    @commandline_options.parse( ['--question=foo/bar'] )
+    assert_equal( 'foo/bar', @commandline_options.question, "couldn't get value for question option" )
   end
   
   public

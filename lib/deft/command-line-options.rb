@@ -45,9 +45,9 @@ module Deft
           "you're looking at it." ],
       [ '--version',        '-v',   nil, \
           "display  lucie-setup's version and exit." ],
-      [ '--template',       '-t',   nil, \
+      [ '--template',       '-t',   'file path', \
           'show all the registered templates and exit.' ],
-      [ '--question',       '-q',   nil, \
+      [ '--question',       '-q',   'file path', \
           'show all the registered questions and exit.' ],
       [ '--build',          '-b',   'file path', \
           'build lmp using template/question definition file.'],
@@ -90,9 +90,9 @@ module Deft
           when '--emulate'
             @emulate = argument
           when '--question'
-            @question = true
+            @question = argument
           when '--template'
-            @template = true
+            @template = argument
           when '--ruby-code'
             @ruby_code = argument
           when '--trace'

@@ -107,7 +107,7 @@ class DeftApp
   
   private
   def build
-    require "#{@command_line_options.build}"
+    require @command_line_options.build
     Task['package'].invoke
   end
   
@@ -187,11 +187,13 @@ end
       puts ruby_code( @command_line_options.ruby_code )        
     end
     if @command_line_options.template
+      require @command_line_options.template
       Deft::Template.templates.each do |each|
         puts each.name
       end
     end
     if @command_line_options.question
+      require @command_line_options.question
       Deft::Question.questions.each do |each|
         puts each.name
       end

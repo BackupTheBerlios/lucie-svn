@@ -31,6 +31,20 @@ module Lucie
       required_attribute :dns
       required_attribute :domain_name
 
+      public
+      def network
+        address_ary = @address.split('.').collect { |octet|
+          octet.to_i 
+        }
+        subnet_ary = @subnet.split('.').collect { |octet|
+          octet.to_i 
+        }
+        ((address_ary[0] & subnet_ary[0]) & 0xff).to_s + '.' + \
+        ((address_ary[1] & subnet_ary[1]) & 0xff).to_s + '.' + \
+        ((address_ary[2] & subnet_ary[2]) & 0xff).to_s + '.' + \
+        ((address_ary[3] & subnet_ary[3]) & 0xff).to_s
+      end
+
       # ------------------------- Special accessor behaviours (overwriting default).
 
       REGEXP_PRINTABLE = /\A[ -~]+\z/

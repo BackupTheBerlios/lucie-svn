@@ -17,7 +17,8 @@ class TC_StringState < Test::Unit::TestCase
   #  class Lucie__Overview < Lucie::StringState
   #    public
   #    def transit( aDebconfContext )
-  #      aDebconfContext.current_state = aDebconfContext::STATES['lucie/caution']
+  #      super aDebconfContext
+  #      aDebconfContext.current_state = DebconfContext::STATES['lucie/caution']
   #    end
   #  end
   public

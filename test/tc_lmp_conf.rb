@@ -198,7 +198,39 @@ VM ノード台数の選択です
 ノードのハードディスク容量
 使用したいハードディスク容量を入れてください (単位: MB)
     DESCRIPTION_JA
+  end
+  
+  ###################################################################################################
+  # テンプレート 'lucie-vmsetup/vm-type' のテスト
+  ###################################################################################################
+
+  # テンプレート 'lucie-vmsetup/vm-type' が登録されていることを確認
+  public
+  def test_template_vm_type_registered
+    assert Lucie::Template.template_defined?( 'lucie-vmsetup/vm-type' )
+  end
+  
+  # テンプレート 'lucie-vmsetup/vm-type' の 'Type:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_vm_type_type
+    assert_equal Template::SELECT, Lucie::Template.lookup( 'lucie-vmsetup/vm-type' ).template_type
+    assert_equal Template::SELECT, Lucie::Template.lookup( 'lucie-vmsetup/vm-type' )['Type']
   end  
+  
+  # テンプレート 'lucie-vmsetup/vm-type' の 'Choices:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_vm_type_choices
+    assert_equal 'xen, umlinux, colinux, vmware', Lucie::Template.lookup( 'lucie-vmsetup/vm-type' ).choices
+  end
+
+  # テンプレート 'lucie-vmsetup/vm-type' の 'Description-ja:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_vm_type_description_ja
+    assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/vm-type' ).description_ja
+使用する VM の種類
+使用する VM を選択してください
+    DESCRIPTION_JA
+  end 
 end
 
 ### Local variables:

@@ -62,6 +62,15 @@ template( 'lucie-vmsetup/harddisk-size' ) do |template|
   DESCRIPTION_JA
 end.register
 
+template( 'lucie-vmsetup/vm-type' ) do |template|
+  template.template_type = Template::SELECT
+  template.choices = ['xen', 'umlinux', 'colinux', 'vmware']
+  template.description_ja = (<<-DESCRIPTION_JA)
+使用する VM の種類
+使用する VM を選択してください
+  DESCRIPTION_JA
+end.register
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

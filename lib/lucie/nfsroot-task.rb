@@ -100,6 +100,7 @@ module Rake
 
     private
     def setup_dhcp
+      puts "Setting up DHCP and PXE environment."
       cp( nfsroot("boot/vmlinuz-#{@kernel_version}"),
           "/tftpboot/#{@name}", {:preserve => true}.merge(sh_option) )
       cp( "/usr/lib/syslinux/pxelinux.0", "/tftpboot", sh_option )

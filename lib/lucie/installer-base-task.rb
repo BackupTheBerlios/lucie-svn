@@ -5,7 +5,11 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+require 'rake'
+require 'rake/tasklib'
+
 module Rake
+  #
   # インストーラのベースシステムをビルドするタスクを作成する。
   #
   # InstallerBaseTask は次のターゲットを作成する:
@@ -21,7 +25,7 @@ module Rake
   # 例:
   #
   #   InstallerBaseTask.new do |installer_base|
-  #     installer_base.directory = "tmp"
+  #     installer_base.dir = "tmp"
   #     installer_base.distribution = "debian"
   #     installer_base.distribution_version = "sarge"
   #   end
@@ -30,7 +34,7 @@ module Rake
   # つけることもできる。
   #
   #   InstallerBaseTask.new(:installer_base_woody) do |installer_base|
-  #     installer_base.directory = "tmp"
+  #     installer_base.dir = "tmp"
   #     installer_base.distribution = "debian"
   #     installer_base.distribution_version = "woody"
   #   end
@@ -38,12 +42,12 @@ module Rake
   # この場合、<em>:installer_base_woody</em>, :clobber_<em>installer_base_woody</em>, 
   # :re<em>installer_base_woody</em> という名前のタスクが生成される。
   #
-  class InstallerBaseTask
+  class InstallerBaseTask < TaskLib
     # インストーラベース作成タスクの名前 (デフォルト: :installer_base )
     attr_accessor :name
     # インストーラベースを作成するディレクトリへのパス 
     # (デフォルト: '/var/lib/lucie/installer-base/' )
-    attr_accessor :directory
+    attr_accessor :dir
     # インストーラベースのディストリビューション (デフォルト: nil)
     attr_accessor :distribution
     # インストーラベースのディストリビューションのバージョン (デフォルト: nil)
@@ -53,8 +57,29 @@ module Rake
     public
     def initialize( name=:installer_base ) # :yield: self
       @name = name
-      @directory = '/var/lib/lucie/installer-base/'
+      @dir = '/var/lib/lucie/installer-base/'
       yield self if block_given?
+      define
+    end
+    
+    private
+    def define
+      desc "Build the #{distribution} version #{distribution_version} installer base tarball"
+      task name
+      
+      desc "Force a rebuild of the installer base tarball"
+      task paste("re", name) => [paste("clobber_", name), name]
+      
+      desc "Remove installer base tarball"
+      task paste("clobber_", name)
+      
+      directory @dir
+      file installer_base_target
+    end
+    
+    private
+    def installer_base_target
+      return File.join(@dir, @distribution+'_'+@distribution_version+'.tgz')
     end
   end
 end

@@ -50,7 +50,12 @@ end
 
 question( 'lucie-vmsetup/num-nodes' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = 'lucie-vmsetup/use-network'
+  question.next_question = <<NEXT_QUESTION
+  Proc.new do |input|
+    subst lucie-vmsetup/confirmation num_nodes #{input}
+    'lucie-vmsetup/use-network'
+  end
+  NEXT_QUESTION
 end
 
 template( 'lucie-vmsetup/use-network' ) do |template|
@@ -213,7 +218,7 @@ template( 'lucie-vmsetup/confirmation' ) do |template|
   template.short_description_ja = '設定情報の確認'
   template.extended_description_ja = (<<-DESCRIPTION_JA)
   設定情報を確認します。
-   o 使用する VM 台数 : ○○台
+   o 使用する VM 台数 : #{num_nodes}台
    o ネットワークへの接続 : ○○
    o ホスト名/IP アドレス ○○
    o メモリサイズ : ○○

@@ -64,6 +64,26 @@ class TC_DebconfContext < Test::Unit::TestCase
     assert_kind_of( Deft::State, @debconf_context.current_state )
     assert_equal( 'Deft::State::Test__Template1', @debconf_context.current_state.class.to_s )
   end
+  
+  public
+  def test_backup
+    $stdout_mock = Mock.new( '#<STDOUT>' )
+    $stdout_mock.__next( :print ) do |output| 
+      assert_equal( "INPUT medium TEST/TEMPLATE1\n", output )
+    end
+    $stdout_mock.__next( :print ) do |output|
+      assert_equal( "GO\n", output )
+    end
+    $stdin_mock = Mock.new( '#<STDIN>' )
+    $stdin_mock.__next( :gets ) do '0 TRUE' end
+    $stdin_mock.__next( :gets ) do '0 TRUE' end    
+    
+    first_state = @debconf_context.current_state
+    @debconf_context.transit
+    assert_equal( first_state, @debconf_context.last_state, '’¼‘O‚Ìó‘Ô‚ªæ‚èo‚¹‚È‚¢' )
+    @debconf_context.backup
+    assert_equal( first_state, @debconf_context.current_state, 'backup ‚Å’¼‘O‚Ìó‘Ô‚É–ß‚ç‚È‚¢' )
+  end
 end
 
 ### Local variables:

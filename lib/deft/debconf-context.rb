@@ -16,6 +16,8 @@ module Deft
   class DebconfContext   
     # 現在の Concrete State
     attr_accessor :current_state
+    # 直前の Concrete State
+    attr_reader :last_state
     
     # あたらしい DebconfContext オブジェクトを返す
     public
@@ -27,6 +29,19 @@ module Deft
     public
     def transit
       @current_state.transit self
+    end
+    
+    # 現在の状態を変更する
+    public
+    def current_state=( aState )
+      @last_state = @current_state
+      @current_state = aState
+    end
+    
+    # 直前の状態に戻る
+    public
+    def backup
+      @current_state = @last_state
     end
   end
 end

@@ -24,7 +24,7 @@ lmp-test (0.1-1) unstable; urgency=low
 
   * Initial Release.
   
- -- Yasuhito TAKAMIYA <takamiya@matsulab.is.titech.ac.jp> Mon, 26 Jul 2004 15:28:39 +0900
+ -- Yasuhito TAKAMIYA <takamiya@matsulab.is.titech.ac.jp>  Mon, 26 Jul 2004 15:28:39 +0900
     CHANGELOG
     end
     spec.__next( :config ) do end

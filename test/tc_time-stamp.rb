@@ -7,13 +7,13 @@
 
 $LOAD_PATH.unshift './lib'
 
-require 'lucie/time-stamp'
+require 'time-stamp'
 require 'test/unit'
 
 class TC_TimeStamp < Test::Unit::TestCase
   public
   def test_svn_date
-    assert_match( /\A\d\d\d\d-\d\d-\d\d\Z/, Lucie::svn_date, "Lucie::svn_date returned wrong date format String." )
+    assert_match( /\A\d\d\d\d-\d\d-\d\d\Z/, $svn_date, "$svn_date returned wrong date format String." )
   end
 end
 

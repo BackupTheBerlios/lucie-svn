@@ -45,7 +45,16 @@ module Deft
     def template_string( typeString, *optionalFieldsArray )     
       _template_string =  "Template: #{name}\n"
       _template_string += "Type: #{typeString}\n"
-      _template_string += "Choices: #{choices.join(', ')}\n" if optionalFieldsArray.include?( 'choices' ) && choices
+      if optionalFieldsArray.include?( 'choices' ) && choices
+        case choices
+        when String
+          _template_string += "Choices: #{choices}\n" 
+        when Array
+          _template_string += "Choices: #{choices.join(', ')}\n" 
+        else
+          raise "This shouldn't happen"
+        end
+      end
       _template_string += "Default: #{default}\n" if optionalFieldsArray.include?( 'default' ) && default
       _template_string += "Description: #{short_description}\n" if short_description
       _template_string += extended_description.to_rfc822 + "\n" if extended_description

@@ -9,12 +9,29 @@ require 'deft'
 
 include Deft
 
-# ------------------------- template と question の定義.
+# ------------------------- エラー表示用テンプレート/質問 
+
+template( 'lucie-vmsetup/error' ) do |template|
+  template.template_type = NoteTemplate
+  template.short_description_ja = '${short_error_message}'
+  template.extended_description_ja = '${extended_error_message}'
+end
+
+question( 'lucie-vmsetup/error' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+  question.next_question = <<-NEXT_QUESTION
+  Proc.new do 
+    $last_question
+  end
+  NEXT_QUESTION
+end
+
+# ------------------------- 
 
 template( 'lucie-vmsetup/hello' ) do |template|
   template.template_type = NoteTemplate
   template.short_description_ja = 'Lucie VM のセットアップウィザードへようこそ'
-  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  template.extended_description_ja = <<-DESCRIPTION_JA
   このウィザードでは、Lucie を用いた VM セットアップの設定を入力します。
   設定可能な項目は、
    o 必要な VM の台数
@@ -32,37 +49,179 @@ end
 
 question( 'lucie-vmsetup/hello' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = 'lucie-vmsetup/num-nodes'
+  question.next_question = 'lucie-vmsetup/vmpool-server-ip'
   question.first_question = true
 end
 
+# ------------------------- 
+
+template( 'lucie-vmsetup/vmpool-server-ip' ) do |template|
+  template.template_type = StringTemplate
+  template.default = '127.0.0.1'
+  template.short_description_ja = 'Lucie VM Pool サーバの IP アドレス'
+  template.extended_description_ja = 'Lucie VM Pool サーバの IP アドレスを入力してください'
+end
+
+question( 'lucie-vmsetup/vmpool-server-ip' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+  question.next_question = <<-NEXT_QUESTION
+  Proc.new do |user_input|
+    unless /\\A\\d{1,3}\.\\d{1,3}\.\\d{1,3}\.\\d{1,3}\\Z/=~ user_input
+      $last_question = 'lucie-vmsetup/vmpool-server-ip'
+      subst 'lucie-vmsetup/error', 'short_error_message', "エラー: IP アドレス形式"
+      subst 'lucie-vmsetup/error', 'extended_error_message', "IP アドレスの形式が正しくありません : \#{get('lucie-vmsetup/vmpool-server-ip')}"
+      'lucie-vmsetup/error'
+    else
+      subst 'lucie-vmsetup/vmpool-server-confirmation', 'vmpool-server-ip', user_input 
+      'lucie-vmsetup/vmpool-server-port'
+    end
+  end
+  NEXT_QUESTION
+end
+
+# ------------------------- 
+
+template( 'lucie-vmsetup/vmpool-server-port' ) do |template|
+  template.template_type = StringTemplate
+  template.default = '5555'	
+  template.short_description_ja = 'Lucie VM Pool サーバのポート番号'
+  template.extended_description_ja = 'Lucie VM Pool サーバのポート番号を入力してください'
+end
+
+question( 'lucie-vmsetup/vmpool-server-port' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+  question.next_question = <<-NEXT_QUESTION
+  Proc.new do |user_input|
+    unless /\\A\\d+\\Z/=~ user_input
+      $last_question = 'lucie-vmsetup/vmpool-server-port'
+      subst 'lucie-vmsetup/error', 'short_error_message', "エラー: ポート番号形式"
+      subst 'lucie-vmsetup/error', 'extended_error_message', "ポート番号の形式が正しくありません : \#{get('lucie-vmsetup/vmpool-server-port')}"
+      'lucie-vmsetup/error'
+    else
+      subst 'lucie-vmsetup/vmpool-server-confirmation', 'vmpool-server-port', user_input 
+      'lucie-vmsetup/vmpool-server-confirmation'
+    end
+  end
+  NEXT_QUESTION
+end
+
+# ------------------------- 
+
+template( 'lucie-vmsetup/vmpool-server-reconnection' ) do |template|
+  template.template_type = BooleanTemplate
+  template.short_description_ja = 'Lucie VM Pool サーバへ再接続'
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  Lucie VM Pool サーバへの接続に失敗しました。
+   o IP アドレス ${vmpool-server-ip}
+   o ポート番号 ${vmpool-server-port}
+  再接続しますか？
+  DESCRIPTION_JA
+end
+
+question( 'lucie-vmsetup/vmpool-server-reconnection' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+  question.next_question = <<-NEXT_QUESTION
+  Proc.new do |user_input|
+    case user_input
+    when 'true'
+      require 'socket'
+      require 'lucie-vm-pool/client'
+      begin
+        socket = TCPSocket.open( get('lucie-vmsetup/vmpool-server-ip'), get('lucie-vmsetup/vmpool-server-port') )
+        'lucie-vmsetup/num-nodes'
+      rescue 
+        'lucie-vmsetup/vmpool-server-reconnection'	
+      end
+    when 'false'
+      $last_question = nil
+      subst 'lucie-vmsetup/error', 'short_error_message', 'Lucie VM Pool セットアップの中止'
+      subst 'lucie-vmsetup/error', 'extended_error_message', 'Lucie VM Pool のセットアップを中止します'
+      'lucie-vmsetup/error'      
+    end
+  end 
+  NEXT_QUESTION
+end
+
+# ------------------------- 
+
+template( 'lucie-vmsetup/vmpool-server-confirmation' ) do |template|
+  template.template_type = NoteTemplate
+  template.short_description_ja = 'Lucie VM Pool 情報の確認'
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  次の設定で Lucie VM Pool サーバに接続します
+   o IP アドレス ${vmpool-server-ip}
+   o ポート番号 ${vmpool-server-port}
+  「Next」 を押すと接続します。
+  DESCRIPTION_JA
+end
+
+question( 'lucie-vmsetup/vmpool-server-confirmation' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+  question.next_question = <<-NEXT_QUESTION
+  Proc.new do 
+    require 'socket'
+    require 'lucie-vm-pool/client'
+    begin
+      socket = TCPSocket.open( get('lucie-vmsetup/vmpool-server-ip'), get('lucie-vmsetup/vmpool-server-port') )
+      $num_nodes_upperbound = LucieVmPool::Client.get( socket, '#nodes upperbound' ).to_i
+      subst 'lucie-vmsetup/num-nodes', 'num-nodes', $num_nodes_upperbound
+      $memory_size_upperbound = LucieVmPool::Client.get( socket, 'memory size upperbound' ).to_i
+      subst 'lucie-vmsetup/memory-size', 'memory-size', $memory_size_upperbound
+      $harddisk_size_upperbound	= LucieVmPool::Client.get( socket, 'hdd size upperbound' ).to_i
+      subst 'lucie-vmsetup/harddisk-size', 'harddisk-size', $harddisk_size_upperbound
+      subst 'lucie-vmsetup/vm-type', 'vm-type', LucieVmPool::Client.get( socket, 'vm' )
+      subst 'lucie-vmsetup/distro', 'distro', LucieVmPool::Client.get( socket, 'distro' )
+      'lucie-vmsetup/num-nodes'
+    rescue 
+      'lucie-vmsetup/vmpool-server-reconnection'	
+    end
+  end
+  NEXT_QUESTION
+end
+
+# ------------------------- 
+
 template( 'lucie-vmsetup/num-nodes' ) do |template|
-  template.template_type = SelectTemplate
-  template.choices = ['4', '8', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '52', '56', '60', '64']
+  template.template_type = StringTemplate
+  template.default = '1'
   template.short_description_ja = 'VM ノードの台数'
-  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  template.extended_description_ja = <<-DESCRIPTION_JA
   使用したい VM の台数を選択してください。
 
-  松岡研 PrestoIII クラスタで提供できる VM クラスタのノード数は、4 台〜 64 台となっています。
+  松岡研 PrestoIII クラスタで提供できる VM クラスタのノード数は、${num-nodes}台までとなっています。
   他のジョブへ影響を与えないように、ジョブ実行に *最低限* 必要な台数を選択してください。
   DESCRIPTION_JA
 end
 
 question( 'lucie-vmsetup/num-nodes' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<NEXT_QUESTION
-  Proc.new do |input|
-    subst lucie-vmsetup/confirmation num_nodes #{input}
-    'lucie-vmsetup/use-network'
+  question.next_question = <<-NEXT_QUESTION
+  Proc.new do |user_input|
+    if user_input.to_i <= 0
+      $last_question = 'lucie-vmsetup/num-nodes'
+      subst 'lucie-vmsetup/error', 'short_error_message', "エラー: VM ノードの台数"
+      subst 'lucie-vmsetup/error', 'extended_error_message', "VM ノードの台数がセットされていません。"
+      'lucie-vmsetup/error'
+    elsif user_input.to_i > $num_nodes_upperbound
+      $last_question = 'lucie-vmsetup/num-nodes'
+      subst 'lucie-vmsetup/error', 'short_error_message', "エラー: VM ノードの台数"
+      subst 'lucie-vmsetup/error', 'extended_error_message', "VM ノードの台数が上限の \#{$num_nodes_upperbound} 台を越えています。"
+      'lucie-vmsetup/error'
+    else
+      subst 'lucie-vmsetup/confirmation', 'num_nodes', user_input
+      'lucie-vmsetup/use-network'
+    end
   end
   NEXT_QUESTION
 end
+
+# ------------------------- 
 
 template( 'lucie-vmsetup/use-network' ) do |template|
   template.template_type = BooleanTemplate
   template.default = 'false'
   template.short_description_ja = 'VM の外部ネットワークへの接続'
-  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  template.extended_description_ja = <<-DESCRIPTION_JA
   ジョブ実行時に VM は外部ネットワークへ接続する必要がありますか？
   このオプションをオンにすると、GRAM が自動的に各 VM に連続した IP アドレスと MAC アドレスを割り当て、
   Lucie をすべてのネットワーク関係の設定を行います。
@@ -71,13 +230,20 @@ end
 
 question( 'lucie-vmsetup/use-network' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = { 'true'=>'lucie-vmsetup/ip', 'false'=>'lucie-vmsetup/memory-size' }
+  question.next_question = <<-NEXT_QUESTION
+  Proc.new do |user_input|
+    subst 'lucie-vmsetup/confirmation', 'use_network', user_input
+    { 'true'=>'lucie-vmsetup/ip', 'false'=>'lucie-vmsetup/memory-size' }[user_input]
+  end
+  NEXT_QUESTION
 end
+
+# ------------------------- 
 
 template( 'lucie-vmsetup/ip' ) do |template|
   template.template_type = NoteTemplate
   template.short_description_ja = 'VM の IP アドレス'
-  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  template.extended_description_ja = <<-DESCRIPTION_JA
   以下のようにホスト名、IP アドレス、MAC アドレスを割り振りました。
   使用可能な VM は pad000 - pad003 の 4 ノードです。
   
@@ -104,96 +270,124 @@ question( 'lucie-vmsetup/ip' ) do |question|
   question.next_question = 'lucie-vmsetup/memory-size'
 end
 
-template( 'lucie-vmsetup/memory-size' ) do |template|
-  template.template_type = SelectTemplate
-  template.choices = ['64', '128', '192', '256', '320', '384', '448', '512', '576', '640']
-  template.short_description_ja = 'VM ノードのメモリ容量'
-  template.extended_description_ja = (<<-DESCRIPTION_JA)
-  使用したい VM 一台あたりのメモリ容量を選択してください。単位は MB です。
+# ------------------------- 
 
-  松岡研 PrestoIII クラスタで提供できる VM クラスタの１ノードあたりのメモリ容量は 640 MB までとなっています。
-  他のジョブへ影響を与えないように、ジョブ実行に *最低限* 必要なメモリ容量を選択してください。
+template( 'lucie-vmsetup/memory-size' ) do |template|
+  template.template_type = StringTemplate
+  template.short_description_ja = 'VM ノードのメモリサイズ'
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  使用したい VM 一台あたりのメモリサイズを選択してください。単位は MB です。
+
+  松岡研 PrestoIII クラスタで提供できる VM クラスタの１ノードあたりのメモリサイズは ${memory-size}MB までとなっています。
+  他のジョブへ影響を与えないように、ジョブ実行に *最低限* 必要なメモリサイズを選択してください。
   DESCRIPTION_JA
 end
 
 question( 'lucie-vmsetup/memory-size' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = 'lucie-vmsetup/harddisk-size'
+  question.next_question = <<-NEXT_QUESTION
+  Proc.new do |user_input|
+    if user_input.to_i <= 0
+      $last_question = 'lucie-vmsetup/memory-size'
+      subst 'lucie-vmsetup/error', 'short_error_message', "エラー: VM ノードのメモリサイズ"
+      subst 'lucie-vmsetup/error', 'extended_error_message', "VM ノードのメモリサイズがセットされていません。"
+      'lucie-vmsetup/error'
+    elsif user_input.to_i > $memory_size_upperbound
+      $last_question = 'lucie-vmsetup/memory-size'
+      subst 'lucie-vmsetup/error', 'short_error_message', "エラー: VM ノードのメモリサイズ"
+      subst 'lucie-vmsetup/error', 'extended_error_message', "VM ノードのメモリサイズが上限の \#{$memory_size_upperbound} MB を越えています。"
+      'lucie-vmsetup/error'
+    else
+      subst 'lucie-vmsetup/confirmation', 'memory_size', user_input
+      'lucie-vmsetup/harddisk-size'
+    end
+  end
+  NEXT_QUESTION
 end
 
+# ------------------------- 
+
 template( 'lucie-vmsetup/harddisk-size' ) do |template|
-  template.template_type = SelectTemplate
-  template.choices = ['1', '2', '3', '4']
+  template.template_type = StringTemplate
   template.short_description_ja = 'VM ノードのハードディスク容量'  
-  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  template.extended_description_ja = <<-DESCRIPTION_JA
   使用したい VM 一台あたりのハードディスク容量を選択してください。単位は GB です。
 
-  松岡研 PrestoIII クラスタで提供できる VM クラスタの１ノードあたりのハードディスク容量は 4GB までとなっています。
+  松岡研 PrestoIII クラスタで提供できる VM クラスタの１ノードあたりのハードディスク容量は ${harddisk-size}GB までとなっています。
   他のジョブへ影響を与えないように、ジョブ実行に *最低限* 必要なハードディスク容量を選択してください。
   DESCRIPTION_JA
 end
 
 question( 'lucie-vmsetup/harddisk-size' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = 'lucie-vmsetup/vm-type'
+  question.next_question = <<-NEXT_QUESTION
+  Proc.new do |user_input|
+    if user_input.to_i <= 0
+      $last_question = 'lucie-vmsetup/harddisk-size'
+      subst 'lucie-vmsetup/error', 'short_error_message', "エラー: VM ノードのハードディスク容量"
+      subst 'lucie-vmsetup/error', 'extended_error_message', "VM ノードのハードディスク容量がセットされていません。"
+      'lucie-vmsetup/error'
+    elsif user_input.to_i > $harddisk_size_upperbound
+      $last_question = 'lucie-vmsetup/harddisk-size'
+      subst 'lucie-vmsetup/error', 'short_error_message', "エラー: VM ノードのハードディスク容量"
+      subst 'lucie-vmsetup/error', 'extended_error_message', "VM ノードのハードディスク容量が上限の \#{$harddisk_size_upperbound} GB を越えています。"
+      'lucie-vmsetup/error'
+    else
+      subst 'lucie-vmsetup/confirmation', 'harddisk_size', user_input	
+      'lucie-vmsetup/vm-type'
+    end
+  end
+  NEXT_QUESTION
 end
+
+# ------------------------- 
 
 template( 'lucie-vmsetup/vm-type' ) do |template|
   template.template_type = SelectTemplate
-  template.choices = ['xen', 'colinux', 'vmware']
+  template.choices = '${vm-type}'
   template.short_description_ja = '使用する VM の種類'
-  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  template.extended_description_ja = <<-DESCRIPTION_JA
   ジョブ実行に使用する VM 実装の種類を選択してください
-
-  松岡研 PrestoIII クラスタで提供できる VM 実装は 
-  'Xen (ケンブリッジ大)', 'colinux (www.colinux.org)', 'vmware (VMware, Inc.)' の 3 種類です。
-  それぞれの特徴は以下の通りです。
-   o Xen: Disk I/O が比較的高速です。
-   o coLinux: Network I/O が比較的高速です。
-   o vmware: CPU が比較的高速です。
-  ジョブの計算内容に合った VM 実装を選択してください。
   DESCRIPTION_JA
 end
 
 question( 'lucie-vmsetup/vm-type' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = 'lucie-vmsetup/distro'
+  question.next_question = <<-NEXT_QUESTION
+  Proc.new do |user_input|
+    subst 'lucie-vmsetup/confirmation', 'vm_type', user_input	
+    'lucie-vmsetup/distro'
+  end
+  NEXT_QUESTION
 end
+
+# ------------------------- 
 
 template( 'lucie-vmsetup/distro' ) do |template|
   template.template_type = SelectTemplate
-  template.choices = ['debian (woody)', 'debian (sarge)', 'redhat7.3']
+  template.choices = '${distro}'
   template.short_description_ja = '使用するディストリビューション'
-  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  template.extended_description_ja = <<-DESCRIPTION_JA
   VM にインストールして使用する Linux ディストリビューションを選択してください
-  .
-  松岡研 PrestoIII クラスタで提供できる Linux ディストリビューションは 
-  'Debian (woody)', 'Debian (sarge)', 'Redhat 7.3' の 3 種類です。
-  それぞれの特徴は以下の通りです。
-   o Debian GNU/Linux (woody): Debian の安定版です。
-   o Debian GNU/Linux (sarge): Debian の開発版です。比較的新しいパッケージも含まれます。
-   o RedHat 7.3: RedHat の安定版です。
   DESCRIPTION_JA
 end
 
 question( 'lucie-vmsetup/distro' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
   question.next_question = <<-NEXT_QUESTION
-  Proc.new do |input|
-    case input
-    when 'debian (woody)', 'debian (sarge)'
-      'lucie-vmsetup/application'
-    when 'redhat7.3'
-      nil
-    end
+  Proc.new do |user_input|
+    subst 'lucie-vmsetup/confirmation', 'distro', user_input	    	
+    'lucie-vmsetup/application'
   end
   NEXT_QUESTION
 end
 
+# ------------------------- 
+
 template( 'lucie-vmsetup/application' ) do |template|
   template.template_type = StringTemplate
   template.short_description_ja = '使用するアプリケーション'
-  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  template.extended_description_ja = <<-DESCRIPTION_JA
   VM にインストールして使用するソフトウェアパッケージを入力してください
 
   松岡研 PrestoIII クラスタでデフォルトでインストールされるソフトウェアパッケージは以下の通りです。
@@ -208,7 +402,12 @@ end
 
 question( 'lucie-vmsetup/application' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = 'lucie-vmsetup/confirmation'
+  question.next_question = <<-NEXT_QUESTION
+  Proc.new do |user_input|
+    subst 'lucie-vmsetup/confirmation', 'application', user_input	    	
+    'lucie-vmsetup/confirmation'
+  end
+  NEXT_QUESTION
 end
 
 # ------------------------- 設定情報の確認
@@ -216,16 +415,15 @@ end
 template( 'lucie-vmsetup/confirmation' ) do |template|
   template.template_type = NoteTemplate
   template.short_description_ja = '設定情報の確認'
-  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  template.extended_description_ja = <<-DESCRIPTION_JA
   設定情報を確認します。
-   o 使用する VM 台数 : #{num_nodes}台
-   o ネットワークへの接続 : ○○
-   o ホスト名/IP アドレス ○○
-   o メモリサイズ : ○○
-   o ハードディスクサイズ : ○○
-   o VM の種類 : ○○
-   o ディストリビューションの種類 : ○○
-   o 追加パッケージ : ○○
+   o 使用する VM 台数 : ${num_nodes}台
+   o ネットワークへの接続 : ${use_network}
+   o メモリサイズ : ${memory_size}MB
+   o ハードディスクサイズ : ${harddisk_size}GB
+   o VM の種類 : ${vm_type}
+   o ディストリビューションの種類 : ${distro}
+   o 追加パッケージ : ${application}
   DESCRIPTION_JA
 end
 

@@ -12,23 +12,16 @@ require 'test/unit'
 
 class TC_Task_Default < Test::Unit::TestCase
   public
-  def test_total_task_size
-    assert_equal 1, tasks.size, "default 以外にも Task が定義されている"
-  end
-  
-  public
   def test_default_task_defined
-    assert_equal "default", tasks[0].name, "タスクの名前が正しくない"
-    assert_equal ["make_installer_template"], tasks[0].prerequisites, "Prerequisites が正しくない"
+    assert_equal ["make_installer_template"], default_task.prerequisites, "Prerequisites が正しくない"
   end
   
   private
-  def tasks
-    _tasks = []
+  def default_task
     ObjectSpace.each_object( Task ) do |each|
-      _tasks << each
+      return each if each.name == "default"
     end
-    return _tasks
+    fail "default タスクが定義されていない"
   end
 end
 

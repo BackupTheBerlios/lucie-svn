@@ -167,6 +167,8 @@ DPkg
       sh %{chroot #{@dir} apt-get install lucie-client}
       sh %{chroot #{@dir} cp -p /usr/share/lucie/etc/dhclient.conf /etc/dhcp3/}
       sh %{cp -Rpv /etc/lucie/* #{nfsroot('etc/lucie')}}
+      sh %{chroot #{@dir} cp -p /usr/lib/lucie/dhclient-script /etc/dhcp3/}      
+      sh %{chroot #{@dir} cp -p /usr/lib/lucie/dhclient-perl /sbin/}      
     end
     
     private
@@ -212,7 +214,7 @@ exit 0
     
     private
     def dpkg_divert( fileNameString )
-      sh %{LC_ALL=C chroot #{@dir} dpkg-divert --quiet --package lucie --add --rename #{fileNameString}}
+      sh %{LC_ALL=C chroot #{@dir} dpkg-divert --quiet --package lucie-client --add --rename #{fileNameString}}
     end
     
     private

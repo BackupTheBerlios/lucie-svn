@@ -59,7 +59,6 @@ sh %{hwdetect}
 puts "Partitioning local harddisks"
 sh %{[ ! -s #{$diskvar} ] && setup_harddisks -f /etc/lucie/partition -d -X > #{File.join( $logdir, 'format.log' )} 2>&1}
 
-
 # ------------------------- task mountdisks.
 
 fstab = File.join( $logdir, 'fstab' )
@@ -70,7 +69,6 @@ swaplist.each do |each|
   sh %{swapon #{each} && echo "Enable swap device #{each}"}
 end
 sh %{mount2dir /tmp/target #{fstab}}
-
 
 # ------------------------- task extrbase.
 
@@ -145,13 +143,20 @@ sh %{chroot /tmp/target dpkg --update-avail /tmp/dumpavail}
 rm_f '/tmp/target/tmp/dumpavail'
 
 # ------------------------- task instsoft
+
 ENV['DEBIAN_FRONTEND']='noninteractive'
 classes = Dir.entries('/etc/lucie/package') - ['.', '..'] # FIXME
-# sh %{classes="#{classes.join(' ')}" install_packages}
+sh %{classes="#{classes.join(' ')}" install_packages}
 
 # ------------------------- task configure
 
+# classes = Dir.entries('/etc/lucie/script') - ['.', '..'] # FIXME
+kernel_package = (Dir.entries('/etc/lucie/kernel') - ['.', '..']).first # FIXME
+classes = ['DEFAULT']
+sh %{classes="#{classes.join(' ')}" cfclasses="#{classes.join('.')}" kernel_package="#{kernel_package}" rootpw="#{installer.root_password}" fai-do-scripts -L /tmp/lucie /etc/lucie/script}
+
 # ------------------------- task finish
+
 # show some local information
 sh %{ifconfig}
 sh %{df}
@@ -167,12 +172,11 @@ end
   sh %{[ -f /tmp/target/#{each}.distrib.dpkg-new ] && mv /tmp/target/#{each}.distrib.dpkg-new /tmp/target/#{each}} rescue nil
 end
 
-# ------------------------- task chboot
-
 # ------------------------- task lucieend
 
 puts "Press <RETURN> to reboot."
 STDIN.gets
+exit # DEBUG
 puts %{Rebooting #{hostname} now}
 Dir.chdir('/')
 sh %{sync}

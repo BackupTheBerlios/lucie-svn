@@ -86,6 +86,7 @@ module Lucie
         nfsroot.installer_base = File.join( File.join( @commandline_options.installer_base_dir, installer.name ), 
           "#{installer.distribution}_#{installer.distribution_version}.tgz" )
       end
+      return Task[installer.name]
     end
     
     private

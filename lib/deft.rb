@@ -108,6 +108,11 @@ class DeftApp
       help
       exit( 0 )
     end
+    if @command_line_options.run
+      ENV['DEBCONF_DEBUG'] = '.*'
+      require @command_line_options.run
+      exec "/usr/share/debconf/frontend #{$0} configure"
+    end
     if @command_line_options.emulate
       next_question = Question::QUESTIONS[@command_line_options.emulate].next_question
       case next_question

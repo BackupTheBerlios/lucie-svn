@@ -9,6 +9,13 @@
 require 'socket'
 require 'English'
 
+resource = { '#nodes upperbound' => 64,
+             'HDD size upperbound' => 4,
+             'memory size upperbound' => 640,
+             'vm' => 'xen, colinux, vmware',
+             'distro' => 'Debian (woody), Debian (sarge), redhat7,3'
+           }
+
 port = (ARGV[0] || 5555).to_i
 lucievmd = TCPServer.open( 'localhost', port )
 addr = lucievmd.addr
@@ -20,9 +27,11 @@ loop do
   print( socket, " is acepted\n" )
   while socket.gets
     case $LAST_READ_LINE
-    when /^GET (.*)$/
-      puts $1
-    end  
+    when /^GET (.*)$/ && resource[$1]
+      socket.puts '0 ' + resource[$1]
+    else
+      socket.puts "10 unknown variable #{$1}"
+    end
   end
   print( socket, "is gone\n" )
   socket.close

@@ -114,20 +114,6 @@ class DeftApp
   private
   def run
     backend = Tempfile.new( 'deft' )
-    backend.print <<-BACKEND
-#!/usr/bin/ruby
-require 'deft/debconf-context'
-require '#{@command_line_options.run}'
-
-capb  'backup'
-title 'Deft'
-debconf_context = Deft::DebconfContext.new  
-loop do 
-  rc = debconf_context.transit
-  exit 0 if rc.nil?
-end
-      BACKEND
-    backend.close
     
     require @command_line_options.run
     File.open( backend.path + '.templates', 'w+' ) do |file|
@@ -135,7 +121,30 @@ end
         file.puts NKF.nkf( '-e', each.to_s )
         file.puts 
       end
-    end 
+    end
+
+    backend.print <<-BACKEND
+#!/usr/bin/ruby
+require 'deft/debconf-context'
+require '#{@command_line_options.run}'
+
+capb  'backup'
+title 'Deft'
+    BACKEND
+    Deft::Question.questions.each do |each|
+      unless each.name == each.template.name
+        backend.puts "register '#{each.template.name}', '#{each.name}'"
+      end
+    end
+    backend.print <<-BACKEND
+debconf_context = Deft::DebconfContext.new  
+loop do 
+  rc = debconf_context.transit
+  exit 0 if rc.nil?
+end
+      BACKEND
+    backend.close
+ 
     ENV['DEBCONF_DEBUG'] = '.*'
     FileUtils.chmod( 0755, backend.path )    
     exec "/usr/share/debconf/frontend #{backend.path} #{ARGV.join(' ')}"

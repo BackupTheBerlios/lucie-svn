@@ -171,7 +171,14 @@ end
 
 question( 'lucie-vmsetup/distro' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = 'lucie-vmsetup/application'
+  question.next_question = Proc.new do |input|
+    case input
+    when 'debian (woody)', 'debian (sarge)'
+      'lucie-vmsetup/application'
+    when 'redhat7.3'
+      nil
+    end
+  end
 end
 
 template( 'lucie-vmsetup/application' ) do |template|

@@ -139,7 +139,7 @@ template( 'lucie-vmsetup/vm-type' ) do |template|
   template.short_description_ja = '使用する VM の種類'
   template.extended_description_ja = (<<-DESCRIPTION_JA)
   ジョブ実行に使用する VM 実装の種類を選択してください
-  .
+
   松岡研 PrestoIII クラスタで提供できる VM 実装は 
   'Xen (ケンブリッジ大)', 'colinux (www.colinux.org)', 'vmware (VMware, Inc.)' の 3 種類です。
   それぞれの特徴は以下の通りです。
@@ -212,15 +212,15 @@ template( 'lucie-vmsetup/confirmation' ) do |template|
   template.template_type = NoteTemplate
   template.short_description_ja = '設定情報の確認'
   template.extended_description_ja = (<<-DESCRIPTION_JA)
-設定情報を確認します。
- o 使用する VM 台数 : ○○台
- o ネットワークへの接続 : ○○
- o ホスト名/IP アドレス ○○
- o メモリサイズ : ○○
- o ハードディスクサイズ : ○○
- o VM の種類 : ○○
- o ディストリビューションの種類 : ○○
- o 追加パッケージ : ○○
+  設定情報を確認します。
+   o 使用する VM 台数 : ○○台
+   o ネットワークへの接続 : ○○
+   o ホスト名/IP アドレス ○○
+   o メモリサイズ : ○○
+   o ハードディスクサイズ : ○○
+   o VM の種類 : ○○
+   o ディストリビューションの種類 : ○○
+   o 追加パッケージ : ○○
   DESCRIPTION_JA
 end
 

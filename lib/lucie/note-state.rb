@@ -20,6 +20,9 @@ module Lucie
       go
     end
     
+    #--
+    # FIXME : ¶¬‚³‚ê‚éƒNƒ‰ƒX‚ğ singleton ‚É‚·‚é
+    #++
     def self.marshal( aQuestion )
       state_class_name = aQuestion.name.to_state_class_name
       next_question_state = aQuestion.next_question.to_state_class_name || 'nil'

@@ -15,7 +15,7 @@ require 'test/unit'
 class TC_ConcreteState < Test::Unit::TestCase
   public
   def test_concrete_state
-    assert_equal( 9, Deft::ConcreteState::STATES.size, 'Concrete State ‚Ì”‚ªˆá‚¤' )
+    assert_equal( 9, Deft::ConcreteState.states.size, 'Concrete State ‚Ì”‚ªˆá‚¤' )
   end
   
   public

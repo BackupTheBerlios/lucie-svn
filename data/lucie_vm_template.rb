@@ -134,9 +134,19 @@ end
 
 template( 'lucie-vmsetup/vm-type' ) do |template|
   template.template_type = SelectTemplate
-  template.choices = ['xen', 'umlinux', 'colinux', 'vmware']
+  template.choices = ['xen', 'colinux', 'vmware']
   template.short_description_ja = '使用する VM の種類'
-  template.extended_description_ja = '使用する VM を選択してください'
+  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  ジョブ実行に使用する VM 実装の種類を選択してください
+  .
+  松岡研 PrestoIII クラスタで提供できる VM 実装は 
+  'Xen (ケンブリッジ大)', 'colinux (www.colinux.org)', 'vmware (VMware, Inc.)' の 3 種類です。
+  それぞれの特徴は以下の通りです。
+   o Xen: Disk I/O が比較的高速です。
+   o coLinux: Network I/O が比較的高速です。
+   o vmware: CPU が比較的高速です。
+  ジョブの計算内容に合った VM 実装を選択してください。
+  DESCRIPTION_JA
 end
 
 question( 'lucie-vmsetup/vm-type' ) do |question|

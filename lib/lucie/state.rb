@@ -1,15 +1,19 @@
 #
-# $Id: tc_setup.rb 21 2005-02-01 07:08:41Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 21 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
+
+require 'lucie/time-stamp'
 
 # 状態遷移表から State パターンの各 ConcreteState クラスを生成する。
 #--
 # TODO: 各 ConcreteState は特異オブジェクトにする。
 #++
 class State
+  Lucie::update(%q$Date$)
+  
   PRIORITY_LOW = 'low'.freeze
   PRIORITY_MEDIUM = 'medium'.freeze
   PRIORITY_HIGH = 'high'.freeze

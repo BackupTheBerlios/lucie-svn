@@ -7,15 +7,6 @@
 
 require 'rake'
 
-desc "インストーラのテンプレートを作成する"
-task :installer_template => [:installer_template_message]
-
-if FileTest.directory?($template_lucie_directory)
-  task :installer_template => [:installer_template_message, :kill_old_template_lucie_directory, :create_base]
-else
-  task :installer_template => [:installer_template_message, :create_base]
-end
-
 task :installer_template_message do
   puts "*** STEP 1: Creating a template for Lucie installer images ***"
   puts "A template for Lucie installer images will be created in #{$template_directory}."
@@ -23,32 +14,42 @@ task :installer_template_message do
 end
 
 desc "古い Lucie のテンプレートディレクトリを消去"
-task :kill_old_template_lucie_directory # => [:kill_old_template_lucie_directory_message, :unmount_pts, :cleanup_installer_rootfs] 
+task :kill_old_template_lucie_directory => [:kill_old_template_lucie_directory_message, :unmount_pts, :cleanup_installer_rootfs] 
 
-#
-#task :remove_old_template_lucie_directory_message do
-#  puts "#{$template_directory} already exists. Removing #{$template_directory}."
-#end
-#
-#desc "pts デバイスをアンマウントする"
-#task :unmount_pts do
-#  puts "Unmounting /dev/pts directory..."
-#  sh "umount #{$template_directory}/dev/pts" unless /mswin32\Z/=~ RUBY_PLATFORM
-#  puts "DONE"
-#end
-#
-#task :cleanup_installer_rootfs do
-#  puts "Cleaning up installer template root filesystem..."
-#  if (/mswin32\Z/=~ RUBY_PLATFORM)
-#    # FIXME : Windows のシェルで書く？
-#    # Ruby の API のみで書き、場合わけをなくす？
-#  else 
-#    sh "rm -rf #{$template_directory}/.??* #{$template_directory}/*"
-#    # also remove files NFSROOT/.? but not . and ..
-#    sh "find #{$template_directory} ! -type d -xdev -maxdepth 1 | xargs -r rm -f"
-#  end
-#  puts "DONE"
-#end
+task :kill_old_template_lucie_directory_message do
+  puts "#{$template_directory} already exists. Removing #{$template_directory}."
+end
+
+desc "pts デバイスをアンマウントする"
+task :unmount_pts do
+  unless /mswin32\Z/=~ RUBY_PLATFORM
+    puts "Unmounting /dev/pts directory..."
+    sh "umount #{$template_directory}/dev/pts" 
+    puts "DONE"
+  end
+end
+
+desc "インストーラのテンプレートディレクトリを実際に消去"
+task :cleanup_installer_rootfs do
+  puts "Cleaning up installer template root filesystem..."
+  if (/mswin32\Z/=~ RUBY_PLATFORM)
+    # FIXME : Windows のシェルで書く？
+    # Ruby の API のみで書き、場合わけをなくす？
+  else 
+    sh "rm -rf #{$template_directory}/.??* #{$template_directory}/*"
+    # also remove files NFSROOT/.? but not . and ..
+    sh "find #{$template_directory} ! -type d -xdev -maxdepth 1 | xargs -r rm -f"
+  end
+  puts "DONE"
+end
+
+desc "インストーラのテンプレートを作成する"
+if FileTest.directory?($template_lucie_directory)
+  task :installer_template => [:installer_template_message, :kill_old_template_lucie_directory, :create_base]
+else
+  task :installer_template => [:installer_template_message, :create_base]
+end
+
 #
 #desc "テンプレートの Lucie ディレクトリを作成"
 #directory $template_lucie_directory

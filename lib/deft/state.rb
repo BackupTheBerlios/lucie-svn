@@ -25,6 +25,12 @@ module Deft
     attr_reader :priority
     attr_reader :first_state
     
+    # デバッグ用
+    public
+    def inspect
+      return "#<State: @name=\"#{@name}\", @priority=\"#{@priority}\", @first_state=\"#{@first_state}\">"
+    end
+    
     # 名前、プライオリティ、最初の State であるかどうかをセットし、
     # ConcreteState として登録する。
     public

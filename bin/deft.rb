@@ -1,4 +1,4 @@
-#!c:/ruby/bin/ruby
+#!/usr/bin/ruby
 #
 # $Id: lucie-setup.rb 30 2005-02-03 05:46:43Z takamiya $
 #
@@ -11,7 +11,7 @@ require 'English'
 
 if __FILE__ == $PROGRAM_NAME
   DeftApp.instance.main
-end
+end 
 
 ### Local variables:
 ### mode: Ruby

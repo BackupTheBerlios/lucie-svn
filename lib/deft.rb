@@ -17,7 +17,10 @@ require 'deft/question'
 require 'deft/select-template'
 require 'deft/string-template'
 require 'deft/template'
+require 'fileutils'
 require 'singleton'
+require 'tempfile'
+require 'nkf'
 
 class DeftApp
   include Singleton
@@ -108,16 +111,32 @@ class DeftApp
       help
       exit( 0 )
     end
-    if @command_line_options.run
+    if @command_line_options.run      
+      backend = Tempfile.new( 'deft' )
+      backend.print <<-BACKEND
+require '#{@command_line_options.run}'
+
+capb  'backup'
+title 'Deft'
+debconf_context = DebconfContext.new  
+loop do 
+  rc = debconf_context.transit
+  exit 0 if rc.nil?
+end
+      BACKEND
+      backend.close
+      puts backend.path
+      
       require @command_line_options.run
-      File.open( 'bin/deft.rb.templates', 'w+' ) do |file|
+      File.open( backend.path + '.template', 'w+' ) do |file|
         Deft::Template.templates.each do |each|
-          file.puts each
-          file.puts
+          file.puts NKF.nkf( '-e', each.to_s )
+          file.puts 
         end
-      end
+      end 
       ENV['DEBCONF_DEBUG'] = '.*'
-      exec "/usr/share/debconf/frontend #{$0} configure"
+      FileUtils.chmod( 0755, backend.path )    
+      exec "/usr/share/debconf/frontend #{backend.path} #{ARGV.join(' ')}"
     end
     if @command_line_options.emulate
       next_question = Question::QUESTIONS[@command_line_options.emulate].next_question

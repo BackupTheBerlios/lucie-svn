@@ -13,7 +13,7 @@ require 'test/unit'
 class TC_Task_Default < Test::Unit::TestCase
   public
   def test_default_task_defined
-    assert_equal ["make_installer_template"], default_task.prerequisites, "Prerequisites ‚ª³‚µ‚­‚È‚¢"
+    assert_equal ["installer_template"], default_task.prerequisites, "Prerequisites ‚ª³‚µ‚­‚È‚¢"
   end
   
   private

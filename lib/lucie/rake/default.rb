@@ -7,7 +7,7 @@
 
 require 'rake'
 
-task :default => [:make_installer_template]
+task :default => [:installer_template]
 
 ### Local variables:
 ### mode: Ruby

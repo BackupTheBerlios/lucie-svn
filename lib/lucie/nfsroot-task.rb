@@ -27,6 +27,7 @@ module Rake
   #     nfsroot.distribution_version = "woody"
   #     nfsroot.kernel_version = "2.2.18"
   #     nfsroot.installer_base = "/tmp/presto_cluster/var/tmp/debian_woody.tgz"
+  #     installer_base.root_password = "h29SP9GgVbLHE"
   #   end
   #
   # 作成する InstallerBaseTask にはデフォルトの名前以外に自分の好きな名前を
@@ -38,6 +39,7 @@ module Rake
   #     nfsroot.distribution_version = "woody"
   #     nfsroot.kernel_version = "2.2.18"
   #     nfsroot.installer_base = "/tmp/presto_cluster/var/tmp/debian_woody.tgz"
+  #     installer_base.root_password = "h29SP9GgVbLHE"
   #   end
   #
   #
@@ -49,6 +51,7 @@ module Rake
     attr_accessor :package_server
     attr_accessor :distribution_version
     attr_accessor :kernel_version
+    attr_accessor :root_password
     
     # Nfsroot タスクを作成する。
     public
@@ -57,6 +60,7 @@ module Rake
       @dir = '/var/lib/lucie/nfsroot/'
       @package_server = 'http://www.debian.or.jp/debian'
       @distribution_version = 'stable'
+      @root_password = "h29SP9GgVbLHE"
       yield self if block_given?
       define
     end
@@ -130,6 +134,7 @@ module Rake
     
     private
     def copy_lucie_files
+      sh %{ruby -pi -e "gsub(/^root:x:/, 'root:#{@root_password}:')" #{nfsroot('etc/passwd')}
     end
     
     private

@@ -17,6 +17,7 @@ class TC_State < Test::Unit::TestCase
   public
   def test_marshal_next_nil
     question = Mock.new( '#<Question (Mock)>' )
+    question.__next( :backup ) do false end
     question.__next( :next_question ) do nil end
     question.__next( :state_class_name ) do 'Deft::State::LucieVmsetup__UseNetwork' end
     
@@ -27,6 +28,8 @@ class TC_State < Test::Unit::TestCase
     current_state = Mock.new( '#<ConcreteState (Mock)>' )
     current_state.__next( :priority ) do Deft::Question::PRIORITY_MEDIUM end
     current_state.__next( :name ) do 'lucie-vmsetup/use-network' end
+    debconf_context.__next( :current_state ) do current_state end
+    debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state= ) do |next_state| 
@@ -60,6 +63,7 @@ class TC_State < Test::Unit::TestCase
   public
   def test_marshal_next_string   
     question = Mock.new( '#<Question (Mock)>' )
+    question.__next( :backup ) do false end
     question.__next( :next_question ) do 'lucie-vmsetup/next' end 
     question.__next( :next_question ) do 'lucie-vmsetup/next' end 
     question.__next( :state_class_name ) do 'Deft::State::LucieVmsetup__UseNetwork' end  
@@ -72,6 +76,8 @@ class TC_State < Test::Unit::TestCase
     current_state = Mock.new( '#<ConcreteState (Mock)>' )
     current_state.__next( :priority ) do Deft::Question::PRIORITY_MEDIUM end
     current_state.__next( :name ) do 'lucie-vmsetup/use-network' end
+    debconf_context.__next( :current_state ) do current_state end
+    debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state= ) do |next_state| 
@@ -105,6 +111,7 @@ class TC_State < Test::Unit::TestCase
   public
   def test_marshal_next_hash
     question = Mock.new( '#<Question (Mock)>' )
+    question.__next( :backup ) do false end
     question.__next( :next_question ) do { 'true' => 'lucie-vmsetup/true', 'false' => 'lucie-vmsetup/false' } end  
     question.__next( :next_question ) do { 'true' => 'lucie-vmsetup/true', 'false' => 'lucie-vmsetup/false' } end 
     question.__next( :next_question ) do { 'true' => 'lucie-vmsetup/true', 'false' => 'lucie-vmsetup/false' } end 
@@ -119,6 +126,8 @@ class TC_State < Test::Unit::TestCase
     current_state.__next( :priority ) do Deft::Question::PRIORITY_MEDIUM end
     current_state.__next( :name ) do 'lucie-vmsetup/use-network' end    
     debconf_context.__next( :current_state ) do current_state end
+    debconf_context.__next( :current_state ) do current_state end
+    debconf_context.__next( :current_state ) do current_state end 
     debconf_context.__next( :current_state ) do current_state end    
     debconf_context.__next( :current_state= ) do end
     
@@ -164,6 +173,7 @@ class TC_State < Test::Unit::TestCase
     NEXT_QUESTION
     
     question = Mock.new( '#<Question (Mock)>' )
+    question.__next( :backup ) do false end
     question.__next( :next_question ) do next_question end
     question.__next( :next_question ) do next_question end 
     question.__next( :next_question ) do next_question end 
@@ -181,6 +191,8 @@ class TC_State < Test::Unit::TestCase
     # <- 0
     debconf_context = Mock.new( '#<DebconfContext (Mock)>' )
     current_state = Mock.new( '#<ConcreteState (Mock)>' )
+    debconf_context.__next( :current_state ) do current_state end
+    debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state= ) do end

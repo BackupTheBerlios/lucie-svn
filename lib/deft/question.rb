@@ -5,13 +5,7 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'deft/boolean-state'
-require 'deft/multiselect-state'
-require 'deft/note-state'
-require 'deft/password-state'
-require 'deft/select-state'
-require 'deft/string-state'
-require 'deft/text-state'
+require 'deft/state'
 require 'deft/template'
 require 'time-stamp'
 
@@ -92,6 +86,7 @@ module Deft
     def enhance( &block )
       @actions << block if block_given?
       @actions.each { |each| result = each.call( self ) }
+      register_concrete_state
       return self
     end
     
@@ -103,27 +98,18 @@ module Deft
       @name = nameString
     end
            
-    # +self+ を表す concrete state のインスタンスを返す
-    public
-    def concrete_state     
+    private
+    def register_concrete_state
       eval marshal_concrete_state
-      return eval( "#{state_class_name}.instance" ) 
+      concrete_state = eval( "#{state_class_name}.instance" )
+      concrete_state.enhance( name, priority, first_question, marshal_concrete_state )
     end   
     
     # Question から対応する Concrete State を表す Ruby コードを文字列で返す
-    public
-    def marshal_concrete_state
-      return state_type.__send__( :marshal_concrete_state, self )
-    end
-    
     private
-    def state_type
-      return { StringTemplate => Deft::StringState,
-        MultiselectTemplate => Deft::MultiselectState,
-        SelectTemplate => Deft::SelectState,
-        NoteTemplate => Deft::NoteState,
-        BooleanTemplate => Deft::BooleanState }[template.class] 
-    end 
+    def marshal_concrete_state
+      return Deft::State.marshal_concrete_state( self )
+    end
     
     # 質問名 => concrete state クラス名へ変換
     # 

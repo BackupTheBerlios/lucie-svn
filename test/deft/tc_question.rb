@@ -30,8 +30,8 @@ class TC_Question < Test::Unit::TestCase
   public
   def test_template_defined_success
     Deft::Question.clear
-    question( 'TEST QUESTION' )
-    assert Deft::Question.question_defined?( 'TEST QUESTION' ), 'Ž¿–â€–Ú‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢'
+    question( 'TEST/QUESTION' )
+    assert Deft::Question.question_defined?( 'TEST/QUESTION' ), 'Ž¿–â€–Ú‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢'
   end
   
   # lookup ‚ÌƒeƒXƒg
@@ -53,7 +53,7 @@ class TC_Question < Test::Unit::TestCase
   
   public
   def test_enhance
-    question = Deft::Question::new( 'TEST QUESTION' )
+    question = Deft::Question::new( 'TEST/QUESTION' )
     question.enhance do 
       # DO NOTHING
     end

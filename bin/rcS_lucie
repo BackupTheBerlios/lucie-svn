@@ -169,10 +169,14 @@ end
 
 # ------------------------- task chboot
 
-# ------------------------- save_dmsg
+# ------------------------- task lucieend
 
-# ------------------------- task savelog
-
-# ------------------------- task faiend
-
-sleep 10
+puts "Press <RETURN> to reboot."
+STDIN.gets
+puts %{Rebooting #{hostname} now}
+Dir.chdir('/')
+sh %{sync}
+sh %{killall -q sshd} rescue nil
+sh %{umount /tmp/target/proc}
+sh %{umount -ar}
+exec %{reboot -dfi}

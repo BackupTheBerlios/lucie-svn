@@ -9,6 +9,33 @@ require 'rake'
 require 'rake/tasklib'
 
 module Rake
+  #
+  # インストーラの NFSROOT をビルドするタスクを生成する。
+  #
+  # NfsrootTask は次のターゲットを作成する:
+  #
+  # [<b><em>nfsroot</em></b>]
+  #   Nfsroot タスクのメインタスク
+  # [<b><em>:clobber_nfsroot</em></b>]
+  #   すべての NFSROOT 関連ファイルを消去する。
+  #   このターゲットは自動的にメインの clobber ターゲットに追加される
+  #
+  # 例:
+  #   NfsrootTask.new do |nfsroot|
+  #     nfsroot.dir = "tmp"
+  #     nfsroot.installer_base = "/tmp/presto_cluster/var/tmp/debian_woody.tgz"
+  #   end
+  #
+  # 作成する InstallerBaseTask にはデフォルトの名前以外に自分の好きな名前を
+  # つけることもできる。
+  #
+  #   NfsrootTask.new( :presto_installer ) do |nfsroot|
+  #     nfsroot.dir = "tmp"
+  #     nfsroot.installer_base = "/tmp/presto_cluster/var/tmp/debian_woody.tgz"
+  #   end
+  #
+  #
+  #
   class NfsrootTask < TaskLib
     attr_accessor :name
     attr_accessor :dir
@@ -20,6 +47,7 @@ module Rake
       @name = name
       @dir = '/var/lib/lucie/nfsroot/'
       yield self if block_given?
+      @top_dir = File.join( @dir, name.to_s )
       define
     end
     
@@ -28,18 +56,17 @@ module Rake
       desc "Build the nfsroot filesytem using #{installer_base}"
       task @name
       
-      
       desc "Remove the nfsroot filesystem"
       task paste("clobber_", @name) do
-        sh %{umount #{File.join( @dir, 'dev/pts' )} 1>/dev/null 2>&1} rescue nil
-        sh %{rm -rf #{File.join( @dir, '.??*' )} #{File.join( @dir, '*' )}} rescue nil
-        sh %{find #{@dir} ! -type d -xdev -maxdepth 1 | xargs -r rm -f} 
+        sh %{umount #{nfsroot( 'dev/pts' )} 1>/dev/null 2>&1} rescue nil
+        sh %{rm -rf #{nfsroot( '.??*' )} #{nfsroot( '*' )}} rescue nil
+        sh %{find #{@top_dir} ! -type d -xdev -maxdepth 1 | xargs -r rm -f} 
       end
       
-      directory @dir
+      directory @top_dir
       task @name => nfsroot_target
       
-      file nfsroot_target => [paste("clobber_", @name), @dir] do
+      file nfsroot_target => [paste("clobber_", @name), @top_dir] do
         extract_installer_base
         save_all_packages_list
         hoax_some_packages
@@ -72,7 +99,7 @@ module Rake
     
     private
     def nfsroot( filePathName )
-      return File.join( @dir, filePathName )
+      return File.join( @top_dir, filePathName )
     end
     
     private
@@ -89,27 +116,27 @@ module Rake
     
     private
     def extract_installer_base
-      sh %{tar -C #{@dir} -xzf #{installer_base}}
+      sh %{tar -C #{@top_dir} -xzf #{installer_base}}
     end
     
     private
     def upgrade
-      cp '/etc/resolv.conf', File.join( @dir, 'etc/resolv.conf' ), {:preserve => true }
-      cp '/etc/resolv.conf', File.join( @dir, 'etc/resolv.conf-lucieserver' ), {:preserve => true }
-      File.open( File.join( @dir, 'etc/apt/apt.conf' ), 'w+' ) do |file|
+      cp '/etc/resolv.conf', nfsroot( 'etc/resolv.conf' ), {:preserve => true }
+      cp '/etc/resolv.conf', nfsroot( 'etc/resolv.conf-lucieserver' ), {:preserve => true }
+      File.open( nfsroot( 'etc/apt/apt.conf' ), 'w+' ) do |file|
         file.puts 'APT::Cache-Limit "100000000";'
       end
-      sh %{chroot #{@dir} apt-get update}
-      sh %{chroot #{@dir} apt-get -fyu install}
-      sh %{chroot #{@dir} apt-get check}
-      rm_rf File.join( @dir, 'etc/apm' )
-      sh %{mount -t proc /proc #{File.join( @dir, 'proc' )}} rescue nil
+      sh %{chroot #{@top_dir} apt-get update}
+      sh %{chroot #{@top_dir} apt-get -fyu install}
+      sh %{chroot #{@top_dir} apt-get check}
+      rm_rf nfsroot( 'etc/apm' )
+      sh %{mount -t proc /proc #{nfsroot( 'proc' )}} rescue nil
 
       dpkg_divert '/etc/init.d/rcS' rescue nil
       dpkg_divert '/sbin/start-stop-daemon' rescue nil
       dpkg_divert '/sbin/discover-modprobe' rescue nil
       
-      File.open( File.join( @dir, 'sbin/lucie-start-stop-daemon' ), 'w+' ) do |file|
+      File.open( nfsroot( 'sbin/lucie-start-stop-daemon' ), 'w+' ) do |file|
         file.puts <<-START_STOP_DAEMON
 for opt in "$@" ; do
     case "$opt" in
@@ -124,47 +151,47 @@ done
 exit 0
         START_STOP_DAEMON
       end
-      sh %{chmod +x #{File.join( @dir, 'sbin/lucie-start-stop-daemon' )}}
-      ln_sf '/sbin/lucie-start-stop-daemon', File.join( @dir, 'sbin/start-stop-daemon' )
-      sh %{chroot #{@dir} apt-get -y dist-upgrade}
+      sh %{chmod +x #{nfsroot( 'sbin/lucie-start-stop-daemon' )}}
+      ln_sf '/sbin/lucie-start-stop-daemon', nfsroot( 'sbin/start-stop-daemon' )
+      sh %{chroot #{@top_dir} apt-get -y dist-upgrade}
     end
     
     private
     def dpkg_divert( fileNameString )
-      sh %{LC_ALL=C chroot #{@dir} dpkg-divert --quiet --package lucie --add --rename #{fileNameString}}
+      sh %{LC_ALL=C chroot #{@top_dir} dpkg-divert --quiet --package lucie --add --rename #{fileNameString}}
     end
     
     private
     def save_all_packages_list
-      sh %{chroot #{@dir} dpkg --get-selections | egrep 'install$' | awk '{print $1}' > #{File.join( @dir, 'var/tmp/base-packages.list' )}}
+      sh %{chroot #{@top_dir} dpkg --get-selections | egrep 'install$' | awk '{print $1}' > #{nfsroot( 'var/tmp/base-packages.list' )}}
     end
     
     # hoaks some packages
     # liloconfig, dump and raidtool2 need these files
     private
     def hoax_some_packages
-      File.open( File.join( @dir, 'etc/fstab' ), 'w+' ) do |file|
+      File.open( nfsroot( 'etc/fstab' ), 'w+' ) do |file|
         file.puts "#UNCONFIGURED FSTAB FOR BASE SYSTEM"
       end
-      touch File.join( @dir, 'etc/raidtab' )
-      mkdir_p File.join( @dir, 'lib/modules/2.2.18' ) # FIXME: kernel version = '2.2.18'
-      touch File.join( @dir, 'lib/modules/2.2.18/modules.dep' )
-      File.open( File.join( @dir, 'etc/default/ntp-servers' ), 'w+' ) do |file|
+      touch nfsroot( 'etc/raidtab' )
+      mkdir_p nfsroot( 'lib/modules/2.2.18' ) # FIXME: kernel version = '2.2.18'
+      touch nfsroot( 'lib/modules/2.2.18/modules.dep' )
+      File.open( nfsroot( 'etc/default/ntp-servers' ), 'w+' ) do |file|
         file.puts 'NTPSERVERS=""'
       end
       
-      mkdir File.join( @dir, 'var/state' ) rescue nil
-      cp '/etc/apt/sources.list', File.join( @dir, 'etc/apt/sources.list' )
-      cp '/etc/apt/preferences',  File.join( @dir, 'etc/apt/preferences' ) rescue nil
+      mkdir nfsroot( 'var/state' ) rescue nil
+      cp '/etc/apt/sources.list', nfsroot( 'etc/apt/sources.list' )
+      cp '/etc/apt/preferences',  nfsroot( 'etc/apt/preferences' ) rescue nil
       
-      File.open( File.join( @dir, 'etc/hosts' ), 'w+' ) do |file|
+      File.open( nfsroot( 'etc/hosts' ), 'w+' ) do |file|
         file.puts "127.0.0.1 localhost"
       end         
     end
     
     private
     def nfsroot_target
-      return File.join( @dir + 'lucie/timestamp' )
+      return nfsroot( 'lucie/timestamp' )
     end
   end
 end

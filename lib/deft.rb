@@ -109,8 +109,14 @@ class DeftApp
       exit( 0 )
     end
     if @command_line_options.run
-      ENV['DEBCONF_DEBUG'] = '.*'
       require @command_line_options.run
+      File.open( 'bin/deft.rb.templates', 'w+' ) do |file|
+        Deft::Template.templates.each do |each|
+          file.puts each
+          file.puts
+        end
+      end
+      ENV['DEBCONF_DEBUG'] = '.*'
       exec "/usr/share/debconf/frontend #{$0} configure"
     end
     if @command_line_options.emulate

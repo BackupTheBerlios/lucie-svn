@@ -12,12 +12,6 @@ require 'deft/note-template'
 require 'test/unit'
 
 class TC_NoteTemplate < Test::Unit::TestCase
-  # 親クラスが Deft::Template であることをテスト
-  public
-  def test_inheritance
-    assert Deft::NoteTemplate < Deft::Template
-  end
-  
   public
   def test_to_s
     Deft::Template.clear

@@ -13,7 +13,7 @@ module Lucie
 
   # All the definitions of class or module in the Lucie distribution
   # should include something like this:
-  #  update(%q$LastChangedDate: 2005-01-19 15:32:24 +0900 (Wed, 19 Jan 2005) $)
+  #  update(%q$LastChangedDate$)
   # at the top of its {module,class} definition.
   # 
   # This statement updates Lucie.svn_date, which is accessible from
@@ -27,7 +27,7 @@ module Lucie
   #
   #  Module Lucie
   #   class FooBar
-  #    update(%q$LastChangedDate: 2005-01-19 15:32:24 +0900 (Wed, 19 Jan 2005) $)
+  #    update(%q$LastChangedDate$)
   #       ...
   #
   #   end
@@ -57,7 +57,7 @@ module Lucie
   end
   module_function :svn_date
 
-  update(%q$LastChangedDate: 2005-01-19 15:32:24 +0900 (Wed, 19 Jan 2005) $)
+  update(%q$LastChangedDate$)
 end
 
 ### Local variables:

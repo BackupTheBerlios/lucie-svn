@@ -11,11 +11,6 @@ require 'lmp/specification'
 require 'test/unit'
 
 class TC_Specification < Test::Unit::TestCase
-  
-  public
-  def setup    
-  end
-  
   # デフォルトで登録されている required attributes を確認
   # 最初に実行しないとデフォルトが以降のテストで消されてしまうので、test00 としておく。
   public

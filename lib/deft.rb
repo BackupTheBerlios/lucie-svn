@@ -123,9 +123,6 @@ class DeftApp
 require 'deft/debconf-context'
 require '#{@command_line_options.run}'
 
-STDOUT.sync = true
-STDIN.sync = true
-
 capb  'backup'
 title 'Deft'
 debconf_context = Deft::DebconfContext.new  

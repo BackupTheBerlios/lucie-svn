@@ -12,7 +12,7 @@ include Deft
 # ------------------------- エラー表示用テンプレート/質問 
 
 def error_backup( shortMessageString, longMessageString )
-  subst 'lucie-vmsetup/error-backup', 'short_error_message', shortMessageStrin
+  subst 'lucie-vmsetup/error-backup', 'short_error_message', shortMessageString
   subst 'lucie-vmsetup/error-backup', 'extended_error_message', longMessageString
   return 'lucie-vmsetup/error-backup'
 end

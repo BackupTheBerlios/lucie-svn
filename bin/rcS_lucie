@@ -50,16 +50,18 @@ sh %{mount -o remount,noatime,ro /dev/root /}
 sh %{cat /proc/kmsg >/dev/tty4 &}
 sh %{dmesg > #{File.join($logdir, 'dmesg.log')}}
 
-## task install
+# ------------------------- task install.
 
 sh %{hwdetect}
 
-# task partition
+# ------------------------- task partition.
+
 puts "Partitioning local harddisks"
 sh %{[ ! -s #{$diskvar} ] && setup_harddisks -f #{File.join( '/etc/lucie', $installer_name, 'partition')} -d -X > #{File.join( $logdir, 'format.log' )} 2>&1}
 
 
-# task mountdisks
+# ------------------------- task mountdisks.
+
 fstab = File.join( $logdir, 'fstab' )
 raise "No #{fstab} created." unless FileTest.exists?(fstab)
 # mount swap space
@@ -69,7 +71,9 @@ swaplist.each do |each|
 end
 sh %{mount2dir /tmp/target #{fstab}}
 
-# task extrbase
+
+# ------------------------- task extrbase.
+
 require '/etc/lucie/resource.rb'
 require 'lucie/config'
 
@@ -81,8 +85,65 @@ sh %{gzip -dc #{base_tgz} | tar -C /tmp/target -xpf -}
 sh %{[ -f /tmp/target/etc/fstab ] && mv /tmp/target/etc/fstab /tmp/target/etc/fstab.old}
 cp fstab, '/tmp/target/etc/fstab', :preserve => true
 
-# task mirror
-# task updatebase
+# ------------------------- task updatebase.
+
+# ftp and http needs resolv.conf in chroot environment, /etc/hosts is useful
+# think about using fcopy for these two files
+sh %{[ -f /tmp/etc/resolv.conf ] && cp /tmp/etc/resolv.conf /tmp/target/etc} rescue nil
+sh %{[ -f /etc/hosts ] && cp /etc/hosts /tmp/target/etc}
+
+# set hostname in /tmp/target
+hostname = `hostname`.chomp
+ip_address = Lucie::Config::Host[hostname].address
+domain = installer.dhcp_server.domain_name
+
+sh %{echo -e "#{ip_address}\t#{hostname}.#{domain} #{hostname}" >>/tmp/target/etc/hosts}
+sh %{echo #{hostname} >/tmp/target/etc/hostname}
+sh %{cp /etc/apt/* /tmp/target/etc/apt/ || true}
+
+File.open( '/tmp/target/etc/apt/sources.list', 'w+' ) do |file|
+  file.puts "deb #{installer.package_server.uri} #{installer.distribution_version} main contrib non-free"
+  file.puts "deb #{installer.package_server.uri}-non-US #{installer.distribution_version}/non-US main contrib non-free"
+end            
+
+# some packages must access /proc even in chroot environment
+sh %{mount -t proc proc /tmp/target/proc}
+
+# if libc is upgraded init u is called in chroot environment and
+# then init will eat up much cpu time
+def add_divert( fname )
+  diverted = File.join('/tmp/target', fname)
+  sh %{chroot /tmp/target dpkg-divert --package lucie-client --rename --add #{fname}}
+  File.open( diverted, 'w+' ) do |file|
+    file.print <<-EOF
+#! /bin/sh
+# diversion of #{fname} crated by Lucie
+exit 0
+    EOF
+  end 
+  sh %{chmod a+rx #{diverted}}
+end
+
+add_divert '/sbin/init'
+add_divert '/usr/sbin/liloconfig'
+add_divert '/usr/sbin/invoke-rc.d'
+
+# fake some more programs
+add_divert '/etc/init.d/nis'
+add_divert '/sbin/start-stop-daemon'
+cp '/sbin/start-stop-daemon', '/tmp/target/sbin/start-stop-daemon'
+
+sh %{chroot /tmp/target apt-get update}
+rc = system %{chroot /tmp/target apt-get check}
+sh %{chroot /tmp/target/ apt-get -f -y install </dev/null} unless rc
+rc = system %{chroot /tmp/target/ dpkg -C}
+sh %{yes '' | chroot /tmp/target dpkg --configure -a} unless rc
+sh %{chroot /tmp/target apt-get -f -y dist-upgrade </dev/null}
+# update dpkg info which packages are available
+sh %{chroot /tmp/target apt-cache dumpavail > /tmp/target/tmp/dumpavail}
+sh %{chroot /tmp/target dpkg --update-avail /tmp/dumpavail}
+rm_f '/tmp/target/tmp/dumpavail'
+
 # task instsoft
 # task configure
 # task finish

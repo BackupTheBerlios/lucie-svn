@@ -299,7 +299,6 @@ exit 0
       File.open( nfsroot( 'etc/apt/sources.list' ), 'w+' ) do |file|
         file.puts "deb #{@package_server} #{@distribution_version} main contrib non-free"
         file.puts "deb #{@package_server}-non-US #{@distribution_version}/non-US main contrib non-free"
-        file.puts "deb http://deb.ruby-lang.org/debian #{@distribution_version} main"
         file.puts "# lucie-client package"
         file.puts "deb http://lucie.sourceforge.net/packages/lucie-client/sarge/ ./"
       end            
@@ -307,7 +306,6 @@ exit 0
       File.open( nfsroot( 'etc/hosts' ), 'w+' ) do |file|
         file.puts "127.0.0.1 localhost"
         file.puts "66.35.250.209 lucie.sourceforge.net"
-        file.puts "210.251.121.210 deb.ruby-lang.org"
       end   
       cp '/etc/apt/preferences',  nfsroot( 'etc/apt/preferences' ), sh_option rescue nil      
     end

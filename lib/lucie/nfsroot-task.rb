@@ -193,7 +193,6 @@ exit 0
       File.open( nfsroot( 'etc/apt/sources.list' ), 'w+' ) do |file|
         file.puts "deb #{@package_server} #{@distribution_version} main contrib non-free"
         file.puts "deb #{@package_server}-non-US #{@distribution_version}/non-US main contrib non-free"
-        file.puts "deb http://security.debian.org/ #{@distribution_version}/updates main contrib"
       end            
       File.open( nfsroot( 'etc/hosts' ), 'w+' ) do |file|
         file.puts "127.0.0.1 localhost"

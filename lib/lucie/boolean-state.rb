@@ -21,10 +21,13 @@ module Lucie
     def initialize( aQuestion )
       @question = aQuestion
     end
-    
+
+    #--
+    # TODO : State ÉNÉâÉXÇ…à¯Ç´è„Ç∞ÇÈ    
+    #++      
     public
     def transit( aDebconfContext )
-      input @priority, @question
+      input @question.priority, @question.name
       go
     end
 
@@ -36,7 +39,8 @@ module Lucie
       class #{aQuestion.name.to_state_class_name} < Lucie::BooleanState
         public
         def transit( aDebconfContext )
-          aDebconfContext.current_state = aDebconfContext::STATES[@question.next_question[get( '#{aQuestion.name}' )]]
+          super aDebconfContext
+          aDebconfContext.current_state = DebconfContext::STATES[@question.next_question[get( '#{aQuestion.name}' )]]
         end
       end
       CLASS_DEFINITION

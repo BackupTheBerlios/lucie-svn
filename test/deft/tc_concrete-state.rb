@@ -54,7 +54,7 @@ class TC_ConcreteState < Test::Unit::TestCase
   private
   def define_templates_and_questions
     template( 'TEST/TEMPLATE1' ) do |template|
-      template.template_type = Deft::NoteTemplate
+      template.template_type = 'note'
       template.short_description_ja = 'テストテンプレート１'
       template.extended_description_ja = (<<-DESCRIPTION_JA)
       テストテンプレート１です。
@@ -67,7 +67,7 @@ class TC_ConcreteState < Test::Unit::TestCase
     end
     
     template( 'TEST/TEMPLATE2' ) do |template|
-      template.template_type = Deft::NoteTemplate
+      template.template_type = 'note'
       template.short_description_ja = 'テストテンプレート２'
       template.extended_description_ja = (<<-DESCRIPTION_JA)
       テストテンプレート２です。
@@ -79,7 +79,7 @@ class TC_ConcreteState < Test::Unit::TestCase
     end
     
     template( 'TEST/TEMPLATE3' ) do |template|
-      template.template_type = Deft::NoteTemplate
+      template.template_type = 'note'
       template.short_description_ja = 'テストテンプレート３'
       template.extended_description_ja = (<<-DESCRIPTION_JA)
       テストテンプレート３です。

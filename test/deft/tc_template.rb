@@ -18,6 +18,11 @@ class TC_Template < Test::Unit::TestCase
   end
   
   public
+  def setup
+    Deft::Template.clear
+  end
+  
+  public
   def test_templates
     template1 = template( 'TEST/TEMPLATE#1' )
     template2 = template( 'TEST/TEMPLATE#2' )
@@ -40,12 +45,6 @@ class TC_Template < Test::Unit::TestCase
     template( 'TEST TEMPLATE' )
     assert( Deft::Template.template_defined?( 'TEST TEMPLATE' ),
             'テンプレートが登録されていない' )
-  end
-  
-  public
-  def test_template
-    assert_kind_of( Deft::Template, template( 'LUCIE/OVERVIEW' ),
-                    'template() の返り値の型が違う' )
   end
   
   # 未知のテンプレートを lookup し、新しいテンプレートができることを確認

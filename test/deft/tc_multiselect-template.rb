@@ -13,32 +13,42 @@ require 'test/unit'
 
 class TC_MultiselectTemplate < Test::Unit::TestCase
   public
-  def test_to_s
+  def setup
     Deft::Template.clear
-    template( 'TEST/MULTISELECT-TEMPLATE' ) do |template|
-      template.template_type = Deft::MultiselectTemplate
-      template.choices = ['CHOICE #1', 'CHOICE #1', 'CHOICE #3']
+  end
+  
+  public
+  def teardown
+    Deft::Template.clear
+  end
+  
+  public
+  def test_to_s
+    template = template( 'TEST/MULTISELECT-TEMPLATE' ) do |template|
+      template.template_type = 'multiselect'
+      template.choices = 'CHOICE #1, CHOICE #1, CHOICE #3'
       template.default = 'CHOICE #1'
       template.short_description = 'This is a short description'
-      template.extended_description = (<<-DESCRIPTION)      
-      This is a long description
-      
-      the abobe is a null line
-      DESCRIPTION
+      template.extended_description = 'This is a extended description'
       template.short_description_ja = 'これは短いデスクリプションです'
-      template.extended_description_ja = (<<-DESCRIPTION_JA)
-      これは長いデスクリプションです
-      
-      上は空行です
-      DESCRIPTION_JA
+      template.extended_description_ja = 'これは長いデスクリプションです'
     end
-    assert /^Template:(.*)^Type:(.*)^Choices:(.*)^Default:(.*)^Description:(.*)^Description-ja:(.*)/m=~ Deft::Template['TEST/MULTISELECT-TEMPLATE'].to_s
-    assert_match /TEST\/MULTISELECT-TEMPLATE/, $1, 'Template: の値がおかしい'
-    assert_match /multiselect/, $2, 'Type: の値がおかしい'
-    assert_match /CHOICE #1, CHOICE #1, CHOICE #3/, $3, 'Choices: の値がおかしい'
-    assert_match /CHOICE #1/, $4, 'Default: の値がおかしい'
-    assert_match /This is a short description.*This is a long description.*the abobe is a null line/m, $5, 'Description: の値がおかしい'
-    assert_match /これは短いデスクリプションです.*これは長いデスクリプションです.*上は空行です/m, $6, 'Description-ja: の値がおかしい'
+    assert_equal( 'TEST/MULTISELECT-TEMPLATE', template.name,
+                  'name アトリビュートの値が正しくない' )
+    assert_equal( 'multiselect', template.template_type,
+                  'template_type アトリビュートの値が正しくない' )
+    assert_equal( 'CHOICE #1, CHOICE #1, CHOICE #3', template.choices,
+                  'choices アトリビュートの値が正しくない' )
+    assert_equal( 'CHOICE #1', template.default,
+                  'default アトリビュートの値が正しくない' )
+    assert_equal( 'This is a short description', template.short_description,
+                  'short_description アトリビュートの値が正しくない' )
+    assert_equal( 'This is a extended description', template.extended_description,
+                  'extended_description アトリビュートの値が正しくない' ) 
+    assert_equal( 'これは短いデスクリプションです', template.short_description_ja,
+                  'short_description_ja アトリビュートの値が正しくない' ) 
+    assert_equal( 'これは長いデスクリプションです', template.extended_description_ja,
+                  'extended_description_ja アトリビュートの値が正しくない' ) 
   end
 end
 

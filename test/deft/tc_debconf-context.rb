@@ -18,10 +18,10 @@ class TC_DebconfContext < Test::Unit::TestCase
     Deft::Question.clear       
     
     template('TEST/TEMPLATE1') do |template|
-      template.template_type = Deft::NoteTemplate
+      template.template_type = 'note'
     end
     template('TEST/TEMPLATE2') do |template|
-      template.template_type = Deft::NoteTemplate
+      template.template_type = 'note'
     end
     
     question('TEST/TEMPLATE1') do |question|

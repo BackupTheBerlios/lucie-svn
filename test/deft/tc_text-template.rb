@@ -13,28 +13,36 @@ require 'test/unit'
 
 class TC_TextTemplate < Test::Unit::TestCase
   public
-  def test_to_s
+  def setup
     Deft::Template.clear
-    template( 'TEST/TEXT-TEMPLATE' ) do |template|
-      template.template_type = Deft::TextTemplate
+  end
+  
+  public
+  def teardown
+    Deft::Template.clear
+  end
+  
+  public
+  def test_register 
+    template = template( 'TEST/TEXT-TEMPLATE' ) do |template|
+      template.template_type = 'text'
       template.short_description = 'This is a short description'
-      template.extended_description = (<<-DESCRIPTION)      
-      This is a long description
-      
-      the abobe is a null line
-      DESCRIPTION
+      template.extended_description = 'This is a extended description'      
       template.short_description_ja = 'これは短いデスクリプションです'
-      template.extended_description_ja = (<<-DESCRIPTION_JA)      
-      これは長いデスクリプションです
-      
-      上は空行です
-      DESCRIPTION_JA
-    end
-    assert /^Template:(.*)^Type:(.*)^Description:(.*)^Description-ja:(.*)/m=~ Deft::Template['TEST/TEXT-TEMPLATE'].to_s
-    assert_match /TEST\/TEXT-TEMPLATE/, $1, 'Template: の値がおかしい'
-    assert_match /text/, $2, 'Type: の値がおかしい'
-    assert_match /This is a short description.*This is a long description.*the abobe is a null line/m, $3, 'Description: の値がおかしい'
-    assert_match /これは短いデスクリプションです.*これは長いデスクリプションです.*上は空行です/m, $4, 'Description-ja: の値がおかしい'
+      template.extended_description_ja = 'これは長いデスクリプションです'
+    end    
+    assert_equal( 'TEST/TEXT-TEMPLATE', template.name,
+                  'name アトリビュートの値が正しくない' )
+    assert_equal( 'text', template.template_type,
+                  'template_type アトリビュートの値が正しくない' )
+    assert_equal( 'This is a short description', template.short_description,
+                  'short_description アトリビュートの値が正しくない' )
+    assert_equal( 'This is a extended description', template.extended_description,
+                  'extended_description アトリビュートの値が正しくない' ) 
+    assert_equal( 'これは短いデスクリプションです', template.short_description_ja,
+                  'short_description_ja アトリビュートの値が正しくない' ) 
+    assert_equal( 'これは長いデスクリプションです', template.extended_description_ja,
+                  'extended_description_ja アトリビュートの値が正しくない' )   
   end
 end
 

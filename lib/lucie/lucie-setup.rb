@@ -40,29 +40,30 @@ module Lucie
       begin
         installer_base_task.invoke
         nfsroot_task.invoke
-        umount_dirs
         puts "lucie-setup finished."
       rescue Exception => ex
         puts "lucie-setup aborted!"
         puts ex.message
+        $trace = true # TODO : implement --trace option
         if $trace
           puts ex.backtrace.join("\n")
-        else
-          puts ex.backtrace.find { |str| str =~ /#{@rakefile}/ } || ""
         end
         exit(1)
+      ensure
+        umount_dirs
       end
       return nil
     end
     
     private
     def umount_dirs
-      sh %{LC_ALL=C chroot #{nfsroot_dir} dpkg-divert --package lucie --rename --remove /sbin/discover-modprobe} rescue nil
-      sh %{umount #{File.join(nfsroot_dir, 'proc')}} rescue nil
-      sh %{umount #{File.join(nfsroot_dir, 'dev/pts')}} rescue nil 
-      sh %{mount | grep "on #{nfsroot_dir} " || true}     
+      sh_option = {:verbose => @commandline_options.verbose}
+      sh %{LC_ALL=C chroot #{nfsroot_dir} dpkg-divert --package lucie --rename --remove /sbin/discover-modprobe}, sh_option rescue nil
+      sh %{umount #{File.join(nfsroot_dir, 'proc')}}, sh_option rescue nil
+      sh %{umount #{File.join(nfsroot_dir, 'dev/pts')}}, sh_option rescue nil 
+      sh %{mount | grep "on #{nfsroot_dir} " || true}, sh_option     
     end
-    
+
     private
     def i_am_root
       return true if (/mswin32\Z/=~ RUBY_PLATFORM)

@@ -38,6 +38,8 @@ end
       return <<-CHANGELOG
 #{aSpecification.name} (#{aSpecification.version}) stable; urgency=low
 
+  * Version #{aSpecification.version}.
+
  -- #{aSpecification.maintainer}  #{DateTime.now.strftime('%a, %e %b %Y %X %Z')}
       CHANGELOG
     end
@@ -75,7 +77,7 @@ This package is #{packageNameString} Lucie Meta Package.
     # (LMP ビルドディレクトリ)/debian/rules のテンプレート文字列を返す
     public
     def rules( packageNameString )
-      return <<-RULES
+      return (<<-RULES).tabify(4)
 #!/usr/bin/make -f
 # -*- makefile -*-
 

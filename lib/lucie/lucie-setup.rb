@@ -29,6 +29,10 @@ module Lucie
     # lucie-setup のメインルーチンを起動
     public
     def main
+      unless i_am_root
+        $stderr.puts "Run this program as root."
+        exit(9)
+      end
       do_option
       begin
         tasks = collect_tasks
@@ -45,6 +49,12 @@ module Lucie
         exit(1)
       end
       return nil
+    end
+    
+    private
+    def i_am_root
+      return true if (/mswin32\Z/=~ RUBY_PLATFORM)
+      return (not (ENV['USER'] != 'root'))
     end
     
     #--

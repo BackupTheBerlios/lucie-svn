@@ -14,9 +14,17 @@ module Lucie
   update(%q$Date$)
   
   class StringState < State
+    #--
+    # TODO : State ƒNƒ‰ƒX‚Éˆø‚«ã‚°‚é    
+    #++  
+    public
+    def initialize( aQuestion )
+      @question = aQuestion
+    end
+    
     public
     def transit( aDebconfContext )
-      input @priority, @question
+      input @question.priority, @question.name
       go
     end
     

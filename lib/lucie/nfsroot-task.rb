@@ -77,14 +77,14 @@ module Rake
       task @name => nfsroot_target
       
       file nfsroot_target => [paste("clobber_", @name), @dir] do
-        extract_installer_base
-        save_all_packages_list
+        extract_installer_base        
         hoax_some_packages
         upgrade
         add_additional_packages
         copy_lucie_files
         set_timezone
         make_symlinks
+        save_all_packages_list
       end
     end
     
@@ -195,12 +195,11 @@ exit 0
         file.puts "deb #{@package_server} #{@distribution_version} main contrib non-free"
         file.puts "deb #{@package_server}-non-US #{@distribution_version}/non-US main contrib non-free"
         file.puts "deb http://security.debian.org/ #{@distribution_version}/updates main contrib"
-      end
-      cp '/etc/apt/preferences',  nfsroot( 'etc/apt/preferences' ) rescue nil
-      
+      end            
       File.open( nfsroot( 'etc/hosts' ), 'w+' ) do |file|
         file.puts "127.0.0.1 localhost"
-      end         
+      end   
+      cp '/etc/apt/preferences',  nfsroot( 'etc/apt/preferences' ) rescue nil      
     end
     
     private

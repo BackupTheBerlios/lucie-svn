@@ -13,18 +13,16 @@ require 'deft/select-state'
 require 'deft/string-state'
 require 'deft/text-state'
 require 'deft/template'
-require 'lucie/time-stamp'
+require 'time-stamp'
 
 # 新しい質問項目を登録する
 def question( nameString, &block )
   return Deft::Question.define_question( nameString, &block )
 end
 
+update(%q$LastChangedDate$)
+
 module Deft
-  
-  # FIXME : update を Deft モジュールに移動
-  Lucie.update(%q$LastChangedDate$)
-  
   # Debconf の質問項目を表現するクラス
   class Question
     # Question の '名前' => インスタンス の Hash

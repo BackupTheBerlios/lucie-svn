@@ -49,7 +49,8 @@ module Deft
        
     # ŽŸ‚Ì State ‚É‘JˆÚ‚·‚é
     public
-    def transit( aDebconfContext )   
+    def transit( aDebconfContext )
+      fset aDebconfContext.current_state.name, 'seen', 'false'   
       input aDebconfContext.current_state.priority, aDebconfContext.current_state.name
       rc = go
       aDebconfContext.backup if rc == 30 

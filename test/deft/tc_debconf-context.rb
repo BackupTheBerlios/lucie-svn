@@ -41,12 +41,16 @@ class TC_DebconfContext < Test::Unit::TestCase
   def test_transit
     $stdout_mock = Mock.new( '[STDOUT]' )
     $stdout_mock.__next( :print ) do |output| 
+      assert_equal( "FSET TEST/TEMPLATE1 seen false\n", output )
+    end
+    $stdout_mock.__next( :print ) do |output| 
       assert_equal( "INPUT medium TEST/TEMPLATE1\n", output )
     end
     $stdout_mock.__next( :print ) do |output|
       assert_equal( "GO\n", output )
     end
     $stdin_mock = Mock.new( '[STDIN]' )
+    $stdin_mock.__next( :gets ) do '0 TRUE' end
     $stdin_mock.__next( :gets ) do '0 TRUE' end
     $stdin_mock.__next( :gets ) do '0 TRUE' end
     
@@ -69,6 +73,9 @@ class TC_DebconfContext < Test::Unit::TestCase
   def test_backup
     $stdout_mock = Mock.new( '#<STDOUT>' )
     $stdout_mock.__next( :print ) do |output| 
+      assert_equal( "FSET TEST/TEMPLATE1 seen false\n", output )
+    end
+    $stdout_mock.__next( :print ) do |output| 
       assert_equal( "INPUT medium TEST/TEMPLATE1\n", output )
     end
     $stdout_mock.__next( :print ) do |output|
@@ -77,6 +84,7 @@ class TC_DebconfContext < Test::Unit::TestCase
     $stdin_mock = Mock.new( '#<STDIN>' )
     $stdin_mock.__next( :gets ) do '0 TRUE' end
     $stdin_mock.__next( :gets ) do '0 TRUE' end    
+    $stdin_mock.__next( :gets ) do '0 TRUE' end  
     
     first_state = @debconf_context.current_state
     @debconf_context.transit

@@ -26,8 +26,10 @@ class TC_State < Test::Unit::TestCase
     
     debconf_context = Mock.new( '#<DebconfContext (Mock)>' )
     current_state = Mock.new( '#<ConcreteState (Mock)>' )
+    current_state.__next( :name ) do 'lucie-vmsetup/use-network' end
     current_state.__next( :priority ) do Deft::Question::PRIORITY_MEDIUM end
     current_state.__next( :name ) do 'lucie-vmsetup/use-network' end
+    debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
@@ -41,13 +43,17 @@ class TC_State < Test::Unit::TestCase
     # -> GO\n
     # <- 0
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
-    $stdin_mock = Mock.new( '#<STDIN (Mock)>' )    
+    $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
+    $stdout_mock.__next( :print ) do |command| 
+      assert_equal( "FSET lucie-vmsetup/use-network seen false\n", command )
+    end    
     $stdout_mock.__next( :print ) do |command| 
       assert_equal( "INPUT medium lucie-vmsetup/use-network\n", command )
     end
     $stdout_mock.__next( :print ) do |command| 
       assert_equal( "GO\n", command )
     end
+    $stdin_mock.__next( :gets ) do '0' end
     $stdin_mock.__next( :gets ) do '0' end
     $stdin_mock.__next( :gets ) do '0' end
     
@@ -74,8 +80,10 @@ class TC_State < Test::Unit::TestCase
 
     debconf_context = Mock.new( '#<DebconfContext (Mock)>' )
     current_state = Mock.new( '#<ConcreteState (Mock)>' )
+    current_state.__next( :name ) do 'lucie-vmsetup/use-network' end
     current_state.__next( :priority ) do Deft::Question::PRIORITY_MEDIUM end
     current_state.__next( :name ) do 'lucie-vmsetup/use-network' end
+    debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
@@ -90,13 +98,17 @@ class TC_State < Test::Unit::TestCase
     # -> GO\n
     # <- 0
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
-    $stdin_mock = Mock.new( '#<STDIN (Mock)>' )    
+    $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
+    $stdout_mock.__next( :print ) do |command| 
+      assert_equal( "FSET lucie-vmsetup/use-network seen false\n", command )
+    end    
     $stdout_mock.__next( :print ) do |command| 
       assert_equal( "INPUT medium lucie-vmsetup/use-network\n", command )
     end
     $stdout_mock.__next( :print ) do |command| 
       assert_equal( "GO\n", command )
     end
+    $stdin_mock.__next( :gets ) do '0' end
     $stdin_mock.__next( :gets ) do '0' end
     $stdin_mock.__next( :gets ) do '0' end
 
@@ -123,12 +135,14 @@ class TC_State < Test::Unit::TestCase
     
     debconf_context = Mock.new( '#<DebconfContext (Mock)>' )
     current_state = Mock.new( '#<ConcreteState (Mock)>' )
+    current_state.__next( :name ) do 'lucie-vmsetup/use-network' end 
     current_state.__next( :priority ) do Deft::Question::PRIORITY_MEDIUM end
     current_state.__next( :name ) do 'lucie-vmsetup/use-network' end    
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end 
-    debconf_context.__next( :current_state ) do current_state end    
+    debconf_context.__next( :current_state ) do current_state end  
+    debconf_context.__next( :current_state ) do current_state end   
     debconf_context.__next( :current_state= ) do end
     
     # -> INPUT medium lucie-vmsetup/use-network\n
@@ -138,7 +152,10 @@ class TC_State < Test::Unit::TestCase
     # -> GET lucie-vmsetup/use-network\n
     # <- 0 true
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
-    $stdin_mock = Mock.new( '#<STDIN (Mock)>' )    
+    $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
+    $stdout_mock.__next( :print ) do |command| 
+      assert_equal( "FSET lucie-vmsetup/use-network seen false\n", command )
+    end    
     $stdout_mock.__next( :print ) do |command| 
       assert_equal( "INPUT medium lucie-vmsetup/use-network\n", command )
     end
@@ -148,6 +165,7 @@ class TC_State < Test::Unit::TestCase
     $stdout_mock.__next( :print ) do |command| 
       assert_equal( "GET lucie-vmsetup/use-network\n", command )
     end
+    $stdin_mock.__next( :gets ) do '0' end
     $stdin_mock.__next( :gets ) do '0' end
     $stdin_mock.__next( :gets ) do '0' end
     $stdin_mock.__next( :gets ) do '0' end
@@ -195,13 +213,18 @@ class TC_State < Test::Unit::TestCase
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state ) do current_state end
+    debconf_context.__next( :current_state ) do current_state end
     debconf_context.__next( :current_state= ) do end
+    current_state.__next( :name ) do 'lucie-vmsetup/use-network' end
     current_state.__next( :priority ) do Deft::Question::PRIORITY_MEDIUM end
     current_state.__next( :name ) do 'lucie-vmsetup/use-network' end
     
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
-    
+
+    $stdout_mock.__next( :print ) do |command| 
+      assert_equal( "FSET lucie-vmsetup/use-network seen false\n", command )
+    end    
     $stdout_mock.__next( :print ) do |command| 
       assert_equal( "INPUT medium lucie-vmsetup/use-network\n", command )
     end
@@ -211,6 +234,7 @@ class TC_State < Test::Unit::TestCase
         $stdout_mock.__next( :print ) do |command| 
       assert_equal( "GET lucie-vmsetup/use-network\n", command )
     end
+    $stdin_mock.__next( :gets ) do '0' end
     $stdin_mock.__next( :gets ) do '0' end
     $stdin_mock.__next( :gets ) do '0' end
     $stdin_mock.__next( :gets ) do '0' end

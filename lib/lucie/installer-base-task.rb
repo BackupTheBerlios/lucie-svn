@@ -99,7 +99,7 @@ module Rake
               STDERR.print ' ' * line_length, "\r"
               STDERR.print line, "\r"
               line_length = line.length
-              logger.info line
+              logger.debug line
             when /^E: /
               logger.error line 
               raise DebootstrapExecutionError, line

@@ -52,7 +52,7 @@ module Debconf
           raise Error::SyntaxError, responseString
         when 30..99
           ## TODO: needs command specific routines (delegator?)
-          return nil
+          return $1.to_i
         when 100..109
           raise Error::InternalError
         else

@@ -90,7 +90,7 @@ module Rake
         sh %{chroot #{@dir} apt-get clean}
         rm_f File.join(@dir, '/etc/resolv.conf')
         puts "Creating #{installer_base_target}"
-        sh %{tar -l -C #{@dir} -cf - --exclude #{File.join('var/tmp', target_fname} . | gzip > #{installer_base_target}}       
+        sh %{tar -l -C #{@dir} -cf - --exclude #{File.join('var/tmp', target_fname)} . | gzip > #{installer_base_target}}       
       end
     end
     

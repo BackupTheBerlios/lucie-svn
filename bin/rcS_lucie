@@ -5,6 +5,12 @@ require 'rake'
 # create ramdisk
 
 sh %{mount -n -t proc proc /proc}
+
+$logdir = '/tmp/lucie'
+$diskvar = File.join( $logdir, 'disk_var.sh' )
+cmdline = %x(cat /proc/cmdline)
+$installer_name = cmdline[cmdline.index('BOOT_IMAGE')+11..-1].strip
+
 # start devfsd if needed
 if FileTest.chardev?( '/dev/.devfsd' )
   sh %{/sbin/devfsd /dev}
@@ -33,7 +39,6 @@ mkdir '/tmp/var/spool'
 # init
 
 # directory where temporary log files are stored.
-$logdir = '/tmp/lucie'
 mkdir_p '/tmp/lucie'
 
 sh %{grep -q '[[:space:]]sysfs' /proc/filesystems && mount -t sysfs sysfs /sys} rescue nil
@@ -44,5 +49,36 @@ sh %{mount -t devpts devpts /dev/pts}
 sh %{mount -o remount,noatime,ro /dev/root /}
 sh %{cat /proc/kmsg >/dev/tty4 &}
 sh %{dmesg > #{File.join($logdir, 'dmesg.log')}}
+
+## task install
+
+sh %{hwdetect}
+
+# task partition
+puts "Partitioning local harddisks"
+sh %{[ ! -s #{$diskvar} ] && setup_harddisks -f #{File.join( '/etc/lucie', $installer_name, 'partition')} -d -X > #{File.join( $logdir, 'format.log' )} 2>&1}
+
+
+# task mountdisks
+fstab = File.join( $logdir, 'fstab' )
+raise "No #{fstab} created." unless FileTest.exists?(fstab)
+# mount swap space
+swaplist = `source #{$diskvar} && echo $SWAPLIST`.strip.split(' ')
+swaplist.each do |each|
+  sh %{swapon #{each} && echo "Enable swap device #{each}"}
+end
+sh %{mount2dir /tmp/target #{fstab}}
+
+# task extrbase
+# task mirror
+# task updatebase
+# task instsoft
+# task configure
+# task finish
+# task chboot
+# save_dmsg
+# task savelog
+
+# task faiend
 
 sleep 10

@@ -23,6 +23,13 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   
   # コマンドラインオプションのデフォルト値のテスト ###################
   
+  # デフォルトで dryrun オプションがオフであることをテスト
+  public
+  def test_default_dryrun_option_is_false
+    @commandline_options.parse( [] )
+    assert_equal( false, @commandline_options.dryrun, "default value for dryrun option was not set to OFF" )
+  end
+  
   # デフォルトで debug オプションがオフであることをテスト
   public
   def test_default_debug_option_is_false
@@ -80,6 +87,12 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   end
   
   # 実際にコマンドラインオプションをパーズし、値が取得できるかどうかのテスト ##############
+  
+  public
+  def test_parse_dryrun_option
+    @commandline_options.parse( ['--dryrun'] )
+    assert( @commandline_options.dryrun, "couldn't get value for --dryrun option" )
+  end
   
   public
   def test_parse_make_floppy_option

@@ -22,6 +22,8 @@ module Lucie
   class CommandLineOptions
     include Singleton
     
+    # ドライランオプションの ON/OFF
+    attr :dryrun
     # デバッグオプションの ON/OFF
     attr :debug 
     # ヘルプの表示
@@ -44,22 +46,24 @@ module Lucie
     #
     module OptionList
       OPTION_LIST = [
+      [ "--dryrun",         "-n",  nil, \
+          "Do a dry run without executing actions." ],
       [ "--ui-type",        "-u",  "`console' or `gtk'", \
-          "set user interface type." ],
+          "Set user interface type." ],
       [ "--make-floppy",    "-f",  nil, \
-          "make a Lucie boot floppy." ],
+          "Make a Lucie boot floppy." ],
       [ "--installer-name", "-i",  "installer name", \
-          "specify an installer name to setup." ],
+          "Specify an installer name to setup." ],
       [ "--skip-verification", "-s",  nil, \
-          "do not verify user configuration." ],
+          "Do not verify user configuration." ],
       [ "--list-resource",  "-r",   "resource type", \
-          "list up registerd resource objects." ],
+          "List up registerd resource objects." ],
       [ "--debug",          "-D",   nil, \
-          "displays lots on internal stuff." ],
+          "Displays lots on internal stuff." ],
       [ "--help",           "-h",   nil, \
-          "you're looking at it." ],
+          "You're looking at it." ],
       [ "--version",        "-v",   nil, \
-          "display  lucie-setup's version and exit." ],
+          "Display  lucie-setup's version and exit." ],
       ]
       
       # GetoptLong オブジェクトの作成用
@@ -92,6 +96,8 @@ module Lucie
         
         getopt_long.each do |option, argument|
           case option
+          when '--dryrun'
+            @dryrun = true
           when '--make-floppy'
             @make_floppy = true
           when '--ui-type'
@@ -129,6 +135,7 @@ module Lucie
     
     private
     def set_default_options
+      @dryrun = false
       @debug = false
       @help = false
       @installer_name = nil

@@ -30,6 +30,11 @@ Rake::TestTask.new( :test_deft ) do |t|
   t.verbose = true
 end
 
+Rake::TestTask.new( :test_lmp ) do |t|
+  t.test_files = FileList['test/lmp/tc_*.rb']
+  t.verbose = true
+end
+
 # RDoc Tasks -------------------------------------------------------------------
 
 Rake::RDocTask.new( :rdoc ) do |rdoc|

@@ -18,6 +18,7 @@ module LMP
     public
     def build
       FileUtils.mkdir_p( @spec.builddir )
+      packages
       @debian_dir_path = [@spec.builddir, @spec.name, 'debian'].join('/')
       FileUtils.mkdir_p( @debian_dir_path )
       readme_debian
@@ -36,6 +37,15 @@ module LMP
     private
     def debuild
       system( "(cd #{@debian_dir_path}; debuild)" )
+    end
+    
+    # ------------------------- Debian package metadata file generator methods.
+
+    private
+    def packages
+      File.open( [@spec.builddir, @spec.name, 'packages'].join('/'), 'w+' ) do |packages|
+        packages.print @spec.packages
+      end
     end
     
     # ------------------------- Debian package metadata file generator methods.

@@ -16,7 +16,7 @@ task :default => [:test]
 
 desc "Run all the unit tests."
 Rake::TestTask.new( :test ) do |t|
-  t.test_files = FileList['test/tc_setup.rb']
+  t.test_files = FileList['test/tc_setup.rb', 'test/tc_command-line-options.rb']
   t.verbose = true
 end
 

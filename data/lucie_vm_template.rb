@@ -203,6 +203,29 @@ end
 
 question( 'lucie-vmsetup/application' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
+  question.next_question = 'lucie-vmsetup/confirmation'
+end
+
+# ------------------------- 設定情報の確認
+
+template( 'lucie-vmsetup/confirmation' ) do |template|
+  template.template_type = NoteTemplate
+  template.short_description_ja = '設定情報の確認'
+  template.extended_description_ja = (<<-DESCRIPTION_JA)
+設定情報を確認します。
+ o 使用する VM 台数 : ○○台
+ o ネットワークへの接続 : ○○
+ o ホスト名/IP アドレス ○○
+ o メモリサイズ : ○○
+ o ハードディスクサイズ : ○○
+ o VM の種類 : ○○
+ o ディストリビューションの種類 : ○○
+ o 追加パッケージ : ○○
+  DESCRIPTION_JA
+end
+
+question( 'lucie-vmsetup/confirmation' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
 end
 
 # ------------------------- LMP の定義.

@@ -144,6 +144,12 @@ module Lucie
       @hash['Choices'] = choicesArray.join(', ')
     end
     
+    # テンプレートの 'Choices:' を指定します
+    public
+    def choices
+      return @hash['Choices']
+    end
+    
     # テンプレートの 'Description:' を指定します
     def description=( descriptionString )
       @hash['Description'] = descriptionString.unindent_auto
@@ -162,6 +168,16 @@ module Lucie
     # テンプレートの 'Description-ja:' を返します
     def description_ja
       return @hash['Description-ja']
+    end
+    
+    # テンプレートの 'Default:' を指定します
+    def default=( defaultString )
+      @hash['Default'] = defaultString
+    end
+    
+    # テンプレートの 'Default:' を返します
+    def default
+      return @hash['Default']
     end
   end
 end

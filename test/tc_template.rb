@@ -56,6 +56,7 @@ class TC_Template < Test::Unit::TestCase
     template = template( 'TEST/TEMPLATE' ) do |template|
       template.template_type = Lucie::Template::SELECT
       template.choices = ['CHOICE #1', 'CHOICE #2', 'CHOICE #3']
+      template.default = 'CHOICE #1'
       template.description = (<<-DESCRIPTION)
 A Description for Unit Test
       DESCRIPTION
@@ -68,6 +69,9 @@ A Description for Unit Test
     assert_equal Lucie::Template::SELECT, template['Type']
     assert_equal Lucie::Template::SELECT, template.template_type
     assert_equal 'CHOICE #1, CHOICE #2, CHOICE #3', template['Choices']
+    assert_equal 'CHOICE #1, CHOICE #2, CHOICE #3', template.choices
+    assert_equal 'CHOICE #1', template['Default']
+    assert_equal 'CHOICE #1', template.default
     assert_equal "A Description for Unit Test\n", template['Description']
     assert_equal "A Description for Unit Test\n", template.description
     assert_equal "ユニットテスト用の Description\n", template['Description-ja']

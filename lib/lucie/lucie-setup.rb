@@ -31,11 +31,11 @@ module Lucie
     # lucie-setup のメインルーチンを起動
     public
     def main
+      do_option
       unless i_am_root
         $stderr.puts "Run this program as root."
         exit(9)
       end
-      do_option
       begin
         installer_base_task.invoke
       rescue Exception => ex

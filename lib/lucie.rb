@@ -10,6 +10,7 @@
 # License::  GPL2
 
 require 'lucie/template'
+require 'lucie/question'
 require 'lucie/note-template'
 require 'lucie/string-template'
 require 'lucie/boolean-template'

@@ -21,23 +21,23 @@ class TC_SelectTemplate < Test::Unit::TestCase
   public
   def test_to_s
     Lucie::Template.clear
-    template( 'TEST/SELECT-TEMPLATE', Lucie::SelectTemplate ) do |template|
+    template( 'TEST/SELECT-TEMPLATE' ) do |template|
+      template.template_type = Lucie::SelectTemplate
       template.choices = ['CHOICE #1', 'CHOICE #1', 'CHOICE #3']
       template.default = 'CHOICE #1'
-      template.description = (<<-DESCRIPTION)
-      This is a short description
+      template.short_description = 'This is a short description'
+      template.extended_description = (<<-DESCRIPTION)      
       This is a long description
       
       the abobe is a null line
       DESCRIPTION
-      template.description_ja = (<<-DESCRIPTION_JA)
-      これは短いデスクリプションです
+      template.short_description_ja = 'これは短いデスクリプションです'
+      template.extended_description_ja = (<<-DESCRIPTION_JA)      
       これは長いデスクリプションです
       
       上は空行です
       DESCRIPTION_JA
     end
-    
     assert /^Template:(.*)^Type:(.*)^Choices:(.*)^Default:(.*)^Description:(.*)^Description-ja:(.*)/m=~ Lucie::Template['TEST/SELECT-TEMPLATE'].to_s
     assert_match /TEST\/SELECT-TEMPLATE/, $1, 'Template: の値がおかしい'
     assert_match /select/, $2, 'Type: の値がおかしい'

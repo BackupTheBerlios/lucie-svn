@@ -7,14 +7,14 @@
 
 $LOAD_PATH.unshift './lib'
 
+require 'deft/select-state'
 require 'mock'
-require 'lucie/select-state'
 require 'test/unit'
 
 class TC_SelectState < Test::Unit::TestCase
   # 以下のようなクラスをあらわす文字列が返されることを確認
   #
-  #  class LucieVmsetup__UseNetwork < Lucie::BooleanState
+  #  class LucieVmsetup__UseNetwork < Deft::SelectState
   #    public
   #    def transit( aDebconfContext )
   #      super aDebconfContext
@@ -27,8 +27,8 @@ class TC_SelectState < Test::Unit::TestCase
     question.__next( :name ) do || 'lucie-vmsetup/vm-type' end
     question.__next( :next_question ) do || 'lucie-vmsetup/distro' end 
     
-    line = Lucie::SelectState::marshal( question ).split("\n")
-    assert_match /class LucieVmsetup__VmType < Lucie::SelectState/, line[0]
+    line = Deft::SelectState::marshal( question ).split("\n")
+    assert_match /class LucieVmsetup__VmType < Deft::SelectState/, line[0]
     assert_match /public/, line[1]
     assert_match /def transit\( aDebconfContext \)/, line[2]
     assert_match /super aDebconfContext/, line[3]

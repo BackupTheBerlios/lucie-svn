@@ -5,21 +5,20 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'lucie/string'
 require 'lucie/state'
+require 'lucie/string'
 require 'lucie/time-stamp'
 
-module Lucie
+module Deft
   
-  update(%q$Date$)
+  Lucie.update(%q$Date$)
   
+  # select 型テンプレート変数の質問が表示されている状態を表すクラス
   class SelectState < State
-    #--
-    # FIXME : 生成されるクラスを singleton にする
-    #++
+    # Question オブジェクトから対応する SelectState クラスの子クラスをあらわす文字列を返す
     def self.marshal( aQuestion )  
       return ( <<-CLASS_DEFINITION ).unindent_auto
-      class #{aQuestion.name.to_state_class_name} < Lucie::SelectState
+      class #{aQuestion.name.to_state_class_name} < Deft::SelectState
         public
         def transit( aDebconfContext )
           super aDebconfContext

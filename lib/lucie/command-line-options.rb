@@ -33,6 +33,7 @@ module Lucie
     attr :config_dir
     attr :installer_base_dir
     attr :nfsroot_dir
+    attr :verbose
 
     module OptionList # :nodoc:
       OPTION_LIST = [
@@ -50,14 +51,16 @@ module Lucie
           "displays lots on internal stuff." ],
         [ "--help",               "-h",   nil, \
           "you're looking at it." ],
-        [ "--version",            "-v",   nil, \
+        [ "--version",            "-V",   nil, \
           "display  lucie-setup's version and exit." ],
         [ "--config-dir",         "-c",   "directory path", \
           "specify configuration directory path." ],
         [ "--installer-base-dir", "-b",   "directory path", \
           "specify installer base directory path." ],
         [ "--nfsroot-dir",        "-n",   "directory path", \
-          "specify nfsroot directory path." ],        
+          "specify nfsroot directory path." ],
+        [ "--verbose",            "-v",   nil, \
+          "be verbose." ],         
       ]
 
       public
@@ -110,6 +113,8 @@ module Lucie
             @installer_base_dir = argument
           when '--nfsroot-dir'
             @nfsroot_dir = argument
+          when '--verbose'
+            @verbose = true
           end
         end
       ensure
@@ -138,6 +143,7 @@ module Lucie
       @config_dir = '/etc/lucie/'
       @installer_base_dir = '/var/lib/lucie/installer_base'
       @nfsroot_dir = '/var/lib/lucie/nfsroot'
+      @verbose = false
     end
   end
 end

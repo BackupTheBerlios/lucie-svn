@@ -8,6 +8,7 @@
 require 'rake'
 require 'rake/tasklib'
 require 'lucie/logger'
+require 'lucie/command-line-options'
 
 module Rake
   #
@@ -121,7 +122,7 @@ module Rake
 
     private
     def sh_option
-       return {:verbose => false} 
+       return {:verbose => Lucie::CommandLineOptions.instance.verbose} 
     end
     
     private

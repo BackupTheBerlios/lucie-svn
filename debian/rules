@@ -67,8 +67,10 @@ install: build
 	cp conf/dhclient.conf debian/tmp/usr/share/lucie/etc
 
 	# instal sbin/* files.
-	install -d debian/tmp/usr/lib/lucie
 	install -d debian/tmp/sbin
+	mv debian/tmp/usr/sbin/rcS_lucie debian/tmp/sbin
+
+	install -d debian/tmp/usr/lib/lucie
 	mv debian/tmp/usr/sbin/start-stop-daemon debian/tmp/usr/lib/lucie
 	mv debian/tmp/usr/sbin/dhclient-script debian/tmp/usr/lib/lucie
 	mv debian/tmp/usr/sbin/dhclient-perl debian/tmp/usr/lib/lucie

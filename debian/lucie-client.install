@@ -1,4 +1,5 @@
 debian/tmp/etc/lucie
+debian/tmp/sbin/rcS_lucie
 debian/tmp/usr/sbin/ftar
 debian/tmp/usr/sbin/fcopy
 debian/tmp/usr/sbin/install_packages

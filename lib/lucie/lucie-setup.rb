@@ -84,7 +84,7 @@ module Lucie
       Rake::NfsrootTask.new( installer.name ) do |nfsroot|
         nfsroot.dir = File.join( @commandline_options.nfsroot_dir, installer.name )
         nfsroot.installer_base = File.join( File.join( @commandline_options.installer_base_dir, installer.name ), 
-          "#{installer.distribution}_#{installer.distribution_version}.tgz" )
+          'var/tmp', "#{installer.distribution}_#{installer.distribution_version}.tgz" )
       end
       return Task[installer.name]
     end

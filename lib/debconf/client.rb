@@ -38,36 +38,48 @@ module Debconf
       "beginblock", "endblock", "go", "get", "register",
       "unregister", "subst", "previous_module", "fset",
       "fget", "purge", "metaget", "version", "clear"
-      ]
+    ]
 
-    def parse_ret (ret)
+    def parse_ret( ret )
       if /(\d+)( (.*))?/ =~ ret then
         case $1
-          when "0"
-           ret = $3
-          when "10".."19"
-            raise Debconf::Exception::InvalidParametersException
-          when "20".."29"
-            raise Debconf::Error::SyntaxError, ret
-          when "30".."39"
-            ## TODO: needs command specific routines (delegator?)
-            nil
-          else
-            raise Debconf::Exception::UnknownReturnValueException, ret
+        when "0"
+          ret = $3
+        when "10".."19"
+          raise Debconf::Exception::InvalidParametersException
+        when "20".."29"
+          raise Debconf::Error::SyntaxError, ret
+        when "30".."39"
+          ## TODO: needs command specific routines (delegator?)
+          nil
+        else
+          raise Debconf::Exception::UnknownReturnValueException, ret
         end
       else
         raise InternalRubyError
       end
-      ret
+      return ret
     end
 
+    STDOUT.sync = true
+    STDIN.sync  = true
+  
     COMMANDS.each do |command|
       eval(<<-COMMAND_METHOD)
         def #{command} ( *args )
-          STDOUT.print( (\"#{command.upcase} \" + args.join(' ')).rstrip + \"\n\" )
-          parse_ret STDIN.gets.chomp
+          stdout = $stdout_mock ? $stdout_mock : STDOUT
+          stdin  = $stdin_mock  ? $stdin_mock  : STDIN
+          
+          stdout.print( (\"#{command.upcase} \" + args.join(' ')).rstrip + \"\n\" )
+          parse_ret stdin.gets.chomp
         end
       COMMAND_METHOD
     end
   end
 end
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:
+

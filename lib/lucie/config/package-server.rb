@@ -27,6 +27,15 @@ module Lucie
       required_attribute :address
       required_attribute :protocol
       required_attribute :distribution
+      
+      public
+      def to_s
+        if @alias
+          return "#{@name} (#{@alias})"
+        else
+          return name
+        end
+      end
     end
   end
 end

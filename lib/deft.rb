@@ -7,6 +7,7 @@
 
 require 'deft/command-line-options'
 require 'deft/question'
+require 'deft/template'
 require 'singleton'
 
 class DeftApp
@@ -26,7 +27,7 @@ class DeftApp
   # +templateNameString+ で表される Template の RFC-822 による表現を返す
   public
   def template( templateNameString )
-    return Lucie::Template[templateNameString].to_s
+    return Deft::Template[templateNameString].to_s
   end
   
   public
@@ -43,12 +44,18 @@ class DeftApp
   private
   def do_option    
     @command_line_options.parse ARGV.dup
-    if @command_line_options.ruby_code
-      begin
-        puts ruby_code( @command_line_options.ruby_code )
-      rescue Exception => e
-        STDERR.puts e.message
+    begin
+      if @command_line_options.ruby_code        
+        puts ruby_code( @command_line_options.ruby_code )        
       end
+      if @command_line_options.template
+        puts '登録されているテンプレートのリスト:'
+        Deft::Template.templates.each do |each|
+          puts each.name
+        end
+      end
+    rescue Exception => e
+      STDERR.puts e.message
     end
   end
 end

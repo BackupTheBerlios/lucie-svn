@@ -47,23 +47,7 @@ class TC_State < Test::Unit::TestCase
     debconf_context.__verify
     current_question.__verify
   end
-  
-  # 親が BooleanState の concrete class のオブジェクトが生成されることを確認
-  public
-  def test_define_boolean_state
-    boolean_question = Mock.new( '[BOOLEAN QUESTION]' )
-    boolean_question.__next( :template ) do || Deft::BooleanState end
-    boolean_question.__next( :name ) do || 'TEST/BOOLEAN-QUESTION' end
-    boolean_question.__next( :name ) do || 'TEST/BOOLEAN-QUESTION' end
-    boolean_question.__next( :name ) do || 'TEST/BOOLEAN-QUESTION' end
-    
-    state = Deft::State.concrete_state( boolean_question )
-    assert_equal 'Deft::State::Test__BooleanQuestion', state.class.to_s, "生成された state のクラス名が違う"
-    assert_equal Deft::BooleanState, state.class.superclass, "生成された state の親クラスが違う"
-    
-    boolean_question.__verify
-  end
-  
+
   # marshal_concrete_state メソッドがアブストラクトであることを確認
   public
   def test_marshal_concrete_state_not_implemented

@@ -5,12 +5,13 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+require 'lucie/string'
 require 'deft/concrete-state'
 require 'debconf/client'
 require 'time-stamp'
 require 'singleton'
 
-include Debconf::ConfModule
+include Debconf::Client
 
 update(%q$Date$)
 
@@ -57,21 +58,24 @@ module Deft
           def transit( aDebconfContext )
             super aDebconfContext
             aDebconfContext.current_state = nil
+            return nil
           end
         end
         CLASS_DEFINITION
       end
       
-      next_question = eval( aQuestion.next_question ) 
-      case next_question
-      when String
-        current_state = "Deft::ConcreteState[next_question]"
+      case aQuestion.next_question
+      when /\A[\w\-]+\Z/, /\A[\w\-]+\/[\w\-]+\Z/
+        next_question = aQuestion.next_question
+        current_state = "Deft::ConcreteState[#{aQuestion.next_question}]"
       when Hash
+        next_question = aQuestion.next_question.inspect
         current_state = "Deft::ConcreteState[next_question[get('#{aQuestion.name}')]]"
-      when Proc
+      when /Proc\.new/
+        next_question = aQuestion.next_question
         current_state = "Deft::ConcreteState[next_question.call(get('#{aQuestion.name}'))]"
       else
-        raise "Unsupported next_question type: #{next_question.class}"
+        raise "Unsupported next_question: #{aQuestion.next_question}"
       end
       
       return ( <<-CLASS_DEFINITION ).unindent_auto
@@ -84,7 +88,7 @@ module Deft
         
         private
         def next_question
-   #{('return ' + aQuestion.next_question.lstrip.rstrip).indent(6)}
+   #{('return ' + next_question.lstrip.rstrip).indent(6)}
         end
       end
       CLASS_DEFINITION

@@ -24,9 +24,7 @@ module Lucie
       
       required_attribute :name
       required_attribute :alias
-      required_attribute :address
-      required_attribute :protocol
-      required_attribute :distribution
+      required_attribute :uri
     end
   end
 end

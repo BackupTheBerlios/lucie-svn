@@ -21,16 +21,12 @@ class TC_PackageServerDefinition < Test::Unit::TestCase
     pkgserver = Lucie::Config::PackageServer.new do |pkgserver|
       pkgserver.name         = 'debian_mirror'
       pkgserver.alias       = 'Local Debian Repository Mirror'
-      pkgserver.address      = '192.168.1.100'
-      pkgserver.protocol     = 'http'
-      pkgserver.distribution = 'debian'
+      pkgserver.uri          = 'http://192.168.1.100/debian/'
     end
     
     assert_equal( 'debian_mirror', pkgserver.name )
     assert_equal( 'Local Debian Repository Mirror', pkgserver.alias )
-    assert_equal( '192.168.1.100', pkgserver.address )
-    assert_equal( 'http', pkgserver.protocol )
-    assert_equal( 'debian', pkgserver.distribution )
+    assert_equal( 'http://192.168.1.100/debian/', pkgserver.uri )
   end
 end
 

@@ -74,6 +74,14 @@ module Lucie
       
       # ------------------------- Infrastructure class methods.
 
+      # 登録されているリソースを <code>key</code> で探す
+      public
+      def self.[](key)
+        module_eval %-
+          @@list['#{key}']
+        -
+      end
+      
       # 登録されているリソースを返す
       public
       def self.list
@@ -115,7 +123,17 @@ module Lucie
         yield self if block_given?
         register
       end
-
+      
+      # リソースの文字列表現を返す
+      public
+      def to_s
+        if @alias
+          return "#{@name} (#{@alias})"
+        else
+          return name
+        end
+      end
+      
       # すべての属性にデフォルト値をセットする。
       # セットはアクセッサメソッドを通じて行われるため、アクセッサに設定された
       # 特別な処理もあわせて実行される。また、それぞれのインスタンスがたとえば

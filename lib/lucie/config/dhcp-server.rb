@@ -30,15 +30,6 @@ module Lucie
       required_attribute :subnet
       required_attribute :dns
       required_attribute :domain_name
-      
-      public
-      def to_s
-        if @alias
-          return "#{@name} (#{@alias})"
-        else
-          return name
-        end
-      end
     end
   end
 end

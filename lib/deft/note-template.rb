@@ -7,7 +7,7 @@
 
 require 'deft/abstract-template'
 require 'deft/template'
-require 'lucie/time-stamp'
+require 'time-stamp'
 
 update(%q$LastChangedDate$)
 

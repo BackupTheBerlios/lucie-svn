@@ -66,8 +66,15 @@ module Deft
       
       case aQuestion.next_question
       when /\A[\w\-]+\Z/, /\A[\w\-]+\/[\w\-]+\Z/
-        next_question = "'#{aQuestion.next_question}'"
-        current_state = "Deft::ConcreteState['#{aQuestion.next_question}']"
+        return ( <<-CLASS_DEFINITION ).unindent_auto
+        class #{aQuestion.state_class_name} < Deft::State
+          public
+          def transit( aDebconfContext )
+            super aDebconfContext
+            aDebconfContext.current_state = Deft::ConcreteState['#{aQuestion.next_question}']
+          end
+        end
+        CLASS_DEFINITION
       when Hash
         next_question = aQuestion.next_question.inspect
         current_state = "Deft::ConcreteState[next_question[get('#{aQuestion.name}')]]"

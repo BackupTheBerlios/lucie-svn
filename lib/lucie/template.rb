@@ -65,6 +65,45 @@ module Lucie
     def register
       puts "Template #{@name} を登録" if $trace
       @actions.each { |each| result = each.call( self ) }
+      return self
+    end
+    
+    # Template をあらわす String オブジェクトを返します
+    #--
+    # FIXME : Multiselect < Template などのサブクラス化
+    #++
+    public
+    def to_s
+      template_string = "Template: #{name}\n" + "Type: #{template_type}\n"
+      template_string += "Choices: #{choices}\n" if choices
+      
+      if description
+        short_description = description.split("\n")[0]
+        template_string += "Description: #{short_description}\n"
+        template_string += description.split("\n")[1..-1].map do |each|
+          case each
+          when /\A\S*\Z/
+          ' .'
+          else
+          ' ' + each
+          end
+        end.join("\n")
+        template_string += "\n"
+      end
+      
+      if description_ja
+        short_description_ja = description_ja.split("\n")[0]
+        template_string += "Description-ja: #{short_description_ja}\n" 
+        template_string += description_ja.split("\n")[1..-1].map do |each|
+          case each
+          when /\A\s*\Z/
+          ' .'
+          else
+          ' ' + each
+          end
+        end.join("\n")
+        template_string += "\n"
+      end
     end
     
     # 現在登録されている Template をクリアします

@@ -50,6 +50,44 @@ class TC_Template < Test::Unit::TestCase
     assert Lucie::Template.const_defined?( :SELECT ), 'SELECT 定数が定義されていない'
   end
 
+  ###################################################################################################
+  # String への変換のテスト
+  ###################################################################################################
+  
+  # Template オブジェクトの to_s のテスト
+  public
+  def test_to_s
+    Lucie::Template.clear
+    test_template = template( 'TEST/TEMPLATE' ) do |template|
+      template.template_type = Lucie::Template::SELECT
+      template.choices = ['CHOICE #1', 'CHOICE #2', 'CHOICE #3']
+      template.default = 'CHOICE #1'
+      template.description = (<<-DESCRIPTION)
+A Description for Unit Test
+This is a description for Unit Test.
+
+Abobe is null line.
+      DESCRIPTION
+      template.description_ja = (<<-DESCRIPTION_JA)
+ユニットテスト用の Description-ja
+これはユニットテスト用の Description-ja です。
+
+上の行は空行です。
+      DESCRIPTION_JA
+    end.register
+    
+    assert_match /^Template: TEST\/TEMPLATE/,  test_template.to_s
+    assert_match /^Type: SELECT/, test_template.to_s
+    assert_match /^Choices: CHOICE #1, CHOICE #2, CHOICE #3/, test_template.to_s
+    assert_match /^Description: A Description for Unit Test/, test_template.to_s
+    assert_match /^ This is a description for Unit Test./, test_template.to_s
+    assert_match /^ Abobe is null line./, test_template.to_s
+    
+    assert_match /^Description-ja: ユニットテスト用の Description-ja/, test_template.to_s
+    assert_match /^ これはユニットテスト用の Description-ja です。/, test_template.to_s
+    assert_match /^ 上の行は空行です。/, test_template.to_s
+  end
+
   # 登録されているテンプレートが空のときに、
   # template_defined? が nil を返すことを確認
   public

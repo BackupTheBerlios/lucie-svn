@@ -15,9 +15,7 @@ module Deft
   # Debconf による画面遷移を表すクラス
   class DebconfContext   
     # 現在の Concrete State
-    attr_accessor :current_state
-    # 直前の Concrete State
-    attr_reader :last_state
+    attr_reader :current_state
     
     # あたらしい DebconfContext オブジェクトを返す
     public
@@ -33,6 +31,7 @@ module Deft
       @current_state.transit self
     end
 
+    # 直前の Concrete State を返す
     public
     def last_state
       return @state_stack.last

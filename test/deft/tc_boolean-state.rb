@@ -7,8 +7,8 @@
 
 $LOAD_PATH.unshift './lib'
 
-require 'mock'
 require 'deft/boolean-state'
+require 'mock'
 require 'test/unit'
 
 class TC_NoteState < Test::Unit::TestCase

@@ -27,12 +27,6 @@ class TC_Template < Test::Unit::TestCase
     assert Lucie::Template.const_defined?( :MULTISELECT ), 'MULTISELECT 定数が定義されていない'
   end
   
-  # NOTE 定数が定義されていることを確認
-  public
-  def test_const_NOTE_defined
-    assert Lucie::Template.const_defined?( :NOTE ), 'NOTE 定数が定義されていない'
-  end
-  
   # SELECT 定数が定義されていることを確認
   public
   def test_const_SELECT_defined

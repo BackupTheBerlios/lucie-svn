@@ -49,7 +49,6 @@ module Lucie
     def_delegator :@hash, :size
     
     TEMPLATES = {}
-    NOTE = 'NOTE'.freeze
     SELECT = 'SELECT'.freeze
     MULTISELECT = 'MULTISELECT'.freeze
     

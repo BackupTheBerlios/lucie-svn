@@ -10,6 +10,11 @@
 # License::  GPL2
 
 require 'lucie/template'
+require 'lucie/note-template'
+require 'lucie/string-template'
+require 'lucie/boolean-template'
+require 'lucie/select-template'
+require 'lucie/multiselect-template'
 
 ### Local variables:
 ### mode: Ruby

@@ -1,0 +1,6 @@
+PACKAGES install
+kernel-package
+libncurses5-dev
+
+fakeroot
+initrd-tools cloop-src cloop-utils

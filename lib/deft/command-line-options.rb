@@ -18,6 +18,7 @@ module Deft
   class CommandLineOptions
     include Singleton
     
+    attr_reader :run
     attr_reader :input
     attr_reader :help 
     attr_reader :ruby_code
@@ -29,6 +30,8 @@ module Deft
 
     module OptionList
       OPTION_LIST = [
+      [ '--run',            '-R',   'file path', \
+          'run debconf.' ],
       [ '--input',          '-i',   'input string', \
           'emulate users input string.' ],
       [ '--ruby-code',      '-r',   'question name', \
@@ -75,6 +78,8 @@ module Deft
 
         getopt_long.each do |option, argument|
           case option
+          when '--run'
+            @run = argument
           when '--input'
             @input= argument
           when '--emulate'
@@ -104,7 +109,7 @@ module Deft
       ["trace=#{@trace.inspect}", "help=#{@help.inspect}", "emulate=#{@emulate.inspect}",
        "version=#{@version.inspect}", "ruby-code=#{@ruby_code.inspect}",
        "template=#{@template.inspect}", "question=#{@question.inspect}",
-       "input=#{@input.inspect}"].join(', ') + ']'
+       "input=#{@input.inspect}", "run=#{@run.inspect}"].join(', ') + ']'
     end
     
     private

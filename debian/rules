@@ -75,6 +75,10 @@ install: build
 	mv debian/tmp/usr/sbin/dhclient-script debian/tmp/usr/lib/lucie
 	mv debian/tmp/usr/sbin/dhclient-perl debian/tmp/usr/lib/lucie
 
+	# install documents.
+	install -d debian/tmp/usr/share/doc/lucie/example
+	cp -pr doc/example/* debian/tmp/usr/share/doc/lucie/example/
+
 	dh_install
 
 # This single target is used to build all the packages, all at once, or

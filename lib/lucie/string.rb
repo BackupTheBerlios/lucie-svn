@@ -59,6 +59,14 @@ class String
       "\t" * ntabs + ' ' * nspaces
     end
   end
+  
+  # 'pascal_style' => 'PascalStyle' ‚Ì‚æ‚¤‚É•ÏŠ·
+  public
+  def to_pascal_style
+    self.split('_').collect do |each| 
+      each.capitalize 
+    end.join
+  end
 end
 
 ### Local variables:

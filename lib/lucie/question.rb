@@ -21,13 +21,13 @@ module Lucie
   class Question
     QUESTIONS = {}
     # Very trivial items that have defaults that will work in the vast majority of cases.
-    PRIORITY_LOW      = 'LOW'.freeze
+    PRIORITY_LOW      = 'low'.freeze
     # Normal items that have reasonable defaults.
-    PRIORITY_MEDIUM   = 'MEDIUM'.freeze
+    PRIORITY_MEDIUM   = 'medium'.freeze
     # Items that don't have a reasonable default.
-    PRIORITY_HIGH     = 'HIGH'.freeze
+    PRIORITY_HIGH     = 'high'.freeze
     # Items that will probably break the system without user intervention.
-    PRIORITY_CRITICAL = 'CRITICAL'.freeze
+    PRIORITY_CRITICAL = 'critical'.freeze
     
     attr :actions
     attr :name

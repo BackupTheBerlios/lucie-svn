@@ -22,7 +22,7 @@ class TC_Task_Installer_Template < Test::Unit::TestCase
     if FileTest.directory? dummy_template_lucie_directory_path
       Dir.rmdir dummy_template_lucie_directory_path      
     end      
-    $template_lucie_directory_path = Dir.pwd + '/' + dummy_template_lucie_directory_path
+    $template_lucie_directory = Dir.pwd + '/' + dummy_template_lucie_directory_path
     load 'lucie/rake/installer_template.rb'
     
     assert_equal( 2, task( 'installer_template' ).prerequisites.size, 'installer_template タスクの Prerequisites の数が正しくない' )
@@ -37,7 +37,7 @@ class TC_Task_Installer_Template < Test::Unit::TestCase
       unless FileTest.directory? dummy_template_lucie_directory_path
         Dir.mkdir dummy_template_lucie_directory_path        
       end  
-      $template_lucie_directory_path = Dir.pwd + '/' + dummy_template_lucie_directory_path  
+      $template_lucie_directory = Dir.pwd + '/' + dummy_template_lucie_directory_path  
       load 'lucie/rake/installer_template.rb'
       
       assert_equal( 'installer_template_message', task( 'installer_template' ).prerequisites[0], 'installer_template タスクの Prerequisites[0] が正しくない' )

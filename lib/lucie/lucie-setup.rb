@@ -84,6 +84,9 @@ module Lucie
     def do_option
       @commandline_options = CommandLineOptions.instance
       @commandline_options.parse ARGV.dup
+      
+      $template_directory = @commandline_options.template_directory
+      $template_lucie_directory = $template_directory + "/lucie/"
       if @commandline_options.help
         help
         exit

@@ -34,6 +34,7 @@ loop do
         end
       else
         socket.puts "20 syntax error"
+        next
       end
       socket.puts "10 unknown variable"
     end

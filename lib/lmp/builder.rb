@@ -5,105 +5,48 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'fileutils'
+require 'rake'
 
 module LMP
+  # LMP パッケージ作成に必要なファイルの Rake ターゲットの登録、
+  # および LMP パッケージのビルドを行う
   class Builder
+    # パッケージ作成に必要な各ファイルの Rake ターゲットを定義する
     public
-    def initialize( aSpec )
-      @spec = aSpec
+    def initialize( aSpecification )
+      @spec = aSpecification
+      define_file_task( File.join(@spec.builddir, 'packages') )
+      define_file_task( File.join(@spec.builddir, 'debian', 'README.Debian'), :readme )
+      define_file_task( File.join(@spec.builddir, 'debian', 'changelog') )
+      define_file_task( File.join(@spec.builddir, 'debian', 'config') )
+      define_file_task( File.join(@spec.builddir, 'debian', 'control') )
+      define_file_task( File.join(@spec.builddir, 'debian', 'copyright') )
+      define_file_task( File.join(@spec.builddir, 'debian', 'postinst') )
+      define_file_task( File.join(@spec.builddir, 'debian', 'rules') )
+      define_file_task( File.join(@spec.builddir, 'debian', 'templates') )
     end
     
     # Specification を元に LMP をビルドする。
     public
     def build
-      FileUtils.mkdir_p( @spec.builddir )
-      packages
-      @debian_dir_path = [@spec.builddir, @spec.name, 'debian'].join('/')
-      FileUtils.mkdir_p( @debian_dir_path )
-      readme_debian
-      changelog
-      config
-      control
-      copyright
-      postinst
-      rules
-      templates
-      debuild   
-    end
-    
-    # ------------------------- LMP building methods.
-
-    private
-    def debuild
-      system( "(cd #{@debian_dir_path}; debuild)" )
-    end
-    
-    # ------------------------- Debian package metadata file generator methods.
-
-    private
-    def packages
-      File.open( [@spec.builddir, @spec.name, 'packages'].join('/'), 'w+' ) do |packages|
-        packages.print @spec.packages
+      sh "(cd #{@spec.builddir}; debuild)" do |ok, res|
+        if ! ok
+          puts "debuild failed (status = #{res.exitstatus})"
+        end
       end
     end
-    
-    # ------------------------- Debian package metadata file generator methods.
-    
+       
     private
-    def readme_debian
-      File.open( @debian_dir_path + '/README.Debian', 'w+' ) do |readme_debian|
-        readme_debian.print @spec.readme
-      end
-    end
-    
-    private 
-    def changelog      
-      File.open( @debian_dir_path + '/changelog', 'w+' ) do |changelog|
-        changelog.print @spec.changelog
-      end
-    end
-    
-    private
-    def config
-      File.open( @debian_dir_path + '/config', 'w+' ) do |config|
-        config.print @spec.config
-      end
-    end
-    
-    private
-    def control
-      File.open( @debian_dir_path + '/control', 'w+' ) do |control|
-        control.print @spec.control
-      end      
-    end
-    
-    private
-    def copyright
-      File.open( @debian_dir_path + '/copyright', 'w+' ) do |copyright|
-        copyright.print @spec.copyright
+    def define_file_task( fileNameString, attribute=nil )
+      file( fileNameString ) do |task|
+        open( task.name, 'w+' ) do |outfile|
+          if attribute
+            outfile.print( @spec.send(attribute) )
+          else
+            outfile.print( @spec.send(File.basename(fileNameString)) )
+          end
+        end
       end     
-    end
-    
-    private
-    def postinst
-      File.open( @debian_dir_path + '/postinst', 'w+' ) do |postinst|
-        postinst.print @spec.postinst
-      end      
-    end
-    
-    private
-    def rules
-      File.open( @debian_dir_path + '/rules', 'w+' ) do |rules|
-        rules.print @spec.rules
-      end  
-    end
-    
-    private
-    def templates
-      File.open( @debian_dir_path + '/templates', 'w+' ) do |templates|
-        templates.print @spec.templates
-      end  
     end
   end
 end

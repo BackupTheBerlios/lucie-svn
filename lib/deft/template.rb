@@ -5,21 +5,18 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-$KCODE = 'SJIS'
-
 require 'forwardable'
 require 'lucie/string'
-require 'lucie/time-stamp'
+require 'time-stamp'
+
+update(%q$LastChangedDate$)
 
 # 新しいテンプレートを登録します
 def template( nameString, &block )
   return Deft::Template.define_template( nameString, &block )
 end
 
-module Deft
-  
-  Lucie.update(%q$LastChangedDate$)
-  
+module Deft  
   # Debconf 用 templates ファイルを生成する Template を定義します。
   #
   # Example:
@@ -42,7 +39,7 @@ module Deft
   # TODO: substによる動的テンプレート生成 (debconf spec を参照) をサポート
   #++
   class Template
-    extend Forwardable
+    TEMPLATES = {}
     
     attr :name
     attr_accessor :default
@@ -51,12 +48,7 @@ module Deft
     attr_accessor :extended_description
     attr_accessor :short_description_ja
     attr_accessor :extended_description_ja
-    attr_accessor :template_type    
-    
-    def_delegator :@variable, :[]
-    def_delegator :@variable, :size
-    
-    TEMPLATES = {}
+    attr_accessor :template_type        
     
     # テンプレートを名前で探します。見つからない場合には nil を返します
     public
@@ -75,14 +67,7 @@ module Deft
       puts "Template #{@name} (#{@template_type}) を登録" if $trace
       @actions.each { |each| result = each.call( self ) }
       if @template_type
-        _template = @template_type.new( self )
-        _template.template_type = @template_type
-        _template.default = @default
-        _template.choices = @choices
-        _template.short_description = @short_description
-        _template.extended_description = @extended_description
-        _template.short_description_ja = @short_description_ja
-        _template.extended_description_ja = @extended_description_ja        
+        _template = @template_type.new( self )       
         TEMPLATES[@name] = _template      
         return _template
       else
@@ -128,18 +113,6 @@ module Deft
     def enhance( &block )
       @actions << block if block_given?
       return register
-    end
-                  
-    private
-    def format_extended_description( descriptionString )
-      return descriptionString.unindent_auto.split("\n").map do |each|
-        case each
-        when /\A\s*\Z/
-          ' .'
-        else
-          " #{each}"
-        end
-      end.join("\n")
     end
   end
 end

@@ -7,7 +7,7 @@
 
 $LOAD_PATH.unshift './lib'
 
-require 'lucie/boolean-template'
+require 'deft/boolean-template'
 require 'deft/template'
 require 'test/unit'
 

@@ -10,12 +10,15 @@
 # License::  GPL2
 
 require 'deft/boolean-template'
-require 'deft/command-line-options'
 require 'deft/multiselect-template'
 require 'deft/note-template'
-require 'deft/question'
+require 'deft/password-template'
 require 'deft/select-template'
 require 'deft/string-template'
+require 'deft/text-template'
+
+require 'deft/command-line-options'
+require 'deft/question'
 require 'deft/template'
 require 'fileutils'
 require 'singleton'
@@ -56,6 +59,8 @@ class DeftApp
   def main
     begin 
       do_option
+    rescue SystemExit
+      # Do Nothing
     rescue Exception => ex
       puts "deft aborted!"
       puts ex.message
@@ -75,7 +80,7 @@ class DeftApp
     usage
     puts
     puts "Options:"
-    CommandLineOptions::OptionList::OPTION_LIST.each do |long, short, arg, desc|
+    Deft::CommandLineOptions::OptionList::OPTION_LIST.each do |long, short, arg, desc|
       opt = sprintf("%25s", "#{long}, #{short}")
       oparg = sprintf("%-7s", arg)
       print "#{opt} #{oparg}"

@@ -78,8 +78,6 @@ module Lucie
       end.join("\n")
     end
   end
-  
-  BOOLEAN = Lucie::BooleanTemplate
 end
 
 ### Local variables:

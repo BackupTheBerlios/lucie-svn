@@ -21,7 +21,7 @@ class TC_BooleanTemplate < Test::Unit::TestCase
   public
   def test_to_s
     Lucie::Template.clear
-    template( 'TEST/BOOLEAN-TEMPLATE', Lucie::BOOLEAN ) do |template|
+    template( 'TEST/BOOLEAN-TEMPLATE', Lucie::BooleanTemplate ) do |template|
       template.default = 'no'
       template.description = (<<-DESCRIPTION)
       This is a short description
@@ -35,7 +35,7 @@ class TC_BooleanTemplate < Test::Unit::TestCase
       
       ã‚Í‹ós‚Å‚·
       DESCRIPTION_JA
-    end.register
+    end
     
     assert /^Template:(.*)^Type:(.*)^Description:(.*)^Description-ja:(.*)/m=~ Lucie::Template['TEST/BOOLEAN-TEMPLATE'].to_s
     assert_match /TEST\/BOOLEAN-TEMPLATE/, $1, 'Template: ‚Ì’l‚ª‚¨‚©‚µ‚¢'

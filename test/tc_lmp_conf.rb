@@ -17,6 +17,10 @@ class TC_LMP_Conf < Test::Unit::TestCase
     require 'test/lmp_conf/lucie-vm'
   end
   
+  ###################################################################################################
+  # タスク 'lucie-vmsetup/hello' のテスト
+  ###################################################################################################
+  
   # タスク 'lucie-vmsetup/hello' が登録されていることを確認
   public
   def test_template_hello_registered
@@ -53,6 +57,36 @@ Lucie VM のセットアップウィザードへようこそ
     assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/hello' )['Description-ja']
 こんにちは
 Lucie VM のセットアップウィザードへようこそ
+    DESCRIPTION_JA
+  end
+  
+  ###################################################################################################
+  # タスク 'lucie-vmsetup/num-nodes' のテスト
+  ###################################################################################################
+  
+  # タスク 'lucie-vmsetup/num-nodes' が登録されていることを確認
+  public
+  def test_template_num_nodes_registered
+    assert Lucie::Template.template_defined?( 'lucie-vmsetup/num-nodes' )
+  end
+  
+  # タスク 'lucie-vmsetup/num-nodes' の 'Type:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_num_nodes_type
+    assert_equal Template::STRING, Lucie::Template.lookup( 'lucie-vmsetup/num-nodes' ).template_type
+    # assert_equal Template::NOTE, Lucie::Template.lookup( 'lucie-vmsetup/hello' )['Type']
+  end
+  
+  # タスク 'lucie-vmsetup/num-nodes' の 'Description-ja:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_hello_description_ja
+    assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/num-nodes' ).description_ja
+VM ノード台数の選択です
+使用したい VM の台数を入れてください
+    DESCRIPTION_JA
+    assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/num-nodes' )['Description-ja']
+VM ノード台数の選択です
+使用したい VM の台数を入れてください
     DESCRIPTION_JA
   end
 end

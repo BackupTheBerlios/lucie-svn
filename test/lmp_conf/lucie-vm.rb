@@ -21,6 +21,14 @@ Lucie VM のセットアップウィザードへようこそ
   DESCRIPTION_JA
 end.register
 
+template( 'lucie-vmsetup/num-nodes' ) do |template|
+  template.template_type = Template::STRING
+  template.description_ja = (<<-DESCRIPTION_JA)
+VM ノード台数の選択です
+使用したい VM の台数を入れてください
+  DESCRIPTION_JA
+end.register
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

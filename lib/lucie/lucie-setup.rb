@@ -8,6 +8,7 @@
 
 require 'English'
 require 'lucie/config'
+require 'lucie/nfsroot-task'
 require 'lucie/installer-base-task'
 require 'lucie/command-line-options'
 require 'lucie/time-stamp'
@@ -38,6 +39,7 @@ module Lucie
       end
       begin
         installer_base_task.invoke
+        nfsroot_task.invoke
       rescue Exception => ex
         puts "lucie-setup aborted!"
         puts ex.message
@@ -77,15 +79,31 @@ module Lucie
     end
     
     private
+    def nfsroot_task
+      installer = Config::Installer[@commandline_options.installer_name]
+      installer_base_task = Task[installer_base_task_name( installer.name )]
+      Rake::NfsrootTask.new( installer.name ) do |nfsroot|
+        nfsroot.dir = File.join( @commandline_options.nfsroot_dir, installer.name )
+        nfsroot.installer_base = File.join( installer_base_task.dir, 
+          "#{installer_base_task.distribution}_#{installer_base_task.distribution_version}.tgz" )
+      end
+    end
+    
+    private
     def installer_base_task
       installer = Config::Installer[@commandline_options.installer_name]
-      Rake::InstallerBaseTask.new( installer.name ) do |installer_base|
+      Rake::InstallerBaseTask.new( installer_base_task_name( installer.name ) ) do |installer_base|
         installer_base.dir = File.join( @commandline_options.installer_base_dir, installer.name )
         installer_base.mirror = installer.package_server.uri
         installer_base.distribution = installer.distribution
         installer_base.distribution_version = installer.distribution_version
       end
-      return Task[installer.name]
+      return Task[installer_base_task_name( installer.name )]
+    end
+    
+    private 
+    def installer_base_task_name( installerNameString )
+      return installerNameString + '_base'
     end
     
     private

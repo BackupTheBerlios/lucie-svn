@@ -47,7 +47,6 @@ module Rake
       @name = name
       @dir = '/var/lib/lucie/nfsroot/'
       yield self if block_given?
-      @top_dir = File.join( @dir, name.to_s )
       define
     end
     
@@ -60,13 +59,13 @@ module Rake
       task paste("clobber_", @name) do
         sh %{umount #{nfsroot( 'dev/pts' )} 1>/dev/null 2>&1} rescue nil
         sh %{rm -rf #{nfsroot( '.??*' )} #{nfsroot( '*' )}} rescue nil
-        sh %{find #{@top_dir} ! -type d -xdev -maxdepth 1 | xargs -r rm -f} 
+        sh %{find #{@dir} ! -type d -xdev -maxdepth 1 | xargs -r rm -f} 
       end
       
-      directory @top_dir
+      directory @dir
       task @name => nfsroot_target
       
-      file nfsroot_target => [paste("clobber_", @name), @top_dir] do
+      file nfsroot_target => [paste("clobber_", @name), @dir] do
         extract_installer_base
         save_all_packages_list
         hoax_some_packages
@@ -99,7 +98,7 @@ module Rake
     
     private
     def nfsroot( filePathName )
-      return File.join( @top_dir, filePathName )
+      return File.join( @dir, filePathName )
     end
     
     private
@@ -116,7 +115,7 @@ module Rake
     
     private
     def extract_installer_base
-      sh %{tar -C #{@top_dir} -xzf #{installer_base}}
+      sh %{tar -C #{@dir} -xzf #{installer_base}}
     end
     
     private
@@ -126,9 +125,9 @@ module Rake
       File.open( nfsroot( 'etc/apt/apt.conf' ), 'w+' ) do |file|
         file.puts 'APT::Cache-Limit "100000000";'
       end
-      sh %{chroot #{@top_dir} apt-get update}
-      sh %{chroot #{@top_dir} apt-get -fyu install}
-      sh %{chroot #{@top_dir} apt-get check}
+      sh %{chroot #{@dir} apt-get update}
+      sh %{chroot #{@dir} apt-get -fyu install}
+      sh %{chroot #{@dir} apt-get check}
       rm_rf nfsroot( 'etc/apm' )
       sh %{mount -t proc /proc #{nfsroot( 'proc' )}} rescue nil
 
@@ -153,17 +152,17 @@ exit 0
       end
       sh %{chmod +x #{nfsroot( 'sbin/lucie-start-stop-daemon' )}}
       ln_sf '/sbin/lucie-start-stop-daemon', nfsroot( 'sbin/start-stop-daemon' )
-      sh %{chroot #{@top_dir} apt-get -y dist-upgrade}
+      sh %{chroot #{@dir} apt-get -y dist-upgrade}
     end
     
     private
     def dpkg_divert( fileNameString )
-      sh %{LC_ALL=C chroot #{@top_dir} dpkg-divert --quiet --package lucie --add --rename #{fileNameString}}
+      sh %{LC_ALL=C chroot #{@dir} dpkg-divert --quiet --package lucie --add --rename #{fileNameString}}
     end
     
     private
     def save_all_packages_list
-      sh %{chroot #{@top_dir} dpkg --get-selections | egrep 'install$' | awk '{print $1}' > #{nfsroot( 'var/tmp/base-packages.list' )}}
+      sh %{chroot #{@dir} dpkg --get-selections | egrep 'install$' | awk '{print $1}' > #{nfsroot( 'var/tmp/base-packages.list' )}}
     end
     
     # hoaks some packages

@@ -152,6 +152,10 @@ end
 
   private
   def emulate
+    $stdin_mock = STDIN.dup
+    def $stdin_mock.gets
+      return "0"
+    end
     debconf_definition, question_name = @command_line_options.emulate.gsub(/\s/, '').split(',')
     require debconf_definition
     next_question = Deft::Question::QUESTIONS[question_name].next_question

@@ -42,16 +42,16 @@ module Deft
     # “ü—Í‚É‘Î‚·‚éŽŸ‚ÌŽ¿–â‚ð•Ô‚·
     public
     def next_question( inputString )
-      next_question = aDebconfContext.current_question.next_question
-      case next_question
+      _next_question = current_question.next_question
+      case _next_question
       when String
-        return next_question
+        return _next_question
       when Hash
-        return next_question[ inputString ]
+        return _next_question[ inputString ]
       when Proc
-        return next_question.call( inputString )
+        return _next_question.call( inputString )
       else
-        "This shouldn't happen"
+        raise "This shouldn't happen"
       end
     end
     

@@ -8,6 +8,28 @@
 require 'rake'
 require 'rake/tasklib'
 
+require 'open3'
+require 'log4r'
+include Log4r
+
+$lucie_log = Logger.new( 'lucie-setup' )
+$lucie_log.outputters = FileOutputter.new( 'lucie-setup', 
+                                           {:filename=>'/var/log/lucie-setup.log'} )
+
+module FileUtils
+  def sh_log(*cmd, &block)
+    if Hash === cmd.last then
+      options = cmd.pop
+    else
+      options = {}
+    end
+    fu_check_options options, :noop, :verbose
+    $lucie_log.info cmd.join(" ")
+    fu_output_message cmd.join(" ") if options[:verbose]
+    IO.popen(cmd.join(' '), &block) unless options[:noop]
+  end
+end
+
 module Rake
   #
   # インストーラのベースシステムをビルドするタスクを作成する。
@@ -85,13 +107,32 @@ module Rake
       directory @dir
       task name => [installer_base_target]
       
+      sh_option = {:verbose => false}
       file installer_base_target do 
         debootstrap_option = "--arch i386 --exclude=pcmcia-cs,ppp,pppconfig,pppoe,pppoeconf,dhcp-client,exim4,exim4-base,exim4-config,exim4-daemon-light,mailx,at,fdutils,info,modconf,libident,logrotate,exim"
-        sh %{yes '' | LC_ALL=C /usr/sbin/debootstrap #{debootstrap_option} #{@distribution_version} #{@dir} #{@mirror} || true}
-        sh %{chroot #{@dir} apt-get clean}
-        rm_f File.join(@dir, '/etc/resolv.conf')
+	puts "Executing debootstrap. This may take a long time."
+        sh_log( %{yes '' | LC_ALL=C /usr/sbin/debootstrap #{debootstrap_option} #{@distribution_version} #{@dir} #{@mirror} 2>&1}, sh_option ) do |rd|
+          line_length = 0
+          while (rd.gets)
+            line = $_.chomp
+            case line
+            when /^I: /
+              STDERR.print ' ' * line_length, "\r"
+              STDERR.print line, "\r"
+              line_length = line.length
+              $lucie_log.info line
+            when /^E: /
+              $lucie_log.error line 
+              raise DebootstrapExecutionError, line
+            else
+              $lucie_log.warn line 
+            end
+          end
+	end
+        sh %{chroot #{@dir} apt-get clean}, sh_option
+        rm_f File.join(@dir, '/etc/resolv.conf'), sh_option
         puts "Creating #{installer_base_target}"
-        sh %{tar -l -C #{@dir} -cf - --exclude #{File.join('var/tmp', target_fname)} . | gzip > #{installer_base_target}}       
+        sh %{tar -l -C #{@dir} -cf - --exclude #{File.join('var/tmp', target_fname)} . | gzip > #{installer_base_target}}, sh_option       
       end
     end
     
@@ -104,6 +145,8 @@ module Rake
     def installer_base_target
       return File.join(@dir, 'var/tmp', target_fname)
     end
+    
+    class DebootstrapExecutionError < ::StandardError; end
   end
 end
 

@@ -14,9 +14,20 @@ module Lucie
   update(%q$Date$)
   
   class TextState < State
+    #--
+    # TODO : State クラスに引き上げる    
+    #++  
+    public
+    def initialize( aQuestion )
+      @question = aQuestion
+    end
+    
+    #--
+    # TODO : State クラスに引き上げる    
+    #++  
     public
     def transit( aDebconfContext )
-      input @priority, @question
+      input @question.priority, @question.name
       go
     end
     
@@ -28,7 +39,8 @@ module Lucie
       class #{aQuestion.name.to_state_class_name} < Lucie::TextState
         public
         def transit( aDebconfContext )
-          aDebconfContext.current_state = aDebconfContext::STATES['#{aQuestion.next_question}']
+          super aDebconfContext
+          aDebconfContext.current_state = DebconfContext::STATES['#{aQuestion.next_question}']
         end
       end
       CLASS_DEFINITION

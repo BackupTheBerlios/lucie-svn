@@ -206,6 +206,7 @@ DPkg
     def extract_installer_base
       puts "Extracting installer base tarball. This may take a long time."
       sh %{tar -C #{@dir} -xzf #{installer_base}}, sh_option
+      cp installer_base, nfsroot( '/var/tmp' ), sh_option
     end
 
     private

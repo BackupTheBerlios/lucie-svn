@@ -7,8 +7,7 @@
 
 $LOAD_PATH.unshift './lib'
 
-require 'test/lmp_conf/lucie_vm_template'
-require 'test/lmp_conf/lucie_vm_question'   
+require 'data/lucie_vm_template'  
 require 'deft/concrete-state'
 require 'test/unit'
 

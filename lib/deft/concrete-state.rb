@@ -12,13 +12,8 @@ update(%q$Date$)
 
 module Deft
   # concrete state を管理するクラス。
-  # すでに登録されている Question オブジェクトから concrete state を生成するので、
-  # deft/question の後に require すること。
   class ConcreteState
     STATES = {}
-    Question::QUESTIONS.values.each do |each|
-      STATES[each.name] = each.concrete_state
-    end 
     
     # 登録されている Concrete State のリストを返す
     public
@@ -36,6 +31,13 @@ module Deft
     public
     def self.[]=( stateNameString, concreteState )
       STATES[stateNameString] = concreteState
+      @@first_state = concreteState if concreteState.first_state
+    end
+    
+    # 最初の Concrete State を返す
+    public
+    def self.first_state
+      return @@first_state
     end
   end
 end

@@ -7,7 +7,7 @@
 
 $LOAD_PATH.unshift './lib'
 
-require 'lucie/command-line-options'
+require 'deft/command-line-options'
 require 'test/unit'
 
 class TC_CommandLineOptions < Test::Unit::TestCase

@@ -45,7 +45,7 @@ module Lucie
       end
 
       overwrite_accessor :uri= do |_uri|
-        unless (_uri.nil?) || ( /\A(http|ftp)\:\/\/[\w\-_.\/]+\Z/ =~ _uri)
+        unless (_uri.nil?) || ( /\A(http|ftp)\:\/\/[\w\-_\.:\/]+\Z/ =~ _uri)
           # FIXME: http ÇæÇØÇ≈ÇÊÇ¢ÅH
           raise InvalidAttributeException, "Invalid attribute for uri: #{_uri}"
         end

@@ -71,7 +71,7 @@ module Lucie
       end
       
       overwrite_accessor :kernel_version= do |_kernel_version|
-        unless (_kernel_version.nil?) || ( /\A\d+(\.\d+)*\z/ =~ _kernel_version)
+        unless (_kernel_version.nil?) || ( /\A\d+[\w\d\.\-]*\z/ =~ _kernel_version)
         # FIXME: 数字とピリオドの組み合わせ以外もある？
           raise InvalidAttributeException, "Invalid attribute for kernel_version: #{_kernel_version}"
         end
@@ -79,7 +79,7 @@ module Lucie
       end
 
       overwrite_accessor :kernel_package= do |_kernel_package|
-        unless (_kernel_package.nil?) || ( /\Akernel-image-\d+(\.\d+)*[\w\-_]*\.deb\z/ =~ _kernel_package)
+        unless (_kernel_package.nil?) || ( /kernel-image-.*\.deb\z/ =~ _kernel_package)
         # FIXME: kernel のパッケージ命名規則要確認。rpm もサポート？
           raise InvalidAttributeException, "Invalid attribute for kernel_package: #{_kernel_package}"
         end

@@ -1,14 +1,13 @@
 #
-# $Id: lucie_vm_template.rb 106 2005-02-11 14:03:23Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 106 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
-$KCODE = 'EUCJP'
-require 'lucie'
+require 'deft'
 
-include Lucie
+include Deft
 
 template( 'lucie-vmsetup/hello' ) do |template|
   template.template_type = NoteTemplate

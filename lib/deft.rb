@@ -108,6 +108,22 @@ class DeftApp
       help
       exit( 0 )
     end
+    if @command_line_options.emulate
+      next_question = Question::QUESTIONS[@command_line_options.emulate].next_question
+      case next_question
+      when String
+        puts "`#{@command_line_options.emulate}' => `#{next_question}'"
+      when Hash
+        raise '--input option is not set' if @command_line_options.input.nil?
+        puts "`#{@command_line_options.emulate}' => `#{next_question[@command_line_options.input]}'"
+      when Proc
+        raise '--input option is not set' if @command_line_options.input.nil?
+        puts "`#{@command_line_options.emulate}' => `#{next_question.call( @command_line_options.input )}'"
+      else
+        raise "This shouldn't happen."
+      end
+      exit( 0 )
+    end
     if @command_line_options.ruby_code        
       puts ruby_code( @command_line_options.ruby_code )        
     end

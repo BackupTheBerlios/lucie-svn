@@ -14,6 +14,7 @@ module Lucie
   
   update(%q$LastChangedDate$)
   
+  # multiselect タイプの Template をあらわすクラス
   class MultiselectTemplate < Template
     # MultiselectTemplate をあらわす String オブジェクトを返します
     public

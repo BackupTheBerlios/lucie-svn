@@ -14,6 +14,7 @@ module Lucie
   
   update(%q$LastChangedDate$)
   
+  # boolean タイプの Template をあらわすクラス
   class BooleanTemplate < Template
     # BooleanTemplate をあらわす String オブジェクトを返します
     public

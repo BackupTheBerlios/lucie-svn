@@ -14,6 +14,7 @@ module Lucie
   
   update(%q$LastChangedDate$)
   
+  # note タイプの Template をあらわすクラス
   class NoteTemplate < Template
     # NoteTemplate をあらわす String オブジェクトを返します
     public

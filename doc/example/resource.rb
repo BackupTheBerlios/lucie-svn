@@ -7,7 +7,6 @@
 # License::  GPL2
 
 require 'lucie/config'
-include Lucie::Config
 
 # ------------------------- ホストの定義.
 

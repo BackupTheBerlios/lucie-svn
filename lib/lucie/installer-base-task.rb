@@ -86,7 +86,8 @@ module Rake
       task name => [installer_base_target]
       
       file installer_base_target do 
-        sh %{yes '' | LC_ALL=C /usr/sbin/debootstrap #{@distribution_version} #{@dir} #{@mirror} || true}
+        debootstrap_option = "--arch i386 --exclude=pcmcia-cs,ppp,pppconfig,pppoe,pppoeconf,dhcp-client,exim4,exim4-base,exim4-config,exim4-daemon-light,mailx,at,fdutils,info,modconf,libident,logrotate,exim"
+        sh %{yes '' | LC_ALL=C /usr/sbin/debootstrap #{debootstrap_option} #{@distribution_version} #{@dir} #{@mirror} || true}
         sh %{chroot #{@dir} apt-get clean}
         rm_f File.join(@dir, '/etc/resolv.conf')
         puts "Creating #{installer_base_target}"

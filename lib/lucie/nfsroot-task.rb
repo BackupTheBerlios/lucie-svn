@@ -130,6 +130,8 @@ module Rake
     
     private
     def add_additional_packages
+      sh %{chroot #{@dir} apt-get -y --fix-missing install dhcp3-client}
+      sh %{chroot #{@dir} apt-get clean}
     end
     
     private
@@ -162,6 +164,8 @@ DPkg
       end
       dpkg_divert '/etc/dhcp3/dhclient-script' rescue nil
       dpkg_divert '/etc/dhcp3/dhclient.conf' rescue nil      
+      sh %{chroot #{@dir} apt-get install lucie-client}
+      sh %{chroot #{@dir} cp -p /usr/share/lucie/etc/dhclient.conf /etc/dhcp3/}
     end
     
     private
@@ -233,9 +237,12 @@ exit 0
       File.open( nfsroot( 'etc/apt/sources.list' ), 'w+' ) do |file|
         file.puts "deb #{@package_server} #{@distribution_version} main contrib non-free"
         file.puts "deb #{@package_server}-non-US #{@distribution_version}/non-US main contrib non-free"
+	file.puts "# lucie-client package"
+	file.puts "deb http://lucie.sourceforge.net/packages/lucie-client/sarge/ ./"
       end            
       File.open( nfsroot( 'etc/hosts' ), 'w+' ) do |file|
         file.puts "127.0.0.1 localhost"
+	file.puts "66.35.250.209 lucie.sourceforge.net"
       end   
       cp '/etc/apt/preferences',  nfsroot( 'etc/apt/preferences' ) rescue nil      
     end

@@ -57,7 +57,7 @@ Rake::RDocTask.new( :rdoc ) do |rdoc|
   rdoc.options << '--charset' << 'sjis' 
   rdoc.options << '--diagram'
   rdoc.rdoc_files.include( 'lib/*.rb', 'lib/debconf/*.rb', 'lib/deft/*.rb', 
-                           'lib/lucie/*.rb', 'lib/lmp/*.rb', 
+                           'lib/lucie/*.rb', 'lib/lucie/config/*.rb', 'lib/lmp/*.rb', 
                            'lib/lucie/rake/*.rb' )
 end
 

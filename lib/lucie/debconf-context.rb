@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/ruby -I/home/takamiya/eclipse/workspace/Lucie/lib
 #
 # $Id$
 #
@@ -10,14 +10,11 @@ require 'lucie'
 require 'lucie/state'
 require 'debconf/client'
 require 'English'
+require 'lucie_vm_template'
+require 'lucie_vm_question'
 
 include Debconf::ConfModule
 
-# 使い方: あらかじめ Template と Question の定義を require し、実行
-# 
-# 例:
-# ruby -r 'テンプレート定義.rb' '質問項目定義.rb' debconfcontext.rb 
-#
 class DebconfContext
   STATES = {}
   attr_accessor :current_state
@@ -48,7 +45,7 @@ end
 ########
 
 if __FILE__ == $PROGRAM_NAME
-  title "#{$package_name} のカスタマイズ"
+  title "Lucie VM のカスタマイズ"
   debconf_context = DebconfContext.new  
   loop do 
     rc = debconf_context.transit

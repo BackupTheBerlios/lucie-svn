@@ -8,21 +8,21 @@
 $KCODE = 'SJIS'
 $LOAD_PATH.unshift './lib'
 
-require 'lucie/select-template'
+require 'deft/select-template'
 require 'test/unit'
 
 class TC_SelectTemplate < Test::Unit::TestCase
-  # 親クラスが Lucie::Template であることをテスト
+  # 親クラスが Deft::Template であることをテスト
   public
   def test_inheritance
-    assert Lucie::SelectTemplate < Lucie::Template
+    assert Deft::SelectTemplate < Deft::Template
   end
   
   public
   def test_to_s
-    Lucie::Template.clear
+    Deft::Template.clear
     template( 'TEST/SELECT-TEMPLATE' ) do |template|
-      template.template_type = Lucie::SelectTemplate
+      template.template_type = Deft::SelectTemplate
       template.choices = ['CHOICE #1', 'CHOICE #1', 'CHOICE #3']
       template.default = 'CHOICE #1'
       template.short_description = 'This is a short description'
@@ -38,7 +38,7 @@ class TC_SelectTemplate < Test::Unit::TestCase
       上は空行です
       DESCRIPTION_JA
     end
-    assert /^Template:(.*)^Type:(.*)^Choices:(.*)^Default:(.*)^Description:(.*)^Description-ja:(.*)/m=~ Lucie::Template['TEST/SELECT-TEMPLATE'].to_s
+    assert /^Template:(.*)^Type:(.*)^Choices:(.*)^Default:(.*)^Description:(.*)^Description-ja:(.*)/m=~ Deft::Template['TEST/SELECT-TEMPLATE'].to_s
     assert_match /TEST\/SELECT-TEMPLATE/, $1, 'Template: の値がおかしい'
     assert_match /select/, $2, 'Type: の値がおかしい'
     assert_match /CHOICE #1, CHOICE #1, CHOICE #3/, $3, 'Choices: の値がおかしい'

@@ -70,19 +70,28 @@ module Rake
       desc "Force a rebuild of the installer base tarball"
       task paste("re", name) => [paste("clobber_", name), name]
       
-      desc "Remove installer base tarball"
-      task paste("clobber_", name)
+      desc "Remove installer base filesystem"
+      task paste("clobber_", name) do 
+        rm_r @dir rescue nil
+      end
       
       task :clobber => [paste("clobber_", name)]
       
       directory @dir
       task name => [installer_base_target]
-      file installer_base_target
+      
+      file installer_base_target do 
+        sh %{yes '' | LC_ALL=C /usr/sbin/debootstrap #{@distribution_version} #{@dir} http://www.debian.or.jp/debian || true}
+        sh %{chroot #{@dir} apt-get clean}
+        rm_f File.join(@dir, '/etc/resolv.conf')
+        puts "Creating #{installer_base_target}"
+        sh %{tar -l -C #{@dir} -cf - --exclude #{installer_base_target} . | gzip > #{installer_base_target}}       
+      end
     end
     
     private
     def installer_base_target
-      return File.join(@dir, @distribution+'_'+@distribution_version+'.tgz')
+      return File.join(@dir, 'var/tmp', @distribution+'_'+@distribution_version+'.tgz')
     end
   end
 end

@@ -50,6 +50,12 @@ module Lucie
     TEMPLATES = {}
     SELECT = 'SELECT'.freeze
     
+    # Template が定義されていれば定義されているテンプレート、そうでなければ nil を返します
+    public
+    def self.template_defined?( templateName )
+      TEMPLATES[templateName]
+    end
+
     # Template を登録します
     public
     def register

@@ -16,6 +16,22 @@ class TC_Template < Test::Unit::TestCase
     @templates = Lucie::Template::parse( test_template_data )
   end
   
+  # 登録されているテンプレートが空のときに、
+  # template_defined? が nil を返すことを確認
+  public
+  def test_template_defined_fail
+    Lucie::Template.clear
+    assert_nil Lucie::Template.template_defined?( 'NOT DEFINED TEMPLATE' )
+  end
+  
+  # テンプレートを登録し、template_defined? で登録が確認できることをテスト
+  public
+  def test_template_defined_success
+    Lucie::Template.clear
+    template( 'TEST TEMPLATE' )
+    assert Lucie::Template.template_defined?( 'TEST TEMPLATE' )
+  end
+  
   public
   def test_template_with_block
     Lucie::Template.clear

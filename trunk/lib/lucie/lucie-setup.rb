@@ -49,8 +49,7 @@ module Lucie
       rescue Exception => ex
         puts "lucie-setup aborted!"
         puts ex.message
-        $trace = true # TODO : implement --trace option
-        if $trace
+        if @commandline_options.trace
           puts ex.backtrace.join("\n")
         end
         exit(1)

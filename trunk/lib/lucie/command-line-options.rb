@@ -31,6 +31,7 @@ module Lucie
     attr :installer_base_dir
     attr :nfsroot_dir
     attr :verbose
+    attr :trace
 
     module OptionList # :nodoc:
       OPTION_LIST = [
@@ -52,6 +53,8 @@ module Lucie
           "specify nfsroot directory path." ],
         [ "--verbose",            "-v",   nil, \
           "be verbose." ],         
+        [ "--trace",              "-t",   nil, \
+          "use the debug trace mode."],
       ]
 
       public
@@ -100,6 +103,8 @@ module Lucie
             @nfsroot_dir = argument
           when '--verbose'
             @verbose = true
+          when '--trace'
+            @trace = true
           end
         end
       ensure
@@ -107,13 +112,6 @@ module Lucie
       end
     end
 
-    public
-    def inspect
-      return "[CommandLineOptions: " +
-      ["debug=#{@debug.inspect}", "help=#{@help.inspect}", "installer-name=#{@installer_name.inspect}",
-      "list-resource=#{@list_resource.inspect}", "version=#{@version.inspect}]"].join(', ')
-    end
-    
     private
     def set_default_options
       @debug = false
@@ -125,6 +123,7 @@ module Lucie
       @installer_base_dir = '/var/lib/lucie/installer_base'
       @nfsroot_dir = '/var/lib/lucie/nfsroot'
       @verbose = false
+      @trace = false
     end
   end
 end

@@ -22,7 +22,9 @@ module Deft
     # あたらしい DebconfContext オブジェクトを返す
     public
     def initialize
+      @state_stack = []
       @current_state = ConcreteState.first_state
+      @state_stack.push( @current_state )
     end
     
     # 次の質問へ遷移する
@@ -30,18 +32,23 @@ module Deft
     def transit
       @current_state.transit self
     end
+
+    public
+    def last_state
+      return @state_stack.last
+    end
     
     # 現在の状態を変更する
     public
     def current_state=( aState )
-      @last_state = @current_state
+      @state_stack.push( @current_state )
       @current_state = aState
     end
     
     # 直前の状態に戻る
     public
     def backup
-      @current_state = @last_state
+      @current_state = @state_stack.pop
     end
   end
 end

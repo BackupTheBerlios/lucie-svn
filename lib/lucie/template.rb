@@ -1,8 +1,8 @@
 #
-# $Id: state.rb 49 2005-02-07 04:30:20Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 49 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 require 'forwardable'
@@ -10,7 +10,7 @@ require 'lucie/time-stamp'
 
 module Lucie
   
-  update(%q$Date: 2005-02-07 13:30:20 +0900 (Mon, 07 Feb 2005) $)
+  update(%q$LastChangedDate$)
   
   # Debconf ‚Ì Template ‚ð•\Œ»‚·‚éƒNƒ‰ƒX
   class Template

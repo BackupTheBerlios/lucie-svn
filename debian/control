@@ -1,0 +1,14 @@
+Source: lucie
+Priority: optional
+Maintainer: Yasuhito Takamiya <takamiya@matsulab.is.titech.ac.jp>
+Build-Depends: debhelper (>> 4.0.0)
+Standards-Version: 3.5.8
+
+Package: lucie-client
+Architecture: all
+Priority: optional
+Section: libs
+Description: Lucie client
+ Lucie client package needed by Lucie installer. Lucie users don't
+ need to install this package by hand, because this package is internal one
+ and is automatically installed into the nfsroot when executing lucie-setup.

@@ -1,0 +1,8 @@
+debian/tmp/etc/lucie
+debian/tmp/usr/sbin/ftar
+debian/tmp/usr/sbin/fcopy
+debian/tmp/usr/sbin/install_packages
+debian/tmp/usr/lib/lucie/start-stop-daemon
+debian/tmp/usr/lib/lucie/dhclient-script
+debian/tmp/usr/lib/lucie/dhclient-perl
+debian/tmp/usr/share/lucie/etc/dhclient.conf

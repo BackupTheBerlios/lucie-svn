@@ -131,6 +131,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   
   # その他のテスト ###################################################################
   
+  # inspect メソッドのテスト
   public
   def test_inspect
     assert_match( /\A\[CommandLineOptions:\s*(\w+=.*)+\]\Z/, @commandline_options.inspect, "bad format of inspection String" )
@@ -144,6 +145,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
     assert_match( /version=\S+/,  @commandline_options.inspect, "couldn't inspect version option" )
   end
   
+  # OptionList::OPTION_LIST の形式が正しいことをテスト
   public
   def test_OPTION_LIST
     assert( Lucie::CommandLineOptions::OptionList.const_defined?( :OPTION_LIST ), "const OPTION_LIST was not defined" )
@@ -156,6 +158,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
     end
   end
   
+  # OptionList モジュールから得られるオプションのリストの形式が正しいことをテスト
   public
   def test_options
     options = Lucie::CommandLineOptions::OptionList.options
@@ -168,6 +171,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
     end
   end
   
+  # 間違ったオプションを師弟した場合に例外が raise されることを確認
   public
   def test_parse_wrong_command_line_option_raises_exception
     assert_raises( GetoptLong::InvalidOption, "getoptlong exception was not raised" ) do 
@@ -175,6 +179,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
     end
   end
   
+  # 引数があるはずのオプションに引数を指定しなかった場合に例外が raise されることを確認
   public
   def test_parse_argument_required_option_with_noargument_raises_exception
     assert_raises( GetoptLong::MissingArgument, "getoptlong exception was not raised" ) do 
@@ -182,6 +187,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
     end
   end
   
+  # 引数が無いはずのオプションに引数を指定した場合に例外が raise されることを確認
   public
   def test_parse_argument_notrequired_option_with_argument_raises_exception
     assert_raises( GetoptLong::NeedlessArgument, "getoptlong exception was not raised" ) do 

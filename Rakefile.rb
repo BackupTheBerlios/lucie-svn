@@ -17,10 +17,12 @@ task :default => [:testall]
 debconf_filelist = FileList['test/debconf/tc_*.rb']
 deft_filelist = FileList['test/deft/tc_*.rb']
 lmp_filelist = FileList['test/lmp/tc_*.rb']
+alltest_filelist = FileList.new
+alltest_filelist << debconf_filelist << deft_filelist << lmp_filelist
 
 desc "Run all the unit tests."
 Rake::TestTask.new( :testall ) do |t|
-  t.test_files = (debconf_filelist << deft_filelist << lmp_filelist)
+  t.test_files = alltest_filelist
   t.verbose = true
 end
 

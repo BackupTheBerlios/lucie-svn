@@ -5,14 +5,18 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'lucie'
-require 'deft/state'
 require 'debconf/client'
+require 'deft/state'
 require 'English'
+require 'lucie'
 
 include Debconf::ConfModule
 
 module Deft
+  
+  # FIXME : update メソッドを Deft モジュールへ移動
+  Lucie.update(%q$Date$)
+  
   class DebconfContext
     STATES = {}
     attr_accessor :current_state

@@ -13,10 +13,13 @@ require 'deft/debconf-context'
 require 'test/unit'
 
 class TC_DebconfContext < Test::Unit::TestCase
+  #--
+  # FIXME : Question と対応する Template の require の順でエラーが起こる。Template の無い Question を定義しようとすると例外を投げるようにする。
+  #++
   public
   def test_start_state
     require 'test/lmp_conf/lucie_vm_template'
-    require 'test/lmp_conf/lucie_vm_question'
+    require 'test/lmp_conf/lucie_vm_question'    
     
     debconf_context = Deft::DebconfContext.new
     assert_kind_of Deft::State, debconf_context.current_state

@@ -30,6 +30,14 @@ class TC_Setup < Test::Unit::TestCase
   def test_singleton
     assert Lucie::Setup::include?( Singleton )
   end
+  
+  # main ‚ÌƒeƒXƒg
+  public
+  def test_main
+    $dryrun = true
+    $trace = true
+    assert_nil Lucie::Setup.instance.main
+  end
 end
 
 ### Local variables:

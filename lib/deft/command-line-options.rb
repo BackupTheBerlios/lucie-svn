@@ -111,10 +111,11 @@ module Deft
     public
     def inspect
       return '[CommandLineOptions: ' +
-      ["trace=#{@trace.inspect}", "help=#{@help.inspect}", "emulate=#{@emulate.inspect}",
-       "version=#{@version.inspect}", "ruby-code=#{@ruby_code.inspect}",
-       "template=#{@template.inspect}", "question=#{@question.inspect}",
-       "input=#{@input.inspect}", "run=#{@run.inspect}", "build=#{@build.inspect}"].join(', ') + ']'
+      ["trace=#{@trace.inspect}", "help=#{@help.inspect}",
+       "emulate=#{@emulate.inspect}", "version=#{@version.inspect}",
+       "ruby-code=#{@ruby_code.inspect}", "template=#{@template.inspect}",
+       "question=#{@question.inspect}", "input=#{@input.inspect}",
+       "run=#{@run.inspect}", "build=#{@build.inspect}"].join(', ') + ']'
     end
     
     private

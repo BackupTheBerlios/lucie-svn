@@ -16,8 +16,8 @@ include Debconf::Client
 update(%q$Date$)
 
 module Deft
-  # Question オブジェクトから State パターンの各 concrete state クラスを生成するクラス。
-  # また、すべての concrete state クラスの親となるクラス。
+  # Question オブジェクトから State パターンの各 concrete state クラスを
+  # 生成するクラス。また、すべての concrete state クラスの親となるクラス。
   class State    
     include Singleton
     
@@ -44,8 +44,8 @@ module Deft
 
     private
     def communicate_debconf( questionNameString, priorityString ) 
-      fset questionNameString, 'seen', 'false'   
-      input priorityString, questionNameString
+      fset( questionNameString, 'seen', 'false' )
+      input( priorityString, questionNameString )
       rc = go
       return rc
     end

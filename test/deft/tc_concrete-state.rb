@@ -14,12 +14,14 @@ require 'test/unit'
 class TC_ConcreteState < Test::Unit::TestCase
   public
   def test00_default_state
-    assert_equal( [], Deft::ConcreteState.states, 'デフォルトの Concrete State が空でない' )
+    assert_equal( [], Deft::ConcreteState.states,
+                  'デフォルトの Concrete State が空でない' )
   end
   
   public
   def test00_lookup_returns_nil
-    assert_nil( Deft::ConcreteState[ 'CONCRETE STATE NAME' ], 'nil が返るはずだが返らない' )
+    assert_nil( Deft::ConcreteState[ 'CONCRETE STATE NAME' ],
+                'nil が返るはずだが返らない' )
   end
   
   public
@@ -30,24 +32,28 @@ class TC_ConcreteState < Test::Unit::TestCase
   public
   def test01_concrete_state
     define_templates_and_questions
-    assert_equal( 3, Deft::ConcreteState.states.size, '登録されている Concrete State の数が違う' )
+    assert_equal( 3, Deft::ConcreteState.states.size,
+                  '登録されている Concrete State の数が違う' )
   end
   
   public
   def test02_lookup
-    assert_equal( 'Deft::State::Test__Template1', Deft::ConcreteState['TEST/TEMPLATE1'].class.to_s,
+    assert_equal( 'Deft::State::Test__Template1', 
+                  Deft::ConcreteState['TEST/TEMPLATE1'].class.to_s,
                   "Concrete State `TEST/TEMPLATE1' が名前で引けない" )
   end
   
   public
   def test03_lookup
-    assert_equal( 'Deft::State::Test__Template2', Deft::ConcreteState['TEST/TEMPLATE2'].class.to_s,
+    assert_equal( 'Deft::State::Test__Template2',
+                  Deft::ConcreteState['TEST/TEMPLATE2'].class.to_s,
                   "Concrete State `TEST/TEMPLATE2' が名前で引けない" )
   end
   
   public
   def test04_lookup
-    assert_equal( 'Deft::State::Test__Template3', Deft::ConcreteState['TEST/TEMPLATE3'].class.to_s,
+    assert_equal( 'Deft::State::Test__Template3',
+                  Deft::ConcreteState['TEST/TEMPLATE3'].class.to_s,
                   "Concrete State `TEST/TEMPLATE3' が名前で引けない" )
   end
   

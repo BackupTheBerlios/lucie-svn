@@ -21,7 +21,8 @@ module Deft
   class Question
     # Question の '名前' => インスタンス の Hash
     QUESTIONS = {}
-    # Very trivial items that have defaults that will work in the vast majority of cases.
+    # Very trivial items that have defaults that will work
+    # in the vast majority of cases.
     PRIORITY_LOW      = 'low'.freeze
     # Normal items that have reasonable defaults.
     PRIORITY_MEDIUM   = 'medium'.freeze
@@ -46,7 +47,8 @@ module Deft
     attr_accessor :backup
     
     # Question を lookup する。
-    # もしみつかればみつかった Question を返し、みつからなければ新しい Question を new して返す。
+    # もしみつかればみつかった Question を返し、みつからなければ
+    # 新しい Question を new して返す。
     public
     def self.lookup( questionNameString )
       return QUESTIONS[questionNameString] ||= self.new( questionNameString )

@@ -39,8 +39,8 @@ module Deft
   #   template( 'lucie/overview' ) do |template|
   #     template.type = 'text'
   #     template.description_ja = (<<-DESCRIPTION)
-  #     この Lucie 設定パッケージは、以下のパッケージをインストール・設定するような
-  #     Lucie の設定を生成します。
+  #     この Lucie 設定パッケージは、以下のパッケージをインストール・設定
+  #     するような Lucie の設定を生成します。
   # 
   #     設定されるパッケージのリストは以下の通りです。
   #
@@ -76,7 +76,8 @@ module Deft
       return TEMPLATES[templateNameString]
     end
     
-    # Template が定義されていれば定義されているテンプレート、そうでなければ nil を返す。
+    # Template が定義されていれば定義されているテンプレート。
+    # そうでなければ nil を返す。
     public
     def self.template_defined?( templateName )
       return TEMPLATES[templateName]

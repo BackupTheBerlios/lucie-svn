@@ -37,7 +37,8 @@ class TC_Question < Test::Unit::TestCase
   def test_template_defined_success
     Deft::Question.clear
     question( 'TEST/QUESTION' )
-    assert( Deft::Question.question_defined?( 'TEST/QUESTION' ), 'Ž¿–â€–Ú‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢' )
+    assert( Deft::Question.question_defined?( 'TEST/QUESTION' ),
+            'Ž¿–â€–Ú‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢' )
   end
   
   # lookup ‚ÌƒeƒXƒg

@@ -55,8 +55,9 @@ class TC_DebconfContext < Test::Unit::TestCase
     $stdin_mock.__next( :gets ) do '0 TRUE' end
     
     @debconf_context.transit
-    assert_equal 'TEST/TEMPLATE2', @debconf_context.current_state.name
-    assert_equal 'Deft::State::Test__Template2', @debconf_context.current_state.class.to_s
+    assert_equal( 'TEST/TEMPLATE2', @debconf_context.current_state.name )
+    assert_equal( 'Deft::State::Test__Template2',
+                  @debconf_context.current_state.class.to_s )
     
     $stdout_mock.__verify
     $stdin_mock.__verify
@@ -66,7 +67,8 @@ class TC_DebconfContext < Test::Unit::TestCase
   public
   def test_start_state
     assert_kind_of( Deft::State, @debconf_context.current_state )
-    assert_equal( 'Deft::State::Test__Template1', @debconf_context.current_state.class.to_s )
+    assert_equal( 'Deft::State::Test__Template1',
+                  @debconf_context.current_state.class.to_s )
   end
   
   public
@@ -88,9 +90,11 @@ class TC_DebconfContext < Test::Unit::TestCase
     
     first_state = @debconf_context.current_state
     @debconf_context.transit
-    assert_equal( first_state, @debconf_context.last_state, '直前の状態が取り出せない' )
+    assert_equal( first_state, @debconf_context.last_state,
+                  '直前の状態が取り出せない' )
     @debconf_context.backup
-    assert_equal( first_state, @debconf_context.current_state, 'backup で直前の状態に戻らない' )
+    assert_equal( first_state, @debconf_context.current_state,
+                  'backup で直前の状態に戻らない' )
   end
 end
 

@@ -1,8 +1,8 @@
 #
-# $Id: time-stamp.rb 14 2005-01-19 06:32:24Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 8 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 require 'parsedate'

@@ -35,6 +35,21 @@ Rake::RDocTask.new( :rdoc ) do |rdoc|
   rdoc.rdoc_files.include( 'lib/*.rb', 'lib/lucie/*.rb', 'lib/lucie/rake/*.rb' )
 end
 
+# templates ÇÃê∂ê¨ -------------------------------------------------------------
+
+desc 'templates ÇÃê∂ê¨'
+task :templates do
+  $LOAD_PATH.unshift './lib'
+  $LOAD_PATH.unshift './data'
+  require 'lucie_vm_template'
+  File::open( 'templates', 'w' ) do |file|
+    Lucie::Template::TEMPLATES.each do |each|
+      file.puts each
+      file.puts
+    end
+  end
+end
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

@@ -42,6 +42,7 @@ module Deft
     attr_accessor :next_question
     # 最初の質問であるかどうかを表す
     attr_accessor :first_question
+    attr_accessor :backup
     
     # Question を lookup する。
     # もしみつかればみつかった Question を返し、みつからなければ新しい Question を new して返す。

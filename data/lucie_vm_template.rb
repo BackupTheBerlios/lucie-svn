@@ -19,11 +19,7 @@ end
 
 question( 'lucie-vmsetup/error' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<-NEXT_QUESTION
-  Proc.new do 
-    $last_question
-  end
-  NEXT_QUESTION
+  question.backup = true
 end
 
 # ------------------------- 
@@ -67,7 +63,6 @@ question( 'lucie-vmsetup/vmpool-server-ip' ) do |question|
   question.next_question = <<-NEXT_QUESTION
   Proc.new do |user_input|
     unless /\\A\\d{1,3}\.\\d{1,3}\.\\d{1,3}\.\\d{1,3}\\Z/=~ user_input
-      $last_question = 'lucie-vmsetup/vmpool-server-ip'
       subst 'lucie-vmsetup/error', 'short_error_message', "エラー: IP アドレス形式"
       subst 'lucie-vmsetup/error', 'extended_error_message', "IP アドレスの形式が正しくありません : \#{get('lucie-vmsetup/vmpool-server-ip')}"
       'lucie-vmsetup/error'
@@ -93,7 +88,6 @@ question( 'lucie-vmsetup/vmpool-server-port' ) do |question|
   question.next_question = <<-NEXT_QUESTION
   Proc.new do |user_input|
     unless /\\A\\d+\\Z/=~ user_input
-      $last_question = 'lucie-vmsetup/vmpool-server-port'
       subst 'lucie-vmsetup/error', 'short_error_message', "エラー: ポート番号形式"
       subst 'lucie-vmsetup/error', 'extended_error_message', "ポート番号の形式が正しくありません : \#{get('lucie-vmsetup/vmpool-server-port')}"
       'lucie-vmsetup/error'
@@ -122,8 +116,7 @@ question( 'lucie-vmsetup/vmpool-server-reconnection' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
   question.next_question = <<-NEXT_QUESTION
   Proc.new do |user_input|
-    case user_input
-    when 'true'
+    if user_input == 'true'
       require 'socket'
       require 'lucie-vm-pool/client'
       begin
@@ -132,11 +125,6 @@ question( 'lucie-vmsetup/vmpool-server-reconnection' ) do |question|
       rescue 
         'lucie-vmsetup/vmpool-server-reconnection'	
       end
-    when 'false'
-      $last_question = nil
-      subst 'lucie-vmsetup/error', 'short_error_message', 'Lucie VM Pool セットアップの中止'
-      subst 'lucie-vmsetup/error', 'extended_error_message', 'Lucie VM Pool のセットアップを中止します'
-      'lucie-vmsetup/error'      
     end
   end 
   NEXT_QUESTION
@@ -198,12 +186,10 @@ question( 'lucie-vmsetup/num-nodes' ) do |question|
   question.next_question = <<-NEXT_QUESTION
   Proc.new do |user_input|
     if user_input.to_i <= 0
-      $last_question = 'lucie-vmsetup/num-nodes'
       subst 'lucie-vmsetup/error', 'short_error_message', "エラー: VM ノードの台数"
       subst 'lucie-vmsetup/error', 'extended_error_message', "VM ノードの台数がセットされていません。"
       'lucie-vmsetup/error'
     elsif user_input.to_i > $num_nodes_upperbound
-      $last_question = 'lucie-vmsetup/num-nodes'
       subst 'lucie-vmsetup/error', 'short_error_message', "エラー: VM ノードの台数"
       subst 'lucie-vmsetup/error', 'extended_error_message', "VM ノードの台数が上限の \#{$num_nodes_upperbound} 台を越えています。"
       'lucie-vmsetup/error'
@@ -288,12 +274,10 @@ question( 'lucie-vmsetup/memory-size' ) do |question|
   question.next_question = <<-NEXT_QUESTION
   Proc.new do |user_input|
     if user_input.to_i <= 0
-      $last_question = 'lucie-vmsetup/memory-size'
       subst 'lucie-vmsetup/error', 'short_error_message', "エラー: VM ノードのメモリサイズ"
       subst 'lucie-vmsetup/error', 'extended_error_message', "VM ノードのメモリサイズがセットされていません。"
       'lucie-vmsetup/error'
     elsif user_input.to_i > $memory_size_upperbound
-      $last_question = 'lucie-vmsetup/memory-size'
       subst 'lucie-vmsetup/error', 'short_error_message', "エラー: VM ノードのメモリサイズ"
       subst 'lucie-vmsetup/error', 'extended_error_message', "VM ノードのメモリサイズが上限の \#{$memory_size_upperbound} MB を越えています。"
       'lucie-vmsetup/error'
@@ -323,12 +307,10 @@ question( 'lucie-vmsetup/harddisk-size' ) do |question|
   question.next_question = <<-NEXT_QUESTION
   Proc.new do |user_input|
     if user_input.to_i <= 0
-      $last_question = 'lucie-vmsetup/harddisk-size'
       subst 'lucie-vmsetup/error', 'short_error_message', "エラー: VM ノードのハードディスク容量"
       subst 'lucie-vmsetup/error', 'extended_error_message', "VM ノードのハードディスク容量がセットされていません。"
       'lucie-vmsetup/error'
     elsif user_input.to_i > $harddisk_size_upperbound
-      $last_question = 'lucie-vmsetup/harddisk-size'
       subst 'lucie-vmsetup/error', 'short_error_message', "エラー: VM ノードのハードディスク容量"
       subst 'lucie-vmsetup/error', 'extended_error_message', "VM ノードのハードディスク容量が上限の \#{$harddisk_size_upperbound} GB を越えています。"
       'lucie-vmsetup/error'

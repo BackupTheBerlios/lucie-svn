@@ -58,7 +58,17 @@ module Deft
     # +aQuestion+ を表す concrete class の Ruby スクリプトを文字列で返す
     public
     def self.marshal_concrete_state( aQuestion )
-      if aQuestion.next_question.nil?
+      if aQuestion.backup
+        return ( <<-CLASS_DEFINITION ).unindent_auto
+        class #{aQuestion.state_class_name} < Deft::State
+          public
+          def transit( aDebconfContext )
+            super( aDebconfContext )
+            aDebconfContext.backup
+          end
+        end
+        CLASS_DEFINITION
+      elsif aQuestion.next_question.nil?
         return ( <<-CLASS_DEFINITION ).unindent_auto
         class #{aQuestion.state_class_name} < Deft::State
           public

@@ -23,10 +23,9 @@ question( 'lucie-vmsetup/error-backup' ) do |question|
   question.backup = true
 end
 
-question( 'lucie-vmsetup/error-abort' ) do |question|
+question( 'lucie-vmsetup/error-abort' => nil ) do |question|
   question.template = Template['lucie-vmsetup/error']
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = nil
 end
 
 # ------------------------- 
@@ -50,9 +49,8 @@ template( 'lucie-vmsetup/hello' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-vmsetup/hello' ) do |question|
+question( 'lucie-vmsetup/hello' => 'lucie-vmsetup/vmpool-server-ip' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = 'lucie-vmsetup/vmpool-server-ip'
   question.first_question = true
 end
 
@@ -65,20 +63,18 @@ template( 'lucie-vmsetup/vmpool-server-ip' ) do |template|
   template.extended_description_ja = 'Lucie VM Pool サーバの IP アドレスを入力してください'
 end
 
-question( 'lucie-vmsetup/vmpool-server-ip' ) do |question|
-  question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<-NEXT_QUESTION
-  Proc.new do |user_input|
-    unless /\\A\\d{1,3}\.\\d{1,3}\.\\d{1,3}\.\\d{1,3}\\Z/=~ user_input
-      subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: IP アドレス形式"
-      subst 'lucie-vmsetup/error-backup', 'extended_error_message', "IP アドレスの形式が正しくありません : \#{get('lucie-vmsetup/vmpool-server-ip')}"
+question( 'lucie-vmsetup/vmpool-server-ip' => 
+proc do |user_input|
+  unless /\A\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\Z/=~ user_input
+    subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: IP アドレス形式"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "IP アドレスの形式が正しくありません : \#{get('lucie-vmsetup/vmpool-server-ip')}"
       'lucie-vmsetup/error-backup'
-    else
-      subst 'lucie-vmsetup/vmpool-server-confirmation', 'vmpool-server-ip', user_input 
+  else
+    subst 'lucie-vmsetup/vmpool-server-confirmation', 'vmpool-server-ip', user_input 
       'lucie-vmsetup/vmpool-server-port'
-    end
   end
-  NEXT_QUESTION
+end ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
 end
 
 # ------------------------- 
@@ -90,20 +86,18 @@ template( 'lucie-vmsetup/vmpool-server-port' ) do |template|
   template.extended_description_ja = 'Lucie VM Pool サーバのポート番号を入力してください'
 end
 
-question( 'lucie-vmsetup/vmpool-server-port' ) do |question|
-  question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<-NEXT_QUESTION
-  Proc.new do |user_input|
-    unless /\\A\\d+\\Z/=~ user_input
-      subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: ポート番号形式"
-      subst 'lucie-vmsetup/error-backup', 'extended_error_message', "ポート番号の形式が正しくありません : \#{get('lucie-vmsetup/vmpool-server-port')}"
+question( 'lucie-vmsetup/vmpool-server-port' => 
+proc do |user_input|
+  unless /\\A\\d+\\Z/=~ user_input
+    subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: ポート番号形式"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "ポート番号の形式が正しくありません : \#{get('lucie-vmsetup/vmpool-server-port')}"
       'lucie-vmsetup/error-backup'
-    else
-      subst 'lucie-vmsetup/vmpool-server-confirmation', 'vmpool-server-port', user_input 
+  else
+    subst 'lucie-vmsetup/vmpool-server-confirmation', 'vmpool-server-port', user_input 
       'lucie-vmsetup/vmpool-server-confirmation'
-    end
   end
-  NEXT_QUESTION
+end ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
 end
 
 # ------------------------- 
@@ -119,27 +113,26 @@ template( 'lucie-vmsetup/vmpool-server-reconnection' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-vmsetup/vmpool-server-reconnection' ) do |question|
-  question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<-NEXT_QUESTION
-  Proc.new do |user_input|
-    case user_input
-    when 'true'
-      require 'socket'
-      require 'lucie-vm-pool/client'
-      begin
-        socket = TCPSocket.open( get('lucie-vmsetup/vmpool-server-ip'), get('lucie-vmsetup/vmpool-server-port') )
+question( 'lucie-vmsetup/vmpool-server-reconnection' =>
+proc do |user_input|
+  case user_input
+  when 'true'
+    require 'socket'
+    require 'lucie-vm-pool/client'
+    begin
+      socket = TCPSocket.open( get('lucie-vmsetup/vmpool-server-ip'), get('lucie-vmsetup/vmpool-server-port') )
         'lucie-vmsetup/num-nodes'
-      rescue 
+    rescue 
         'lucie-vmsetup/vmpool-server-reconnection'	
-      end
-    when 'false'
-      subst 'lucie-vmsetup/error-abort', 'short_error_message', 'Lucie VM Pool セットアップの中止'
-      subst 'lucie-vmsetup/error-abort', 'extended_error_message', 'Lucie VM Pool のセットアップを中止します'
-      'lucie-vmsetup/error-abort'
     end
-  end 
-  NEXT_QUESTION
+  when 'false'
+    subst 'lucie-vmsetup/error-abort', 'short_error_message', 'Lucie VM Pool セットアップの中止'
+    subst 'lucie-vmsetup/error-abort', 'extended_error_message', 'Lucie VM Pool のセットアップを中止します'
+      'lucie-vmsetup/error-abort'
+  end
+end 
+) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
 end
 
 # ------------------------- 
@@ -155,28 +148,27 @@ template( 'lucie-vmsetup/vmpool-server-confirmation' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-vmsetup/vmpool-server-confirmation' ) do |question|
-  question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<-NEXT_QUESTION
-  Proc.new do 
-    require 'socket'
-    require 'lucie-vm-pool/client'
-    begin
-      socket = TCPSocket.open( get('lucie-vmsetup/vmpool-server-ip'), get('lucie-vmsetup/vmpool-server-port') )
-      $num_nodes_upperbound = LucieVmPool::Client.get( socket, '#nodes upperbound' ).to_i
-      subst 'lucie-vmsetup/num-nodes', 'num-nodes', $num_nodes_upperbound
-      $memory_size_upperbound = LucieVmPool::Client.get( socket, 'memory size upperbound' ).to_i
-      subst 'lucie-vmsetup/memory-size', 'memory-size', $memory_size_upperbound
-      $harddisk_size_upperbound	= LucieVmPool::Client.get( socket, 'hdd size upperbound' ).to_i
-      subst 'lucie-vmsetup/harddisk-size', 'harddisk-size', $harddisk_size_upperbound
-      subst 'lucie-vmsetup/vm-type', 'vm-type', LucieVmPool::Client.get( socket, 'vm' )
-      subst 'lucie-vmsetup/distro', 'distro', LucieVmPool::Client.get( socket, 'distro' )
-      'lucie-vmsetup/num-nodes'
-    rescue 
-      'lucie-vmsetup/vmpool-server-reconnection'	
-    end
+question( 'lucie-vmsetup/vmpool-server-confirmation' =>
+proc do 
+  require 'socket'
+  require 'lucie-vm-pool/client'
+  begin
+    socket = TCPSocket.open( get('lucie-vmsetup/vmpool-server-ip'), get('lucie-vmsetup/vmpool-server-port') )
+    $num_nodes_upperbound = LucieVmPool::Client.get( socket, '#nodes upperbound' ).to_i
+    subst 'lucie-vmsetup/num-nodes', 'num-nodes', $num_nodes_upperbound
+    $memory_size_upperbound = LucieVmPool::Client.get( socket, 'memory size upperbound' ).to_i
+    subst 'lucie-vmsetup/memory-size', 'memory-size', $memory_size_upperbound
+    $harddisk_size_upperbound	= LucieVmPool::Client.get( socket, 'hdd size upperbound' ).to_i
+    subst 'lucie-vmsetup/harddisk-size', 'harddisk-size', $harddisk_size_upperbound
+    subst 'lucie-vmsetup/vm-type', 'vm-type', LucieVmPool::Client.get( socket, 'vm' )
+    subst 'lucie-vmsetup/distro', 'distro', LucieVmPool::Client.get( socket, 'distro' )
+    'lucie-vmsetup/num-nodes'
+  rescue 
+    'lucie-vmsetup/vmpool-server-reconnection'	
   end
-  NEXT_QUESTION
+end
+) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
 end
 
 # ------------------------- 
@@ -193,24 +185,23 @@ template( 'lucie-vmsetup/num-nodes' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-vmsetup/num-nodes' ) do |question|
-  question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<-NEXT_QUESTION
-  Proc.new do |user_input|
-    if user_input.to_i <= 0
-      subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードの台数"
-      subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードの台数がセットされていません。"
+question( 'lucie-vmsetup/num-nodes' => 
+proc do |user_input|
+  if user_input.to_i <= 0
+    subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードの台数"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードの台数がセットされていません。"
       'lucie-vmsetup/error-backup'
-    elsif user_input.to_i > $num_nodes_upperbound
-      subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードの台数"
-      subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードの台数が上限の \#{$num_nodes_upperbound} 台を越えています。"
+  elsif user_input.to_i > $num_nodes_upperbound
+    subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードの台数"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードの台数が上限の \#{$num_nodes_upperbound} 台を越えています。"
       'lucie-vmsetup/error-backup'
-    else
-      subst 'lucie-vmsetup/confirmation', 'num_nodes', user_input
+  else
+    subst 'lucie-vmsetup/confirmation', 'num_nodes', user_input
       'lucie-vmsetup/use-network'
-    end
   end
-  NEXT_QUESTION
+end
+) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
 end
 
 # ------------------------- 
@@ -226,14 +217,12 @@ template( 'lucie-vmsetup/use-network' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-vmsetup/use-network' ) do |question|
+question( 'lucie-vmsetup/use-network' =>
+proc do |user_input|
+  subst 'lucie-vmsetup/confirmation', 'use_network', user_input
+  { 'true'=>'lucie-vmsetup/ip', 'false'=>'lucie-vmsetup/memory-size' }[user_input]
+end ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<-NEXT_QUESTION
-  Proc.new do |user_input|
-    subst 'lucie-vmsetup/confirmation', 'use_network', user_input
-    { 'true'=>'lucie-vmsetup/ip', 'false'=>'lucie-vmsetup/memory-size' }[user_input]
-  end
-  NEXT_QUESTION
 end
 
 # ------------------------- 
@@ -263,9 +252,8 @@ template( 'lucie-vmsetup/ip' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-vmsetup/ip' ) do |question|
+question( 'lucie-vmsetup/ip' => 'lucie-vmsetup/memory-size' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = 'lucie-vmsetup/memory-size'
 end
 
 # ------------------------- 
@@ -281,25 +269,23 @@ template( 'lucie-vmsetup/memory-size' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-vmsetup/memory-size' ) do |question|
-  question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<-NEXT_QUESTION
-  Proc.new do |user_input|
-    if user_input.to_i <= 0
-      subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードのメモリサイズ"
-      subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードのメモリサイズがセットされていません。"
+question( 'lucie-vmsetup/memory-size' => 
+proc do |user_input|
+  if user_input.to_i <= 0
+    subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードのメモリサイズ"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードのメモリサイズがセットされていません。"
       'lucie-vmsetup/error-backup'
-    elsif user_input.to_i > $memory_size_upperbound
-      subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードのメモリサイズ"
-      subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードのメモリサイズが上限の \#{$memory_size_upperbound} MB を越えています。"
+  elsif user_input.to_i > $memory_size_upperbound
+    subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードのメモリサイズ"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードのメモリサイズが上限の \#{$memory_size_upperbound} MB を越えています。"
       'lucie-vmsetup/error-backup'
-    else
-      subst 'lucie-vmsetup/confirmation', 'memory_size', user_input
+  else
+    subst 'lucie-vmsetup/confirmation', 'memory_size', user_input
       'lucie-vmsetup/harddisk-size'
-    end
   end
-  NEXT_QUESTION
-end
+  end) do |question|
+    question.priority = Question::PRIORITY_MEDIUM
+  end
 
 # ------------------------- 
 
@@ -314,24 +300,22 @@ template( 'lucie-vmsetup/harddisk-size' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-vmsetup/harddisk-size' ) do |question|
-  question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<-NEXT_QUESTION
-  Proc.new do |user_input|
-    if user_input.to_i <= 0
-      subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードのハードディスク容量"
-      subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードのハードディスク容量がセットされていません。"
+question( 'lucie-vmsetup/harddisk-size' => 
+proc do |user_input|
+  if user_input.to_i <= 0
+    subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードのハードディスク容量"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードのハードディスク容量がセットされていません。"
       'lucie-vmsetup/error-backup'
-    elsif user_input.to_i > $harddisk_size_upperbound
-      subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードのハードディスク容量"
-      subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードのハードディスク容量が上限の \#{$harddisk_size_upperbound} GB を越えています。"
+  elsif user_input.to_i > $harddisk_size_upperbound
+    subst 'lucie-vmsetup/error-backup', 'short_error_message', "エラー: VM ノードのハードディスク容量"
+    subst 'lucie-vmsetup/error-backup', 'extended_error_message', "VM ノードのハードディスク容量が上限の \#{$harddisk_size_upperbound} GB を越えています。"
       'lucie-vmsetup/error-backup'
-    else
-      subst 'lucie-vmsetup/confirmation', 'harddisk_size', user_input	
+  else
+    subst 'lucie-vmsetup/confirmation', 'harddisk_size', user_input	
       'lucie-vmsetup/vm-type'
-    end
   end
-  NEXT_QUESTION
+end ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
 end
 
 # ------------------------- 
@@ -345,14 +329,12 @@ template( 'lucie-vmsetup/vm-type' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-vmsetup/vm-type' ) do |question|
-  question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<-NEXT_QUESTION
-  Proc.new do |user_input|
-    subst 'lucie-vmsetup/confirmation', 'vm_type', user_input	
+question( 'lucie-vmsetup/vm-type' => 
+proc do |user_input|
+  subst 'lucie-vmsetup/confirmation', 'vm_type', user_input	
     'lucie-vmsetup/distro'
-  end
-  NEXT_QUESTION
+end ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
 end
 
 # ------------------------- 
@@ -366,14 +348,12 @@ template( 'lucie-vmsetup/distro' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-vmsetup/distro' ) do |question|
-  question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<-NEXT_QUESTION
-  Proc.new do |user_input|
-    subst 'lucie-vmsetup/confirmation', 'distro', user_input	    	
+question( 'lucie-vmsetup/distro' => 
+proc do |user_input|
+  subst 'lucie-vmsetup/confirmation', 'distro', user_input	    	
     'lucie-vmsetup/application'
-  end
-  NEXT_QUESTION
+end ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
 end
 
 # ------------------------- 
@@ -394,14 +374,12 @@ template( 'lucie-vmsetup/application' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-vmsetup/application' ) do |question|
-  question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = <<-NEXT_QUESTION
-  Proc.new do |user_input|
-    subst 'lucie-vmsetup/confirmation', 'application', user_input	    	
+question( 'lucie-vmsetup/application' =>
+proc do |user_input|
+  subst 'lucie-vmsetup/confirmation', 'application', user_input	    	
     'lucie-vmsetup/confirmation'
-  end
-  NEXT_QUESTION
+end ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
 end
 
 # ------------------------- 設定情報の確認
@@ -421,7 +399,7 @@ template( 'lucie-vmsetup/confirmation' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-vmsetup/confirmation' ) do |question|
+question( 'lucie-vmsetup/confirmation' => nil ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
 end
 

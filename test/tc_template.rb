@@ -59,6 +59,7 @@ A Description for Unit Test
     assert_equal "A Description for Unit Test\n", template['Description']
     assert_equal "A Description for Unit Test\n", template.description
     assert_equal "ユニットテスト用の Description\n", template['Description-ja']
+    assert_equal "ユニットテスト用の Description\n", template.description_ja
   end
   
   public

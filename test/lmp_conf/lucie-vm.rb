@@ -71,6 +71,15 @@ template( 'lucie-vmsetup/vm-type' ) do |template|
   DESCRIPTION_JA
 end.register
 
+template( 'lucie-vmsetup/distro' ) do |template|
+  template.template_type = Template::SELECT
+  template.choices = ['debian (woody)', 'debian (sarge)', 'redhat7.3']
+  template.description_ja = (<<-DESCRIPTION_JA)
+使用するディストリビューションの選択
+使用するディストリビューションを選択してください
+  DESCRIPTION_JA
+end.register
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

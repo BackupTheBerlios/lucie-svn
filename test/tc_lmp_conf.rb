@@ -231,6 +231,32 @@ VM ノード台数の選択です
 使用する VM を選択してください
     DESCRIPTION_JA
   end 
+  
+  ###################################################################################################
+  # テンプレート 'lucie-vmsetup/distro' のテスト
+  ###################################################################################################
+
+  # テンプレート 'lucie-vmsetup/distro' が登録されていることを確認
+  public
+  def test_template_os_registered
+    assert Lucie::Template.template_defined?( 'lucie-vmsetup/distro' )
+  end
+  
+  # テンプレート 'lucie-vmsetup/distro' の 'Type:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_os_type
+    assert_equal Template::SELECT, Lucie::Template.lookup( 'lucie-vmsetup/distro' ).template_type
+    assert_equal 'debian (woody), debian (sarge), redhat7.3', Lucie::Template.lookup( 'lucie-vmsetup/distro' ).choices
+  end
+  
+  # テンプレート 'lucie-vmsetup/distro' の 'Description-ja:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_distro_description_ja
+    assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/distro' ).description_ja
+使用するディストリビューションの選択
+使用するディストリビューションを選択してください
+    DESCRIPTION_JA
+  end
 end
 
 ### Local variables:

@@ -112,6 +112,53 @@ class DeftApp
   end
   
   private
+  def run
+    backend = Tempfile.new( 'deft' )
+    backend.print <<-BACKEND
+#!/usr/bin/ruby
+require 'deft/debconf-context'
+require '#{@command_line_options.run}'
+
+capb  'backup'
+title 'Deft'
+debconf_context = Deft::DebconfContext.new  
+loop do 
+  rc = debconf_context.transit
+  exit 0 if rc.nil?
+end
+      BACKEND
+    backend.close
+    
+    require @command_line_options.run
+    File.open( backend.path + '.templates', 'w+' ) do |file|
+      Deft::Template.templates.each do |each|
+        file.puts NKF.nkf( '-e', each.to_s )
+        file.puts 
+      end
+    end 
+    ENV['DEBCONF_DEBUG'] = '.*'
+    FileUtils.chmod( 0755, backend.path )    
+    exec "/usr/share/debconf/frontend #{backend.path} #{ARGV.join(' ')}"
+  end
+
+  private
+  def emulate
+    next_question = Question::QUESTIONS[@command_line_options.emulate].next_question
+    case next_question
+    when String
+      puts "`#{@command_line_options.emulate}' => `#{next_question}'"
+    when Hash
+      raise '--input option is not set' if @command_line_options.input.nil?
+      puts "`#{@command_line_options.emulate}' => `#{next_question[@command_line_options.input]}'"
+    when Proc
+      raise '--input option is not set' if @command_line_options.input.nil?
+      puts "`#{@command_line_options.emulate}' => `#{next_question.call( @command_line_options.input )}'"
+    else
+      raise "This shouldn't happen."
+    end
+  end
+    
+  private
   def do_option    
     @command_line_options.parse ARGV.dup
     if @command_line_options.trace
@@ -130,47 +177,10 @@ class DeftApp
       exit( 0 )
     end
     if @command_line_options.run      
-      backend = Tempfile.new( 'deft' )
-      backend.print <<-BACKEND
-#!/usr/bin/ruby
-require 'deft/debconf-context'
-require '#{@command_line_options.run}'
-
-capb  'backup'
-title 'Deft'
-debconf_context = Deft::DebconfContext.new  
-loop do 
-  rc = debconf_context.transit
-  exit 0 if rc.nil?
-end
-      BACKEND
-      backend.close
-      
-      require @command_line_options.run
-      File.open( backend.path + '.templates', 'w+' ) do |file|
-        Deft::Template.templates.each do |each|
-          file.puts NKF.nkf( '-e', each.to_s )
-          file.puts 
-        end
-      end 
-      ENV['DEBCONF_DEBUG'] = '.*'
-      FileUtils.chmod( 0755, backend.path )    
-      exec "/usr/share/debconf/frontend #{backend.path} #{ARGV.join(' ')}"
+      run
     end
     if @command_line_options.emulate
-      next_question = Question::QUESTIONS[@command_line_options.emulate].next_question
-      case next_question
-      when String
-        puts "`#{@command_line_options.emulate}' => `#{next_question}'"
-      when Hash
-        raise '--input option is not set' if @command_line_options.input.nil?
-        puts "`#{@command_line_options.emulate}' => `#{next_question[@command_line_options.input]}'"
-      when Proc
-        raise '--input option is not set' if @command_line_options.input.nil?
-        puts "`#{@command_line_options.emulate}' => `#{next_question.call( @command_line_options.input )}'"
-      else
-        raise "This shouldn't happen."
-      end
+      emulate
       exit( 0 )
     end
     if @command_line_options.ruby_code        

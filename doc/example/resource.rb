@@ -11,21 +11,21 @@ include Lucie::Config
 
 # ------------------------- ホストの定義.
 
-cluster_node00 = Host.new do |host|
+Host.new do |host|
   host.name = 'cluster_node00'
   host.alias = 'Cluster Node #00'
   host.address = '192.168.0.1'
   host.mac_address = '00:0C:29:41:88:F0'
 end
 
-cluster_node01 = Host.new do |host|
+Host.new do |host|
   host.name = 'cluster_node01'
   host.alias = 'Cluster Node #01'
   host.address = '192.168.0.2'
   host.mac_address = '00:0C:29:41:88:F1'
 end
 
-cluster_node02 = Host.new do |host|
+Host.new do |host|
   host.name = 'cluster_node02'
   host.alias = 'Cluster Node #02'
   host.address = '192.168.0.3'

@@ -64,9 +64,18 @@ module Deft
     end
     
     private
-    def self.define_question( nameString, &block )
-      question = lookup( nameString ) 
-      question.template = Template[nameString]     
+    def self.define_question( nameDescription, &block )
+      case nameDescription
+      when String
+        question = lookup( nameDescription )
+        question.template = Template[nameDescription] 
+      when Hash
+        question = lookup( nameDescription.keys[0] )
+        question.template = Template[nameDescription.keys[0]] 
+        question.next_question = nameDescription.values[0]
+      else
+        raise "This shouldn't happen"
+      end   
       return question.enhance( &block )
     end
     
@@ -102,15 +111,40 @@ module Deft
            
     private
     def register_concrete_state
-      eval marshal_concrete_state
+      define_concrete_state
       concrete_state = eval( "#{state_class_name}.instance" )
-      concrete_state.enhance( name, priority, first_question, marshal_concrete_state )
+      concrete_state.enhance( self )
     end   
-    
-    # Question から対応する Concrete State を表す Ruby コードを文字列で返す
-    public
-    def marshal_concrete_state
-      return Deft::State.marshal_concrete_state( self )
+
+    private 
+    def define_concrete_state
+      eval( "class #{state_class_name} < Deft::State; end" )
+      if @backup
+        concrete_state_class.__send__( :define_method, :transit, 
+                                       State.instance.method(:transit_backup) )
+      elsif @next_question.nil?
+        concrete_state_class.__send__( :define_method, :transit, 
+                                       State.instance.method(:transit_finish) )
+      else   
+        case @next_question
+        when String
+          concrete_state_class.__send__( :define_method, :transit, 
+                                         State.instance.method(:transit_string_state) )
+        when Hash
+          concrete_state_class.__send__( :define_method, :transit, 
+                                         State.instance.method(:transit_hash_state) )
+        when Proc
+          concrete_state_class.__send__( :define_method, :transit, 
+                                         State.instance.method(:transit_proc_state) )
+        else
+          raise "Unsupported next_question: #{@next_question}"
+        end
+      end
+    end
+        
+    private
+    def concrete_state_class
+      return eval(state_class_name)
     end
     
     # 質問名 => concrete state クラス名へ変換

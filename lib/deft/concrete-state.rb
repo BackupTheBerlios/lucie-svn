@@ -16,6 +16,11 @@ module Deft
     
     @@first_state = nil
     
+    # 登録されている Concrete State のリストをクリアする
+    def self.clear
+      STATES.clear
+    end
+    
     # 登録されている Concrete State のリストを返す
     def self.states
       return STATES.values

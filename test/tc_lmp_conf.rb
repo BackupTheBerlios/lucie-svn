@@ -10,9 +10,8 @@ $LOAD_PATH.unshift './lib'
 
 require 'test/unit'
 
-# test/lmp_conf/lucie-vm を LMP 設定ファイルとして読み込み、
-# Template や Question がきちんと登録できるかどうかをテスト。
-class TC_LMP_Conf < Test::Unit::TestCase
+# Template が登録できることをテスト
+class TC_LMP_Conf_Template < Test::Unit::TestCase
   public
   def setup
     require 'test/lmp_conf/lucie_vm_template'

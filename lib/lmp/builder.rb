@@ -13,23 +13,25 @@ module LMP
   class Builder
     # パッケージ作成に必要な各ファイルの Rake ターゲットを定義する
     public
-    def initialize( aSpecification )
+    def initialize( aSpecification, buildDirPathString )
       @spec = aSpecification
-      define_file_task( File.join(@spec.builddir, 'packages') )
-      define_file_task( File.join(@spec.builddir, 'debian', 'README.Debian'), :readme )
-      define_file_task( File.join(@spec.builddir, 'debian', 'changelog') )
-      define_file_task( File.join(@spec.builddir, 'debian', 'config') )
-      define_file_task( File.join(@spec.builddir, 'debian', 'control') )
-      define_file_task( File.join(@spec.builddir, 'debian', 'copyright') )
-      define_file_task( File.join(@spec.builddir, 'debian', 'postinst') )
-      define_file_task( File.join(@spec.builddir, 'debian', 'rules') )
-      define_file_task( File.join(@spec.builddir, 'debian', 'templates') )
+      @build_dir = buildDirPathString
+      
+      define_file_task( File.join(@build_dir, 'packages') )
+      define_file_task( File.join(@build_dir, 'debian', 'README.Debian'), :readme )
+      define_file_task( File.join(@build_dir, 'debian', 'changelog') )
+      define_file_task( File.join(@build_dir, 'debian', 'config') )
+      define_file_task( File.join(@build_dir, 'debian', 'control') )
+      define_file_task( File.join(@build_dir, 'debian', 'copyright') )
+      define_file_task( File.join(@build_dir, 'debian', 'postinst') )
+      define_file_task( File.join(@build_dir, 'debian', 'rules') )
+      define_file_task( File.join(@build_dir, 'debian', 'templates') )
     end
     
     # Specification を元に LMP をビルドする。
     public
     def build
-      sh "(cd #{@spec.builddir}; debuild)" do |ok, res|
+      sh "cd #{@build_dir} && debuild" do |ok, res|
         if ! ok
           puts "debuild failed (status = #{res.exitstatus})"
         end
@@ -39,10 +41,12 @@ module LMP
     private
     def define_file_task( fileNameString, attribute=nil )
       file( fileNameString ) do |task|
-        open( task.name, 'w+' ) do |outfile|
-          if attribute
+        if attribute && @spec.send(attribute)
+          open( task.name, 'w+' ) do |outfile|
             outfile.print( @spec.send(attribute) )
-          else
+          end
+        elsif @spec.send(File.basename(fileNameString))
+          open( task.name, 'w+' ) do |outfile|
             outfile.print( @spec.send(File.basename(fileNameString)) )
           end
         end

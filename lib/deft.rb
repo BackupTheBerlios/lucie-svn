@@ -143,16 +143,18 @@ end
 
   private
   def emulate
-    next_question = Deft::Question::QUESTIONS[@command_line_options.emulate].next_question
+    debconf_definition, question_name = @command_line_options.emulate.gsub(/\s/, '').split(',')
+    require debconf_definition
+    next_question = Deft::Question::QUESTIONS[question_name].next_question
     case next_question
     when String
-      puts "`#{@command_line_options.emulate}' => `#{next_question}'"
+      puts "`#{question_name}' => `#{next_question}'"
     when Hash
       raise '--input option is not set' if @command_line_options.input.nil?
-      puts "`#{@command_line_options.emulate}' => `#{next_question[@command_line_options.input]}'"
+      puts "`#{question_name}' => `#{next_question[@command_line_options.input]}'"
     when Proc
       raise '--input option is not set' if @command_line_options.input.nil?
-      puts "`#{@command_line_options.emulate}' => `#{next_question.call( @command_line_options.input )}'"
+      puts "`#{question_name}' => `#{next_question.call( @command_line_options.input )}'"
     else
       raise "This shouldn't happen."
     end

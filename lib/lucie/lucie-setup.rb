@@ -81,11 +81,10 @@ module Lucie
     private
     def nfsroot_task
       installer = Config::Installer[@commandline_options.installer_name]
-      installer_base_task = Task[installer_base_task_name( installer.name )]
       Rake::NfsrootTask.new( installer.name ) do |nfsroot|
         nfsroot.dir = File.join( @commandline_options.nfsroot_dir, installer.name )
-        nfsroot.installer_base = File.join( installer_base_task.dir, 
-          "#{installer_base_task.distribution}_#{installer_base_task.distribution_version}.tgz" )
+        nfsroot.installer_base = File.join( File.join( @commandline_options.installer_base_dir, installer.name ), 
+          "#{installer.distribution}_#{installer.distribution_version}.tgz" )
       end
     end
     

@@ -32,7 +32,7 @@ module Debconf
     class InternalRubyError < ::RuntimeError; end
   end
 
-  module ConfModule
+  module Client
     COMMANDS = [
       "capb", "set", "reset", "title", "input",
       "beginblock", "endblock", "go", "get", "register",

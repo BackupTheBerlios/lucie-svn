@@ -12,3 +12,13 @@ Description: Lucie client
  Lucie client package needed by Lucie installer. Lucie users don't
  need to install this package by hand, because this package is internal one
  and is automatically installed into the nfsroot when executing lucie-setup.
+
+Package: lucie
+Architecture: all
+Section: admin
+Depends: ruby1.8, nfs-kernel-server | nfs-user-server, debootstrap
+Description: The Linux Universal Configuration & Installation Engine
+ Lucie is a fully automatic installation system aimed at daily hourly
+ automatic software installation/update of PC commodity cluster.
+ . 
+ See Project Page: http://developer.berlios.de/projects/lucie/

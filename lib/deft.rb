@@ -128,13 +128,11 @@ class DeftApp
       puts ruby_code( @command_line_options.ruby_code )        
     end
     if @command_line_options.template
-      puts '登録されているテンプレートのリスト:'
       Deft::Template.templates.each do |each|
         puts each.name
       end
     end
     if @command_line_options.question
-      puts '登録されている質問のリスト:'
       Deft::Question.questions.each do |each|
         puts each.name
       end

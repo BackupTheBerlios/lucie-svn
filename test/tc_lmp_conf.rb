@@ -169,10 +169,36 @@ VM ノード台数の選択です
   public
   def test_template_memory_size_description_ja
     assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/memory-size' ).description_ja
-ノードのメモリ
+ノードのメモリ容量
 使用したいメモリ容量を入力してください (単位: MB)
     DESCRIPTION_JA
   end
+  
+  ###################################################################################################
+  # テンプレート 'lucie-vmsetup/harddisk-size' のテスト
+  ###################################################################################################
+
+  # テンプレート 'lucie-vmsetup/harddisk-size' が登録されていることを確認
+  public
+  def test_template_harddisk_size_registered
+    assert Lucie::Template.template_defined?( 'lucie-vmsetup/harddisk-size' )
+  end
+  
+  # テンプレート 'lucie-vmsetup/harddisk-size' の 'Type:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_harddisk_size_type
+    assert_equal Template::STRING, Lucie::Template.lookup( 'lucie-vmsetup/harddisk-size' ).template_type
+    assert_equal Template::STRING, Lucie::Template.lookup( 'lucie-vmsetup/harddisk-size' )['Type'] 
+  end
+  
+  # テンプレート 'lucie-vmsetup/harddisk-size' の 'Description-ja:' フィールドが正しく設定されているかどうかを確認
+  public
+  def test_template_harddisk_size_description_ja
+    assert_equal (<<-DESCRIPTION_JA), Lucie::Template.lookup( 'lucie-vmsetup/harddisk-size' ).description_ja
+ノードのハードディスク容量
+使用したいハードディスク容量を入れてください (単位: MB)
+    DESCRIPTION_JA
+  end  
 end
 
 ### Local variables:

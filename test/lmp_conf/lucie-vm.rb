@@ -49,8 +49,16 @@ end.register
 template( 'lucie-vmsetup/memory-size' ) do |template|
   template.template_type = Template::STRING
   template.description_ja = (<<-DESCRIPTION_JA)
-ノードのメモリ
+ノードのメモリ容量
 使用したいメモリ容量を入力してください (単位: MB)
+  DESCRIPTION_JA
+end.register
+
+template( 'lucie-vmsetup/harddisk-size' ) do |template|
+  template.template_type = Template::STRING
+  template.description_ja = (<<-DESCRIPTION_JA)
+ノードのハードディスク容量
+使用したいハードディスク容量を入れてください (単位: MB)
   DESCRIPTION_JA
 end.register
 

@@ -23,6 +23,13 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   
   # コマンドラインオプションのデフォルト値のテスト ###################
   
+  # デフォルトで trace オプションがオフであることをテスト
+  public
+  def test_default_trace_option_is_false
+    @commandline_options.parse( [] )
+    assert_equal( false, @commandline_options.trace, "default value for trace option was not set to OFF" )
+  end
+  
   # デフォルトで dryrun オプションがオフであることをテスト
   public
   def test_default_dryrun_option_is_false
@@ -87,6 +94,12 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   end
   
   # 実際にコマンドラインオプションをパーズし、値が取得できるかどうかのテスト ##############
+  
+  public
+  def test_parse_trace_option
+    @commandline_options.parse( ['--trace'] )
+    assert( @commandline_options.trace, "couldn't get value for --trace option" )
+  end
   
   public
   def test_parse_dryrun_option

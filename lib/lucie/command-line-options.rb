@@ -22,6 +22,8 @@ module Lucie
   class CommandLineOptions
     include Singleton
     
+    # トレースオプションの ON/OFF
+    attr :trace
     # ドライランオプションの ON/OFF
     attr :dryrun
     # デバッグオプションの ON/OFF
@@ -46,23 +48,25 @@ module Lucie
     #
     module OptionList
       OPTION_LIST = [
-      [ "--dryrun",         "-n",  nil, \
+      [ "--trace",             "-t",   nil, \
+          "Turn on invoke/execute tracing, enable full backtrace." ],
+      [ "--dryrun",            "-n",   nil, \
           "Do a dry run without executing actions." ],
-      [ "--ui-type",        "-u",  "`console' or `gtk'", \
+      [ "--ui-type",           "-u",   "`console' or `gtk'", \
           "Set user interface type." ],
-      [ "--make-floppy",    "-f",  nil, \
+      [ "--make-floppy",       "-f",   nil, \
           "Make a Lucie boot floppy." ],
-      [ "--installer-name", "-i",  "installer name", \
+      [ "--installer-name",    "-i",   "installer name", \
           "Specify an installer name to setup." ],
-      [ "--skip-verification", "-s",  nil, \
+      [ "--skip-verification", "-s",   nil, \
           "Do not verify user configuration." ],
-      [ "--list-resource",  "-r",   "resource type", \
+      [ "--list-resource",     "-r",   "resource type", \
           "List up registerd resource objects." ],
-      [ "--debug",          "-D",   nil, \
+      [ "--debug",             "-D",   nil, \
           "Displays lots on internal stuff." ],
-      [ "--help",           "-h",   nil, \
+      [ "--help",              "-h",   nil, \
           "You're looking at it." ],
-      [ "--version",        "-v",   nil, \
+      [ "--version",           "-v",   nil, \
           "Display  lucie-setup's version and exit." ],
       ]
       
@@ -96,6 +100,8 @@ module Lucie
         
         getopt_long.each do |option, argument|
           case option
+          when '--trace'
+            @trace = true
           when '--dryrun'
             @dryrun = true
           when '--make-floppy'
@@ -135,6 +141,7 @@ module Lucie
     
     private
     def set_default_options
+      @trace = false
       @dryrun = false
       @debug = false
       @help = false

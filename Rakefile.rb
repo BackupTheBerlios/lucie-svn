@@ -79,9 +79,20 @@ end
 
 desc 'Upload Debian Packages'
 task :upload => [:deb] do
-  sh %{cd .. && apt-ftparchive packages . | gzip -c9 > Packages.gz}
-  sh %{cd .. && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
-  sh %{cd .. && scp Packages.gz Sources.gz lucie-client*.deb *.dsc *.tar.gz *.build lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/packages/lucie-client/sarge/ }
+  mkdir_p '../upload/lucie/'
+  sh %{mv ../lucie_*.deb ../upload/lucie/}
+  sh %{mv ../lucie_*.dsc ../upload/lucie/}
+  sh %{mv ../lucie_*.tar.gz ../upload/lucie/}
+  sh %{mv ../lucie_*.build ../upload/lucie/}
+  sh %{cd ../upload/lucie/ && apt-ftparchive packages . | gzip -c9 > Packages.gz}
+  sh %{cd ../upload/lucie/ && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
+  sh %{cd ../upload/lucie/ && scp * lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/packages/lucie/debian/sarge/ }
+
+  mkdir_p '../upload/lucie-client'
+  sh %{mv ../lucie-client*.deb ../upload/lucie-client/}
+  sh %{cd ../upload/lucie-client/ && apt-ftparchive packages . | gzip -c9 > Packages.gz}
+  sh %{cd ../upload/lucie-client/ && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
+  sh %{cd ../upload/lucie-client/ && scp * lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/packages/lucie-client/debian/woody/ }
 end
 
 ### Local variables:

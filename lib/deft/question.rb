@@ -87,6 +87,7 @@ module Deft
       @actions << block if block_given?
       @actions.each { |each| result = each.call( self ) }
       register_concrete_state
+      puts "Question #{@name} (ƒeƒ“ƒvƒŒ[ƒg : #{@template.name}) ‚ð“o˜^" if $trace
       return self
     end
     

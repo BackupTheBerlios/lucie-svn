@@ -163,7 +163,6 @@ module Lucie
   end
 end
 
-
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

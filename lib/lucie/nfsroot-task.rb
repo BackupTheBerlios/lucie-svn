@@ -131,7 +131,6 @@ module Rake
     
     private
     def upgrade
-      cp '/etc/resolv.conf', nfsroot( 'etc/resolv.conf' ), {:preserve => true }
       cp '/etc/resolv.conf', nfsroot( 'etc/resolv.conf-lucieserver' ), {:preserve => true }
       File.open( nfsroot( 'etc/apt/apt.conf' ), 'w+' ) do |file|
         file.puts 'APT::Cache-Limit "100000000";'

@@ -144,18 +144,35 @@ sh %{chroot /tmp/target apt-cache dumpavail > /tmp/target/tmp/dumpavail}
 sh %{chroot /tmp/target dpkg --update-avail /tmp/dumpavail}
 rm_f '/tmp/target/tmp/dumpavail'
 
-# task instsoft
+# ------------------------- task instsoft
 ENV['DEBIAN_FRONTEND']='noninteractive'
 classes = Dir.entries('/etc/lucie/package') - ['.', '..'] # FIXME
-sh %{classes="#{classes.join(' ')}" install_packages}
+# sh %{classes="#{classes.join(' ')}" install_packages}
 
-# task configure
+# ------------------------- task configure
 
-# task finish
-# task chboot
-# save_dmsg
-# task savelog
+# ------------------------- task finish
+# show some local information
+sh %{ifconfig}
+sh %{df}
+# umount swap space
+swaplist.each do |each|
+  sh %{swapoff #{each} && echo "Disable swap device #{each}"}
+end
+# undo fake of all programs made by fai
+`chroot /tmp/target dpkg-divert --list lucie-client | awk '{ print $3}'`.split("\n").each do |each|
+  rm_f File.join('/tmp/target/', each)
+  sh %{chroot /tmp/target dpkg-divert --package lucie-client --rename --remove #{each}}
+  # when a diversion was made before the file exists
+  sh %{[ -f /tmp/target/#{each}.distrib.dpkg-new ] && mv /tmp/target/#{each}.distrib.dpkg-new /tmp/target/#{each}} rescue nil
+end
 
-# task faiend
+# ------------------------- task chboot
+
+# ------------------------- save_dmsg
+
+# ------------------------- task savelog
+
+# ------------------------- task faiend
 
 sleep 10

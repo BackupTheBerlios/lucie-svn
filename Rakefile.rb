@@ -2,7 +2,7 @@
 # $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $Revision$
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 require 'rake/clean'

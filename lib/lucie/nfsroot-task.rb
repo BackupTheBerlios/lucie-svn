@@ -23,6 +23,8 @@ module Rake
   # 例:
   #   NfsrootTask.new do |nfsroot|
   #     nfsroot.dir = "tmp"
+  #     nfsroot.package_server = "http://www.debian.or.jp/debian"
+  #     nfsroot.distribution_version = "woody"
   #     nfsroot.installer_base = "/tmp/presto_cluster/var/tmp/debian_woody.tgz"
   #   end
   #
@@ -31,6 +33,8 @@ module Rake
   #
   #   NfsrootTask.new( :presto_installer ) do |nfsroot|
   #     nfsroot.dir = "tmp"
+  #     nfsroot.package_server = "http://www.debian.or.jp/debian"
+  #     nfsroot.distribution_version = "woody"
   #     nfsroot.installer_base = "/tmp/presto_cluster/var/tmp/debian_woody.tgz"
   #   end
   #
@@ -40,12 +44,16 @@ module Rake
     attr_accessor :name
     attr_accessor :dir
     attr_accessor :installer_base
+    attr_accessor :package_server
+    attr_accessor :distribution_version
     
     # Nfsroot タスクを作成する。
     public
     def initialize( name=:nfsroot ) # :yield: self
       @name = name
       @dir = '/var/lib/lucie/nfsroot/'
+      @package_server = 'http://www.debian.or.jp/debian'
+      @distribution_version = 'stable'
       yield self if block_given?
       define
     end
@@ -180,7 +188,11 @@ exit 0
       end
       
       mkdir nfsroot( 'var/state' ) rescue nil
-      cp '/etc/apt/sources.list', nfsroot( 'etc/apt/sources.list' )
+      File.open( nfsroot( 'etc/apt/sources.list' ), 'w+' ) do |file|
+        file.puts "deb #{@package_server} #{@distribution_version} main contrib non-free"
+        file.puts "deb #{@package_server}-non-US #{@distribution_version}/non-US main contrib non-free"
+        file.puts "deb http://security.debian.org/ #{@distribution_version}/updates main contrib"
+      end
       cp '/etc/apt/preferences',  nfsroot( 'etc/apt/preferences' ) rescue nil
       
       File.open( nfsroot( 'etc/hosts' ), 'w+' ) do |file|

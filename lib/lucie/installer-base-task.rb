@@ -73,7 +73,10 @@ module Rake
       desc "Remove installer base tarball"
       task paste("clobber_", name)
       
+      task :clobber => [paste("clobber_", name)]
+      
       directory @dir
+      task name => [installer_base_target]
       file installer_base_target
     end
     

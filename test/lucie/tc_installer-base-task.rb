@@ -23,6 +23,39 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
   end
   
   public
+  def test_installer_base_target_prerequisites
+    Rake::InstallerBaseTask.new do |task|
+      task.distribution = 'debian'
+      task.distribution_version = 'woody'
+    end
+    assert_equal( ['/var/lib/lucie/installer-base/debian_woody.tgz'], 
+                  Task[:installer_base].prerequisites,
+                  ":installer_base タスクの prerequisites が正しくない" )
+  end
+  
+  public
+  def test_clobber_target_prerequisites
+    Rake::InstallerBaseTask.new do |task|
+      task.distribution = 'debian'
+      task.distribution_version = 'woody'
+    end
+    assert_equal( ["clobber_installer_base"], 
+                  Task[:clobber].prerequisites,
+                  ":clobber タスクの prerequisites が正しくない" )
+  end
+  
+  public
+  def test_reinstaller_base_target_prerequisites
+    Rake::InstallerBaseTask.new do |task|
+      task.distribution = 'debian'
+      task.distribution_version = 'woody'
+    end
+    assert_equal( ["clobber_installer_base", "installer_base"], 
+                  Task[:reinstaller_base].prerequisites,
+                  ":reinstaller_base タスクの prerequisites が正しくない" )
+  end
+  
+  public
   def test_targets_defined
     Rake::InstallerBaseTask.new do |task|
       task.distribution = 'debian'
@@ -33,25 +66,25 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
     assert_equal( "Build the debian version woody installer base tarball",
                   Task[:installer_base].comment, 
                   ":installer_base タスクのコメントが設定されていない" )
-                  
+    
     assert_not_nil( Task[:reinstaller_base],
                     ':reinstaller_base タスクが定義されていない' )
     assert_equal( "Force a rebuild of the installer base tarball",
                   Task[:reinstaller_base].comment, 
                   ":reinstaller_base タスクのコメントが設定されていない" )
-                                      
+    
     assert_not_nil( Task[:clobber_installer_base],
                     ':clobber_installer_base タスクが定義されていない' )
     assert_equal( "Remove installer base tarball",
                   Task[:clobber_installer_base].comment, 
                   ":clobber_installer_base タスクのコメントが設定されていない" )
-                                      
+    
     assert_not_nil( Task['/var/lib/lucie/installer-base/'],
                     'var/lib/lucie/installer-base/ ディレクトリタスクが定義されていない' )
     assert_not_nil( Task['/var/lib/lucie/installer-base/debian_woody.tgz'],
                     'var/lib/lucie/installer-base/debian_woody.tgz ファイルタスクが定義されていない' )
   end
-
+  
   public
   def test_accessor
     installer_base_task = Rake::InstallerBaseTask.new do |task|

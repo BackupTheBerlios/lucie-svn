@@ -126,8 +126,7 @@ install: build
 	install -d $(CURDIR)/debian/tmp/etc/lucie/lmp/c-dev/files/
 	-cp -a $(CURDIR)/files/* $(CURDIR)/debian/tmp/etc/lucie/lmp/c-dev/files/
 	install -d $(CURDIR)/debian/tmp/etc/lucie/lmp/c-dev/scripts/
-	-cp -a $(CURDIR)/scripts/* 
-$(CURDIR)/debian/tmp/etc/lucie/lmp/c-dev/scripts/
+	-cp -a $(CURDIR)/scripts/* $(CURDIR)/debian/tmp/etc/lucie/lmp/c-dev/scripts/
 
 # Build architecture-independent files here.
 binary-indep: build install

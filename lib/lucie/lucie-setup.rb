@@ -26,7 +26,7 @@ module Lucie
   class Setup
     include Singleton
     
-    LUCIE_VERSION = '0.0.1'
+    LUCIE_VERSION = '0.0.2alpha'
     VERSION_STRING = ['lucie-setup', LUCIE_VERSION, '('+Lucie::svn_date+')'].join(' ')
     
     # lucie-setup のメインルーチンを起動
@@ -58,9 +58,9 @@ module Lucie
     private
     def umount_dirs
       sh_option = {:verbose => @commandline_options.verbose}
-      sh %{LC_ALL=C chroot #{nfsroot_dir} dpkg-divert --package lucie --rename --remove /sbin/discover-modprobe}, sh_option rescue nil
-      sh %{umount #{File.join(nfsroot_dir, 'proc')}}, sh_option rescue nil
-      sh %{umount #{File.join(nfsroot_dir, 'dev/pts')}}, sh_option rescue nil 
+      sh %{LC_ALL=C chroot #{nfsroot_dir} dpkg-divert --package lucie-client --rename --remove /sbin/discover-modprobe}, sh_option rescue nil
+      sh %{umount #{File.join(nfsroot_dir, 'proc')} || true}, sh_option
+      sh %{umount #{File.join(nfsroot_dir, 'dev/pts')} || true}, sh_option
       sh %{mount | grep "on #{nfsroot_dir} " || true}, sh_option     
     end
 

@@ -1,4 +1,32 @@
-#! /bin/bash
+#! /usr/bin/ruby1.8
 
-echo "Hello World"
+require 'rake'
+
+# create ramdisk
+
+sh %{mount -n -t proc proc /proc}
+# start devfsd if needed
+if FileTest.chardev?( '/dev/.devfsd' )
+  sh %{/sbin/devfsd /dev}
+end
+
+# if we have shm use it as ramdisk
+rc = sh %{mount -t tmpfs tmpfs /tmp}
+unless rc
+  sh %{mke2fs -q -m 0 /dev/ram0}
+  sh %{mount -n /dev/ram0 /tmp}
+end
+
+# now create the required subdirectories
+mkdir_p '/tmp/etc'
+mkdir_p '/tmp/target'
+mkdir_p '/tmp/var/run/sshd'
+mkdir_p '/tmp/var/state/discover'
+mkdir_p '/tmp/var/lib/discover'
+
+mkdir '/tmp/var/tmp'
+mkdir '/tmp/var/log'
+mkdir '/tmp/var/lock'
+mkdir '/tmp/var/spool'
+
 sleep 10

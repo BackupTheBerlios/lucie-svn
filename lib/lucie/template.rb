@@ -12,8 +12,8 @@ require 'lucie/string'
 require 'lucie/time-stamp'
 
 # 新しいテンプレートを登録します
-def template( nameString, templateType, &block )
-  return Lucie::Template.define_template( nameString, templateType, &block )
+def template( nameString, &block )
+  return Lucie::Template.define_template( nameString, &block )
 end
 
 module Lucie
@@ -45,11 +45,19 @@ module Lucie
     extend Forwardable
     
     attr :name
-    def_delegator :@hash, :[]
-    def_delegator :@hash, :size
+    attr_accessor :default
+    attr_accessor :choices
+    attr_accessor :short_description
+    attr_accessor :extended_description
+    attr_accessor :short_description_ja
+    attr_accessor :extended_description_ja    
+    
+    def_delegator :@variable, :[]
+    def_delegator :@variable, :size
     
     TEMPLATES = {}
     
+    # テンプレートを名前で探します。見つからない場合には nil を返します
     public
     def self.[] ( templateNameString )
       return TEMPLATES[templateNameString]
@@ -63,9 +71,15 @@ module Lucie
     
     private
     def register
-      puts "Template #{@name} を登録" if $trace
+      puts "Template #{@name} (#{@template_type}) を登録" if $trace
       @actions.each { |each| result = each.call( self ) }
-      return self
+      if @template_type
+        _template = @template_type.new( self )
+        TEMPLATES[@name] = _template      
+        return _template
+      else
+        return self
+      end
     end
     
     # 登録されているテンプレートのリストを返します
@@ -81,33 +95,37 @@ module Lucie
     end
     
     private
-    def self.define_template( nameString, templateType, &block )
-      template = lookup( nameString, templateType )
-      template.enhance( &block )
-      return template
+    def self.define_template( nameString, &block )
+      template = lookup( nameString )      
+      return template.enhance( &block )
     end
     
     # Template を lookup し、もしすでに同名の Template が存在すればそれを返します。
     # 存在しない場合、新たに登録します。
     public
-    def self.lookup( nameString, templateType )
-      return TEMPLATES[nameString] ||= templateType.new( nameString )
+    def self.lookup( nameString )
+      return TEMPLATES[nameString] ||= self.new( nameString )
     end
     
     # あたらしい Template オブジェクトを返す
     public
-    def initialize( nameString, attributeHash = {} )
+    def initialize( nameString )
       @actions = []
       @name = nameString
-      @hash = attributeHash
+      @variable = {}
     end
     
     # テンプレートをブロックを用いてエンハンスします。self を返します。
     public
     def enhance( &block )
       @actions << block if block_given?
-      register
-      return self
+      return register
+    end
+    
+    # テンプレートの 'Type:' を指定します
+    public
+    def template_type=( typeClass )
+      @template_type = typeClass
     end
     
     # テンプレートの 'Type:' を返します
@@ -115,86 +133,10 @@ module Lucie
     def template_type
       return self.class
     end
-    
-    # テンプレートの 'Choices:' を指定します
-    public
-    def choices=( choicesArray )
-      @hash['Choices'] = choicesArray.join(', ')
-    end
-    
-    # テンプレートの 'Choices:' を指定します
-    public
-    def choices
-      return @hash['Choices']
-    end
-    
-    # テンプレートの 'Description:' を指定します
-    def description=( descriptionString )
-      @hash['Description'] = descriptionString.unindent_auto
-    end
-    
-    # テンプレートの 'Description:' を返します
-    def description
-      return @hash['Description']
-    end
-    
-    # テンプレートの 'Description-ja:' を指定します
-    def description_ja=( descriptionString )
-      @hash['Description-ja'] = descriptionString.unindent_auto
-    end
-    
-    # テンプレートの 'Description-ja:' を返します
-    def description_ja
-      return @hash['Description-ja']
-    end
-    
-    # テンプレートの 'Default:' を指定します
-    def default=( defaultString )
-      @hash['Default'] = defaultString
-    end
-    
-    # テンプレートの 'Default:' を返します
-    def default
-      return @hash['Default']
-    end
-    
+               
     private
-    def long_description
-      return format_long_description( description )
-    end
-    
-    private 
-    def long_description_ja
-      return format_long_description( description_ja )
-    end
-    
-    private
-    def short_description_ja
-      description_ja.split("\n")[0]
-    end
-    
-    private
-    def short_description
-      description.split("\n")[0]
-    end
-    
-    private
-    def description_string
-      _description = ''
-      if description
-        _description += "Description: #{short_description}\n"
-        _description += long_description + "\n"
-      end      
-      if description_ja
-        _description += "Description-ja: #{short_description_ja}\n" 
-        _description += long_description_ja
-      end
-      return _description
-    end
-    
-    private
-    def format_long_description( descriptionString )
-      return descriptionString.split("\n")[1..-1].map do |each|
+    def format_extended_description( descriptionString )
+      return descriptionString.unindent_auto.split("\n").map do |each|
         case each
         when /\A\s*\Z/
           ' .'

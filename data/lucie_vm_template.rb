@@ -147,8 +147,17 @@ end
 template( 'lucie-vmsetup/distro' ) do |template|
   template.template_type = SelectTemplate
   template.choices = ['debian (woody)', 'debian (sarge)', 'redhat7.3']
-  template.short_description_ja = '使用するディストリビューションの選択'
-  template.extended_description_ja = '使用するディストリビューションを選択してください'
+  template.short_description_ja = '使用するディストリビューション'
+  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  VM にインストールして使用する Linux ディストリビューションを選択してください
+  .
+  松岡研 PrestoIII クラスタで提供できる Linux ディストリビューションは 
+  'Debian (woody)', 'Debian (sarge)', 'Redhat 7.3' の 3 種類です。
+  それぞれの特徴は以下の通りです。
+   o Debian GNU/Linux (woody): Debian の安定版です。
+   o Debian GNU/Linux (sarge): Debian の開発版です。比較的新しいパッケージも含まれます。
+   o RedHat 7.3: RedHat の安定版です。
+  DESCRIPTION_JA
 end
 
 question( 'lucie-vmsetup/distro' ) do |question|

@@ -13,20 +13,67 @@ require 'test/unit'
 class TC_Template < Test::Unit::TestCase
   public
   def setup
-    @template = Lucie::Template.new( test_template_data )
+    @templates = Lucie::Template::parse( test_template_data )
+  end
+  
+  public
+  def test_template_with_block
+    Lucie::Template.clear
+    template = template( 'TEST/TEMPLATE' ) do |template|
+      template.template_type = Lucie::Template::SELECT
+      template.choices = ['CHOICE #1', 'CHOICE #2', 'CHOICE #3']
+      template.description = (<<-DESCRIPTION)
+      A Description for Unit Test
+      DESCRIPTION
+    end
+    
+    template.register
+    assert_equal Lucie::Template::SELECT, template['Type']
+    assert_equal 'CHOICE #1, CHOICE #2, CHOICE #3', template['Choices']
+    assert_equal "A Description for Unit Test\n", template['Description']
+  end
+  
+  public
+  def test_template
+    assert_kind_of Lucie::Template, template( 'LUCIE/OVERVIEW' )
+  end
+  
+  # clear のテスト
+  public
+  def test_clear
+    Lucie::Template::TEMPLATES['TEST TEMPLATE'] = Lucie::Template.new( 'TEST TEMPLATE' )
+    Lucie::Template::clear
+    assert_equal 0, Lucie::Template::TEMPLATES.size, 'TEMPLATES がクリアされていない'
+  end
+
+  # lookup のテスト (未知のテンプレート)
+  public
+  def test_lookup_unknown_template
+    Lucie::Template::clear
+    template = Lucie::Template::lookup( 'UNKNOWN TEMPLATE' )
+    assert_kind_of Lucie::Template, template
+    assert_equal 'UNKNOWN TEMPLATE', template.name, 'テンプレートが登録されていない'
+  end
+  
+  # lookup のテスト (既知のテンプレート)
+  public
+  def test_lookup_known_template
+    Lucie::Template::clear
+    template = template( 'KNOWN TEMPLATE' )
+    assert_equal template, Lucie::Template::lookup( 'KNOWN TEMPLATE' ), 'テンプレートが登録されていない'
   end
   
   # パーズ結果のテンプレート数が合っているかテスト
   public
   def test_size_of_templates
-    assert_equal 4, @template.size
+    assert_equal 4, @templates.size
   end
   
   # テンプレート 'libdebconf-client-ruby/do_you_like_ruby' の各値が正しく取得できるかテスト
   public
   def test_template_do_you_like_ruby
-    do_you_like_ruby = @template['libdebconf-client-ruby/do_you_like_ruby']
-    assert_kind_of Hash, do_you_like_ruby, "テンプレートが Hash として取得できない"    
+    do_you_like_ruby = @templates['libdebconf-client-ruby/do_you_like_ruby']
+    assert_kind_of Lucie::Template, do_you_like_ruby, "テンプレートが Hash として取得できない"    
     assert_equal 'libdebconf-client-ruby/do_you_like_ruby', do_you_like_ruby['Template'], "Template: の値が違う"
     assert_equal 'boolean', do_you_like_ruby['Type'], "Type: の値が違う"
     assert_equal 'yes', do_you_like_ruby['Default'], "Default: の値が違う"
@@ -37,8 +84,8 @@ class TC_Template < Test::Unit::TestCase
   # テンプレート 'libdebconf-client-ruby/hello_world' の各値が正しく取得できるかテスト
   public
   def test_hello_world
-    hello_world = @template['libdebconf-client-ruby/hello_world']
-    assert_kind_of Hash, hello_world, "テンプレートが Hash として取得できない"
+    hello_world = @templates['libdebconf-client-ruby/hello_world']
+    assert_kind_of Lucie::Template, hello_world, "テンプレートが Hash として取得できない"
     assert_equal 'libdebconf-client-ruby/hello_world', hello_world['Template'], "Template: の値が違う"
     assert_equal 'note', hello_world['Type'], "Type: の値が違う"
     assert_equal "Hello, World\nThis is an example script of libdebconf-client-ruby. You will see some\nexample questions from a Ruby script and find how to use the library and\nwhat this library does.", hello_world['Description'], "Description: の値が違う"
@@ -48,8 +95,8 @@ class TC_Template < Test::Unit::TestCase
   # 境界条件として、一番最後に定義されたテンプレートの 'libdebconf-client-ruby/nice_guy' の各値が正しく取得できるかテスト
   public
   def test_nice_guy
-    nice_guy = @template['libdebconf-client-ruby/nice_guy']
-    assert_kind_of Hash, nice_guy, "テンプレートが Hash として取得できない"
+    nice_guy = @templates['libdebconf-client-ruby/nice_guy']
+    assert_kind_of Lucie::Template, nice_guy, "テンプレートが Hash として取得できない"
     assert_equal 'libdebconf-client-ruby/nice_guy', nice_guy['Template'], "Template: の値が違う"
     assert_equal 'note', nice_guy['Type'], "Type: の値が違う"
     assert_equal "You nice Guy!\nGood Answer! You may be a nice guy.", nice_guy['Description'], 'Description の値が違う'

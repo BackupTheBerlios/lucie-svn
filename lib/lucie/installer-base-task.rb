@@ -26,6 +26,7 @@ module Rake
   #
   #   InstallerBaseTask.new do |installer_base|
   #     installer_base.dir = "tmp"
+  #     installer_base.mirror = "http://www.debian.or.jp/debian"
   #     installer_base.distribution = "debian"
   #     installer_base.distribution_version = "sarge"
   #   end
@@ -35,6 +36,7 @@ module Rake
   #
   #   InstallerBaseTask.new(:installer_base_woody) do |installer_base|
   #     installer_base.dir = "tmp"
+  #     installer_base.mirror = "http://www.debian.or.jp/debian"
   #     installer_base.distribution = "debian"
   #     installer_base.distribution_version = "woody"
   #   end
@@ -48,6 +50,8 @@ module Rake
     # インストーラベースを作成するディレクトリへのパス 
     # (デフォルト: '/var/lib/lucie/installer-base/' )
     attr_accessor :dir
+    # Debian のミラーの URI (デフォルト: http://www.debian.or.jp/debian)
+    attr_accessor :mirror
     # インストーラベースのディストリビューション (デフォルト: nil)
     attr_accessor :distribution
     # インストーラベースのディストリビューションのバージョン (デフォルト: nil)
@@ -58,6 +62,7 @@ module Rake
     def initialize( name=:installer_base ) # :yield: self
       @name = name
       @dir = '/var/lib/lucie/installer-base/'
+      @mirror = 'http://www.debian.or.jp/debian/'
       yield self if block_given?
       define
     end
@@ -81,7 +86,7 @@ module Rake
       task name => [installer_base_target]
       
       file installer_base_target do 
-        sh %{yes '' | LC_ALL=C /usr/sbin/debootstrap #{@distribution_version} #{@dir} http://www.debian.or.jp/debian || true}
+        sh %{yes '' | LC_ALL=C /usr/sbin/debootstrap #{@distribution_version} #{@dir} #{@mirror} || true}
         sh %{chroot #{@dir} apt-get clean}
         rm_f File.join(@dir, '/etc/resolv.conf')
         puts "Creating #{installer_base_target}"

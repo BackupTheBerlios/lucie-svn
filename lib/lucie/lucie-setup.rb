@@ -81,6 +81,7 @@ module Lucie
       installer = Config::Installer[@commandline_options.installer_name]
       Rake::InstallerBaseTask.new( installer.name ) do |installer_base|
         installer_base.dir = File.join( @commandline_options.installer_base_dir, installer.name )
+        installer_base.mirror = installer.package_server.uri
         installer_base.distribution = installer.distribution
         installer_base.distribution_version = installer.distribution_version
       end

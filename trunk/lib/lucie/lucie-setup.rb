@@ -32,7 +32,12 @@ module Lucie
     # lucie-setup のメインルーチンを起動
     public
     def main
-      do_option
+      begin
+        do_option
+      rescue Exception => ex
+        puts ex.message
+        exit(1)
+      end
       unless i_am_root
         $stderr.puts "Run this program as root."
         exit(9)
@@ -149,7 +154,8 @@ module Lucie
       when 'installer'
         Config::Installer.list.each_value do |each| puts each end 
       else
-        # TODO: 例外を raise
+        raise( UnknownResourceTypeException,
+               "Unknown resource type: '#{@commandline_options.list_resource}'" )
       end
     end
     
@@ -186,6 +192,8 @@ module Lucie
         puts
       end
     end
+
+    class UnknownResourceTypeException < ::Exception; end
   end 
 end
 

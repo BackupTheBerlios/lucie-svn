@@ -52,6 +52,7 @@ module Lucie
     STRING = 'STRING'.freeze
     NOTE = 'NOTE'.freeze
     SELECT = 'SELECT'.freeze
+    MULTISELECT = 'MULTISELECT'.freeze
     
     # Template が定義されていれば定義されているテンプレート、そうでなければ nil を返します
     public

@@ -16,6 +16,12 @@ class TC_Template < Test::Unit::TestCase
     @templates = Lucie::Template::parse( test_template_data )
   end
   
+  # MULTISELECT 定数が定義されていることを確認
+  public
+  def test_const_MULTISELECT_defined  
+    assert Lucie::Template.const_defined?( :MULTISELECT ), 'MULTISELECT 定数が定義されていない'
+  end
+  
   # BOOLEAN 定数が定義されていることを確認
   public
   def test_const_BOOLEAN_defined

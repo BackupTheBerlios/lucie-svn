@@ -6,6 +6,7 @@ debian/tmp/usr/sbin/install_packages
 debian/tmp/usr/sbin/setup_harddisks
 debian/tmp/usr/sbin/hwdetect
 debian/tmp/usr/sbin/mount2dir
+debian/tmp/usr/sbin/fai-do-scripts
 debian/tmp/usr/lib/lucie/start-stop-daemon
 debian/tmp/usr/lib/lucie/dhclient-script
 debian/tmp/usr/lib/lucie/dhclient-perl

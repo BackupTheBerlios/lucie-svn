@@ -35,7 +35,6 @@ class TC_Setup < Test::Unit::TestCase
   public
   def test_main
     $dryrun = true
-    $trace = true
     assert_nil Lucie::Setup.instance.main
   end
 end

@@ -57,7 +57,7 @@ module Lucie
     
     private
     def umount_dirs
-      sh %{LC_ALL=C chroot #{nfsroot_dir} dpkg-divert --package lucie --rename --remove /sbin/discover-modprobe}
+      sh %{LC_ALL=C chroot #{nfsroot_dir} dpkg-divert --package lucie --rename --remove /sbin/discover-modprobe} rescue nil
       sh %{umount #{File.join(nfsroot_dir, 'proc')}} rescue nil
       sh %{umount #{File.join(nfsroot_dir, 'dev/pts')}} rescue nil 
       sh %{mount | grep "on #{nfsroot_dir} " || true}     

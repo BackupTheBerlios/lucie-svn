@@ -55,8 +55,12 @@ end
 template( 'lucie-vmsetup/use-network' ) do |template|
   template.template_type = BooleanTemplate
   template.default = 'false'
-  template.short_description_ja = 'ノードのネットワーク'
-  template.extended_description_ja = 'ノードはネットワークにつながりますか？'
+  template.short_description_ja = 'VM の外部ネットワークへの接続'
+  template.extended_description_ja = (<<-DESCRIPTION_JA)
+  ジョブ実行時に VM は外部ネットワークへ接続する必要がありますか？
+  このオプションをオンにすると、GRAM が自動的に各 VM に連続した IP アドレスと MAC アドレスを割り当て、
+  Lucie をすべてのネットワーク関係の設定を行います。
+  DESCRIPTION_JA
 end
 
 question( 'lucie-vmsetup/use-network' ) do |question|

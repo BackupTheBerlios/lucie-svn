@@ -18,8 +18,8 @@ end
 
 task :installer_template_message do
   puts "*** STEP 1: Creating a template for Lucie installer images ***"
-  puts "A template for Lucie installer images will be created in #{$template_lucie_directory}."
-  puts "This operation can take a long time and will need approximately 100MB disk spce in #{$template_lucie_directory}."
+  puts "A template for Lucie installer images will be created in #{$template_directory}."
+  puts "This operation can take a long time and will need approximately 100MB disk spce in #{$template_directory}."
 end
 
 desc "古い Lucie のテンプレートディレクトリを消去"

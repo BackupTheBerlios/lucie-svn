@@ -105,6 +105,8 @@ module Lucie
         
         getopt_long.each do |option, argument|
           case option
+          when '--template-directory'
+            @template_directory = argument
           when '--trace'
             @trace = true
           when '--dryrun'

@@ -104,7 +104,8 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   
   public
   def test_template_directory_option
-    @commandline_options.parse( ['--template-directory="C:\tmp"'] )
+    @commandline_options.parse( ['--template-directory=c:\tmp'] )
+    assert_equal 'c:\tmp', @commandline_options.template_directory, "couldn't get value for --template-directory option"
   end
   
   public

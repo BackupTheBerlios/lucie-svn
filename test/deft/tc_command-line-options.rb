@@ -52,6 +52,13 @@ class TC_CommandLineOptions < Test::Unit::TestCase
     assert_nil( @commandline_options.ruby_code, "defalut value for ruby-code was not set to OFF" )
   end
   
+  # デフォルトで emulate オプションが nil であることをテスト
+  public
+  def test_default_emulate_option_is_false
+    @commandline_options.parse( [] )
+    assert_nil( @commandline_options.emulate, "defalut value for emulate was not set to OFF" )
+  end
+  
   # デフォルトで template オプションが false であることをテスト
   public
   def test_default_template_option_is_false
@@ -89,7 +96,13 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   public
   def test_parse_ruby_code_option
     @commandline_options.parse( ['--ruby-code=hello'] )
-    assert_equal( 'hello', @commandline_options.ruby_code, "couldn't get value for version option" )
+    assert_equal( 'hello', @commandline_options.ruby_code, "couldn't get value for ruby-code option" )
+  end
+  
+  public
+  def test_parse_emulate_option
+    @commandline_options.parse( ['--emulate=hello'] )
+    assert_equal( 'hello', @commandline_options.emulate, "couldn't get value for emulate option" )
   end
   
   public
@@ -115,6 +128,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
     assert_match( /ruby-code=\S+/,  @commandline_options.inspect, "couldn't inspect ruby-code option" )
     assert_match( /template=\S+/,  @commandline_options.inspect, "couldn't inspect template option" )
     assert_match( /question=\S+/,  @commandline_options.inspect, "couldn't inspect question option" )
+    assert_match( /emulate=\S+/, @commandline_options.inspect, "couldn't inspect emulate option" )
   end
 
   public

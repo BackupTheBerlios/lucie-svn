@@ -18,17 +18,20 @@ module Deft
   class CommandLineOptions
     include Singleton
     
-    attr :help 
-    attr :ruby_code
-    attr :template
-    attr :trace 
-    attr :version
-    attr :question
+    attr_reader :help 
+    attr_reader :ruby_code
+    attr_reader :template
+    attr_reader :trace 
+    attr_reader :version
+    attr_reader :question
+    attr_reader :emulate
 
     module OptionList
       OPTION_LIST = [
-      [ '--ruby-code',  '-r',   'question name', \
+      [ '--ruby-code',      '-r',   'question name', \
           'show concrete state definition in Ruby code.' ],
+      [ '--emulate',        '-e',   'question name', \
+          'emulate state transition.' ],
       [ '--trace',          '-T',   nil, \
           'displays lots on internal stuff.' ],
       [ '--help',           '-h',   nil, \
@@ -69,6 +72,8 @@ module Deft
 
         getopt_long.each do |option, argument|
           case option
+          when '--emulate'
+            @emulate = argument
           when '--question'
             @question = true
           when '--template'
@@ -91,7 +96,7 @@ module Deft
     public
     def inspect
       return '[CommandLineOptions: ' +
-      ["trace=#{@trace.inspect}", "help=#{@help.inspect}",
+      ["trace=#{@trace.inspect}", "help=#{@help.inspect}", "emulate=#{@emulate.inspect}",
        "version=#{@version.inspect}", "ruby-code=#{@ruby_code.inspect}",
        "template=#{@template.inspect}", "question=#{@question.inspect}"].join(', ') + ']'
     end

@@ -43,7 +43,7 @@ task :templates do
   $LOAD_PATH.unshift './data'
   require 'lucie_vm_template'
   File::open( 'templates', 'w' ) do |file|
-    Lucie::Template::TEMPLATES.each do |each|
+    Lucie::Template::TEMPLATES.values.each do |each|
       file.puts each
       file.puts
     end

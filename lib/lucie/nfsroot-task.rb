@@ -166,6 +166,7 @@ DPkg
       dpkg_divert '/etc/dhcp3/dhclient.conf' rescue nil      
       sh %{chroot #{@dir} apt-get install lucie-client}
       sh %{chroot #{@dir} cp -p /usr/share/lucie/etc/dhclient.conf /etc/dhcp3/}
+      sh %{cp -Rpv /etc/lucie/* #{nfsroot('etc/lucie')}}
     end
     
     private

@@ -5,9 +5,9 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'lucie'
+require 'deft'
 
-include Lucie
+include Deft
 
 template( 'lucie-vmsetup/hello' ) do |template|
   template.template_type = NoteTemplate

@@ -5,9 +5,9 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'lucie'
+require 'deft'
 
-include Lucie
+include Deft
 
 question( 'lucie-vmsetup/hello' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM

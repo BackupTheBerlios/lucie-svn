@@ -18,8 +18,11 @@ printf( "server is on %s\n", addr.join(":"))
 loop do 
   Thread.start( lucievmd.accept ) do |socket|
   print( socket, " is acepted\n" )
-  while socket.gets  
-    socket.write($LAST_READ_LINE)
+  while socket.gets
+    case $LAST_READ_LINE
+    when /^GET (.*)$/
+      puts $1
+    end  
   end
   print( socket, "is gone\n" )
   socket.close

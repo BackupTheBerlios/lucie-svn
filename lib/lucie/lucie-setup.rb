@@ -40,6 +40,8 @@ module Lucie
       begin
         installer_base_task.invoke
         nfsroot_task.invoke
+        umount_dirs
+        puts "lucie-setup finished."
       rescue Exception => ex
         puts "lucie-setup aborted!"
         puts ex.message
@@ -51,6 +53,14 @@ module Lucie
         exit(1)
       end
       return nil
+    end
+    
+    private
+    def umount_dirs
+      sh %{LC_ALL=C chroot #{nfsroot_dir} dpkg-divert --package lucie --rename --remove /sbin/discover-modprobe}
+      sh %{umount #{File.join(nfsroot_dir, 'proc')}} rescue nil
+      sh %{umount #{File.join(nfsroot_dir, 'dev/pts')}} rescue nil 
+      sh %{mount | grep "on #{nfsroot_dir} " || true}     
     end
     
     private
@@ -80,9 +90,8 @@ module Lucie
     
     private
     def nfsroot_task
-      installer = Config::Installer[@commandline_options.installer_name]
       Rake::NfsrootTask.new( installer.name ) do |nfsroot|
-        nfsroot.dir = File.join( @commandline_options.nfsroot_dir, installer.name )
+        nfsroot.dir = nfsroot_dir
         nfsroot.package_server = installer.package_server.uri
         nfsroot.distribution_version = installer.distribution_version
         nfsroot.kernel_version = installer.kernel_version
@@ -93,8 +102,17 @@ module Lucie
     end
     
     private
+    def nfsroot_dir
+      return File.join( @commandline_options.nfsroot_dir, installer.name )
+    end
+    
+    private
+    def installer
+      return Config::Installer[@commandline_options.installer_name]
+    end
+    
+    private
     def installer_base_task
-      installer = Config::Installer[@commandline_options.installer_name]
       Rake::InstallerBaseTask.new( installer_base_task_name( installer.name ) ) do |installer_base|
         installer_base.dir = File.join( @commandline_options.installer_base_dir, installer.name )
         installer_base.mirror = installer.package_server.uri

@@ -7,13 +7,12 @@
 
 require 'English'
 require 'getoptlong'
-require 'lucie/time-stamp'
+require 'time-stamp'
 require 'singleton'
 
+update(%q$Date$)
+
 module Deft
-
-  Lucie.update(%q$Date$)
-
   # We handle the parsing of options, and subsequently as a singleton
   # object to be queried for option values
   class CommandLineOptions

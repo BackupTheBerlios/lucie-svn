@@ -147,6 +147,11 @@ module Lucie
       @hash['Description'] = descriptionString.unindent_auto
     end
     
+    # テンプレートの 'Description:' を返します
+    def description
+      return @hash['Description']
+    end
+
     # テンプレートの 'Description-ja:' を指定します
     def description_ja=( descriptionString )
       @hash['Description-ja'] = descriptionString.unindent_auto

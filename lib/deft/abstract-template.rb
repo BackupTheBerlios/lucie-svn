@@ -30,6 +30,11 @@ module Deft
       @template = aTemplate
     end
     
+    public
+    def inspect
+      return "#<Deft::AbstractTemplate: @template=\"#{@template}\">"
+    end
+    
     # •¶Žš—ñ‚É•ÏŠ·‚·‚é
     public
     def to_s

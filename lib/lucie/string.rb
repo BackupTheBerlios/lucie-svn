@@ -11,6 +11,13 @@ update(%q$LastChangedDate$)
 
 # 標準の String クラスにインデント系のメソッドを追加
 class String
+  public
+  def indent( n )
+    return map do |each|
+      ' ' * n + each
+    end
+  end
+  
   # インデントを保ちつつ左寄せする
   public
   def unindent_auto

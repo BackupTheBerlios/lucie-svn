@@ -12,20 +12,22 @@ require 'deft/password-state'
 require 'deft/select-state'
 require 'deft/string-state'
 require 'deft/text-state'
-require 'lucie/template'
+require 'deft/template'
 require 'lucie/time-stamp'
 
-# 新しい質問項目を登録します
+# 新しい質問項目を登録する
 def question( nameString, &block )
   return Deft::Question.define_question( nameString, &block )
 end
 
 module Deft
   
+  # FIXME : update を Deft モジュールに移動
   Lucie.update(%q$LastChangedDate$)
   
   # Debconf の質問項目を表現するクラス
   class Question
+    # Question の '名前' => インスタンス の Hash
     QUESTIONS = {}
     # Very trivial items that have defaults that will work in the vast majority of cases.
     PRIORITY_LOW      = 'low'.freeze
@@ -36,11 +38,17 @@ module Deft
     # Items that will probably break the system without user intervention.
     PRIORITY_CRITICAL = 'critical'.freeze
     
+    # 質問の属性を決めるブロック
     attr :actions
+    # 質問の名前
     attr :name
+    # 質問の Template
     attr_accessor :template
+    # 質問の優先度
     attr_accessor :priority
+    # 次の質問
     attr_accessor :next_question
+    # 最初の質問であるかどうかを表す
     attr_accessor :first_question
     
     # Question を lookup する。
@@ -50,6 +58,13 @@ module Deft
       return QUESTIONS[questionNameString] ||= self.new( questionNameString )
     end
     
+    # 登録されている Question のリストを返す
+    public
+    def self.questions
+      return QUESTIONS.values
+    end
+    
+    # 登録されている Question オブジェクトを名前で検索する
     public
     def self.[]( questionNameString )
       return QUESTIONS[questionNameString]
@@ -58,10 +73,11 @@ module Deft
     private
     def self.define_question( nameString, &block )
       question = lookup( nameString ) 
-      question.template = Lucie::Template[nameString]     
+      question.template = Template[nameString]     
       return question.enhance( &block )
     end
     
+    # 登録されている Question オブジェクトをクリアする
     public
     def self.clear
       QUESTIONS.clear
@@ -73,20 +89,15 @@ module Deft
       return QUESTIONS[questionNameString]
     end
     
-    # Question を登録する
-    public
-    def register
-      puts "Question #{@name} を登録" if $trace
-      @actions.each { |each| result = each.call( self ) }
-    end
-    
+    # Question オブジェクトの各属性をセットする
     public
     def enhance( &block )
       @actions << block if block_given?
-      register
+      @actions.each { |each| result = each.call( self ) }
       return self
     end
     
+    # あたらしい Question オブジェクトを返す
     public
     def initialize( nameString )
       @priority = nil
@@ -101,6 +112,7 @@ module Deft
       return eval( "#{state_class_name}.instance" ) 
     end   
     
+    # Question から対応する Concrete State を表す Ruby コードを文字列で返す
     public
     def marshal_concrete_state
       return state_type.__send__( :marshal_concrete_state, self )
@@ -117,7 +129,7 @@ module Deft
     
     # 質問名 => concrete state クラス名へ変換
     # 
-    # 例 : 'lucie/hello-world' => 'Lucie__HelloWorld'
+    # 例 : 'lucie/hello-world' => 'Deft::State::Lucie__HelloWorld'
     #
     public
     def state_class_name
@@ -126,7 +138,7 @@ module Deft
       end.join('__')
     end
     
-    ## TODO: need to implement Exception & Error using exception
+    # TODO: need to implement Exception & Error using exception
     module Exception
       class InvalidQuestionException < ::Exception; end
     end

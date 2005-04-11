@@ -10,7 +10,6 @@ $LOAD_PATH.unshift './lib'
 require 'lucie/config'
 require 'lucie/config/host-group'
 require 'test/unit'
-include Lucie::Config
 
 class TC_HostGroupDefinition < Test::Unit::TestCase
   def setup
@@ -39,12 +38,14 @@ class TC_HostGroupDefinition < Test::Unit::TestCase
     group = Lucie::Config::HostGroup.new do |group|
       group.name = 'presto_cluster'
       group.alias = 'Presto Cluster'
-      group.members = [Host['cluster_node00'], Host['cluster_node01']]    
+      group.members = [Lucie::Config::Host['cluster_node00'],
+        Lucie::Config::Host['cluster_node01']]    
     end
     
     assert_equal( 'presto_cluster', group.name )
     assert_equal( 'Presto Cluster', group.alias )
-    assert_equal( [Host['cluster_node00'], Host['cluster_node01']], group.members )
+    assert_equal( [Lucie::Config::Host['cluster_node00'],
+                    Lucie::Config::Host['cluster_node01']], group.members )
   end
 end
 

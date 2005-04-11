@@ -10,7 +10,6 @@ $LOAD_PATH.unshift './lib'
 require 'lucie/config'
 require 'lucie/config/host-group'
 require 'test/unit'
-include Lucie::Config
 
 class TC_HostGroupDefinitionException < Test::Unit::TestCase
   public
@@ -32,7 +31,7 @@ class TC_HostGroupDefinitionException < Test::Unit::TestCase
   
   public
   def teardown
-    Host.clear
+    Lucie::Config::Host.clear
   end
 
 # ------------------------------------------------------------------------------
@@ -40,14 +39,14 @@ class TC_HostGroupDefinitionException < Test::Unit::TestCase
   public
   def test_name_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       host_group do |host_group|
         host_group.name = '*'
       end
     end
     
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       host_group do |host_group|
         host_group.name = '?'
       end
@@ -56,7 +55,7 @@ class TC_HostGroupDefinitionException < Test::Unit::TestCase
 
   public
   def test_name_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       host_group do |host_group|
         host_group.name = 'aiUeo-kakikukeko_Sasisuseso'
       end
@@ -68,14 +67,14 @@ class TC_HostGroupDefinitionException < Test::Unit::TestCase
   public
   def test_alias_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       host_group do |host_group|
         host_group.alias = ''
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       host_group do |host_group|
         host_group.alias = "\n"
       end
@@ -84,7 +83,7 @@ class TC_HostGroupDefinitionException < Test::Unit::TestCase
 
   public
   def test_alias_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       host_group do |host_group|
         host_group.alias = 'aiueo- bo Y 12_'
       end
@@ -96,7 +95,7 @@ class TC_HostGroupDefinitionException < Test::Unit::TestCase
   public
   def test_members_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       host_group do |host_group|
         host_group.members = '\n'
       end
@@ -106,7 +105,7 @@ class TC_HostGroupDefinitionException < Test::Unit::TestCase
   public
   def test_members_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       host_group do |host_group|
         host_group.members = Object.new
       end
@@ -115,15 +114,16 @@ class TC_HostGroupDefinitionException < Test::Unit::TestCase
 
   public
   def test_members_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       host_group do |host_group|
-        host_group.members = [Host['cluster_node00']]
+        host_group.members = [Lucie::Config::Host['cluster_node00']]
       end
     end
 
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       host_group do |host_group|
-        host_group.members = [Host['cluster_node00'], Host['cluster_node01']]
+        host_group.members = [Lucie::Config::Host['cluster_node00'],
+          Lucie::Config::Host['cluster_node01']]
       end
     end
    end

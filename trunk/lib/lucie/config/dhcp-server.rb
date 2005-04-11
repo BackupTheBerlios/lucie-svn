@@ -8,18 +8,20 @@
 require 'lucie/config/resource'
 
 module Lucie
+  update(%q$Date$)
+
   module Config
     class DHCPServer < Resource
-      # “o˜^‚³‚ê‚Ä‚¢‚é Host ‚ÌƒŠƒXƒg
+      # ÅÐÏ¿¤µ¤ì¤Æ¤¤¤ë Host ¤Î¥ê¥¹¥È
       @@list = {}
       
-      # ƒAƒgƒŠƒrƒ…[ƒg–¼‚ÌƒŠƒXƒg: [:name, :version, ...]
+      # ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤Î¥ê¥¹¥È: [:name, :version, ...]
       @@required_attributes = []
       
-      # _‚·‚×‚Ä‚Ì_ ƒAƒgƒŠƒrƒ…[ƒg–¼‚ÆƒfƒtƒHƒ‹ƒg’l‚ÌƒŠƒXƒg: [[:name, nil], [:version, '0.0.1'], ...]
+      # _¤¹¤Ù¤Æ¤Î_ ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤È¥Ç¥Õ¥©¥ë¥ÈÃÍ¤Î¥ê¥¹¥È: [[:name, nil], [:version, '0.0.1'], ...]
       @@attributes = []
       
-      # ƒAƒgƒŠƒrƒ…[ƒg–¼‚©‚çƒfƒtƒHƒ‹ƒg’l‚Ö‚Ìƒ}ƒbƒsƒ“ƒO
+      # ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤«¤é¥Ç¥Õ¥©¥ë¥ÈÃÍ¤Ø¤Î¥Þ¥Ã¥Ô¥ó¥°
       @@default_value = {}
       
       required_attribute :name
@@ -48,8 +50,8 @@ module Lucie
       # ------------------------- Special accessor behaviours (overwriting default).
 
       REGEXP_PRINTABLE = /\A[ -~]+\z/
-      REGEXP_IPADDR = /\A((0|[1-9]\d{0,2})\.){3}(0|[1-9]\d{0,2})\z/ # FIXME: ‚à‚Á‚ÆŒµ–§‚É‚â‚éH
-#      REGEXP_IPADDR = /\A(0|[1-9]\d{0,2})(\.\1){3}\z/ # Œã•ûŽQÆ‚ÌŽg‚¢•ûŠÔˆá‚Á‚Ä‚éH
+      REGEXP_IPADDR = /\A((0|[1-9]\d{0,2})\.){3}(0|[1-9]\d{0,2})\z/ # FIXME: ¤â¤Ã¤È¸·Ì©¤Ë¤ä¤ë¡©
+#      REGEXP_IPADDR = /\A(0|[1-9]\d{0,2})(\.\1){3}\z/ # ¸åÊý»²¾È¤Î»È¤¤Êý´Ö°ã¤Ã¤Æ¤ë¡©
 
       overwrite_accessor :name= do |_name|
         unless (_name.nil?) || ( /\A[\w\-_]+\z/ =~ _name)

@@ -8,6 +8,7 @@
 $LOAD_PATH.unshift './lib'
 
 require 'lucie/config/dhcp-server'
+require 'test/unit'
 
 class TC_DHCPServerDefinition < Test::Unit::TestCase
   public

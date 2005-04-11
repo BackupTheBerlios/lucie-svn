@@ -30,7 +30,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
     end
     assert_equal( ['/var/lib/lucie/installer-base/var/tmp/debian_woody.tgz'], 
                   Task[:installer_base].prerequisites,
-                  ":installer_base ƒ^ƒXƒN‚Ì prerequisites ‚ª³‚µ‚­‚È‚¢" )
+                  ":installer_base ¥¿¥¹¥¯¤Î prerequisites ¤¬Àµ¤·¤¯¤Ê¤¤" )
   end
   
   public
@@ -41,7 +41,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
     end
     assert_equal( ["clobber_installer_base"], 
                   Task[:clobber].prerequisites,
-                  ":clobber ƒ^ƒXƒN‚Ì prerequisites ‚ª³‚µ‚­‚È‚¢" )
+                  ":clobber ¥¿¥¹¥¯¤Î prerequisites ¤¬Àµ¤·¤¯¤Ê¤¤" )
   end
   
   public
@@ -52,7 +52,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
     end
     assert_equal( ["clobber_installer_base", "installer_base"], 
                   Task[:reinstaller_base].prerequisites,
-                  ":reinstaller_base ƒ^ƒXƒN‚Ì prerequisites ‚ª³‚µ‚­‚È‚¢" )
+                  ":reinstaller_base ¥¿¥¹¥¯¤Î prerequisites ¤¬Àµ¤·¤¯¤Ê¤¤" )
   end
   
   public
@@ -62,27 +62,27 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
       task.distribution_version = 'woody'
     end
     assert_not_nil( Task[:installer_base], 
-                    ':installer_base ƒ^ƒXƒN‚ª’è‹`‚³‚ê‚Ä‚¢‚È‚¢' )
+                    ':installer_base ¥¿¥¹¥¯¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Ê¤¤' )
     assert_equal( "Build the debian version woody installer base tarball",
                   Task[:installer_base].comment, 
-                  ":installer_base ƒ^ƒXƒN‚ÌƒRƒƒ“ƒg‚ªÝ’è‚³‚ê‚Ä‚¢‚È‚¢" )
+                  ":installer_base ¥¿¥¹¥¯¤Î¥³¥á¥ó¥È¤¬ÀßÄê¤µ¤ì¤Æ¤¤¤Ê¤¤" )
     
     assert_not_nil( Task[:reinstaller_base],
-                    ':reinstaller_base ƒ^ƒXƒN‚ª’è‹`‚³‚ê‚Ä‚¢‚È‚¢' )
+                    ':reinstaller_base ¥¿¥¹¥¯¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Ê¤¤' )
     assert_equal( "Force a rebuild of the installer base tarball",
                   Task[:reinstaller_base].comment, 
-                  ":reinstaller_base ƒ^ƒXƒN‚ÌƒRƒƒ“ƒg‚ªÝ’è‚³‚ê‚Ä‚¢‚È‚¢" )
+                  ":reinstaller_base ¥¿¥¹¥¯¤Î¥³¥á¥ó¥È¤¬ÀßÄê¤µ¤ì¤Æ¤¤¤Ê¤¤" )
     
     assert_not_nil( Task[:clobber_installer_base],
-                    ':clobber_installer_base ƒ^ƒXƒN‚ª’è‹`‚³‚ê‚Ä‚¢‚È‚¢' )
+                    ':clobber_installer_base ¥¿¥¹¥¯¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Ê¤¤' )
     assert_equal( "Remove installer base filesystem",
                   Task[:clobber_installer_base].comment, 
-                  ":clobber_installer_base ƒ^ƒXƒN‚ÌƒRƒƒ“ƒg‚ªÝ’è‚³‚ê‚Ä‚¢‚È‚¢" )
+                  ":clobber_installer_base ¥¿¥¹¥¯¤Î¥³¥á¥ó¥È¤¬ÀßÄê¤µ¤ì¤Æ¤¤¤Ê¤¤" )
     
     assert_not_nil( Task['/var/lib/lucie/installer-base/'],
-                    'var/lib/lucie/installer-base/ ƒfƒBƒŒƒNƒgƒŠƒ^ƒXƒN‚ª’è‹`‚³‚ê‚Ä‚¢‚È‚¢' )
+                    'var/lib/lucie/installer-base/ ¥Ç¥£¥ì¥¯¥È¥ê¥¿¥¹¥¯¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Ê¤¤' )
     assert_not_nil( Task['/var/lib/lucie/installer-base/var/tmp/debian_woody.tgz'],
-                    'var/lib/lucie/installer-base/var/tmp/debian_woody.tgz ƒtƒ@ƒCƒ‹ƒ^ƒXƒN‚ª’è‹`‚³‚ê‚Ä‚¢‚È‚¢' )
+                    'var/lib/lucie/installer-base/var/tmp/debian_woody.tgz ¥Õ¥¡¥¤¥ë¥¿¥¹¥¯¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Ê¤¤' )
   end
   
   public

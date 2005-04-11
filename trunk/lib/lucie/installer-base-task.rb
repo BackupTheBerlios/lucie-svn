@@ -10,21 +10,23 @@ require 'rake/tasklib'
 require 'lucie/logger'
 require 'lucie/command-line-options'
 
+Lucie::update(%q$Date$)
+
 module Rake
   #
-  # ƒCƒ“ƒXƒg[ƒ‰‚Ìƒx[ƒXƒVƒXƒeƒ€‚ğƒrƒ‹ƒh‚·‚éƒ^ƒXƒN‚ğì¬‚·‚éB
+  # ¥¤¥ó¥¹¥È¡¼¥é¤Î¥Ù¡¼¥¹¥·¥¹¥Æ¥à¤ò¥Ó¥ë¥É¤¹¤ë¥¿¥¹¥¯¤òºîÀ®¤¹¤ë¡£
   #
-  # InstallerBaseTask ‚ÍŸ‚Ìƒ^[ƒQƒbƒg‚ğì¬‚·‚é:
+  # InstallerBaseTask ¤Ï¼¡¤Î¥¿¡¼¥²¥Ã¥È¤òºîÀ®¤¹¤ë:
   #
   # [<b><em>installer_base</em></b>]
-  #   InstallerBase ƒ^ƒXƒN‚ÌƒƒCƒ“ƒ^ƒXƒN
+  #   InstallerBase ¥¿¥¹¥¯¤Î¥á¥¤¥ó¥¿¥¹¥¯
   # [<b><em>:clobber_installer_base</em></b>]
-  #   ‚·‚×‚Ä‚ÌƒCƒ“ƒXƒg[ƒ‰ƒx[ƒXŠÖ˜Aƒtƒ@ƒCƒ‹‚ğÁ‹‚·‚éB
-  #   ‚±‚Ìƒ^[ƒQƒbƒg‚Í©“®“I‚ÉƒƒCƒ“‚Ì clobber ƒ^[ƒQƒbƒg‚É’Ç‰Á‚³‚ê‚é
+  #   ¤¹¤Ù¤Æ¤Î¥¤¥ó¥¹¥È¡¼¥é¥Ù¡¼¥¹´ØÏ¢¥Õ¥¡¥¤¥ë¤ò¾Ãµî¤¹¤ë¡£
+  #   ¤³¤Î¥¿¡¼¥²¥Ã¥È¤Ï¼«Æ°Åª¤Ë¥á¥¤¥ó¤Î clobber ¥¿¡¼¥²¥Ã¥È¤ËÄÉ²Ã¤µ¤ì¤ë
   # [<b><em>:reinstaller_base</em></b>]
-  #   ƒ^ƒCƒ€ƒXƒ^ƒ“ƒv‚ÉŠÖ‚í‚ç‚¸ƒCƒ“ƒXƒg[ƒ‰ƒx[ƒX‚ğ‚Ü‚Á‚³‚ç‚©‚çƒŠƒrƒ‹ƒh‚·‚é
+  #   ¥¿¥¤¥à¥¹¥¿¥ó¥×¤Ë´Ø¤ï¤é¤º¥¤¥ó¥¹¥È¡¼¥é¥Ù¡¼¥¹¤ò¤Ş¤Ã¤µ¤é¤«¤é¥ê¥Ó¥ë¥É¤¹¤ë
   #
-  # —á:
+  # Îã:
   #
   #   InstallerBaseTask.new do |installer_base|
   #     installer_base.dir = "tmp"
@@ -33,8 +35,8 @@ module Rake
   #     installer_base.distribution_version = "sarge"
   #   end
   #
-  # ì¬‚·‚é InstallerBaseTask ‚É‚ÍƒfƒtƒHƒ‹ƒg‚Ì–¼‘OˆÈŠO‚É©•ª‚ÌD‚«‚È–¼‘O‚ğ
-  # ‚Â‚¯‚é‚±‚Æ‚à‚Å‚«‚éB
+  # ºîÀ®¤¹¤ë InstallerBaseTask ¤Ë¤Ï¥Ç¥Õ¥©¥ë¥È¤ÎÌ¾Á°°Ê³°¤Ë¼«Ê¬¤Î¹¥¤­¤ÊÌ¾Á°¤ò
+  # ¤Ä¤±¤ë¤³¤È¤â¤Ç¤­¤ë¡£
   #
   #   InstallerBaseTask.new(:installer_base_woody) do |installer_base|
   #     installer_base.dir = "tmp"
@@ -43,23 +45,23 @@ module Rake
   #     installer_base.distribution_version = "woody"
   #   end
   # 
-  # ‚±‚Ìê‡A<em>:installer_base_woody</em>, :clobber_<em>installer_base_woody</em>, 
-  # :re<em>installer_base_woody</em> ‚Æ‚¢‚¤–¼‘O‚Ìƒ^ƒXƒN‚ª¶¬‚³‚ê‚éB
+  # ¤³¤Î¾ì¹ç¡¢<em>:installer_base_woody</em>, :clobber_<em>installer_base_woody</em>, 
+  # :re<em>installer_base_woody</em> ¤È¤¤¤¦Ì¾Á°¤Î¥¿¥¹¥¯¤¬À¸À®¤µ¤ì¤ë¡£
   #
   class InstallerBaseTask < TaskLib
-    # ƒCƒ“ƒXƒg[ƒ‰ƒx[ƒXì¬ƒ^ƒXƒN‚Ì–¼‘O (ƒfƒtƒHƒ‹ƒg: :installer_base )
+    # ¥¤¥ó¥¹¥È¡¼¥é¥Ù¡¼¥¹ºîÀ®¥¿¥¹¥¯¤ÎÌ¾Á° (¥Ç¥Õ¥©¥ë¥È: :installer_base )
     attr_accessor :name
-    # ƒCƒ“ƒXƒg[ƒ‰ƒx[ƒX‚ğì¬‚·‚éƒfƒBƒŒƒNƒgƒŠ‚Ö‚ÌƒpƒX 
-    # (ƒfƒtƒHƒ‹ƒg: '/var/lib/lucie/installer-base/' )
+    # ¥¤¥ó¥¹¥È¡¼¥é¥Ù¡¼¥¹¤òºîÀ®¤¹¤ë¥Ç¥£¥ì¥¯¥È¥ê¤Ø¤Î¥Ñ¥¹ 
+    # (¥Ç¥Õ¥©¥ë¥È: '/var/lib/lucie/installer-base/' )
     attr_accessor :dir
-    # Debian ‚Ìƒ~ƒ‰[‚Ì URI (ƒfƒtƒHƒ‹ƒg: http://www.debian.or.jp/debian)
+    # Debian ¤Î¥ß¥é¡¼¤Î URI (¥Ç¥Õ¥©¥ë¥È: http://www.debian.or.jp/debian)
     attr_accessor :mirror
-    # ƒCƒ“ƒXƒg[ƒ‰ƒx[ƒX‚ÌƒfƒBƒXƒgƒŠƒrƒ…[ƒVƒ‡ƒ“ (ƒfƒtƒHƒ‹ƒg: nil)
+    # ¥¤¥ó¥¹¥È¡¼¥é¥Ù¡¼¥¹¤Î¥Ç¥£¥¹¥È¥ê¥Ó¥å¡¼¥·¥ç¥ó (¥Ç¥Õ¥©¥ë¥È: nil)
     attr_accessor :distribution
-    # ƒCƒ“ƒXƒg[ƒ‰ƒx[ƒX‚ÌƒfƒBƒXƒgƒŠƒrƒ…[ƒVƒ‡ƒ“‚Ìƒo[ƒWƒ‡ƒ“ (ƒfƒtƒHƒ‹ƒg: nil)
+    # ¥¤¥ó¥¹¥È¡¼¥é¥Ù¡¼¥¹¤Î¥Ç¥£¥¹¥È¥ê¥Ó¥å¡¼¥·¥ç¥ó¤Î¥Ğ¡¼¥¸¥ç¥ó (¥Ç¥Õ¥©¥ë¥È: nil)
     attr_accessor :distribution_version
     
-    # InstallerBase ƒ^ƒXƒN‚ğì¬‚·‚éBƒfƒtƒHƒ‹ƒg‚Ì–¼‘O‚Í +installer_base+
+    # InstallerBase ¥¿¥¹¥¯¤òºîÀ®¤¹¤ë¡£¥Ç¥Õ¥©¥ë¥È¤ÎÌ¾Á°¤Ï +installer_base+
     public
     def initialize( name=:installer_base ) # :yield: self
       @name = name

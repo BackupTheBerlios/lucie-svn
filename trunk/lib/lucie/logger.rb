@@ -6,6 +6,7 @@
 # License::  GPL2
 
 require 'log4r'
+require 'lucie/time-stamp'
 require 'open3'
 
 module Lucie

@@ -1,7 +1,7 @@
-# = Lucie 儕僜乕僗愝掕僼傽僀儖梡儔僀僽儔儕
+# = Lucie リソ〖ス肋年ファイル脱ライブラリ
 #
-# Lucie 儕僜乕僗愝掕僼傽僀儖 <code>/etc/lucie/resource.rb</code> 偺愭摢偱偙偺僼傽僀儖傪
-# <code>require</code> 偡傞偙偲丅徻偟偔偼 <code>doc/example/resource.rb</code> 傪嶲徠丅
+# Lucie リソ〖ス肋年ファイル <code>/etc/lucie/resource.rb</code> の黎片でこのファイルを
+# <code>require</code> すること。拒しくは <code>doc/example/resource.rb</code> を徊救。
 #
 # $Id$
 #
@@ -15,29 +15,31 @@ require 'lucie/config/host-group'
 require 'lucie/config/installer'
 require 'lucie/config/package-server'
 
+Lucie::update(%q$Date$)
+
 # ------------------------- Convenience methods.
 
-# dhcp_server 儕僜乕僗偺掕媊梡
+# dhcp_server リソ〖スの年盗脱
 def dhcp_server( &block )
   return Lucie::Config::DHCPServer.new( &block )
 end
 
-# host 儕僜乕僗偺掕媊梡
+# host リソ〖スの年盗脱
 def host( &block )
   return Lucie::Config::Host.new( &block )
 end
 
-# host_group 儕僜乕僗偺掕媊梡
+# host_group リソ〖スの年盗脱
 def host_group( &block )
   return Lucie::Config::HostGroup.new( &block )
 end
 
-# installer 儕僜乕僗偺掕媊梡
+# installer リソ〖スの年盗脱
 def installer( &block )
   return Lucie::Config::Installer.new( &block )
 end
 
-# package_server 儕僜乕僗偺掕媊梡
+# package_server リソ〖スの年盗脱
 def package_server( &block )
   return Lucie::Config::PackageServer.new( &block )
 end

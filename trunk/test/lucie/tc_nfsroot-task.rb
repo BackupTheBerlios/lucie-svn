@@ -27,16 +27,16 @@ class TC_NfsrootTask < Test::Unit::TestCase
     nfsroot_task = Rake::NfsrootTask.new do |task|
       task.installer_base = 'debian_woody.tgz'
     end   
-    assert_not_nil( Task[:nfsroot], ':nfsroot ƒ^ƒXƒN‚ª’è‹`‚³‚ê‚Ä‚¢‚È‚¢' )
+    assert_not_nil( Task[:nfsroot], ':nfsroot ¥¿¥¹¥¯¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Ê¤¤' )
     assert_equal( "Build the nfsroot filesytem using debian_woody.tgz",
                   Task[:nfsroot].comment, 
-                  ":nfsroot ƒ^ƒXƒN‚ÌƒRƒƒ“ƒg‚ªÝ’è‚³‚ê‚Ä‚¢‚È‚¢" )
+                  ":nfsroot ¥¿¥¹¥¯¤Î¥³¥á¥ó¥È¤¬ÀßÄê¤µ¤ì¤Æ¤¤¤Ê¤¤" )
     
     assert_not_nil( Task['/var/lib/lucie/nfsroot/'],
-                    '/var/lib/lucie/nfsroot/ ƒfƒBƒŒƒNƒgƒŠƒ^ƒXƒN‚ª’è‹`‚³‚ê‚Ä‚¢‚È‚¢' )
+                    '/var/lib/lucie/nfsroot/ ¥Ç¥£¥ì¥¯¥È¥ê¥¿¥¹¥¯¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Ê¤¤' )
                     
     assert_not_nil( Task['/var/lib/lucie/nfsroot/lucie/timestamp'],
-                    '/var/lib/lucie/nfsroot/lucie/timestamp ƒtƒ@ƒCƒ‹ƒ^ƒXƒN‚ª’è‹`‚³‚ê‚Ä‚¢‚È‚¢' )
+                    '/var/lib/lucie/nfsroot/lucie/timestamp ¥Õ¥¡¥¤¥ë¥¿¥¹¥¯¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤Ê¤¤' )
   end
   
   public
@@ -45,9 +45,9 @@ class TC_NfsrootTask < Test::Unit::TestCase
       task.dir = 'tmp'
       task.installer_base = 'debian_woody'
     end    
-    assert_equal( 'tmp', nfsroot_task.dir, 'tmp ƒAƒgƒŠƒrƒ…[ƒg‚ª³‚µ‚­‚È‚¢' )
+    assert_equal( 'tmp', nfsroot_task.dir, 'tmp ¥¢¥È¥ê¥Ó¥å¡¼¥È¤¬Àµ¤·¤¯¤Ê¤¤' )
     assert_equal( 'debian_woody', nfsroot_task.installer_base,
-                  'debian_woody ƒAƒgƒŠƒrƒ…[ƒg‚ª³‚µ‚­‚È‚¢' )
+                  'debian_woody ¥¢¥È¥ê¥Ó¥å¡¼¥È¤¬Àµ¤·¤¯¤Ê¤¤' )
   end  
 end
 

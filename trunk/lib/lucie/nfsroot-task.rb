@@ -5,22 +5,25 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+require 'lucie/time-stamp'
 require 'rake'
 require 'rake/tasklib'
 
+Lucie::update(%q$Date$)
+
 module Rake
   #
-  # ƒCƒ“ƒXƒg[ƒ‰‚Ì NFSROOT ‚ğƒrƒ‹ƒh‚·‚éƒ^ƒXƒN‚ğ¶¬‚·‚éB
+  # ¥¤¥ó¥¹¥È¡¼¥é¤Î NFSROOT ¤ò¥Ó¥ë¥É¤¹¤ë¥¿¥¹¥¯¤òÀ¸À®¤¹¤ë¡£
   #
-  # NfsrootTask ‚ÍŸ‚Ìƒ^[ƒQƒbƒg‚ğì¬‚·‚é:
+  # NfsrootTask ¤Ï¼¡¤Î¥¿¡¼¥²¥Ã¥È¤òºîÀ®¤¹¤ë:
   #
   # [<b><em>nfsroot</em></b>]
-  #   Nfsroot ƒ^ƒXƒN‚ÌƒƒCƒ“ƒ^ƒXƒN
+  #   Nfsroot ¥¿¥¹¥¯¤Î¥á¥¤¥ó¥¿¥¹¥¯
   # [<b><em>:clobber_nfsroot</em></b>]
-  #   ‚·‚×‚Ä‚Ì NFSROOT ŠÖ˜Aƒtƒ@ƒCƒ‹‚ğÁ‹‚·‚éB
-  #   ‚±‚Ìƒ^[ƒQƒbƒg‚Í©“®“I‚ÉƒƒCƒ“‚Ì clobber ƒ^[ƒQƒbƒg‚É’Ç‰Á‚³‚ê‚é
+  #   ¤¹¤Ù¤Æ¤Î NFSROOT ´ØÏ¢¥Õ¥¡¥¤¥ë¤ò¾Ãµî¤¹¤ë¡£
+  #   ¤³¤Î¥¿¡¼¥²¥Ã¥È¤Ï¼«Æ°Åª¤Ë¥á¥¤¥ó¤Î clobber ¥¿¡¼¥²¥Ã¥È¤ËÄÉ²Ã¤µ¤ì¤ë
   #
-  # —á:
+  # Îã:
   #   NfsrootTask.new do |nfsroot|
   #     nfsroot.dir = "tmp"
   #     nfsroot.package_server = "http://www.debian.or.jp/debian"
@@ -31,8 +34,8 @@ module Rake
   #     installer_base.root_password = "h29SP9GgVbLHE"
   #   end
   #
-  # ì¬‚·‚é InstallerBaseTask ‚É‚ÍƒfƒtƒHƒ‹ƒg‚Ì–¼‘OˆÈŠO‚É©•ª‚ÌD‚«‚È–¼‘O‚ğ
-  # ‚Â‚¯‚é‚±‚Æ‚à‚Å‚«‚éB
+  # ºîÀ®¤¹¤ë InstallerBaseTask ¤Ë¤Ï¥Ç¥Õ¥©¥ë¥È¤ÎÌ¾Á°°Ê³°¤Ë¼«Ê¬¤Î¹¥¤­¤ÊÌ¾Á°¤ò
+  # ¤Ä¤±¤ë¤³¤È¤â¤Ç¤­¤ë¡£
   #
   #   NfsrootTask.new( :presto_installer ) do |nfsroot|
   #     nfsroot.dir = "tmp"
@@ -56,7 +59,7 @@ module Rake
     attr_accessor :kernel_version
     attr_accessor :root_password
     
-    # Nfsroot ƒ^ƒXƒN‚ğì¬‚·‚éB
+    # Nfsroot ¥¿¥¹¥¯¤òºîÀ®¤¹¤ë¡£
     public
     def initialize( name=:nfsroot ) # :yield: self
       @name = name
@@ -343,11 +346,11 @@ exit 0
     # hoaks some packages
     # liloconfig, dump and raidtool2 need these files
     #
-    # * raidtool2: ‹ó‚Ì /etc/fstab, /etc/raidtab ‚ğì¬
-    # * lvm: ‹ó‚Ì /lib/modules/ƒJ[ƒlƒ‹ƒo[ƒWƒ‡ƒ“, /lib/modules/ƒJ[ƒlƒ‹ƒo[ƒWƒ‡ƒ“/modules.dep ‚ğì¬
+    # * raidtool2: ¶õ¤Î /etc/fstab, /etc/raidtab ¤òºîÀ®
+    # * lvm: ¶õ¤Î /lib/modules/¥«¡¼¥Í¥ë¥Ğ¡¼¥¸¥ç¥ó, /lib/modules/¥«¡¼¥Í¥ë¥Ğ¡¼¥¸¥ç¥ó/modules.dep ¤òºîÀ®
     # * /etc/default/ntp-servers
     # * /var/state
-    # * apt-get: /etc/hosts ‚É localhost, lucie.sourceforge.net ‚ğ’Ç‰Á, /etc/apt/sources-list ‚ğì¬, /etc/apt/preferences ‚ğƒRƒs[
+    # * apt-get: /etc/hosts ¤Ë localhost, lucie.sourceforge.net ¤òÄÉ²Ã, /etc/apt/sources-list ¤òºîÀ®, /etc/apt/preferences ¤ò¥³¥Ô¡¼
     # 
     private
     def hoax_some_packages

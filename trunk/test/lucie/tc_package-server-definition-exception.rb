@@ -15,14 +15,14 @@ class TC_PackageServerDefinitionException < Test::Unit::TestCase
   public
   def test_name_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       package_server do |package_server|
         package_server.name = '*'
       end
     end
     
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       package_server do |package_server|
         package_server.name = '?'
       end
@@ -31,7 +31,7 @@ class TC_PackageServerDefinitionException < Test::Unit::TestCase
 
   public
   def test_name_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       package_server do |package_server|
         package_server.name = 'aiUeo-kakikukeko_Sasisuseso'
       end
@@ -43,14 +43,14 @@ class TC_PackageServerDefinitionException < Test::Unit::TestCase
   public
   def test_alias_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       package_server do |package_server|
         package_server.alias = ''
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       package_server do |package_server|
         package_server.alias = "\n"
       end
@@ -59,7 +59,7 @@ class TC_PackageServerDefinitionException < Test::Unit::TestCase
 
   public
   def test_alias_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       package_server do |package_server|
         package_server.alias = 'aiueo- bo Y 12_#'
       end
@@ -71,14 +71,14 @@ class TC_PackageServerDefinitionException < Test::Unit::TestCase
   public
   def test_uri_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       package_server do |package_server|
         package_server.uri = '\n'
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       package_server do |package_server|
         package_server.uri = '192.168.1.100/debian'
       end
@@ -87,19 +87,19 @@ class TC_PackageServerDefinitionException < Test::Unit::TestCase
 
   public
   def test_uri_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       package_server do |package_server|
         package_server.uri = 'http://192.168.1.100/debian/'
       end
     end
 
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       package_server do |package_server|
         package_server.uri = 'ftp://192.168.1.100/debian/'
       end
     end
 
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       package_server do |package_server|
         package_server.uri = 'http://lucie.example.com/debian/'
       end

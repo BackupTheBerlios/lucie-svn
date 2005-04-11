@@ -8,18 +8,20 @@
 require 'lucie/config/resource'
 
 module Lucie
+  update(%q$Date$)
+
   module Config
     class PackageServer < Resource
-      # “o˜^‚³‚ê‚Ä‚¢‚é Host ‚ÌƒŠƒXƒg
+      # ÅÐÏ¿¤µ¤ì¤Æ¤¤¤ë Host ¤Î¥ê¥¹¥È
       @@list = {}
       
-      # ƒAƒgƒŠƒrƒ…[ƒg–¼‚ÌƒŠƒXƒg: [:name, :version, ...]
+      # ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤Î¥ê¥¹¥È: [:name, :version, ...]
       @@required_attributes = []
       
-      # _‚·‚×‚Ä‚Ì_ ƒAƒgƒŠƒrƒ…[ƒg–¼‚ÆƒfƒtƒHƒ‹ƒg’l‚ÌƒŠƒXƒg: [[:name, nil], [:version, '0.0.1'], ...]
+      # _¤¹¤Ù¤Æ¤Î_ ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤È¥Ç¥Õ¥©¥ë¥ÈÃÍ¤Î¥ê¥¹¥È: [[:name, nil], [:version, '0.0.1'], ...]
       @@attributes = []
       
-      # ƒAƒgƒŠƒrƒ…[ƒg–¼‚©‚çƒfƒtƒHƒ‹ƒg’l‚Ö‚Ìƒ}ƒbƒsƒ“ƒO
+      # ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤«¤é¥Ç¥Õ¥©¥ë¥ÈÃÍ¤Ø¤Î¥Þ¥Ã¥Ô¥ó¥°
       @@default_value = {}
       
       required_attribute :name
@@ -46,7 +48,7 @@ module Lucie
 
       overwrite_accessor :uri= do |_uri|
         unless (_uri.nil?) || ( /\A(http|ftp)\:\/\/[\w\-_\.:\/]+\Z/ =~ _uri)
-          # FIXME: http ‚¾‚¯‚Å‚æ‚¢H
+          # FIXME: http ¤À¤±¤Ç¤è¤¤¡©
           raise InvalidAttributeException, "Invalid attribute for uri: #{_uri}"
         end
         @uri = _uri

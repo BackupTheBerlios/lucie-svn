@@ -61,6 +61,13 @@ Rake::RDocTask.new( :rdoc ) do |rdoc|
                            'lib/lucie/rake/*.rb' )
 end
 
+desc 'Upload rdoc documents'
+task :upload_rdoc => [:rdoc] do
+  sh %{tar --directory doc -czf web.tar rdoc}
+  sh %{scp web.tar takamiya@shell.berlios.de:/home/groups/lucie/htdocs/}
+  sh %{ssh -l takamiya shell.berlios.de "cd /home/groups/lucie/htdocs && tar xzf web.tar"}   
+end
+
 # ------------------------- Installation Tasks.
 
 # Install Lucie using the standard install.rb script.
@@ -77,8 +84,8 @@ task :deb do
   sh %{debuild || true}
 end
 
-desc 'Upload Debian Packages'
-task :upload => [:deb] do
+desc 'Upload Debian Packages and rdoc documents'
+task :upload => [:deb, :upload_rdoc] do
   mkdir_p '../upload/lucie/'
   sh %{mv ../lucie_*.deb ../upload/lucie/}
   sh %{mv ../lucie_*.dsc ../upload/lucie/}

@@ -9,6 +9,8 @@ require 'log4r'
 require 'open3'
 
 module Lucie
+  update(%q$Date$)
+
   class Logger < Log4r::Logger
     include Singleton
 

@@ -5,26 +5,30 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+require 'lucie/time-stamp'
+
 module Lucie
+  update(%q$Date$)
+
   module Config
-    # 偡傋偰偺儕僜乕僗僋儔僗
-    # * 儂僗僩 (Host)
-    # * 儂僗僩僌儖乕僾 (HostGroup)
-    # * 僷僢働乕僕僒乕僶 (PackageServer)
-    # * DHCP 僒乕僶 (DHCPServer)
-    # * 僀儞僗僩乕儔 (Installer)
-    # 偺恊偲側傞僋儔僗丅
+    # すべてのリソ〖スクラス
+    # * ホスト (Host)
+    # * ホストグル〖プ (HostGroup)
+    # * パッケ〖ジサ〖バ (PackageServer)
+    # * DHCP サ〖バ (DHCPServer)
+    # * インスト〖ラ (Installer)
+    # の科となるクラス。
     #
-    # 巕偲側傞儕僜乕僗僋儔僗偼丄埲壓偺僋儔僗曄悢傪帩偮昁梫偑偁傞
-    # * 搊榐偝傟偰偄傞儕僜乕僗僆僽僕僃僋僩偺儕僗僩: <code>@@list = []</code>
-    # * 傾僩儕價儏乕僩柤偺儕僗僩: <code>@@required_attributes = []</code>
-    # * 偡傋偰偺傾僩儕價儏乕僩柤偲僨僼僅儖僩抣偺儕僗僩: <code>@@attributes = []</code>
-    # * 傾僩儕價儏乕僩柤偐傜僨僼僅儖僩抣傊偺儅僢僺儞僌: <code>@@default_value = {}</code>
+    # 灰となるリソ〖スクラスは、笆布のクラス恃眶を积つ涩妥がある
+    # * 判峡されているリソ〖スオブジェクトのリスト: <code>@@list = []</code>
+    # * アトリビュ〖ト叹のリスト: <code>@@required_attributes = []</code>
+    # * すべてのアトリビュ〖ト叹とデフォルト猛のリスト: <code>@@attributes = []</code>
+    # * アトリビュ〖ト叹からデフォルト猛へのマッピング: <code>@@default_value = {}</code>
     #
     class Resource  
       # ------------------------- Convenience class methods.
 
-      # 搊榐偝傟偰偄傞儕僜乕僗傪僋儕傾偡傞
+      # 判峡されているリソ〖スをクリアする
       public
       def self.clear
         module_eval %-
@@ -32,7 +36,7 @@ module Lucie
         -
       end
 
-      # 懏惈偺柤慜傪曉偡
+      # 掳拉の叹涟を手す
       public
       def self.attribute_names
         module_eval %-
@@ -40,7 +44,7 @@ module Lucie
         -
       end
       
-      # <code>[懏惈, 僨僼僅儖僩抣]</code> 偺攝楍傪曉偡
+      # <code>[掳拉, デフォルト猛]</code> の芹误を手す
       public
       def self.attribute_defaults
         module_eval %-
@@ -48,7 +52,7 @@ module Lucie
         -
       end
       
-      # 懏惈 <code>name</code> 偵懳墳偡傞僨僼僅儖僩抣傪曉偡
+      # 掳拉 <code>name</code> に滦炳するデフォルト猛を手す
       public
       def self.default_value( name )
         module_eval %-
@@ -56,7 +60,7 @@ module Lucie
         -
       end
       
-      # 昁恵懏惈傪曉偡
+      # 涩寇掳拉を手す
       public
       def self.required_attributes
         module_eval %-
@@ -64,7 +68,7 @@ module Lucie
         -
       end
       
-      # 懏惈 <code>name</code> 偑昁恵懏惈偱偁傞偐偳偆偐傪曉偡
+      # 掳拉 <code>name</code> が涩寇掳拉であるかどうかを手す
       public
       def self.required_attribute?( name )
         module_eval %-
@@ -74,7 +78,7 @@ module Lucie
       
       # ------------------------- Infrastructure class methods.
 
-      # 搊榐偝傟偰偄傞儕僜乕僗傪 <code>key</code> 偱扵偡
+      # 判峡されているリソ〖スを <code>key</code> で玫す
       public
       def self.[](key)
         module_eval %-
@@ -82,7 +86,7 @@ module Lucie
         -
       end
       
-      # 搊榐偝傟偰偄傞儕僜乕僗傪曉偡
+      # 判峡されているリソ〖スを手す
       public
       def self.list
         module_eval %-
@@ -90,7 +94,7 @@ module Lucie
         -
       end
       
-      # 懏惈傪掕媊偡傞
+      # 掳拉を年盗する
       public
       def self.attribute( name, default=nil )
         if default.nil?
@@ -107,7 +111,7 @@ module Lucie
         attr_accessor name
       end
       
-      # 昁恵懏惈傪掕媊偡傞
+      # 涩寇掳拉を年盗する
       public
       def self.required_attribute( *args )
         module_eval %-
@@ -116,14 +120,14 @@ module Lucie
         attribute( *args )
       end      
             
-      # 懏惈偺拞偵偼傾僋僙僗偝傟偨偲偒偵摿暿側摦嶌傪梫媮偡傞傕偺偑偁傞丅
-      # 偙偺儊僜僢僪偱摦嶌傪愝掕偱偒傞丅
+      # 掳拉の面にはアクセスされたときに泼侍な瓢侯を妥滇するものがある。
+      # このメソッドで瓢侯を肋年できる。
       def self.overwrite_accessor(name, &block)
         remove_method name
         define_method(name, &block)
       end   
       
-      # 怴偟偄儕僜乕僗僆僽僕僃僋僩傪曉偡
+      # 糠しいリソ〖スオブジェクトを手す
       public
       def initialize # :yield: self
         set_default_values        
@@ -131,7 +135,7 @@ module Lucie
         register
       end
       
-      # 儕僜乕僗偺暥帤楍昞尰傪曉偡
+      # リソ〖スの矢机误山附を手す
       public
       def to_s
         if @alias
@@ -141,10 +145,10 @@ module Lucie
         end
       end
       
-      # 偡傋偰偺懏惈偵僨僼僅儖僩抣傪僙僢僩偡傞丅
-      # 僙僢僩偼傾僋僙僢僒儊僜僢僪傪捠偠偰峴傢傟傞偨傔丄傾僋僙僢僒偵愝掕偝傟偨
-      # 摿暿側張棟傕偁傢偣偰幚峴偝傟傞丅傑偨丄偦傟偧傟偺僀儞僗僞儞僗偑偨偲偊偽
-      # 撈帺偺嬻 Array 傪帩偮傛偆偵丄僨僼僅儖僩抣偺僐僺乕傪巊偆丅     
+      # すべての掳拉にデフォルト猛をセットする。
+      # セットはアクセッサメソッドを奶じて乖われるため、アクセッサに肋年された
+      # 泼侍な借妄もあわせて悸乖される。また、それぞれのインスタンスがたとえば
+      # 迫极の鄂 Array を积つように、デフォルト猛のコピ〖を蝗う。     
       private
       def set_default_values
         self.class.attribute_defaults.each do |attribute, default|
@@ -157,7 +161,7 @@ module Lucie
         self.class.list[name] = self
       end
       
-      # 懄抣埲奜偼僆僽僕僃僋僩傪 dup 偡傞
+      # 篓猛笆嘲はオブジェクトを dup する
       private
       def copy_of(obj)
         case obj

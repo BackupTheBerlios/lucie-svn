@@ -15,14 +15,14 @@ class TC_HostDefinitionException < Test::Unit::TestCase
   public
   def test_name_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       host do |host|
         host.name = '*'
       end
     end
     
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       host do |host|
         host.name = '?'
       end
@@ -31,7 +31,7 @@ class TC_HostDefinitionException < Test::Unit::TestCase
 
   public
   def test_name_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       host do |host|
         host.name = 'aiUeo-kakikukeko_Sasisuseso'
       end
@@ -43,14 +43,14 @@ class TC_HostDefinitionException < Test::Unit::TestCase
   public
   def test_alias_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       host do |host|
         host.alias = ''
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       host do |host|
         host.alias = "\n"
       end
@@ -59,7 +59,7 @@ class TC_HostDefinitionException < Test::Unit::TestCase
 
   public
   def test_alias_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       host do |host|
         host.alias = 'aiueo- bo Y 12_#'
       end
@@ -71,14 +71,14 @@ class TC_HostDefinitionException < Test::Unit::TestCase
   public
   def test_address_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
       host do |host|
         host.address = '*'
       end
     end
     
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
       host do |host|
         host.address = '092.1.2.9'
       end
@@ -87,7 +87,7 @@ class TC_HostDefinitionException < Test::Unit::TestCase
   
   public
   def test_address_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do
       host do |host|
         host.address = '192.168.0.1'
       end
@@ -99,28 +99,28 @@ class TC_HostDefinitionException < Test::Unit::TestCase
   public
   def test_mac_address_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
       host do |host|
         host.mac_address = '*'
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
       host do |host|
         host.mac_address = '00:50:56:00:32'
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
       host do |host|
         host.mac_address = '00:50:56:00:32:7D:88'
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
       host do |host|
         host.mac_address = '0H:50:56:00:32:7D'
       end
@@ -129,7 +129,7 @@ class TC_HostDefinitionException < Test::Unit::TestCase
   
   public
   def test_mac_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       host do |host|
         host.mac_address = '00:0C:29:41:88:F0'
       end

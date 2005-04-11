@@ -33,6 +33,7 @@ module Lucie
     attr_reader :verbose
     attr_reader :trace
     attr_reader :installer_base
+    attr_reader :log_file
 
     module OptionList # :nodoc:
       OPTION_LIST = [
@@ -58,6 +59,8 @@ module Lucie
           "use the debug trace mode."],
         [ "--installer-base",     "-I",   nil, \
           "build installer base tarball only."],
+        [ "--log-file",          "-l",    "file path", \
+          "specify log file path."],
       ]
 
       public
@@ -110,6 +113,8 @@ module Lucie
             @trace = true
           when '--installer-base'
             @installer_base = true
+          when '--log-file'
+            @log_file = argument
           end
         end
       ensure
@@ -130,6 +135,7 @@ module Lucie
       @verbose = false
       @trace = false
       @installer_base = false
+      @log_file = '/var/log/lucie-setup.log'
     end
   end
 end

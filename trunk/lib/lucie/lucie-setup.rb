@@ -128,6 +128,7 @@ module Lucie
     
     private
     def installer_base_task
+      require 'lucie/logger'
       Rake::InstallerBaseTask.new( installer_base_task_name( installer.name ) ) do |installer_base|
         installer_base.dir = File.join( @commandline_options.installer_base_dir, installer.name )
         installer_base.mirror = installer.package_server.uri

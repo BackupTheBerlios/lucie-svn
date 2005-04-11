@@ -6,6 +6,7 @@
 # License::  GPL2
 
 require 'log4r'
+require 'lucie/command-line-options'
 require 'lucie/time-stamp'
 require 'open3'
 
@@ -20,7 +21,7 @@ module Lucie
       super( 'lucie-setup' )
       @outputters = 
         [Log4r::FileOutputter.new( 'lucie-setup',
-                                   {:filename=>'/var/log/lucie-setup.log'} )]
+                                   {:filename=>CommandLineOptions.instance.log_file} )]
     end
   end
 end

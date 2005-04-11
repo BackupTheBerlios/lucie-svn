@@ -5,11 +5,11 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'time-stamp'
+require 'lucie/time-stamp'
 
-update(%q$LastChangedDate$)
+Lucie::update(%q$LastChangedDate$)
 
-# •W€‚Ì String ƒNƒ‰ƒX‚ÉƒCƒ“ƒfƒ“ƒgŒn‚Ìƒƒ\ƒbƒh‚ğ’Ç‰Á
+# É¸½à¤Î String ¥¯¥é¥¹¤Ë¥¤¥ó¥Ç¥ó¥È·Ï¤Î¥á¥½¥Ã¥É¤òÄÉ²Ã
 class String
   public
   def indent( n )
@@ -18,13 +18,13 @@ class String
     end
   end
   
-  # ƒCƒ“ƒfƒ“ƒg‚ğ•Û‚¿‚Â‚Â¶Šñ‚¹‚·‚é
+  # ¥¤¥ó¥Ç¥ó¥È¤òÊİ¤Á¤Ä¤Äº¸´ó¤»¤¹¤ë
   public
   def unindent_auto
     return unindent( minimum_indent )
   end
   
-  # Å¬‚ÌƒCƒ“ƒfƒ“ƒg•‚ğ•Ô‚·Bƒ^ƒuƒXƒgƒbƒv‚Í 8 ‚ÆŒvZ‚·‚éB
+  # ºÇ¾®¤Î¥¤¥ó¥Ç¥ó¥ÈÉı¤òÊÖ¤¹¡£¥¿¥Ö¥¹¥È¥Ã¥×¤Ï 8 ¤È·×»»¤¹¤ë¡£
   public
   def minimum_indent
     indents = map do |each|
@@ -33,7 +33,7 @@ class String
     return ((indents - [0]).min || 0)
   end
   
-  # •¶š—ñ‚ğ n ‚Ô‚ñƒAƒ“ƒCƒ“ƒfƒ“ƒg‚·‚é
+  # Ê¸»úÎó¤ò n ¤Ö¤ó¥¢¥ó¥¤¥ó¥Ç¥ó¥È¤¹¤ë
   public
   def unindent( n, tabstopNum = 8 )
     indent_re = /^ {0,#{n}}/
@@ -46,7 +46,7 @@ class String
     end.join('')
   end   
   
-  # ƒ^ƒu‚ğƒXƒy[ƒX‚É•ÏŠ·‚·‚é
+  # ¥¿¥Ö¤ò¥¹¥Ú¡¼¥¹¤ËÊÑ´¹¤¹¤ë
   #--
   # NOTE: don't work with UTF-8
   #++
@@ -55,7 +55,7 @@ class String
     return gsub(/(.*?)\t/n) do $1 + ' ' * (tabstopNum - ($1.length % tabstopNum)) end
   end
   
-  # s“ª‚ÌƒXƒy[ƒX‚ğƒ^ƒu‚ÆƒXƒy[ƒX‚É•ÏŠ·‚·‚é
+  # ¹ÔÆ¬¤Î¥¹¥Ú¡¼¥¹¤ò¥¿¥Ö¤È¥¹¥Ú¡¼¥¹¤ËÊÑ´¹¤¹¤ë
   #--
   # NOTE: don't work with UTF-8
   #++
@@ -67,7 +67,7 @@ class String
     end
   end
   
-  # 'pascal_style' => 'PascalStyle' ‚Ì‚æ‚¤‚É•ÏŠ·
+  # 'pascal_style' => 'PascalStyle' ¤Î¤è¤¦¤ËÊÑ´¹
   public
   def to_pascal_style
     if self.include?('_')
@@ -79,8 +79,8 @@ class String
     end
   end  
   
-  # ’·‚¢ƒŠƒeƒ‰ƒ‹‚ğ RFC822 ‚É‡‚¤‚æ‚¤‚ÉƒtƒH[ƒ}ƒbƒg‚·‚éB
-  # Debconf ‚Ìƒeƒ“ƒvƒŒ[ƒg‚Ì extended description ‚É—p‚¢‚éB    
+  # Ä¹¤¤¥ê¥Æ¥é¥ë¤ò RFC822 ¤Ë¹ç¤¦¤è¤¦¤Ë¥Õ¥©¡¼¥Ş¥Ã¥È¤¹¤ë¡£
+  # Debconf ¤Î¥Æ¥ó¥×¥ì¡¼¥È¤Î extended description ¤ËÍÑ¤¤¤ë¡£    
   public
   def to_rfc822
     return unindent_auto.split("\n").map do |each|

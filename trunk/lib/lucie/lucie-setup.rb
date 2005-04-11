@@ -29,7 +29,7 @@ module Lucie
     LUCIE_VERSION = '0.0.2alpha'
     VERSION_STRING = ['lucie-setup', LUCIE_VERSION, '('+Lucie::svn_date+')'].join(' ')
     
-    # lucie-setup ’¤Î’¥á’¥¤’¥ó’¥ë’¡¼’¥Á’¥ó’¤ò’µ¯’Æ°
+    # lucie-setup ¤Î¥á¥¤¥ó¥ë¡¼¥Á¥ó¤òµ¯Æ°
     public
     def main
       begin

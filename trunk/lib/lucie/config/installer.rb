@@ -5,23 +5,25 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-# FIXME: ³‹K•\Œ»‚Í‰Â“Ç«‚Æƒƒ“ƒeƒiƒ“ƒX«‚Ì‚½‚ß‚ ‚Æ‚Å•Ï”‚È‚Ç‚É‚­‚­‚èo‚·Bresouce.rb ‚ ‚½‚è‚Å‚Ü‚Æ‚ß‚éH
+# FIXME: Àµµ¬É½¸½¤Ï²ÄÆÉÀ­¤È¥á¥ó¥Æ¥Ê¥ó¥¹À­¤Î¤¿¤á¤¢¤È¤ÇÊÑ¿ô¤Ê¤É¤Ë¤¯¤¯¤ê½Ğ¤¹¡£resouce.rb ¤¢¤¿¤ê¤Ç¤Ş¤È¤á¤ë¡©
 
 require 'lucie/config/resource'
 
 module Lucie
+  update(%q$Date$)
+
   module Config
     class Installer < Resource
-      # “o˜^‚³‚ê‚Ä‚¢‚é Host ‚ÌƒŠƒXƒg
+      # ÅĞÏ¿¤µ¤ì¤Æ¤¤¤ë Host ¤Î¥ê¥¹¥È
       @@list = {}
       
-      # ƒAƒgƒŠƒrƒ…[ƒg–¼‚ÌƒŠƒXƒg: [:name, :version, ...]
+      # ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤Î¥ê¥¹¥È: [:name, :version, ...]
       @@required_attributes = []
       
-      # _‚·‚×‚Ä‚Ì_ ƒAƒgƒŠƒrƒ…[ƒg–¼‚ÆƒfƒtƒHƒ‹ƒg’l‚ÌƒŠƒXƒg: [[:name, nil], [:version, '0.0.1'], ...]
+      # _¤¹¤Ù¤Æ¤Î_ ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤È¥Ç¥Õ¥©¥ë¥ÈÃÍ¤Î¥ê¥¹¥È: [[:name, nil], [:version, '0.0.1'], ...]
       @@attributes = []
       
-      # ƒAƒgƒŠƒrƒ…[ƒg–¼‚©‚çƒfƒtƒHƒ‹ƒg’l‚Ö‚Ìƒ}ƒbƒsƒ“ƒO
+      # ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤«¤é¥Ç¥Õ¥©¥ë¥ÈÃÍ¤Ø¤Î¥Ş¥Ã¥Ô¥ó¥°
       @@default_value = {}
       
       required_attribute :name
@@ -39,8 +41,8 @@ module Lucie
       # ------------------------- Special accessor behaviours (overwriting default).
 
       REGEXP_PRINTABLE = /\A[ -~]+\z/
-      REGEXP_IPADDR = /\A((0|[1-9]\d{0,2})\.){3}(0|[1-9]\d{0,2})\z/ # FIXME: ‚à‚Á‚ÆŒµ–§‚É‚â‚éH
-#      REGEXP_IPADDR = /\A(0|[1-9]\d{0,2})(\.\1){3}\z/ # Œã•ûQÆ‚Ìg‚¢•ûŠÔˆá‚Á‚Ä‚éH
+      REGEXP_IPADDR = /\A((0|[1-9]\d{0,2})\.){3}(0|[1-9]\d{0,2})\z/ # FIXME: ¤â¤Ã¤È¸·Ì©¤Ë¤ä¤ë¡©
+#      REGEXP_IPADDR = /\A(0|[1-9]\d{0,2})(\.\1){3}\z/ # ¸åÊı»²¾È¤Î»È¤¤Êı´Ö°ã¤Ã¤Æ¤ë¡©
       
       overwrite_accessor :name= do |_name|
         unless (_name.nil?) || ( /\A[\w\-_]+\z/ =~ _name)
@@ -72,7 +74,7 @@ module Lucie
       
       overwrite_accessor :kernel_version= do |_kernel_version|
         unless (_kernel_version.nil?) || ( /\A\d+[\w\d\.\-]*\z/ =~ _kernel_version)
-        # FIXME: ”š‚ÆƒsƒŠƒIƒh‚Ì‘g‚İ‡‚í‚¹ˆÈŠO‚à‚ ‚éH
+        # FIXME: ¿ô»ú¤È¥Ô¥ê¥ª¥É¤ÎÁÈ¤ß¹ç¤ï¤»°Ê³°¤â¤¢¤ë¡©
           raise InvalidAttributeException, "Invalid attribute for kernel_version: #{_kernel_version}"
         end
         @kernel_version = _kernel_version
@@ -80,7 +82,7 @@ module Lucie
 
       overwrite_accessor :kernel_package= do |_kernel_package|
         unless (_kernel_package.nil?) || ( /kernel-image-.*\.deb\z/ =~ _kernel_package)
-        # FIXME: kernel ‚ÌƒpƒbƒP[ƒW–½–¼‹K‘¥—vŠm”FBrpm ‚àƒTƒ|[ƒgH
+        # FIXME: kernel ¤Î¥Ñ¥Ã¥±¡¼¥¸Ì¿Ì¾µ¬Â§Í×³ÎÇ§¡£rpm ¤â¥µ¥İ¡¼¥È¡©
           raise InvalidAttributeException, "Invalid attribute for kernel_package: #{_kernel_package}"
         end
         @kernel_package = _kernel_package
@@ -116,7 +118,7 @@ module Lucie
 
       overwrite_accessor :distribution_version= do |_distribution_version|
         unless (_distribution_version.nil?) || ( /\A(woody|sarge)\Z/ =~ _distribution_version)
-          # FIXME: ƒTƒ|[ƒg‚·‚éƒo[ƒWƒ‡ƒ“‚ğ‚·‚×‚Ä‚­‚­‚èo‚·H or [\w\-_]+ ‚­‚ç‚¢‚É‚µ‚Ä‚¨‚­H
+          # FIXME: ¥µ¥İ¡¼¥È¤¹¤ë¥Ğ¡¼¥¸¥ç¥ó¤ò¤¹¤Ù¤Æ¤¯¤¯¤ê½Ğ¤¹¡© or [\w\-_]+ ¤¯¤é¤¤¤Ë¤·¤Æ¤ª¤¯¡©
           raise InvalidAttributeException, "Invalid attribute for distribution_version: #{_distribution_version}"
         end
         @distribution_version = _distribution_version

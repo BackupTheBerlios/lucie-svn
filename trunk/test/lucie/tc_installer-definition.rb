@@ -7,10 +7,10 @@
 
 $LOAD_PATH.unshift './lib'
 
-require 'mock'
 require 'lucie/config'
 require 'lucie/config/installer'
-include Lucie::Config
+require 'mock'
+require 'test/unit'
 
 class TC_InstallerDefinition < Test::Unit::TestCase
   public
@@ -31,13 +31,13 @@ class TC_InstallerDefinition < Test::Unit::TestCase
 
     package_server do |pkgserver|
       pkgserver.name         = 'debian_mirror'
-      pkgserver.alias       = 'Local Debian Repository Mirror'
+      pkgserver.alias        = 'Local Debian Repository Mirror'
       pkgserver.uri          = 'http://192.168.1.100/debian/'
     end
     
     dhcp_server do |dhcp_server|
       dhcp_server.name            = 'dhcp'
-      dhcp_server.alias          = 'Cluster DHCP Server'
+      dhcp_server.alias           = 'Cluster DHCP Server'
       dhcp_server.nis_domain_name = 'yp.titech.ac.jp'
       dhcp_server.gateway         = '192.168.1.254'
       dhcp_server.address         = '192.168.1.200'
@@ -49,7 +49,8 @@ class TC_InstallerDefinition < Test::Unit::TestCase
     host_group do |group|
       group.name = 'presto_cluster'
       group.alias = 'Presto Cluster'
-      group.members = [Host['cluster_node00'], Host['cluster_node01']]    
+      group.members = [Lucie::Config::Host['cluster_node00'],
+        Lucie::Config::Host['cluster_node01']]    
     end
   end
  
@@ -65,14 +66,14 @@ class TC_InstallerDefinition < Test::Unit::TestCase
     host_group = Mock.new( '#<HostGroup (Mock)>' )
     installer = Lucie::Config::Installer.new do |installer|
       installer.name                 = 'presto_installer'
-      installer.alias               = 'Presto Cluster Installer'
+      installer.alias                = 'Presto Cluster Installer'
       installer.address              = '192.168.1.200'
-      installer.package_server       = PackageServer['debian_mirror']
+      installer.package_server       = Lucie::Config::PackageServer['debian_mirror']
       installer.kernel_version       = '2.2.18'
       installer.kernel_package       = 'kernel-image-2.4.27_lucie20040923_i386.deb'
-      installer.dhcp_server          = DHCPServer['dhcp']
+      installer.dhcp_server          = Lucie::Config::DHCPServer['dhcp']
       installer.root_password        = 'xxxxxxxx'
-      installer.host_group           = HostGroup['presto_cluster']
+      installer.host_group           = Lucie::Config::HostGroup['presto_cluster']
       installer.distribution         = 'debian'
       installer.distribution_version = 'woody'
     end
@@ -80,12 +81,12 @@ class TC_InstallerDefinition < Test::Unit::TestCase
     assert_equal( 'presto_installer', installer.name )
     assert_equal( 'Presto Cluster Installer', installer.alias )
     assert_equal( '192.168.1.200', installer.address )
-    assert_equal( PackageServer['debian_mirror'], installer.package_server )
+    assert_equal( Lucie::Config::PackageServer['debian_mirror'], installer.package_server )
     assert_equal( '2.2.18', installer.kernel_version )
     assert_equal( 'kernel-image-2.4.27_lucie20040923_i386.deb', installer.kernel_package )
-    assert_equal( DHCPServer['dhcp'], installer.dhcp_server )
+    assert_equal( Lucie::Config::DHCPServer['dhcp'], installer.dhcp_server )
     assert_equal( 'xxxxxxxx', installer.root_password )
-    assert_equal( HostGroup['presto_cluster'], installer.host_group )
+    assert_equal( Lucie::Config::HostGroup['presto_cluster'], installer.host_group )
     assert_equal( 'debian', installer.distribution )
     assert_equal( 'woody', installer.distribution_version )
   end

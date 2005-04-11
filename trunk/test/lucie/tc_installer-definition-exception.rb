@@ -10,7 +10,6 @@ $LOAD_PATH.unshift './lib'
 require 'lucie/config'
 require 'lucie/config/installer'
 require 'test/unit'
-include Lucie::Config
 
 class TC_InstallerDefinitionException < Test::Unit::TestCase
   public
@@ -49,27 +48,27 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
     host_group do |group|
       group.name = 'presto_cluster'
       group.alias = 'Presto Cluster'
-      group.members = [Host['cluster_node00'], Host['cluster_node01']]    
+      group.members = [Lucie::Config::Host['cluster_node00'], Lucie::Config::Host['cluster_node01']]    
     end
   end
   
   public
   def teardown
-    Host.clear
-    PackageServer.clear
+    Lucie::Config::Host.clear
+    Lucie::Config::PackageServer.clear
   end
 
   public
   def test_name_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.name = '*'
       end
     end
     
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.name = '?'
       end
@@ -78,7 +77,7 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
 
   public
   def test_name_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
         installer.name = 'aiUeo-kakikukeko_Sasisuseso'
       end
@@ -90,14 +89,14 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
   public
   def test_alias_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.alias = ''
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.alias = "\n"
       end
@@ -106,7 +105,7 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
 
   public
   def test_alias_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
         installer.alias = 'aiueo- bo Y 12_#'
       end
@@ -118,14 +117,14 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
   public
   def test_address_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.address = '*'
       end
     end
     
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.address = '092.1.2.9'
       end
@@ -134,7 +133,7 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
   
   public
   def test_address_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
         installer.address = '192.168.0.1'
       end
@@ -146,25 +145,25 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
   public
   def test_package_server_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.package_server = 'package_server'
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
-        installer.package_server = Host['cluster_node00']
+        installer.package_server = Lucie::Config::Host['cluster_node00']
       end
     end
   end
   
   public
   def test_package_server_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
-        installer.package_server = PackageServer['debian_mirror']
+        installer.package_server = Lucie::Config::PackageServer['debian_mirror']
       end
     end
   end
@@ -172,25 +171,8 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
 # ------------------------------------------------------------------------------
 
   public
-  def test_kernel_version_exception
-    assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
-      installer do |installer|
-        installer.kernel_version = '20ab'
-      end
-    end
-
-    assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
-      installer do |installer|
-        installer.kernel_version = '2.2.'
-      end
-    end
-  end
-  
-  public
   def test_kernel_version_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
         installer.kernel_version = '2.4.1'
       end
@@ -202,28 +184,28 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
   public
   def test_kernel_package_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.kernel_package = '20ab'
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.kernel_package = '2.2.'
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.kernel_package = 'kernel-image-2.4.27_lucie20040923_i386'
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.kernel_package = 'kernl-image-2.4.27_lucie20040923_i386.deb'
       end
@@ -232,13 +214,13 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
   
   public
   def test_kernel_package_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
         installer.kernel_package = 'kernel-image-2.4.27_lucie20040923_i386.deb'
       end
     end
 
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
         installer.kernel_package = 'kernel-image-2.6.10-1-686.deb'
       end
@@ -250,25 +232,25 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
   public
   def test_dhcp_server_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.dhcp_server = 'dhcp_server'
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
-        installer.dhcp_server = Host['cluster_node00']
+        installer.dhcp_server = Lucie::Config::Host['cluster_node00']
       end
     end
   end
   
   public
   def test_dhcp_server_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
-        installer.dhcp_server = DHCPServer['debian_mirror']
+        installer.dhcp_server = Lucie::Config::DHCPServer['debian_mirror']
       end
     end
   end
@@ -278,14 +260,14 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
   public
   def test_root_password_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.root_password = ''
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.root_password = "\010" # Backspace
       end
@@ -294,7 +276,7 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
 
   public
   def test_root_password_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
         installer.root_password = 'aiueo- bo Y 12_# *%~'
       end
@@ -306,25 +288,25 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
   public
   def test_host_group_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.host_group = 'host_group'
       end
     end
 
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
-        installer.host_group = Host['cluster_node00']
+        installer.host_group = Lucie::Config::Host['cluster_node00']
       end
     end
   end
   
   public
   def test_host_group_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
-        installer.host_group = HostGroup['presto_cluster']
+        installer.host_group = Lucie::Config::HostGroup['presto_cluster']
       end
     end
   end
@@ -334,7 +316,7 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
   public
   def test_distribution_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.distribution = 'Turbo Linux'
       end
@@ -343,13 +325,13 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
 
   public
   def test_distribution_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
         installer.distribution = 'Debian'
       end
     end
 
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
         installer.distribution = 'RedHat'
       end
@@ -361,7 +343,7 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
   public
   def test_distribution_version_exception
     assert_raises( Lucie::Config::InvalidAttributeException,
-                   '—áŠO‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do 
+                   'Îã³°¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do 
       installer do |installer|
         installer.distribution_version = ''
       end
@@ -370,7 +352,7 @@ class TC_InstallerDefinitionException < Test::Unit::TestCase
 
   public
   def test_distribution_version_nothing_raised
-    assert_nothing_raised( '—áŠO‚ª raise ‚³‚ê‚½' ) do 
+    assert_nothing_raised( 'Îã³°¤¬ raise ¤µ¤ì¤¿' ) do 
       installer do |installer|
         installer.distribution_version = 'woody'
       end

@@ -109,9 +109,15 @@ module Rake
             end
           end
         end
+        # FIXME: ’Æ©’²á’¤Ë’¥í’¥°’¤¬’¼è’¤é’¤ì’¤ë’¤è’¤¦’¤Ë’¤¹’¤ë
+        logger.info %{chroot #{@dir} apt-get clean}
         sh %{chroot #{@dir} apt-get clean}, sh_option
+
+        logger.info %{rm -f #{File.join(@dir, '/etc/resolv.conf')}}
         rm_f File.join(@dir, '/etc/resolv.conf'), sh_option
+
         puts "Creating #{installer_base_target}."
+        logger.info %{tar -l -C #{@dir} -cf - --exclude #{File.join('var/tmp', target_fname)} . | gzip > #{installer_base_target}}
         sh %{tar -l -C #{@dir} -cf - --exclude #{File.join('var/tmp', target_fname)} . | gzip > #{installer_base_target}}, sh_option       
       end
     end

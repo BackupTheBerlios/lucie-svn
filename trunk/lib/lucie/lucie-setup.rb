@@ -66,8 +66,8 @@ module Lucie
     def umount_dirs
       sh_option = {:verbose => @commandline_options.verbose}
       sh %{LC_ALL=C chroot #{nfsroot_dir} dpkg-divert --package lucie-client --rename --remove /sbin/discover-modprobe}, sh_option rescue nil
-      sh %{umount #{File.join(nfsroot_dir, 'proc')} || true}, sh_option
-      sh %{umount #{File.join(nfsroot_dir, 'dev/pts')} || true}, sh_option
+      sh %{[ -d #{File.join(nfsroot_dir, 'proc/self')} ] && umount #{File.join(nfsroot_dir, 'proc')} || true}, sh_option
+      sh %{[ -d #{File.join(nfsroot_dir, 'proc/self')} ] && umount #{File.join(nfsroot_dir, 'dev/pts')} || true}, sh_option
       sh %{mount | grep "on #{nfsroot_dir} " || true}, sh_option     
     end
 

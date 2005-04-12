@@ -40,6 +40,22 @@ module FileUtils
   end
 end
 
+# a thin wrapper for FileUtils.sh
+def sh(*cmd, &block)
+  if Hash === cmd.last
+    Lucie::Logger.instance.info cmd[0..cmd.size-2].join(' ')
+  else
+    Lucie::Logger.instance.info cmd.join(' ')
+  end
+  return FileUtils.sh( *cmd, &block )
+end
+
+# a thin wrapper for FileUtils.rm_f
+def rm_f( list, options={} ) 
+  Lucie::Logger.instance.info( 'rm -f ' + ([list].flatten.map { |path| path.to_str }).join(' ') )
+  return FileUtils.rm_f( list, options )
+end
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

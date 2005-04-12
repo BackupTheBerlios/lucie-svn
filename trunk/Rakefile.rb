@@ -102,6 +102,19 @@ task :upload => [:deb, :upload_rdoc] do
   sh %{cd ../upload/lucie-client/ && scp * lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/packages/lucie-client/debian/woody/ }
 end
 
+# ------------------------- Other Tasks.
+
+desc 'Show TODOs'
+task :todo do
+  sh %{find . -name '*.rb' | grep -v './debian/' | xargs grep 'TODO' -}
+end
+
+desc 'Show FIXMEs'
+task :fixme do
+  sh %{find . -name '*.rb' | grep -v './debian/' | xargs grep 'FIXME' -}
+end
+
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

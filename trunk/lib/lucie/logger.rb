@@ -52,8 +52,51 @@ end
 
 # a thin wrapper for FileUtils.rm_f
 def rm_f( list, options={} ) 
-  Lucie::Logger.instance.info( 'rm -f ' + ([list].flatten.map { |path| path.to_str }).join(' ') )
+  Lucie::Logger.instance.info( "rm#{options[:force] ? ' -f' : ''} #{[list].flatten.join ' '}" )
   return FileUtils.rm_f( list, options )
+end
+
+# a thin wrapper for FileUtils.rm_r
+def rm_r( list, options={} )
+  Lucie::Logger.instance.info("rm -r#{options[:force] ? 'f' : ''} #{[list].flatten.join ' '}")
+  return FileUtils.rm_r( list, options )
+end
+
+# a thin wrapper for FileUtils.rm_rf
+def rm_rf( list, options={} )
+  options = options.dup
+  options[:force] = true
+  return rm_r( list, options )
+end
+
+# a thin wrapper for FileUtils.mkdir_p
+def mkdir_p( list, options={} )
+  Lucie::Logger.instance.info("mkdir -p #{options[:mode] ? ('-m %03o ' % options[:mode]) : ''}#{[list].flatten.join ' '}")
+  return FileUtils.mkdir_p( list, options )
+end
+
+# a thin wrapper for FileUtils.cp
+def cp( src, dest, options={} )
+  Lucie::Logger.instance.info( "cp#{options[:preserve] ? ' -p' : ''} #{[src,dest].flatten.join ' '}" )
+  return FileUtils.cp( src, dest, options )
+end
+
+# a thin wrapper for FileUtis.touch
+def touch( list, options={} )
+  Lucie::Logger.instance.info( "touch #{[list].flatten.join ' '}" )
+  return FileUtils.touch( list,options )
+end
+
+# a thin wrapper for FileUtis.rmdir
+def rmdir( list, options={} )
+  Lucie::Logger.instance.info( "rmdir #{[list].flatten.join ' '}" )
+  return FileUtils.rmdir( list, options )
+end
+
+# a thin wrapper for FileUtis.ln_s
+def ln_s( src, dest, options={} )
+  Lucie::Logger.instance.info "ln -s#{options[:force] ? 'f' : ''} #{[src,dest].flatten.join ' '}"
+  return FileUtils.ln_s( src, dest, options )
 end
 
 ### Local variables:

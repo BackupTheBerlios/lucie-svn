@@ -181,7 +181,6 @@ module Rake
       sprintf '%s%s', tabString, yield
     end
 
-
     private
     def install_kernel_nfsroot
       puts "Installing kernel on nfsroot."
@@ -203,15 +202,18 @@ module Rake
       ln_s  '/tmp/var/run', nfsroot('var/run'), sh_option
       ln_sf '/tmp/var/state/discover', nfsroot('var/state/discover'), sh_option
       ln_sf '/tmp/var/lib/discover', nfsroot('var/lib/discover'), sh_option
-      ln_sf '/tmp/etc/syslogsocket', nfsroot('dev/log'), sh_option
+      ln_s  '/tmp/etc/syslogsocket', nfsroot('dev/log'), sh_option
       ln_sf '/tmp/etc/resolv.conf', nfsroot('etc/resolv.conf'), sh_option
       ln_sf '/tmp', nfsroot('etc/sysconfig'), sh_option
       ln_sf '../../sbin/rcS_lucie', nfsroot('etc/init.d/rcS'), sh_option
       ln_sf '/dev/null', nfsroot('etc/network/ifstate'), sh_option
-      ln_s  '/tmp/binding', nfsroot('var/yp/binding'), sh_option rescue nil
-      rmdir nfsroot('var/log/ksymoops'), sh_option rescue nil
+      sh %{[ -d #{nfsroot('var/yp')} ] && ln -s /tmp/binding #{nfsroot('var/yp/binding')}}, sh_option rescue nil
+
+      sh %{[ -d #{nfsroot('var/log/ksymoops')} ] && rmdir #{nfsroot('var/log/ksymoops')}}, sh_option
       ln_s  '/dev/null', nfsroot('var/log/ksymoops'), sh_option
+
       sh %{echo "iface lo inet loopback" > #{nfsroot( 'etc/network/interfaces' )}}, sh_option
+
       sh %{echo "*.* /tmp/lucie/syslog.log" > #{nfsroot( 'etc/syslog.conf' )}}, sh_option
     end
     

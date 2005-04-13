@@ -10,6 +10,7 @@ require 'English'
 require 'getoptlong'
 require 'lucie/time-stamp'
 require 'singleton'
+require 'log4r'
 
 module Lucie
 
@@ -34,6 +35,7 @@ module Lucie
     attr_reader :trace
     attr_reader :installer_base
     attr_reader :log_file
+    attr_reader :logging_level
 
     module OptionList # :nodoc:
       OPTION_LIST = [
@@ -59,8 +61,10 @@ module Lucie
           "use the debug trace mode."],
         [ "--installer-base",     "-I",   nil, \
           "build installer base tarball only."],
-        [ "--log-file",          "-l",    "file path", \
+        [ "--log-file",           "-l",    "file path", \
           "specify log file path."],
+        [ "--logging-level",      "-L",    "logging level", \
+          "set the logger level."],
       ]
 
       public
@@ -115,6 +119,14 @@ module Lucie
             @installer_base = true
           when '--log-file'
             @log_file = argument
+          when '--logging-level'
+            @logging_level = {
+              'DEBUG' => Log4r::DEBUG,
+              'INFO'  => Log4r::INFO,
+              'WARN'  => Log4r::WARN,
+              'ERROR' => Log4r::ERROR,
+              'FATAL' => Log4r::FATAL
+            }[argument.upcase]
           end
         end
       ensure
@@ -136,10 +148,11 @@ module Lucie
       @trace = false
       @installer_base = false
       @log_file = '/var/log/lucie-setup.log'
+      Log4r.define_levels(*Log4r::Log4rConfig::LogLevels) # ensure levels are loaded.
+      @logging_level = Log4r::INFO
     end
   end
 end
-
 
 ### Local variables:
 ### mode: Ruby

@@ -18,7 +18,7 @@ module Lucie
 
     public
     def initialize
-      super( 'lucie-setup' )
+      super( 'lucie-setup', CommandLineOptions.instance.logging_level )
       @outputters = 
         [Log4r::FileOutputter.new( 'lucie-setup',
                                    {:filename=>CommandLineOptions.instance.log_file} )]

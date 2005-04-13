@@ -37,9 +37,6 @@ module Lucie
       rescue SystemExit => ex
         $stderr.puts( ex.message ) unless( ex.success? )
         exit(0)
-      rescue Exception => ex
-        puts ex.message
-        exit(1)
       end
       unless i_am_root
         $stderr.puts "Run this program as root."

@@ -99,6 +99,7 @@ module Rake
         set_timezone
         make_symlinks
         save_all_packages_list
+        # TODO: setup_ssh
         install_kernel_nfsroot
         setup_dhcp
       end
@@ -183,7 +184,8 @@ module Rake
 
     private
     def install_kernel_nfsroot
-      puts "Installing kernel on nfsroot."
+      # TODO: automatically determine kernel_version using filename.
+      info "Installing kernel on nfsroot."
       rm_rf nfsroot("boot/*-#{@kernel_version}"), sh_option
       rm_rf nfsroot("lib/modules/#{@kernel_version}"), sh_option
       sh %{echo "do_boot_enable=no" > #{nfsroot('etc/kernel-img.conf')}}, sh_option

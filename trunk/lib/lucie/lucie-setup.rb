@@ -104,6 +104,7 @@ module Lucie
         nfsroot.root_password = installer.root_password
         nfsroot.installer_base = File.join( @commandline_options.installer_base_dir, 
                                             installer.name, 'var/tmp', basetgz_filename)
+        nfsroot.extra_packages = installer.extra_packages
       end
       return Task[installer.name]
     end

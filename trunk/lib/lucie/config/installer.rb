@@ -37,7 +37,8 @@ module Lucie
       required_attribute :host_group
       required_attribute :distribution
       required_attribute :distribution_version
-      
+      required_attribute :extra_packages
+
       # ------------------------- Special accessor behaviours (overwriting default).
 
       REGEXP_PRINTABLE = /\A[ -~]+\z/

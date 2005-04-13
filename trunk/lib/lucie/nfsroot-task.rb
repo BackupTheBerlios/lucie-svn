@@ -58,6 +58,7 @@ module Rake
     attr_accessor :kernel_package
     attr_accessor :kernel_version
     attr_accessor :root_password
+    attr_accessor :extra_packages
     
     # Nfsroot タスクを作成する。
     public
@@ -67,6 +68,7 @@ module Rake
       @package_server = 'http://www.debian.or.jp/debian'
       @distribution_version = 'stable'
       @root_password = "h29SP9GgVbLHE"
+      @extra_packages = nil
       yield self if block_given?
       define
     end
@@ -231,8 +233,14 @@ module Rake
     
     private
     def add_additional_packages
-      puts "Adding additional packages to nfsroot."
-      sh_log %{chroot #{@dir} apt-get -y --fix-missing install dhcp3-client ruby1.8 rake perl-modules discover libapt-pkg-perl file cfengine}, sh_option, &apt_block
+      info "Adding additional packages to nfsroot."
+      additional_packages = ['dhcp3-client', 'ruby1.8',
+        'rake', 'perl-modules', 'discover', 'libapt-pkg-perl', 'file', 'cfengine']
+      sh_log %{LC_ALL=C chroot #{@dir} apt-get -y --fix-missing install #{additional_packages.join(' ')} </dev/null 2>&1}, sh_option, &apt_block
+      if @extra_packages
+        info "Adding extra packages to nfsroot: #{@extra_packages.join(', ')}"
+        sh_log %{LC_ALL=C chroot #{@dir} apt-get -y --fix-missing install #{@extra_packages.join(' ')} </dev/null 2>&1}, sh_option, &apt_block
+      end
       sh_log %{chroot #{@dir} apt-get clean}, sh_option, &apt_block
     end
     
@@ -332,7 +340,7 @@ exit 0
       end
       Lucie::Logger::instance.info "DONE"
       sh %{chmod +x #{nfsroot( 'sbin/lucie-start-stop-daemon' )}}, sh_option
-      ln_s '/sbin/lucie-start-stop-daemon', nfsroot( 'sbin/start-stop-daemon' ), sh_option
+      ln_sf '/sbin/lucie-start-stop-daemon', nfsroot( 'sbin/start-stop-daemon' ), sh_option
       sh_log %{chroot #{@dir} apt-get -y dist-upgrade}, sh_option, &apt_block
     end
     

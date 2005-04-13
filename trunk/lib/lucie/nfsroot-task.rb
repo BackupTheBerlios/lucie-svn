@@ -13,17 +13,17 @@ Lucie::update(%q$Date$)
 
 module Rake
   #
-  # ¥¤¥ó¥¹¥È¡¼¥é¤Î NFSROOT ¤ò¥Ó¥ë¥É¤¹¤ë¥¿¥¹¥¯¤òÀ¸À®¤¹¤ë¡£
+  # ’¥¤’¥ó’¥¹’¥È’¡¼’¥é’¤Î NFSROOT ’¤ò’¥Ó’¥ë’¥É’¤¹’¤ë’¥¿’¥¹’¥¯’¤ò’À¸’À®’¤¹’¤ë’¡£
   #
-  # NfsrootTask ¤Ï¼¡¤Î¥¿¡¼¥²¥Ã¥È¤òºîÀ®¤¹¤ë:
+  # NfsrootTask ’¤Ï’¼¡’¤Î’¥¿’¡¼’¥²’¥Ã’¥È’¤ò’ºî’À®’¤¹’¤ë:
   #
   # [<b><em>nfsroot</em></b>]
-  #   Nfsroot ¥¿¥¹¥¯¤Î¥á¥¤¥ó¥¿¥¹¥¯
+  #   Nfsroot ’¥¿’¥¹’¥¯’¤Î’¥á’¥¤’¥ó’¥¿’¥¹’¥¯
   # [<b><em>:clobber_nfsroot</em></b>]
-  #   ¤¹¤Ù¤Æ¤Î NFSROOT ´ØÏ¢¥Õ¥¡¥¤¥ë¤ò¾Ãµî¤¹¤ë¡£
-  #   ¤³¤Î¥¿¡¼¥²¥Ã¥È¤Ï¼«Æ°Åª¤Ë¥á¥¤¥ó¤Î clobber ¥¿¡¼¥²¥Ã¥È¤ËÄÉ²Ã¤µ¤ì¤ë
+  #   ’¤¹’¤Ù’¤Æ’¤Î NFSROOT ’´Ø’Ï¢’¥Õ’¥¡’¥¤’¥ë’¤ò’¾Ã’µî’¤¹’¤ë’¡£
+  #   ’¤³’¤Î’¥¿’¡¼’¥²’¥Ã’¥È’¤Ï’¼«’Æ°’Åª’¤Ë’¥á’¥¤’¥ó’¤Î clobber ’¥¿’¡¼’¥²’¥Ã’¥È’¤Ë’ÄÉ’²Ã’¤µ’¤ì’¤ë
   #
-  # Îã:
+  # ’Îã:
   #   NfsrootTask.new do |nfsroot|
   #     nfsroot.dir = "tmp"
   #     nfsroot.package_server = "http://www.debian.or.jp/debian"
@@ -34,8 +34,8 @@ module Rake
   #     installer_base.root_password = "h29SP9GgVbLHE"
   #   end
   #
-  # ºîÀ®¤¹¤ë InstallerBaseTask ¤Ë¤Ï¥Ç¥Õ¥©¥ë¥È¤ÎÌ¾Á°°Ê³°¤Ë¼«Ê¬¤Î¹¥¤­¤ÊÌ¾Á°¤ò
-  # ¤Ä¤±¤ë¤³¤È¤â¤Ç¤­¤ë¡£
+  # ’ºî’À®’¤¹’¤ë InstallerBaseTask ’¤Ë’¤Ï’¥Ç’¥Õ’¥©’¥ë’¥È’¤Î’Ì¾’Á°’°Ê’³°’¤Ë’¼«’Ê¬’¤Î’¹¥’¤­’¤Ê’Ì¾’Á°’¤ò
+  # ’¤Ä’¤±’¤ë’¤³’¤È’¤â’¤Ç’¤­’¤ë’¡£
   #
   #   NfsrootTask.new( :presto_installer ) do |nfsroot|
   #     nfsroot.dir = "tmp"
@@ -60,7 +60,7 @@ module Rake
     attr_accessor :root_password
     attr_accessor :extra_packages
     
-    # Nfsroot ¥¿¥¹¥¯¤òºîÀ®¤¹¤ë¡£
+    # Nfsroot ’¥¿’¥¹’¥¯’¤ò’ºî’À®’¤¹’¤ë’¡£
     public
     def initialize( name=:nfsroot ) # :yield: self
       @name = name
@@ -222,13 +222,10 @@ module Rake
     
     private
     def set_timezone
-      puts "Setting timezone in nfsroot."
+      info "Setting timezone in nfsroot."
       timezone = `readlink /etc/localtime | sed 's%^/usr/share/zoneinfo/%%'`.chomp
-      File.open( nfsroot('etc/timezone'), 'w+' ) do |file|
-        file.puts timezone
-      end
-      rm_f nfsroot( 'etc/localtime' ), sh_option
-      ln_sf "/usr/share/zoneinfo/#{timezone}", nfsroot( 'etc/localtime' ), sh_option
+      sh %{echo #{timezone} > #{nfsroot('etc/timezone')}}
+      sh %{rm -f #{nfsroot('etc/localtime')} && ln -sf /usr/share/zoneinfo/#{timezone} #{nfsroot('etc/localtime')}}, sh_option
     end
     
     private
@@ -361,11 +358,11 @@ exit 0
     # hoaks some packages
     # liloconfig, dump and raidtool2 need these files
     #
-    # * raidtool2: ¶õ¤Î /etc/fstab, /etc/raidtab ¤òºîÀ®
-    # * lvm: ¶õ¤Î /lib/modules/¥«¡¼¥Í¥ë¥Ð¡¼¥¸¥ç¥ó, /lib/modules/¥«¡¼¥Í¥ë¥Ð¡¼¥¸¥ç¥ó/modules.dep ¤òºîÀ®
+    # * raidtool2: ’¶õ’¤Î /etc/fstab, /etc/raidtab ’¤ò’ºî’À®
+    # * lvm: ’¶õ’¤Î /lib/modules/’¥«’¡¼’¥Í’¥ë’¥Ð’¡¼’¥¸’¥ç’¥ó, /lib/modules/’¥«’¡¼’¥Í’¥ë’¥Ð’¡¼’¥¸’¥ç’¥ó/modules.dep ’¤ò’ºî’À®
     # * /etc/default/ntp-servers
     # * /var/state
-    # * apt-get: /etc/hosts ¤Ë localhost, lucie.sourceforge.net ¤òÄÉ²Ã, /etc/apt/sources-list ¤òºîÀ®, /etc/apt/preferences ¤ò¥³¥Ô¡¼
+    # * apt-get: /etc/hosts ’¤Ë localhost, lucie.sourceforge.net ’¤ò’ÄÉ’²Ã, /etc/apt/sources-list ’¤ò’ºî’À®, /etc/apt/preferences ’¤ò’¥³’¥Ô’¡¼
     # 
     private
     def hoax_some_packages

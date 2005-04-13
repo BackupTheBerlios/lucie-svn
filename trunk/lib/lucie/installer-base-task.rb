@@ -89,10 +89,12 @@ module Rake
       task name => [installer_base_target]
       
       file installer_base_target do
+        # TODO: debootstrap ’¤Î’¥ª’¥×’¥·’¥ç’¥ó’¤ò’»Ø’Äê’²Ä’Ç½’¤Ë’¤¹’¤ë
         debootstrap_option = "--arch i386 --exclude=#{exclude_packages.join(',')}"
-        puts "Executing debootstrap. This may take a long time."
+        info "Executing debootstrap. This may take a long time."
         sh_log( %{yes '' | LC_ALL=C debootstrap #{debootstrap_option} #{@distribution_version} #{@dir} #{@mirror} 2>&1}, sh_option ) do |rd|
           line_length = 0
+          # TODO: ’¥×’¥í’¥°’¥ì’¥¹’¥Ð’¡¼’¤Ç’¿Ê’Ä½’¤ò’É½’¼¨
           while (rd.gets)
             line = $_.chomp
             case line
@@ -100,23 +102,29 @@ module Rake
               STDERR.print ' ' * line_length, "\r"
               STDERR.print line, "\r"
               line_length = line.length
-              logger.debug line
+              logger.info line
             when /^E: /
               logger.error line 
               raise DebootstrapExecutionError, line
             else
-              logger.warn line 
+              logger.debug line 
             end
           end
         end
         sh %{chroot #{@dir} apt-get clean}, sh_option
-        rm_f File.join(@dir, '/etc/resolv.conf'), sh_option
+        rm File.join(@dir, '/etc/resolv.conf'), {:force=>true}.merge( sh_option )
 
-        puts "Creating #{installer_base_target}."
+        info "Creating installer base tarball on #{installer_base_target}."
         sh %{tar -l -C #{@dir} -cf - --exclude #{File.join('var/tmp', target_fname)} . | gzip > #{installer_base_target}}, sh_option       
       end
     end
     
+    private
+    def info( aString )
+      logger.info aString
+      puts aString
+    end
+
     private
     def logger
       return Lucie::Logger::instance

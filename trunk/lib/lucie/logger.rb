@@ -34,31 +34,35 @@ module FileUtils
       options = {}
     end
     fu_check_options options, :noop, :verbose
-    Lucie::Logger.instance.info cmd.join(' ')
+    Lucie::Logger.instance.info( sh_msg(cmd.join(' ')) )
     fu_output_message cmd.join(' ') if options[:verbose]
     IO.popen(cmd.join(' '), &block) unless options[:noop]
   end
 end
 
+def sh_msg( aString )
+  return "shell: " + aString
+end
+
 # a thin wrapper for FileUtils.sh
 def sh(*cmd, &block)
   if Hash === cmd.last
-    Lucie::Logger.instance.info cmd[0..cmd.size-2].join(' ')
+    Lucie::Logger.instance.info( sh_msg(cmd[0..cmd.size-2].join(' ')) )
   else
-    Lucie::Logger.instance.info cmd.join(' ')
+    Lucie::Logger.instance.info( sh_msg(cmd.join(' ')) )
   end
   return FileUtils.sh( *cmd, &block )
 end
 
 # a thin wrapper for FileUtils.rm_f
 def rm_f( list, options={} ) 
-  Lucie::Logger.instance.info( "rm#{options[:force] ? ' -f' : ''} #{[list].flatten.join ' '}" )
+  Lucie::Logger.instance.info( sh_msg("rm#{options[:force] ? ' -f' : ''} #{[list].flatten.join ' '}") )
   return FileUtils.rm_f( list, options )
 end
 
 # a thin wrapper for FileUtils.rm_r
 def rm_r( list, options={} )
-  Lucie::Logger.instance.info("rm -r#{options[:force] ? 'f' : ''} #{[list].flatten.join ' '}")
+  Lucie::Logger.instance.info( sh_msg("rm -r#{options[:force] ? 'f' : ''} #{[list].flatten.join ' '}") )
   return FileUtils.rm_r( list, options )
 end
 
@@ -71,31 +75,31 @@ end
 
 # a thin wrapper for FileUtils.mkdir_p
 def mkdir_p( list, options={} )
-  Lucie::Logger.instance.info("mkdir -p #{options[:mode] ? ('-m %03o ' % options[:mode]) : ''}#{[list].flatten.join ' '}")
+  Lucie::Logger.instance.info( sh_msg("mkdir -p #{options[:mode] ? ('-m %03o ' % options[:mode]) : ''}#{[list].flatten.join ' '}") )
   return FileUtils.mkdir_p( list, options )
 end
 
 # a thin wrapper for FileUtils.cp
 def cp( src, dest, options={} )
-  Lucie::Logger.instance.info( "cp#{options[:preserve] ? ' -p' : ''} #{[src,dest].flatten.join ' '}" )
+  Lucie::Logger.instance.info( sh_msg("cp#{options[:preserve] ? ' -p' : ''} #{[src,dest].flatten.join ' '}" ) )
   return FileUtils.cp( src, dest, options )
 end
 
 # a thin wrapper for FileUtis.touch
 def touch( list, options={} )
-  Lucie::Logger.instance.info( "touch #{[list].flatten.join ' '}" )
+  Lucie::Logger.instance.info( sh_msg("touch #{[list].flatten.join ' '}") )
   return FileUtils.touch( list,options )
 end
 
 # a thin wrapper for FileUtis.rmdir
 def rmdir( list, options={} )
-  Lucie::Logger.instance.info( "rmdir #{[list].flatten.join ' '}" )
+  Lucie::Logger.instance.info( sh_msg("rmdir #{[list].flatten.join ' '}" ) )
   return FileUtils.rmdir( list, options )
 end
 
 # a thin wrapper for FileUtis.ln_s
 def ln_s( src, dest, options={} )
-  Lucie::Logger.instance.info "ln -s#{options[:force] ? 'f' : ''} #{[src,dest].flatten.join ' '}"
+  Lucie::Logger.instance.info( sh_msg("ln -s#{options[:force] ? 'f' : ''} #{[src,dest].flatten.join ' '}") )
   return FileUtils.ln_s( src, dest, options )
 end
 

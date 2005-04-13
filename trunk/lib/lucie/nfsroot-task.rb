@@ -114,7 +114,7 @@ module Rake
 
     private
     def setup_dhcp
-      puts "Setting up DHCP and PXE environment."
+      info "Setting up DHCP and PXE environment."
       installer = Lucie::Config::Installer[@name]
       dhcp_server = installer.dhcp_server
       host_group = installer.host_group

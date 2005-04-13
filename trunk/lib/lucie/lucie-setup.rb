@@ -26,7 +26,7 @@ module Lucie
   class Setup
     include Singleton
     
-    LUCIE_VERSION = '0.0.2alpha'
+    LUCIE_VERSION = '0.0.2alpha2'
     VERSION_STRING = ['lucie-setup', LUCIE_VERSION, '('+Lucie::svn_date+')'].join(' ')
     
     # lucie-setup のメインルーチンを起動

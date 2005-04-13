@@ -246,8 +246,10 @@ module Rake
     
     private
     def copy_lucie_files
-      puts "Copying lucie client files."
+      info "Copying lucie client files."
       sh %{ruby -pi -e "gsub(/^root::/, 'root:#{@root_password}:')" #{nfsroot('etc/passwd')}}, sh_option
+
+      Lucie::Logger::instance.info "Generating apt.conf on nfsroot"      
       File.open( nfsroot( 'etc/apt/apt.conf' ), 'w+' ) do |file|
         file.print <<-APT_CONF
 APT 
@@ -273,6 +275,8 @@ DPkg
 };
         APT_CONF
       end
+      Lucie::Logger::instance.info "DONE"
+
       dpkg_divert '/etc/dhcp3/dhclient-script' rescue nil
       dpkg_divert '/etc/dhcp3/dhclient.conf' rescue nil      
       sh_log %{chroot #{@dir} apt-get install lucie-client}, sh_option, &apt_block

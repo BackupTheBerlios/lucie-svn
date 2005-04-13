@@ -13,17 +13,17 @@ Lucie::update(%q$Date$)
 
 module Rake
   #
-  # ’¥¤’¥ó’¥¹’¥È’¡¼’¥é’¤Î NFSROOT ’¤ò’¥Ó’¥ë’¥É’¤¹’¤ë’¥¿’¥¹’¥¯’¤ò’À¸’À®’¤¹’¤ë’¡£
+  # ¥¤¥ó¥¹¥È¡¼¥é¤Î NFSROOT ¤ò¥Ó¥ë¥É¤¹¤ë¥¿¥¹¥¯¤òÀ¸À®¤¹¤ë¡£
   #
-  # NfsrootTask ’¤Ï’¼¡’¤Î’¥¿’¡¼’¥²’¥Ã’¥È’¤ò’ºî’À®’¤¹’¤ë:
+  # NfsrootTask ¤Ï¼¡¤Î¥¿¡¼¥²¥Ã¥È¤òºîÀ®¤¹¤ë:
   #
   # [<b><em>nfsroot</em></b>]
-  #   Nfsroot ’¥¿’¥¹’¥¯’¤Î’¥á’¥¤’¥ó’¥¿’¥¹’¥¯
+  #   Nfsroot ¥¿¥¹¥¯¤Î¥á¥¤¥ó¥¿¥¹¥¯
   # [<b><em>:clobber_nfsroot</em></b>]
-  #   ’¤¹’¤Ù’¤Æ’¤Î NFSROOT ’´Ø’Ï¢’¥Õ’¥¡’¥¤’¥ë’¤ò’¾Ã’µî’¤¹’¤ë’¡£
-  #   ’¤³’¤Î’¥¿’¡¼’¥²’¥Ã’¥È’¤Ï’¼«’Æ°’Åª’¤Ë’¥á’¥¤’¥ó’¤Î clobber ’¥¿’¡¼’¥²’¥Ã’¥È’¤Ë’ÄÉ’²Ã’¤µ’¤ì’¤ë
+  #   ¤¹¤Ù¤Æ¤Î NFSROOT ´ØÏ¢¥Õ¥¡¥¤¥ë¤ò¾Ãµî¤¹¤ë¡£
+  #   ¤³¤Î¥¿¡¼¥²¥Ã¥È¤Ï¼«Æ°Åª¤Ë¥á¥¤¥ó¤Î clobber ¥¿¡¼¥²¥Ã¥È¤ËÄÉ²Ã¤µ¤ì¤ë
   #
-  # ’Îã:
+  # Îã:
   #   NfsrootTask.new do |nfsroot|
   #     nfsroot.dir = "tmp"
   #     nfsroot.package_server = "http://www.debian.or.jp/debian"
@@ -34,8 +34,8 @@ module Rake
   #     installer_base.root_password = "h29SP9GgVbLHE"
   #   end
   #
-  # ’ºî’À®’¤¹’¤ë InstallerBaseTask ’¤Ë’¤Ï’¥Ç’¥Õ’¥©’¥ë’¥È’¤Î’Ì¾’Á°’°Ê’³°’¤Ë’¼«’Ê¬’¤Î’¹¥’¤­’¤Ê’Ì¾’Á°’¤ò
-  # ’¤Ä’¤±’¤ë’¤³’¤È’¤â’¤Ç’¤­’¤ë’¡£
+  # ºîÀ®¤¹¤ë InstallerBaseTask ¤Ë¤Ï¥Ç¥Õ¥©¥ë¥È¤ÎÌ¾Á°°Ê³°¤Ë¼«Ê¬¤Î¹¥¤­¤ÊÌ¾Á°¤ò
+  # ¤Ä¤±¤ë¤³¤È¤â¤Ç¤­¤ë¡£
   #
   #   NfsrootTask.new( :presto_installer ) do |nfsroot|
   #     nfsroot.dir = "tmp"
@@ -59,7 +59,7 @@ module Rake
     attr_accessor :kernel_version
     attr_accessor :root_password
     
-    # Nfsroot ’¥¿’¥¹’¥¯’¤ò’ºî’À®’¤¹’¤ë’¡£
+    # Nfsroot ¥¿¥¹¥¯¤òºîÀ®¤¹¤ë¡£
     public
     def initialize( name=:nfsroot ) # :yield: self
       @name = name
@@ -78,11 +78,10 @@ module Rake
       
       desc "Remove the nfsroot filesystem"
       task paste("clobber_", @name) do
-        puts "Removing #{@dir}"
-        Lucie::Logger::instance.info "Removing #{@dir}"
+        info "Removing #{@dir}"
         sh %{umount #{nfsroot( 'dev/pts' )} 1>/dev/null 2>&1}, sh_option rescue nil
         sh %{rm -rf #{nfsroot( '.??*' )} #{nfsroot( '*' )}}, sh_option
-        sh %{find #{@dir} ! -type d -xdev -maxdepth 1 | xargs -r rm -f}, sh_option 
+        sh %{[ -d #{@dir} ] && find #{@dir} ! -type d -xdev -maxdepth 1 | xargs -r rm -f}, sh_option 
       end
       
       directory @dir
@@ -279,7 +278,7 @@ DPkg
     
     private
     def extract_installer_base
-      puts "Extracting installer base tarball. This may take a long time."
+      info "Extracting installer base tarball. This may take a long time."
       sh %{tar -C #{@dir} -xzf #{installer_base}}, sh_option
       cp installer_base, nfsroot( '/var/tmp' ), sh_option
     end
@@ -348,18 +347,16 @@ exit 0
     # hoaks some packages
     # liloconfig, dump and raidtool2 need these files
     #
-    # * raidtool2: ’¶õ’¤Î /etc/fstab, /etc/raidtab ’¤ò’ºî’À®
-    # * lvm: ’¶õ’¤Î /lib/modules/’¥«’¡¼’¥Í’¥ë’¥Ð’¡¼’¥¸’¥ç’¥ó, /lib/modules/’¥«’¡¼’¥Í’¥ë’¥Ð’¡¼’¥¸’¥ç’¥ó/modules.dep ’¤ò’ºî’À®
+    # * raidtool2: ¶õ¤Î /etc/fstab, /etc/raidtab ¤òºîÀ®
+    # * lvm: ¶õ¤Î /lib/modules/¥«¡¼¥Í¥ë¥Ð¡¼¥¸¥ç¥ó, /lib/modules/¥«¡¼¥Í¥ë¥Ð¡¼¥¸¥ç¥ó/modules.dep ¤òºîÀ®
     # * /etc/default/ntp-servers
     # * /var/state
-    # * apt-get: /etc/hosts ’¤Ë localhost, lucie.sourceforge.net ’¤ò’ÄÉ’²Ã, /etc/apt/sources-list ’¤ò’ºî’À®, /etc/apt/preferences ’¤ò’¥³’¥Ô’¡¼
+    # * apt-get: /etc/hosts ¤Ë localhost, lucie.sourceforge.net ¤òÄÉ²Ã, /etc/apt/sources-list ¤òºîÀ®, /etc/apt/preferences ¤ò¥³¥Ô¡¼
     # 
     private
     def hoax_some_packages
-      puts "Modifying nfsroot to avoid errors specific to some packages."
-      File.open( nfsroot( 'etc/fstab' ), 'w+' ) do |file|
-        file.puts "#UNCONFIGURED FSTAB FOR BASE SYSTEM"
-      end
+      info "Modifying nfsroot to avoid errors caused by some packages."
+      sh %{echo "#UNCONFIGURED FSTAB FOR BASE SYSTEM" > #{nfsroot('etc/fstab')}}
       touch nfsroot( 'etc/raidtab' ), sh_option
 
       mkdir_p nfsroot( "lib/modules/#{@kernel_version}" ), sh_option
@@ -367,25 +364,25 @@ exit 0
       lucie_server_kernel_version=`uname -r`.chomp
       mkdir_p nfsroot( "lib/modules/#{lucie_server_kernel_version}" ), sh_option
       touch nfsroot( "lib/modules/#{lucie_server_kernel_version}/modules.dep" ), sh_option
-
-      File.open( nfsroot( 'etc/default/ntp-servers' ), 'w+' ) do |file|
-        file.puts 'NTPSERVERS=""'
-      end
+      
+      sh %{echo 'NTPSERVERS=""' > #{nfsroot('etc/default/ntp-servers')}}
       
       mkdir nfsroot( 'var/state' ), sh_option rescue nil
 
-      File.open( nfsroot( 'etc/apt/sources.list' ), 'w+' ) do |file|
+      Lucie::Logger::instance.info "Generating sources.list on nfsroot"
+      File.open( nfsroot('etc/apt/sources.list'), 'w+' ) do |file|
         file.puts "deb #{@package_server} #{@distribution_version} main contrib non-free"
         file.puts "deb #{@package_server}-non-US #{@distribution_version}/non-US main contrib non-free"
         file.puts "# lucie-client package"
         file.puts "deb http://lucie.sourceforge.net/packages/lucie-client/debian/#{@distribution_version}/ ./"
-      end            
+      end
+      Lucie::Logger::instance.info "DONE"
 
-      File.open( nfsroot( 'etc/hosts' ), 'w+' ) do |file|
-        file.puts "127.0.0.1 localhost"
-        file.puts "66.35.250.209 lucie.sourceforge.net"
-      end   
-      cp '/etc/apt/preferences',  nfsroot( 'etc/apt/preferences' ), sh_option rescue nil      
+      sh %{echo "127.0.0.1 localhost" >> #{nfsroot('etc/hosts')}}
+      # FIXME: lookup IP address on each lucie-setup.
+      sh %{echo "66.35.250.209 lucie.sourceforge.net" >> #{nfsroot('etc/hosts')}}
+
+      cp '/etc/apt/preferences',  nfsroot('etc/apt/preferences'), sh_option rescue nil      
     end
     
     private
@@ -396,6 +393,12 @@ exit 0
     private
     def sh_option
        return {:verbose => Lucie::CommandLineOptions.instance.verbose} 
+    end
+
+    private
+    def info( aString )
+      Lucie::Logger::instance.info aString
+      puts aString
     end
   end
 end

@@ -294,7 +294,7 @@ DPkg
     
     private
     def upgrade
-      puts "Upgrading nfsroot. This may take a long time."
+      info "Upgrading nfsroot. This may take a long time."
       cp( '/etc/resolv.conf', nfsroot( 'etc/resolv.conf-lucieserver' ),
           {:preserve => true }.merge( sh_option ))
       cp( '/etc/resolv.conf', nfsroot( 'etc/resolv.conf' ),
@@ -312,6 +312,7 @@ DPkg
       dpkg_divert '/sbin/start-stop-daemon' rescue nil
       dpkg_divert '/sbin/discover-modprobe' rescue nil
       
+      Lucie::Logger::instance.info "Generating fake start-stop-daemon"      
       File.open( nfsroot( 'sbin/lucie-start-stop-daemon' ), 'w+' ) do |file|
         file.puts <<-START_STOP_DAEMON
 #! /bin/bash
@@ -329,8 +330,9 @@ done
 exit 0
         START_STOP_DAEMON
       end
+      Lucie::Logger::instance.info "DONE"
       sh %{chmod +x #{nfsroot( 'sbin/lucie-start-stop-daemon' )}}, sh_option
-      ln_sf '/sbin/lucie-start-stop-daemon', nfsroot( 'sbin/start-stop-daemon' ), sh_option
+      ln_s '/sbin/lucie-start-stop-daemon', nfsroot( 'sbin/start-stop-daemon' ), sh_option
       sh_log %{chroot #{@dir} apt-get -y dist-upgrade}, sh_option, &apt_block
     end
     

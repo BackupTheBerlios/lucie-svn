@@ -235,7 +235,7 @@ module Rake
     private
     def add_additional_packages
       info "Adding additional packages to nfsroot."
-      additional_packages = ['dhcp3-client', 'ruby1.8',
+      additional_packages = ['dhcp3-client', 'ruby1.8', 'liblog4r-ruby',
         'rake', 'perl-modules', 'discover', 'libapt-pkg-perl', 'file', 'cfengine']
       sh_log %{LC_ALL=C chroot #{@dir} apt-get -y --fix-missing install #{additional_packages.join(' ')} </dev/null 2>&1}, sh_option, &apt_block
       if @extra_packages

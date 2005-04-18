@@ -1,186 +1,30 @@
 #! /usr/bin/ruby1.8
+#
+# $Id: command-line-options.rb 557 2005-04-13 07:05:05Z takamiya $
+#
+# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Revision:: $Revision: 557 $
+# License::  GPL2
 
 require 'rake'
+require 'lucie/installer'
 
-# create ramdisk
+include Lucie::Installer
 
-sh %{mount -n -t proc proc /proc}
+init
+require 'lucie/installer/confdir'
+require 'lucie/installer/setup'
+require 'lucie/installer/hwdetect'
+require 'lucie/installer/partition'
+require 'lucie/installer/mountdisks'
+require 'lucie/installer/extrbase'
+require 'lucie/installer/updatebase'
+require 'lucie/installer/instsoft'
+require 'lucie/installer/configure'
+require 'lucie/installer/finish'
+require 'lucie/installer/lucieend'
 
-$logdir = '/tmp/lucie'
-$diskvar = File.join( $logdir, 'disk_var.sh' )
-cmdline = %x(cat /proc/cmdline)
-$installer_name = cmdline[cmdline.index('BOOT_IMAGE')+11..-1].strip
-
-# start devfsd if needed
-if FileTest.chardev?( '/dev/.devfsd' )
-  sh %{/sbin/devfsd /dev}
-end
-
-# if we have shm use it as ramdisk
-rc = sh %{mount -t tmpfs tmpfs /tmp}
-unless rc
-  sh %{mke2fs -q -m 0 /dev/ram0}
-  sh %{mount -n /dev/ram0 /tmp}
-end
-
-# now create the required subdirectories
-mkdir_p '/tmp/etc'
-mkdir_p '/tmp/target'
-mkdir_p '/tmp/var/run/sshd'
-mkdir_p '/tmp/var/state/discover'
-mkdir_p '/tmp/var/lib/discover'
-
-mkdir '/tmp/var/tmp'
-mkdir '/tmp/var/log'
-mkdir '/tmp/var/lock'
-mkdir '/tmp/var/spool'
-
-
-# init
-
-# directory where temporary log files are stored.
-mkdir_p '/tmp/lucie'
-
-sh %{grep -q '[[:space:]]sysfs' /proc/filesystems && mount -t sysfs sysfs /sys} rescue nil
-sh %{ifup lo} rescue nil
-sh %{[ -x /sbin/portmap ] && /sbin/portmap} rescue nil
-sh %{mount -t devpts devpts /dev/pts}
-# add other options for nfs mount of /dev/root to root-path in dhcpd.conf
-sh %{mount -o remount,noatime,ro /dev/root /}
-sh %{cat /proc/kmsg >/dev/tty4 &}
-sh %{dmesg > #{File.join($logdir, 'dmesg.log')}}
-
-# ------------------------- task install.
-
-sh %{hwdetect}
-
-# ------------------------- task partition.
-
-puts "Partitioning local harddisks"
-sh %{[ ! -s #{$diskvar} ] && setup_harddisks -f /etc/lucie/partition -d -X > #{File.join( $logdir, 'format.log' )} 2>&1}
-
-# ------------------------- task mountdisks.
-
-fstab = File.join( $logdir, 'fstab' )
-raise "No #{fstab} created." unless FileTest.exists?(fstab)
-# mount swap space
-swaplist = `source #{$diskvar} && echo $SWAPLIST`.strip.split(' ')
-swaplist.each do |each|
-  sh %{swapon #{each} && echo "Enable swap device #{each}"}
-end
-sh %{mount2dir /tmp/target #{fstab}}
-
-# ------------------------- task extrbase.
-
-require '/etc/lucie/resource.rb'
-require 'lucie/config'
-
-installer = Lucie::Config::Installer[$installer_name]
-base_tgz = File.join( '/var/tmp', installer.distribution + '_' + installer.distribution_version + '.tgz')
-puts "Unpcking Debian base archive"
-sh %{gzip -dc #{base_tgz} | tar -C /tmp/target -xpf -}
-# now we can copy fstab
-sh %{[ -f /tmp/target/etc/fstab ] && mv /tmp/target/etc/fstab /tmp/target/etc/fstab.old}
-cp fstab, '/tmp/target/etc/fstab', :preserve => true
-
-# ------------------------- task updatebase.
-
-# ftp and http needs resolv.conf in chroot environment, /etc/hosts is useful
-# think about using fcopy for these two files
-sh %{[ -f /tmp/etc/resolv.conf ] && cp /tmp/etc/resolv.conf /tmp/target/etc} rescue nil
-sh %{[ -f /etc/hosts ] && cp /etc/hosts /tmp/target/etc}
-
-# set hostname in /tmp/target
-hostname = `hostname`.chomp
-ip_address = Lucie::Config::Host[hostname].address
-domain = installer.dhcp_server.domain_name
-
-sh %{echo -e "#{ip_address}\t#{hostname}.#{domain} #{hostname}" >>/tmp/target/etc/hosts}
-sh %{echo #{hostname} >/tmp/target/etc/hostname}
-sh %{cp /etc/apt/* /tmp/target/etc/apt/ || true}
-
-File.open( '/tmp/target/etc/apt/sources.list', 'w+' ) do |file|
-  file.puts "deb #{installer.package_server.uri} #{installer.distribution_version} main contrib non-free"
-  file.puts "deb #{installer.package_server.uri}-non-US #{installer.distribution_version}/non-US main contrib non-free"
-end            
-
-# some packages must access /proc even in chroot environment
-sh %{mount -t proc proc /tmp/target/proc}
-
-# if libc is upgraded init u is called in chroot environment and
-# then init will eat up much cpu time
-def add_divert( fname )
-  diverted = File.join('/tmp/target', fname)
-  sh %{chroot /tmp/target dpkg-divert --package lucie-client --rename --add #{fname}}
-  File.open( diverted, 'w+' ) do |file|
-    file.print <<-EOF
-#! /bin/sh
-# diversion of #{fname} crated by Lucie
-exit 0
-    EOF
-  end 
-  sh %{chmod a+rx #{diverted}}
-end
-
-add_divert '/sbin/init'
-add_divert '/usr/sbin/liloconfig'
-add_divert '/usr/sbin/invoke-rc.d'
-
-# fake some more programs
-add_divert '/etc/init.d/nis'
-add_divert '/sbin/start-stop-daemon'
-cp '/sbin/start-stop-daemon', '/tmp/target/sbin/start-stop-daemon'
-
-sh %{chroot /tmp/target apt-get update}
-rc = system %{chroot /tmp/target apt-get check}
-sh %{chroot /tmp/target/ apt-get -f -y install </dev/null} unless rc
-rc = system %{chroot /tmp/target/ dpkg -C}
-sh %{yes '' | chroot /tmp/target dpkg --configure -a} unless rc
-sh %{chroot /tmp/target apt-get -f -y dist-upgrade </dev/null}
-# update dpkg info which packages are available
-sh %{chroot /tmp/target apt-cache dumpavail > /tmp/target/tmp/dumpavail}
-sh %{chroot /tmp/target dpkg --update-avail /tmp/dumpavail}
-rm_f '/tmp/target/tmp/dumpavail'
-
-# ------------------------- task instsoft
-
-ENV['DEBIAN_FRONTEND']='noninteractive'
-classes = Dir.entries('/etc/lucie/package') - ['.', '..'] # FIXME
-sh %{classes="#{classes.join(' ')}" install_packages}
-
-# ------------------------- task configure
-
-# classes = Dir.entries('/etc/lucie/script') - ['.', '..'] # FIXME
-kernel_package = (Dir.entries('/etc/lucie/kernel') - ['.', '..']).first # FIXME
-classes = ['DEFAULT']
-sh %{classes="#{classes.join(' ')}" cfclasses="#{classes.join('.')}" kernel_package="#{kernel_package}" rootpw="#{installer.root_password}" fai-do-scripts -L /tmp/lucie /etc/lucie/script}
-
-# ------------------------- task finish
-
-# show some local information
-sh %{ifconfig}
-sh %{df}
-# umount swap space
-swaplist.each do |each|
-  sh %{swapoff #{each} && echo "Disable swap device #{each}"}
-end
-# undo fake of all programs made by fai
-`chroot /tmp/target dpkg-divert --list lucie-client | awk '{ print $3}'`.split("\n").each do |each|
-  rm_f File.join('/tmp/target/', each)
-  sh %{chroot /tmp/target dpkg-divert --package lucie-client --rename --remove #{each}}
-  # when a diversion was made before the file exists
-  sh %{[ -f /tmp/target/#{each}.distrib.dpkg-new ] && mv /tmp/target/#{each}.distrib.dpkg-new /tmp/target/#{each}} rescue nil
-end
-
-# ------------------------- task lucieend
-
-puts "Press <RETURN> to reboot."
-STDIN.gets
-exit # DEBUG
-puts %{Rebooting #{hostname} now}
-Dir.chdir('/')
-sh %{sync}
-sh %{killall -q sshd} rescue nil
-sh %{umount /tmp/target/proc}
-sh %{umount -ar}
-exec %{reboot -dfi}
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

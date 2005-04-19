@@ -118,12 +118,12 @@ install: build
 
     # Add here commands to install the package into debian/lmp-test.
     # $(MAKE) install DESTDIR=$(CURDIR)/debian/lmp-test
-    install -d $(CURDIR)/debian/tmp/etc/lucie/lmp/#{packageNameString}
-    install $(CURDIR)/packages $(CURDIR)/debian/tmp/etc/lucie/lmp/#{packageNameString}
-    install -d $(CURDIR)/debian/tmp/etc/lucie/lmp/#{packageNameString}/files/
-    -cp -a $(CURDIR)/files/* $(CURDIR)/debian/tmp/etc/lucie/lmp/#{packageNameString}/files/
-    install -d $(CURDIR)/debian/tmp/etc/lucie/lmp/#{packageNameString}/scripts/
-    -cp -a $(CURDIR)/scripts/* $(CURDIR)/debian/tmp/etc/lucie/lmp/#{packageNameString}/scripts/
+    install -d $(CURDIR)/debian/tmp/etc/lucie/package
+    cp $(CURDIR)/packages $(CURDIR)/debian/tmp/etc/lucie/package/#{packageNameString}
+#    install -d $(CURDIR)/debian/tmp/etc/lucie/files/
+#    -cp -a $(CURDIR)/files/* $(CURDIR)/debian/tmp/etc/lucie/lmp/#{packageNameString}/file/
+    install -d $(CURDIR)/debian/tmp/etc/lucie/script/
+#    -cp -a $(CURDIR)/scripts/* $(CURDIR)/debian/tmp/etc/lucie/lmp/#{packageNameString}/script/
 
 
 # Build architecture-independent files here.

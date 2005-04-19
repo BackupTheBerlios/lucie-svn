@@ -390,6 +390,8 @@ exit 0
         file.puts "deb #{@package_server}-non-US #{@distribution_version}/non-US main contrib non-free"
         file.puts "# lucie-client package"
         file.puts "deb http://lucie.sourceforge.net/packages/lucie-client/debian/#{@distribution_version}/ ./"
+        file.puts "# lucie meta package"
+        file.puts "deb http://lucie.sourceforge.net/packages/lmp/ ./"
       end
       Lucie::Logger::instance.info "DONE"
 

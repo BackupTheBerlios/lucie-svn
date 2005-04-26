@@ -1,0 +1,13 @@
+Source: lmp-lilo
+Priority: optional   
+Section: misc   
+Maintainer: Yasuhito TAKAMIYA <takamiya@matsulab.is.titech.ac.jp>
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.6.0
+      
+Package: lmp-lilo
+Architecture: all
+Description: [Lucie Meta Package] lilo
+ Included packages:
+ .
+ o FIXME

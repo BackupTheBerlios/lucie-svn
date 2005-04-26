@@ -1,0 +1,5 @@
+432316d1483533f130dee6c3552f2314  etc/lucie/package/lmp-lilo
+61dfec18666ce5dca19073cb3439f680  etc/lucie/script/lmp-lilo/S01
+5072306a3969ad0c36eb960ba34461c2  usr/share/doc/lmp-lilo/README.Debian
+b0f7f10a1a1de95b6cbc45b5533a84d1  usr/share/doc/lmp-lilo/copyright
+4c8733d43f52a1f14a25f21cf1d80d96  usr/share/doc/lmp-lilo/changelog.Debian.gz

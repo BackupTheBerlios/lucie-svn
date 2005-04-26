@@ -1,4 +1,0 @@
-Template: lucie-client/lilo/hello
-Type: note
-Description: Welcome to lmp-lilo setup wizard.
- This metapackage will setup lilo configuration.

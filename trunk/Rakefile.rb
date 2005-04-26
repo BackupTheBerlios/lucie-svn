@@ -79,6 +79,8 @@ end
 
 # ------------------------- Package Tasks.
 
+$sourceforge_basedir = %{lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/}
+
 desc 'Build Debian Packages'
 task :deb do 
   sh %{debuild || true}
@@ -86,28 +88,35 @@ end
 
 desc 'Upload LMP'
 task :upload_lmp do
+  scp_targets = %{*.gz *.dsc *.deb *.build *.changes}
+  scp_destination = File.join( $sourceforge_basedir, 'packages/lmp' )
   sh %{cd test/lmp/build/ && apt-ftparchive packages . | gzip -c9 > Packages.gz}
   sh %{cd test/lmp/build/ && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
-  sh %{cd test/lmp/build/ && scp *.gz *.dsc *.deb *.build *.changes lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/packages/lmp/ }
+  sh %{cd test/lmp/build/ && scp #{scp_targets} #{scp_destination}}
 end
 
 task :upload_lucie => [:deb] do
-  mkdir_p '../upload/lucie/'
-  sh %{mv ../lucie_*.deb ../upload/lucie/}
-  sh %{mv ../lucie_*.dsc ../upload/lucie/}
-  sh %{mv ../lucie_*.tar.gz ../upload/lucie/}
-  sh %{mv ../lucie_*.build ../upload/lucie/}
-  sh %{cd ../upload/lucie/ && apt-ftparchive packages . | gzip -c9 > Packages.gz}
-  sh %{cd ../upload/lucie/ && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
-  sh %{cd ../upload/lucie/ && scp * lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/packages/lucie/debian/sarge/ }
+  tmp_dir = '../upload/lucie/'
+  scp_destination = File.join( $sourceforge_basedir, 'packages/lucie/debian/sarge' )
+  mkdir_p tmp_dir
+  sh %{mv ../lucie_*.deb    #{tmp_dir}}
+  sh %{mv ../lucie_*.dsc    #{tmp_dir}}
+  sh %{mv ../lucie_*.tar.gz #{tmp_dir}}
+  sh %{mv ../lucie_*.build  #{tmp_dir}}
+  sh %{cd #{tmp_dir} && apt-ftparchive packages . | gzip -c9 > Packages.gz}
+  sh %{cd #{tmp_dir} && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
+  sh %{cd #{tmp_dir} && scp * #{scp_destination}}
 end
 
 task :upload_lucie_client => [:deb] do 
-  mkdir_p '../upload/lucie-client'
-  sh %{mv ../lucie-client*.deb ../upload/lucie-client/}
-  sh %{cd ../upload/lucie-client/ && apt-ftparchive packages . | gzip -c9 > Packages.gz}
-  sh %{cd ../upload/lucie-client/ && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
-  sh %{cd ../upload/lucie-client/ && scp * lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/packages/lucie-client/debian/woody/ }
+  tmp_dir = '../upload/lucie-client'
+  scp_destination = File.join( $sourceforge_basedir, 'packages/lucie-client/debian/woody/' )
+  scp_destination = %{lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/}
+  mkdir_p tmp_dir
+  sh %{mv ../lucie-client*.deb #{tmp_dir}}
+  sh %{cd #{tmp_dir} && apt-ftparchive packages . | gzip -c9 > Packages.gz}
+  sh %{cd #{tmp_dir} && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
+  sh %{cd #{tmp_dir} && scp * #{scp_destination}}
 end
 
 desc 'Upload Debian Packages and rdoc documents'
@@ -124,7 +133,6 @@ desc 'Show FIXMEs'
 task :fixme do
   sh %{find . -name '*.rb' | grep -v './debian/' | xargs grep 'FIXME' -}
 end
-
 
 ### Local variables:
 ### mode: Ruby

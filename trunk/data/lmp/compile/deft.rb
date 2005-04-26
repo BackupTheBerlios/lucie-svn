@@ -1,8 +1,8 @@
 #
-# $Id: lucie_vm_template.rb 395 2005-03-10 08:28:02Z takamiya $
+# $Id$
 #
 # Author::   Yoshiaki Sakae (mailto:sakae@is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 395 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 require 'deft'

@@ -89,11 +89,12 @@ end
 
 desc 'Upload LMP'
 task :upload_lmp do
+  tmp_dir = %{data/lmp}
   scp_targets = %{*.gz *.dsc *.deb *.build *.changes}
   scp_destination = File.join( $sourceforge_basedir, 'packages/lmp' )
-  sh %{cd test/lmp/build/ && apt-ftparchive packages . | gzip -c9 > Packages.gz}
-  sh %{cd test/lmp/build/ && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
-  sh %{cd test/lmp/build/ && scp #{scp_targets} #{scp_destination}}
+  sh %{cd #{tmp_dir} && apt-ftparchive packages . | gzip -c9 > Packages.gz}
+  sh %{cd #{tmp_dir} && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
+  sh %{cd #{tmp_dir} && scp #{scp_targets} #{scp_destination}}
 end
 
 task :upload_lucie => [:deb] do

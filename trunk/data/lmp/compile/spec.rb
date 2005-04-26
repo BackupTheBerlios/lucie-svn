@@ -11,15 +11,13 @@ spec = LMP::Specification.new do |spec|
   spec.maintainer = 'Yasuhito TAKAMIYA <takamiya@matsulab.is.titech.ac.jp>'
   spec.short_description = '[Lucie Meta Package] compile'
   spec.extended_description = <<-EXTENDED_DESCRIPTION
-  Included packages:
-
-   o FIXME
-
+A Lucie Meta Package which setups compilation environment (compilers,
+debbugers, tools, documents).
   EXTENDED_DESCRIPTION
 end
 
 lmp_package_task = Rake::LMPPackageTask.new( spec ) do |pkg|
-  pkg.package_dir = 'test/lmp/build/compile'
+  pkg.package_dir = 'data/lmp/compile'
   pkg.need_deb = true
 end
 

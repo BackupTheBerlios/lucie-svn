@@ -1,14 +1,6 @@
 #
 # $Id$
 #
-# コンパイル環境 (コンパイラ、デバッガ、各種ツール、ドキュメント類) を
-# セットアップするための Lucie メタパッケージ。
-#
-#--
-# TODO: コンパイラのバージョン選択を可能にする
-# TODO: /etc/alternatives の設定を自動的に行う
-#++
-#
 # Author::   Yasuhito TAKAMIYA (mailto:takamiya@matsulab.is.titech.ac.jp)
 # Revision:: $LastChangedRevision$
 # License::  GPL2

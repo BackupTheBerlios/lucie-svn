@@ -84,8 +84,14 @@ task :deb do
   sh %{debuild || true}
 end
 
-desc 'Upload Debian Packages and rdoc documents'
-task :upload => [:deb, :upload_rdoc] do
+desc 'Upload LMP'
+task :upload_lmp do
+  sh %{cd test/lmp/build/ && apt-ftparchive packages . | gzip -c9 > Packages.gz}
+  sh %{cd test/lmp/build/ && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
+  sh %{cd test/lmp/build/ && scp *.gz *.dsc *.deb *.build *.changes lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/packages/lmp/ }
+end
+
+task :upload_lucie => [:deb] do
   mkdir_p '../upload/lucie/'
   sh %{mv ../lucie_*.deb ../upload/lucie/}
   sh %{mv ../lucie_*.dsc ../upload/lucie/}
@@ -94,13 +100,18 @@ task :upload => [:deb, :upload_rdoc] do
   sh %{cd ../upload/lucie/ && apt-ftparchive packages . | gzip -c9 > Packages.gz}
   sh %{cd ../upload/lucie/ && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
   sh %{cd ../upload/lucie/ && scp * lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/packages/lucie/debian/sarge/ }
+end
 
+task :upload_lucie_client => [:deb] do 
   mkdir_p '../upload/lucie-client'
   sh %{mv ../lucie-client*.deb ../upload/lucie-client/}
   sh %{cd ../upload/lucie-client/ && apt-ftparchive packages . | gzip -c9 > Packages.gz}
   sh %{cd ../upload/lucie-client/ && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
   sh %{cd ../upload/lucie-client/ && scp * lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/packages/lucie-client/debian/woody/ }
 end
+
+desc 'Upload Debian Packages and rdoc documents'
+task :upload => [:upload_lucie, :upload_lucie_client, :upload_rdoc]
 
 # ------------------------- Other Tasks.
 

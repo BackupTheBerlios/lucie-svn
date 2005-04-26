@@ -9,6 +9,10 @@ require 'rake/clean'
 require 'rake/testtask'
 require 'rake/rdoctask'
 
+$sourceforge_host = %{lucie.sourceforge.net}
+$sourceforge_dir  = %{/home/groups/l/lu/lucie/htdocs/}
+$sourceforge_uri  = $sourceforge_host + ':' + $sourceforge_dir
+
 desc "Default Task"
 task :default => [:testall]
 
@@ -65,8 +69,8 @@ end
 desc 'Upload rdoc documents'
 task :upload_rdoc => [:rdoc] do
   sh %{tar --directory doc -czf web.tar rdoc}
-  sh %{scp web.tar takamiya@shell.berlios.de:/home/groups/lucie/htdocs/}
-  sh %{ssh -l takamiya shell.berlios.de "cd /home/groups/lucie/htdocs && tar xzf web.tar"}   
+  sh %{scp web.tar #{$sourceforge_uri}}
+  sh %{ssh -l takamiya #{$sourceforge_host} "cd #{$sourceforge_dir} && tar xzf web.tar"}   
 end
 
 # ------------------------- Installation Tasks.
@@ -80,8 +84,6 @@ end
 
 # ------------------------- Package Tasks.
 
-$sourceforge_basedir = %{lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/}
-
 desc 'Build Debian Packages'
 task :deb do 
   sh %{debuild || true}
@@ -91,7 +93,7 @@ desc 'Upload LMP'
 task :upload_lmp do
   tmp_dir = %{data/lmp}
   scp_targets = %{*.gz *.dsc *.deb *.build *.changes}
-  scp_destination = File.join( $sourceforge_basedir, 'packages/lmp' )
+  scp_destination = File.join( $sourceforge_uri, 'packages/lmp' )
   sh %{cd #{tmp_dir} && apt-ftparchive packages . | gzip -c9 > Packages.gz}
   sh %{cd #{tmp_dir} && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
   sh %{cd #{tmp_dir} && scp #{scp_targets} #{scp_destination}}
@@ -99,7 +101,7 @@ end
 
 task :upload_lucie => [:deb] do
   tmp_dir = '../upload/lucie/'
-  scp_destination = File.join( $sourceforge_basedir, 'packages/lucie/debian/sarge' )
+  scp_destination = File.join( $sourceforge_uri, 'packages/lucie/debian/sarge' )
   mkdir_p tmp_dir
   sh %{mv ../lucie_*.deb    #{tmp_dir}}
   sh %{mv ../lucie_*.dsc    #{tmp_dir}}
@@ -112,7 +114,7 @@ end
 
 task :upload_lucie_client => [:deb] do 
   tmp_dir = '../upload/lucie-client'
-  scp_destination = File.join( $sourceforge_basedir, 'packages/lucie-client/debian/woody/' )
+  scp_destination = File.join( $sourceforge_uri, 'packages/lucie-client/debian/woody/' )
   scp_destination = %{lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/}
   mkdir_p tmp_dir
   sh %{mv ../lucie-client*.deb #{tmp_dir}}

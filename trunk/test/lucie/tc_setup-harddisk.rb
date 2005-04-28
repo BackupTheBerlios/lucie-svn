@@ -1,8 +1,8 @@
 #
-# $Id: tc_nfsroot-task.rb 544 2005-04-11 08:27:42Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 544 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 $LOAD_PATH.unshift 'trunk/lib'

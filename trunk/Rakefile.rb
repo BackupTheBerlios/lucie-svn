@@ -76,7 +76,6 @@ end
 # ------------------------- Installation Tasks.
 
 # Install Lucie using the standard install.rb script.
-
 desc 'Install the application'
 task :install do 
   ruby 'install.rb'
@@ -84,12 +83,15 @@ end
 
 # ------------------------- Package Tasks.
 
-desc 'Build Debian Packages'
+# Build Debian packages of Lucie.
+# For information about packages, see debian/control.
+desc 'Lucie パッケージのビルド'
 task :deb do 
   sh %{debuild || true}
 end
 
-desc 'Upload LMP'
+# FIXME: :upload_lmp should depend to :build_lmp?
+desc 'Lucie メタパッケージのアップロード'
 task :upload_lmp do
   tmp_dir = %{data/lmp}
   scp_targets = %{*.gz *.dsc *.deb *.build *.changes}
@@ -99,9 +101,13 @@ task :upload_lmp do
   sh %{cd #{tmp_dir} && scp #{scp_targets} #{scp_destination}}
 end
 
+# FIXME: divide into upload_deb and upload_rpm(?)
+# TODO: support woody and other versions.
+desc 'Lucie パッケージのアップロード'
 task :upload_lucie => [:deb] do
   tmp_dir = '../upload/lucie/'
-  scp_destination = File.join( $sourceforge_uri, 'packages/lucie/debian/sarge' )
+  scp_destination = File.join( $sourceforge_uri, 
+                               'packages/lucie/debian/sarge' )
   mkdir_p tmp_dir
   sh %{mv ../lucie_*.deb    #{tmp_dir}}
   sh %{mv ../lucie_*.dsc    #{tmp_dir}}
@@ -112,10 +118,12 @@ task :upload_lucie => [:deb] do
   sh %{cd #{tmp_dir} && scp * #{scp_destination}}
 end
 
+# TODO: support sarge and other versions.
+desc 'Lucie クライアント関連パッケージのアップロード'
 task :upload_lucie_client => [:deb] do 
   tmp_dir = '../upload/lucie-client'
-  scp_destination = File.join( $sourceforge_uri, 'packages/lucie-client/debian/woody/' )
-  scp_destination = %{lucie.sourceforge.net:/home/groups/l/lu/lucie/htdocs/}
+  scp_destination = File.join( $sourceforge_uri,
+                               'packages/lucie-client/debian/woody/' )
   mkdir_p tmp_dir
   sh %{mv ../lucie-client*.deb #{tmp_dir}}
   sh %{cd #{tmp_dir} && apt-ftparchive packages . | gzip -c9 > Packages.gz}
@@ -123,19 +131,21 @@ task :upload_lucie_client => [:deb] do
   sh %{cd #{tmp_dir} && scp * #{scp_destination}}
 end
 
-desc 'Upload Debian Packages and rdoc documents'
+desc 'Lucie/Lucie クライアント/rdoc ドキュメントのアップロード'
 task :upload => [:upload_lucie, :upload_lucie_client, :upload_rdoc]
 
 # ------------------------- Other Tasks.
 
-desc 'Show TODOs'
+# タスク管理/表示用簡易ターゲット:
+
+desc 'ソースコード中の todo タスクを表示'
 task :todo do
-  sh %{find . -name '*.rb' | grep -v './debian/' | xargs grep 'TODO' -}
+  sh %{find . -name '*.rb' | grep -v './debian/' | xargs grep -n 'TODO'  -}
 end
 
-desc 'Show FIXMEs'
+desc 'ソースコード中の fixme タスクを表示'
 task :fixme do
-  sh %{find . -name '*.rb' | grep -v './debian/' | xargs grep 'FIXME' -}
+  sh %{find . -name '*.rb' | grep -v './debian/' | xargs grep -n 'FIXME' -}
 end
 
 ### Local variables:

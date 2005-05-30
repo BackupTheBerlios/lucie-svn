@@ -18,18 +18,13 @@ require 'time-stamp'
 
 update(%q$LastChangedDate$)
 
-# 新しいテンプレートを登録します
+# ???????????????
 def template( nameString, &block )
   return Deft::Template.define_template( nameString, &block )
 end
 
-module Deft
-  module Exception
-    class UnknownTemplateTypeException < ::Exception; end
-    class InvalidAttributeException < ::Exception; end
-  end
-     
-  # Debconf 用 templates ファイルを生成する Template を定義する。
+module Deft    
+  # Debconf ? templates ????????? Template ??????
   #
   # Example:
   #
@@ -39,10 +34,10 @@ module Deft
   #   template( 'lucie/overview' ) do |template|
   #     template.type = 'text'
   #     template.description_ja = (<<-DESCRIPTION)
-  #     この Lucie 設定パッケージは、以下のパッケージをインストール・設定
-  #     するような Lucie の設定を生成します。
+  #     ?? Lucie ???????????????????????????
+  #     ????? Lucie ??????????
   # 
-  #     設定されるパッケージのリストは以下の通りです。
+  #     ???????????????????????
   #
   #     o autoconf - automatic configure script builder
   #     o automake - A tool for generating GNU Standards-compliant Makefiles.
@@ -70,14 +65,14 @@ module Deft
     def_delegator :@template, :template_type=
     def_delegator :@template, :template_type     
     
-    # テンプレートを名前で探す。見つからない場合には nil を返す。
+    # ???????????????????????nil ????
     public
     def self.[] ( templateNameString )
       return TEMPLATES[templateNameString]
     end
     
-    # Template が定義されていれば定義されているテンプレート。
-    # そうでなければ nil を返す。
+    # Template ???????????????????????
+    # ??????? nil ????
     public
     def self.template_defined?( templateName )
       return TEMPLATES[templateName]
@@ -86,7 +81,7 @@ module Deft
     private
     def register
       @actions.each { |each| result = each.call( self ) }
-      puts "Template #{@name} (#{@template.template_type}) を登録" if $trace
+      puts "Template #{@name} (#{@template.template_type}) ???" if $trace
       if @template     
         TEMPLATES[@name] = @template      
         return @template
@@ -95,13 +90,13 @@ module Deft
       end
     end
     
-    # 登録されているテンプレートのリストを返す
+    # ????????????????????
     public
     def self.templates
       return TEMPLATES.values
     end
     
-    # 現在登録されている Template をクリアする
+    # ????????? Template ??????
     public
     def self.clear
       TEMPLATES.clear
@@ -113,8 +108,8 @@ module Deft
       return template.enhance( &block )
     end
     
-    # Template を lookup し、もしすでに同名の Template が存在すればそれを返す。
-    # 存在しない場合、新たに登録する。
+    # Template ? lookup ?????????? Template ????????????
+    # ???????A????????
     public
     def self.lookup( nameString )
       return TEMPLATES[nameString] ||= self.new( nameString )
@@ -135,21 +130,21 @@ module Deft
       @template = template_table[templateTypeString].new( @name )
     end
     
-    # あたらしい Template オブジェクトを返す
+    # ????? Template ?????????
     public
     def initialize( nameString )
       @actions = []
       @name = nameString
     end
     
-    # テンプレートをブロックを用いてエンハンスする。self を返す。
+    # ???????????????????????self ????
     public
     def enhance( &block )
       @actions << block if block_given?
       return register
     end
     
-    # デバッグ用
+    # ?????
     public
     def inspect
       return "#<Deft::Template: @name=\"#{@name}\">"

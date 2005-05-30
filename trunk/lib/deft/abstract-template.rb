@@ -5,13 +5,19 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'forwardable'
+require 'lucie/string'
 require 'time-stamp'
 
 update(%q$LastChangedDate$)
 
 module Deft
-  # ‚·‚×‚Ä‚Ìƒeƒ“ƒvƒŒ[ƒg‚ÌeƒNƒ‰ƒX
+  module Exception
+    class UnknownTemplateTypeException < ::Exception; end
+    class InvalidAttributeException < ::Exception; end
+    class RequiredAttributeException < ::Exception; end
+  end
+
+  # ¤¹¤Ù¤Æ¤Î¥Æ¥ó¥×¥ì¡¼¥È¤Î¿Æ¥¯¥é¥¹
   class AbstractTemplate
     attr_reader :name
     attr_accessor :choices
@@ -21,19 +27,19 @@ module Deft
     attr_accessor :short_description
     attr_accessor :default
     
-    # V‚µ‚¢ abstractTemplate ƒIƒuƒWƒFƒNƒg‚ğ•Ô‚·
+    # ¿·¤·¤¤ AbstractTemplate ¥ª¥Ö¥¸¥§¥¯¥È¤òÊÖ¤¹
     public
     def initialize( nameString )
       @name = nameString
     end
     
-    # ƒfƒoƒbƒO—p
+    # ¥Ç¥Ğ¥Ã¥°ÍÑ
     public
     def inspect
       return "#<Deft::AbstractTemplate: @name=\"#{@name}\">"
     end
     
-    # •¶š—ñ‚É•ÏŠ·‚·‚é
+    # Ê¸»úÎó¤ËÊÑ´¹¤¹¤ë
     public
     def to_s
       raise NotImplementedError, 'Abstract Method.'

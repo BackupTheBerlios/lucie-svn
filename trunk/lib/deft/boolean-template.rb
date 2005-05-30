@@ -11,9 +11,9 @@ require 'time-stamp'
 update(%q$LastChangedDate$)
 
 module Deft  
-  # boolean ?^?C?v? Template ??巽鱈??N???X
+  # boolean 型のテンプレートを表すクラス
   class BooleanTemplate < AbstractTemplate   
-    # BooleanTemplate ??巽鱈? String ?I?u?W?F?N?g??夬申
+    # BooleanTemplate の RFC822 による表現を返す
     public
     def to_s
       return template_string( 'boolean', 'default' )

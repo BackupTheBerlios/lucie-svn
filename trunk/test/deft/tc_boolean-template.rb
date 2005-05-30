@@ -16,6 +16,28 @@ class TC_BooleanTemplate < Test::Unit::TestCase
     @boolean_template = Deft::BooleanTemplate.new( 'TEST BOOLEAN TEMPLATE' )
   end
 
+  # to_s で templates 文字列が正しく生成されることをテスト
+  #--
+  # TODO: default= の引数チェック (yes/no だけ受け付ける)
+  #++ 
+  public
+  def test_to_s
+    @boolean_template.default = 'yes'
+    @boolean_template.short_description = 'TEST SHORT DESCRIPTION'
+    @boolean_template.extended_description = 'TEST EXTENDED DESCRIPTION'
+    @boolean_template.short_description_ja = 'TEST SHORT DESCRIPTION JA'
+    @boolean_template.extended_description_ja = 'TEST EXTENDED DESCRIPTION JA'
+    assert_equal( (<<-BOOLEAN_TEMPLATE).chomp, @boolean_template.to_s, "to_s が正しい値を返さない" )
+Template: TEST BOOLEAN TEMPLATE
+Type: boolean
+Default: yes
+Description: TEST SHORT DESCRIPTION
+ TEST EXTENDED DESCRIPTION
+Description-ja: TEST SHORT DESCRIPTION JA
+ TEST EXTENDED DESCRIPTION JA
+   BOOLEAN_TEMPLATE
+  end
+
   # template_type が 'boolean' を返すことをテスト
   #--
   # FIXME: このメソッドはなぜ必要？

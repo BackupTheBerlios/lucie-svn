@@ -20,7 +20,7 @@ module Deft
       return template_string( 'boolean', 'default' )
     end
     
-    # ?e???v???[?g??^??夬申
+    # テンプレートの型を文字列で返す
     public
     def template_type
       return 'boolean'

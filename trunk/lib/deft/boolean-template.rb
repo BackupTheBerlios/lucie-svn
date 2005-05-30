@@ -12,15 +12,15 @@ require 'time-stamp'
 update(%q$LastChangedDate$)
 
 module Deft  
-  # boolean ƒ^ƒCƒv‚Ì Template ‚ð‚ ‚ç‚í‚·ƒNƒ‰ƒX
+  # boolean ?^?C?v? Template ??Ã§Ã­??N???X
   class BooleanTemplate < AbstractTemplate   
-    # BooleanTemplate ‚ð‚ ‚ç‚í‚· String ƒIƒuƒWƒFƒNƒg‚ð•Ô‚·
+    # BooleanTemplate ??Ã§Ã­? String ?I?u?W?F?N?g??Ôï¿½
     public
     def to_s
       return template_string( 'boolean', 'default' )
     end
     
-    # ƒeƒ“ƒvƒŒ[ƒg‚ÌŒ^‚ð•Ô‚·
+    # ?e???v???[?g??^??Ôï¿½
     public
     def template_type
       return 'boolean'
@@ -31,7 +31,7 @@ module Deft
       raise Deft::Exception::InvalidAttributeException
     end
     
-    # ƒfƒoƒbƒO—p
+    # ¥Ç¥Ð¥Ã¥°ÍÑ
     public
     def inspect
       return "#<Deft::BooleanTemplate: @name=\"#{@name}\">"

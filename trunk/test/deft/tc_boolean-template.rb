@@ -20,6 +20,14 @@ class TC_BooleanTemplate < Test::Unit::TestCase
   def teardown
     Deft::Template.clear
   end
+
+  # inspect ¤ÎÊÖ¤êÃÍ¤ò¥Æ¥¹¥È
+  public
+  def test_inspect
+    boolean_template = Deft::BooleanTemplate.new( 'TEST BOOLEAN TEMPLATE' )
+    assert_equal( %{#<Deft::BooleanTemplate: @name="TEST BOOLEAN TEMPLATE">},
+                  boolean_template.inspect, "inspect ¤¬Àµ¤·¤¤ÃÍ¤òÊÖ¤µ¤Ê¤¤" )
+  end
   
   public
   def test_register
@@ -28,23 +36,23 @@ class TC_BooleanTemplate < Test::Unit::TestCase
       template.default = 'true'
       template.short_description = 'This is a short description'
       template.extended_description = 'This is a extended description'
-      template.short_description_ja = '‚±‚ê‚Í’Z‚¢ƒfƒXƒNƒŠƒvƒVƒ‡ƒ“‚Å‚·'
-      template.extended_description_ja = '‚±‚ê‚Í’·‚¢ƒfƒXƒNƒŠƒvƒVƒ‡ƒ“‚Å‚·'      
+      template.short_description_ja = '¤³¤ì¤ÏÃ»¤¤¥Ç¥¹¥¯¥ê¥×¥·¥ç¥ó¤Ç¤¹'
+      template.extended_description_ja = '¤³¤ì¤ÏÄ¹¤¤¥Ç¥¹¥¯¥ê¥×¥·¥ç¥ó¤Ç¤¹'      
     end
     assert_equal( 'TEST/BOOLEAN-TEMPLATE', template.name,
-                  'name ƒAƒgƒŠƒrƒ…[ƒg‚Ì’l‚ª³‚µ‚­‚È‚¢' )
+                  'name ¥¢¥È¥ê¥Ó¥å¡¼¥È¤ÎÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' )
     assert_equal( 'boolean', template.template_type,
-                  'template_type ƒAƒgƒŠƒrƒ…[ƒg‚Ì’l‚ª³‚µ‚­‚È‚¢' )
+                  'template_type ¥¢¥È¥ê¥Ó¥å¡¼¥È¤ÎÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' )
     assert_equal( 'true', template.default,
-                  'default ƒAƒgƒŠƒrƒ…[ƒg‚Ì’l‚ª³‚µ‚­‚È‚¢' )
+                  'default ¥¢¥È¥ê¥Ó¥å¡¼¥È¤ÎÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' )
     assert_equal( 'This is a short description', template.short_description,
-                  'short_description ƒAƒgƒŠƒrƒ…[ƒg‚Ì’l‚ª³‚µ‚­‚È‚¢' )
+                  'short_description ¥¢¥È¥ê¥Ó¥å¡¼¥È¤ÎÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' )
     assert_equal( 'This is a extended description', template.extended_description,
-                  'extended_description ƒAƒgƒŠƒrƒ…[ƒg‚Ì’l‚ª³‚µ‚­‚È‚¢' ) 
-    assert_equal( '‚±‚ê‚Í’Z‚¢ƒfƒXƒNƒŠƒvƒVƒ‡ƒ“‚Å‚·', template.short_description_ja,
-                  'short_description_ja ƒAƒgƒŠƒrƒ…[ƒg‚Ì’l‚ª³‚µ‚­‚È‚¢' ) 
-    assert_equal( '‚±‚ê‚Í’·‚¢ƒfƒXƒNƒŠƒvƒVƒ‡ƒ“‚Å‚·', template.extended_description_ja,
-                  'extended_description_ja ƒAƒgƒŠƒrƒ…[ƒg‚Ì’l‚ª³‚µ‚­‚È‚¢' )    
+                  'extended_description ¥¢¥È¥ê¥Ó¥å¡¼¥È¤ÎÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' ) 
+    assert_equal( '¤³¤ì¤ÏÃ»¤¤¥Ç¥¹¥¯¥ê¥×¥·¥ç¥ó¤Ç¤¹', template.short_description_ja,
+                  'short_description_ja ¥¢¥È¥ê¥Ó¥å¡¼¥È¤ÎÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' ) 
+    assert_equal( '¤³¤ì¤ÏÄ¹¤¤¥Ç¥¹¥¯¥ê¥×¥·¥ç¥ó¤Ç¤¹', template.extended_description_ja,
+                  'extended_description_ja ¥¢¥È¥ê¥Ó¥å¡¼¥È¤ÎÃÍ¤¬Àµ¤·¤¯¤Ê¤¤' )    
   end
 end
 

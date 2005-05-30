@@ -6,49 +6,45 @@
 # License::  GPL2
 
 require 'rake/clean'
-require 'rake/testtask'
 require 'rake/rdoctask'
+require 'rake/testtask'
 
-$sourceforge_host = %{lucie.sourceforge.net}
-$sourceforge_dir  = %{/home/groups/l/lu/lucie/htdocs/}
-$sourceforge_uri  = $sourceforge_host + ':' + $sourceforge_dir
+SOURCEFORGE_DIR  = %{/home/groups/l/lu/lucie/htdocs/}
+SOURCEFORGE_HOST = %{lucie.sourceforge.net}
+SOURCEFORGE_URI  = SOURCEFORGE_HOST + ':' + SOURCEFORGE_DIR
 
 desc "Default Task"
 task :default => [:testall]
 
 # ------------------------- Test Tasks.
 
-lucie_filelist = FileList['test/lucie/tc_*.rb']
-debconf_filelist = FileList['test/debconf/tc_*.rb']
-deft_filelist = FileList['test/deft/tc_*.rb']
-lmp_filelist = FileList['test/lmp/tc_*.rb']
-alltest_filelist = FileList.new
-alltest_filelist << lucie_filelist << debconf_filelist << deft_filelist << lmp_filelist
+# テスト出力の冗長性
+TEST_VERBOSITY = true 
+
+# テストに含まれる全テストスイート
+TEST_SUITES = ['lucie', 'debconf', 'deft', 'lmp']
+
+# すべてのテストは $(TOPDIR)/test/$(テストスイート名)/ というディレクトリを作り
+# tc_*.rb という名前のテストケースに作成する
+def testcase_filelist( testNameString )
+  return FileList[File.join('test', testNameString, 'tc_*.rb')]
+end
 
 desc "Run all the unit tests."
 Rake::TestTask.new( :testall ) do |t|
-  t.test_files = alltest_filelist
-  t.verbose = true
+  all_tests = FileList.new
+  TEST_SUITES.each do |each|
+    all_tests << testcase_filelist( each )
+  end    
+  t.test_files = all_tests
+  t.verbose = TEST_VERBOSITY
 end
 
-Rake::TestTask.new( :test_lucie ) do |t|
-  t.test_files = lucie_filelist
-  t.verbose = true
-end
-
-Rake::TestTask.new( :test_debconf ) do |t|
-  t.test_files = debconf_filelist
-  t.verbose = true
-end
-
-Rake::TestTask.new( :test_deft ) do |t|
-  t.test_files = deft_filelist
-  t.verbose = true
-end
-
-Rake::TestTask.new( :test_lmp ) do |t|
-  t.test_files = lmp_filelist
-  t.verbose = true
+TEST_SUITES.each do |each|
+  Rake::TestTask.new( %{test_#{each}}.intern ) do |t|
+    t.test_files = testcase_filelist( each )
+    t.verbose = TEST_VERBOSITY
+  end
 end
 
 # ------------------------- RDoc Tasks.
@@ -69,8 +65,8 @@ end
 desc 'Upload rdoc documents'
 task :upload_rdoc => [:rdoc] do
   sh %{tar --directory doc -czf web.tar rdoc}
-  sh %{scp web.tar #{$sourceforge_uri}}
-  sh %{ssh -l takamiya #{$sourceforge_host} "cd #{$sourceforge_dir} && tar xzf web.tar"}   
+  sh %{scp web.tar #{SOURCEFORGE_URI}}
+  sh %{ssh -l takamiya #{SOURCEFORGE_HOST} "cd #{SOURCEFORGE_DIR} && tar xzf web.tar"}   
 end
 
 # ------------------------- Installation Tasks.
@@ -95,7 +91,7 @@ desc 'Lucie メタパッケージのアップロード'
 task :upload_lmp do
   tmp_dir = %{data/lmp}
   scp_targets = %{*.gz *.dsc *.deb *.build *.changes}
-  scp_destination = File.join( $sourceforge_uri, 'packages/lmp' )
+  scp_destination = File.join( SOURCEFORGE_URI, 'packages/lmp' )
   sh %{cd #{tmp_dir} && apt-ftparchive packages . | gzip -c9 > Packages.gz}
   sh %{cd #{tmp_dir} && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
   sh %{cd #{tmp_dir} && scp #{scp_targets} #{scp_destination}}
@@ -106,7 +102,7 @@ end
 desc 'Lucie パッケージのアップロード'
 task :upload_lucie => [:deb] do
   tmp_dir = '../upload/lucie/'
-  scp_destination = File.join( $sourceforge_uri, 
+  scp_destination = File.join( SOURCEFORGE_URI, 
                                'packages/lucie/debian/sarge' )
   mkdir_p tmp_dir
   sh %{mv ../lucie_*.deb    #{tmp_dir}}
@@ -122,7 +118,7 @@ end
 desc 'Lucie クライアント関連パッケージのアップロード'
 task :upload_lucie_client => [:deb] do 
   tmp_dir = '../upload/lucie-client'
-  scp_destination = File.join( $sourceforge_uri,
+  scp_destination = File.join( SOURCEFORGE_URI,
                                'packages/lucie-client/debian/woody/' )
   mkdir_p tmp_dir
   sh %{mv ../lucie-client*.deb #{tmp_dir}}

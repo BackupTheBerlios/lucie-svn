@@ -22,46 +22,47 @@ class TC_Template < Test::Unit::TestCase
     Deft::Template.clear
   end
   
+  # template ¥á¥½¥Ã¥É¤Ç¥Æ¥ó¥×¥ì¡¼¥È¤¬Àµ¤·¤¯ÅÐÏ¿¤µ¤ì¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_templates
     template1 = template( 'TEST/TEMPLATE#1' )
     template2 = template( 'TEST/TEMPLATE#2' )
     template3 = template( 'TEST/TEMPLATE#3' )    
     assert_equal( [template1, template2, template3], Deft::Template.templates,
-                  'ƒeƒ“ƒvƒŒ[ƒg‚ª³‚µ‚­“o˜^‚³‚ê‚Ä‚¢‚È‚¢' )
+                  '¥Æ¥ó¥×¥ì¡¼¥È¤¬Àµ¤·¤¯ÅÐÏ¿¤µ¤ì¤Æ¤¤¤Ê¤¤' )
   end
   
-  # “o˜^‚³‚ê‚Ä‚¢‚éƒeƒ“ƒvƒŒ[ƒg‚ª‹ó‚Ì‚Æ‚«‚ÉA
-  # template_defined? ‚ª nil ‚ð•Ô‚·‚±‚Æ‚ðŠm”F
+  # ÅÐÏ¿¤µ¤ì¤Æ¤¤¤ë¥Æ¥ó¥×¥ì¡¼¥È¤¬¶õ¤Î¤È¤­¤Ë¡¢
+  # template_defined? ¤¬ nil ¤òÊÖ¤¹¤³¤È¤ò³ÎÇ§
   public
   def test_template_defined_fail
     assert_nil( Deft::Template.template_defined?( 'NOT DEFINED TEMPLATE' ),
-                '“o˜^‚³‚ê‚Ä‚¢‚È‚¢‚Í‚¸‚Ìƒeƒ“ƒvƒŒ[ƒg‚ª‚ ‚é' )
+                'ÅÐÏ¿¤µ¤ì¤Æ¤¤¤Ê¤¤¤Ï¤º¤Î¥Æ¥ó¥×¥ì¡¼¥È¤¬¤¢¤ë' )
   end
   
-  # ƒeƒ“ƒvƒŒ[ƒg‚ð“o˜^‚µAtemplate_defined? ‚Å“o˜^‚ªŠm”F‚Å‚«‚é‚±‚Æ‚ðƒeƒXƒg
+  # ¥Æ¥ó¥×¥ì¡¼¥È¤òÅÐÏ¿¤·¡¢template_defined? ¤ÇÅÐÏ¿¤¬³ÎÇ§¤Ç¤­¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_template_defined_success
     template( 'TEST TEMPLATE' )
     assert( Deft::Template.template_defined?( 'TEST TEMPLATE' ),
-            'ƒeƒ“ƒvƒŒ[ƒg‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢' )
+            '¥Æ¥ó¥×¥ì¡¼¥È¤¬ÅÐÏ¿¤µ¤ì¤Æ¤¤¤Ê¤¤' )
   end
   
-  # –¢’m‚Ìƒeƒ“ƒvƒŒ[ƒg‚ð lookup ‚µAV‚µ‚¢ƒeƒ“ƒvƒŒ[ƒg‚ª‚Å‚«‚é‚±‚Æ‚ðŠm”F
+  # Ì¤ÃÎ¤Î¥Æ¥ó¥×¥ì¡¼¥È¤ò lookup ¤·¡¢¿·¤·¤¤¥Æ¥ó¥×¥ì¡¼¥È¤¬¤Ç¤­¤ë¤³¤È¤ò³ÎÇ§
   public
   def test_lookup_unknown_template
     template = Deft::Template::lookup( 'UNKNOWN TEMPLATE' )
-    assert_kind_of( Deft::Template, template, 'ƒeƒ“ƒvƒŒ[ƒg‚Ì Œ^‚ªˆá‚¤' )
-    assert_equal( 'UNKNOWN TEMPLATE', template.name, 'ƒeƒ“ƒvƒŒ[ƒg‚Ì–¼‘O‚ªˆá‚¤' )
+    assert_kind_of( Deft::Template, template, '¥Æ¥ó¥×¥ì¡¼¥È¤Î ·¿¤¬°ã¤¦' )
+    assert_equal( 'UNKNOWN TEMPLATE', template.name, '¥Æ¥ó¥×¥ì¡¼¥È¤ÎÌ¾Á°¤¬°ã¤¦' )
   end
   
-  # Šù’m‚Ìƒeƒ“ƒvƒŒ[ƒg‚ð lookup ‚Å‚«‚é‚±‚Æ‚ðŠm”F
+  # ´ûÃÎ¤Î¥Æ¥ó¥×¥ì¡¼¥È¤ò lookup ¤Ç¤­¤ë¤³¤È¤ò³ÎÇ§
   public
   def test_lookup_known_template
     known_template = template( 'KNOWN TEMPLATE' )
     assert_equal( known_template, Deft::Template::lookup( 'KNOWN TEMPLATE' ),
-                  'ƒeƒ“ƒvƒŒ[ƒg‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢' )
-    assert_equal( 'KNOWN TEMPLATE', known_template.name, 'ƒeƒ“ƒvƒŒ[ƒg‚Ì–¼‘O‚ªˆá‚¤' )
+                  '¥Æ¥ó¥×¥ì¡¼¥È¤¬ÅÐÏ¿¤µ¤ì¤Æ¤¤¤Ê¤¤' )
+    assert_equal( 'KNOWN TEMPLATE', known_template.name, '¥Æ¥ó¥×¥ì¡¼¥È¤ÎÌ¾Á°¤¬°ã¤¦' )
   end
 end
 

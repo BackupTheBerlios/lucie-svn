@@ -18,7 +18,7 @@ require 'time-stamp'
 
 update(%q$LastChangedDate$)
 
-# ???????????????
+# テンプレートを登録
 def template( nameString, &block )
   return Deft::Template.define_template( nameString, &block )
 end
@@ -77,11 +77,12 @@ module Deft
     def self.template_defined?( templateName )
       return TEMPLATES[templateName]
     end
-    
+
+    # テンプレートを登録
     private
     def register
       @actions.each { |each| result = each.call( self ) }
-      puts "Template #{@name} (#{@template.template_type}) ???" if $trace
+      $stderr.puts "Template #{@name} (#{@template.template_type}) を登録" if $trace
       if @template     
         TEMPLATES[@name] = @template      
         return @template
@@ -90,26 +91,27 @@ module Deft
       end
     end
     
-    # ????????????????????
+    # 登録されている Template の配列を返す
     public
     def self.templates
       return TEMPLATES.values
     end
     
-    # ????????? Template ??????
+    # 登録されている Template をクリアする
     public
     def self.clear
       TEMPLATES.clear
     end
     
+    # テンプレートを定義する
     private
     def self.define_template( nameString, &block )
       template = lookup( nameString )      
       return template.enhance( &block )
     end
     
-    # Template ? lookup ?????????? Template ????????????
-    # ???????A????????
+    # 登録されている Template を名前で探す.
+    # もし登録されている物が無ければ new する
     public
     def self.lookup( nameString )
       return TEMPLATES[nameString] ||= self.new( nameString )
@@ -130,24 +132,29 @@ module Deft
       @template = template_table[templateTypeString].new( @name )
     end
     
-    # ????? Template ?????????
+    # 新しい Template オブジェクトを返す
+    #--
+    # TODO: nameString の型や書式をチェック (?)
+    #++
     public
     def initialize( nameString )
       @actions = []
       @name = nameString
     end
     
-    # ???????????????????????self ????
+    # Template の属性をブロック実行によってエンハンスする
     public
     def enhance( &block )
-      @actions << block if block_given?
+      if block_given?
+        @actions << block 
+      end
       return register
     end
     
-    # ?????
+    # デバッグ用
     public
     def inspect
-      return "#<Deft::Template: @name=\"#{@name}\">"
+      return %{#<Deft::Template: @name="#{@name}">}
     end
   end
 end

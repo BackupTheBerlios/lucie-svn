@@ -5,74 +5,57 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'deft/password-template'
-require 'deft/multiselect-template'
-require 'deft/string-template'
 require 'deft/boolean-template'
+require 'deft/multiselect-template'
 require 'deft/note-template'
+require 'deft/password-template'
 require 'deft/select-template'
+require 'deft/string-template'
 require 'deft/text-template'
 require 'forwardable'
 require 'lucie/string'
 require 'time-stamp'
-
-update(%q$LastChangedDate$)
 
 # テンプレートを登録
 def template( nameString, &block )
   return Deft::Template.define_template( nameString, &block )
 end
 
-module Deft    
-  # Debconf ? templates ????????? Template ??????
-  #
-  # Example:
-  #
-  #   require 'deft/template'
-  #
-  #   include Deft
-  #   template( 'lucie/overview' ) do |template|
-  #     template.type = 'text'
-  #     template.description_ja = (<<-DESCRIPTION)
-  #     ?? Lucie ???????????????????????????
-  #     ????? Lucie ??????????
-  # 
-  #     ???????????????????????
-  #
-  #     o autoconf - automatic configure script builder
-  #     o automake - A tool for generating GNU Standards-compliant Makefiles.
-  #     ...
-  #     DESCRIPTION
-  #   end
+module Deft
+  # テンプレートの管理用クラス
+  #--
+  # FIXME: update コマンドでタイムスタンプを更新
+  #++ 
   class Template
     extend Forwardable
     
     TEMPLATES = {}
     
     attr_reader :name
-    def_delegator :@template, :extended_description_ja=
-    def_delegator :@template, :extended_description_ja        
-    def_delegator :@template, :short_description_ja=
-    def_delegator :@template, :short_description_ja
-    def_delegator :@template, :extended_description=
-    def_delegator :@template, :extended_description 
-    def_delegator :@template, :short_description=
-    def_delegator :@template, :short_description    
-    def_delegator :@template, :choices=
     def_delegator :@template, :choices
-    def_delegator :@template, :default= 
+    def_delegator :@template, :choices=
     def_delegator :@template, :default
-    def_delegator :@template, :template_type=
+    def_delegator :@template, :default= 
+    def_delegator :@template, :extended_description 
+    def_delegator :@template, :extended_description=
+    def_delegator :@template, :extended_description_ja        
+    def_delegator :@template, :extended_description_ja=
+    def_delegator :@template, :short_description    
+    def_delegator :@template, :short_description=
+    def_delegator :@template, :short_description_ja
+    def_delegator :@template, :short_description_ja=
     def_delegator :@template, :template_type     
+    def_delegator :@template, :template_type=
     
-    # ???????????????????????nil ????
+    # Template が登録されていればそれを返す
+    # 登録されていなければ nil を返す
     public
     def self.[] ( templateNameString )
       return TEMPLATES[templateNameString]
     end
     
-    # Template ???????????????????????
-    # ??????? nil ????
+    # Template が登録されていればそれを返す
+    # 登録されていなければ nil を返す
     public
     def self.template_defined?( templateName )
       return TEMPLATES[templateName]
@@ -119,17 +102,22 @@ module Deft
     
     public
     def template_type=( templateTypeString )
-      template_table = { 'text'        => Deft::TextTemplate,
-                         'select'      => Deft::SelectTemplate,
-                         'note'        => Deft::NoteTemplate,
-                         'boolean'     => Deft::BooleanTemplate,
-                         'string'      => Deft::StringTemplate,
-                         'multiselect' => Deft::MultiselectTemplate,
-                         'password'    => Deft::PasswordTemplate }
       if template_table[templateTypeString].nil?
         raise Exception::UnknownTemplateTypeException, templateTypeString
       end
       @template = template_table[templateTypeString].new( @name )
+    end
+
+    # テンプレート名 => 実装クラスのテーブル
+    private
+    def template_table
+      { 'text'        => Deft::TextTemplate,
+        'select'      => Deft::SelectTemplate,
+        'note'        => Deft::NoteTemplate,
+        'boolean'     => Deft::BooleanTemplate,
+        'string'      => Deft::StringTemplate,
+        'multiselect' => Deft::MultiselectTemplate,
+        'password'    => Deft::PasswordTemplate }
     end
     
     # 新しい Template オブジェクトを返す

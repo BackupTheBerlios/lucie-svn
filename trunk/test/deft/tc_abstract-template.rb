@@ -1,8 +1,8 @@
 #
-# $Id: tc_boolean-template.rb 520 2005-04-05 05:15:36Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 520 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 $LOAD_PATH.unshift './lib'

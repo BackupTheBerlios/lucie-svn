@@ -31,6 +31,13 @@ class TC_Template < Test::Unit::TestCase
     assert_equal( [template1, template2, template3], Deft::Template.templates,
                   'テンプレートが正しく登録されていない' )
   end
+
+  public
+  def test_inspect
+    template = template( 'TEST/TEMPLATE' )
+    assert_equal( %{#<Deft::Template: @name="TEST/TEMPLATE">}, template.inspect,
+                  "inspect の返す値が正しくない" )
+  end
   
   # 登録されているテンプレートが空のときに、
   # template_defined? が nil を返すことを確認

@@ -15,6 +15,27 @@ class TC_AbstractTemplate < Test::Unit::TestCase
   def setup
     @abstract_template = Deft::AbstractTemplate.new( 'TEST ABSTRACT TEMPLATE' )
   end
+
+  # @choices の accessor をテスト
+  #--
+  # FIXME: @choices にはどんなオブジェクトが入るか？チェックをここでするか？
+  #++ 
+  public
+  def test_choices_accessor 
+    @abstract_template.choices = 'CHOICES'
+    assert_equal 'CHOICES', @abstract_template.choices, "@choices の accessor が正しく動作しない"
+  end
+
+  # @extended_description_ja の accessor をテスト
+  #--
+  # FIXME: @extended_description_ja の型チェック (String) をここでするか？
+  #++ 
+  public
+  def test_extended_description_ja_accessor
+    @abstract_template.extended_description_ja = 'EXTENDED DESCRIPTION JA'
+    assert_equal( 'EXTENDED DESCRIPTION JA', @abstract_template.extended_description_ja,
+                  "@extended_description_ja の accessor が正しく動作しない" )
+  end
   
   # @name の getter をテスト
   public

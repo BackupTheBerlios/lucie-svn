@@ -6,7 +6,6 @@
 # License::  GPL2
 
 require 'deft/abstract-template'
-require 'deft/template'
 require 'time-stamp'
 
 update(%q$LastChangedDate$)

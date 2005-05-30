@@ -13,6 +13,7 @@ require 'test/unit'
 class TC_BooleanTemplate < Test::Unit::TestCase
   public
   def setup
+    @boolean_template = Deft::BooleanTemplate.new( 'TEST BOOLEAN TEMPLATE' )
     Deft::Template.clear
   end
   
@@ -20,13 +21,21 @@ class TC_BooleanTemplate < Test::Unit::TestCase
   def teardown
     Deft::Template.clear
   end
+  
+  # @choices= が Deft::Exception::InvalidAttributeException を返すことをテスト
+  public 
+  def test_setter_choices_raises_invalid_attribute_exception
+    assert_raises( Deft::Exception::InvalidAttributeException, 
+                   '@choices への代入で InvalidAttributeException が raise されなかった' ) do 
+      @boolean_template.choices = 'THIS MUST RAISE EXCEPTION'
+    end
+  end
 
   # inspect の返り値をテスト
   public
   def test_inspect
-    boolean_template = Deft::BooleanTemplate.new( 'TEST BOOLEAN TEMPLATE' )
     assert_equal( %{#<Deft::BooleanTemplate: @name="TEST BOOLEAN TEMPLATE">},
-                  boolean_template.inspect, "inspect が正しい値を返さない" )
+                  @boolean_template.inspect, "inspect が正しい値を返さない" )
   end
   
   public

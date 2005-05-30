@@ -26,6 +26,7 @@ module Deft
       return 'boolean'
     end
     
+    # boolean template では choices 属性は利用できない
     public
     def choices=( choicesString ) # :nodoc:
       raise Deft::Exception::InvalidAttributeException

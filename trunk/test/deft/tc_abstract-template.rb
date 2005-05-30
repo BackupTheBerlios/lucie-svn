@@ -11,11 +11,22 @@ require 'deft/abstract-template'
 require 'test/unit'
 
 class TC_AbstractTemplate < Test::Unit::TestCase
+  public
+  def setup
+    @abstract_template = Deft::AbstractTemplate.new( 'TEST ABSTRACT TEMPLATE' )
+  end
+  
   # @name の getter をテスト
   public
   def test_name_getter
-    abstract_template = Deft::AbstractTemplate.new( 'TEST ABSTRACT TEMPLATE' )
-    assert_equal 'TEST ABSTRACT TEMPLATE', abstract_template.name
+    assert_equal 'TEST ABSTRACT TEMPLATE', @abstract_template.name
+  end
+  
+  # inspect の返り値をテスト
+  public
+  def test_inspect
+    assert_equal( %{#<Deft::AbstractTemplate: @name="TEST ABSTRACT TEMPLATE">},
+                  @abstract_template.inspect )
   end
 end
 

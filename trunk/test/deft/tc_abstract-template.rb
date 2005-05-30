@@ -19,14 +19,15 @@ class TC_AbstractTemplate < Test::Unit::TestCase
   # @name の getter をテスト
   public
   def test_name_getter
-    assert_equal 'TEST ABSTRACT TEMPLATE', @abstract_template.name
+    assert_equal( 'TEST ABSTRACT TEMPLATE', @abstract_template.name,
+                  "@name の getter が正しい値を返さない" )
   end
   
   # inspect の返り値をテスト
   public
   def test_inspect
     assert_equal( %{#<Deft::AbstractTemplate: @name="TEST ABSTRACT TEMPLATE">},
-                  @abstract_template.inspect )
+                  @abstract_template.inspect, "inspect が正しい値を返さない" )
   end
   
   # to_s で NotImplementedError が raise されることを確認

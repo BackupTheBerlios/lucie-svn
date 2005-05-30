@@ -70,6 +70,16 @@ class TC_AbstractTemplate < Test::Unit::TestCase
                   "@short_description の accessor が正しく動作しない" )
   end
   
+  # @default の accessor をテスト
+  #--
+  # FIXME: @default にはどんなオブジェクトが入るか？チェックをここでするか？
+  #++ 
+  public
+  def test_default_accessor 
+    @abstract_template.default = 'DEFAULT'
+    assert_equal 'DEFAULT', @abstract_template.default, "@default の accessor が正しく動作しない"
+  end
+  
   # @name の getter をテスト
   public
   def test_name_getter

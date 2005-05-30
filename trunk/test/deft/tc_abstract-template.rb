@@ -36,6 +36,17 @@ class TC_AbstractTemplate < Test::Unit::TestCase
     assert_equal( 'EXTENDED DESCRIPTION JA', @abstract_template.extended_description_ja,
                   "@extended_description_ja の accessor が正しく動作しない" )
   end
+
+  # @extended_description の accessor をテスト
+  #--
+  # FIXME: @extended_description の型チェック (String) をここでするか？
+  #++ 
+  public
+  def test_extended_description_accessor
+    @abstract_template.extended_description = 'EXTENDED DESCRIPTION'
+    assert_equal( 'EXTENDED DESCRIPTION', @abstract_template.extended_description,
+                  "@extended_description の accessor が正しく動作しない" )
+  end
   
   # @name の getter をテスト
   public

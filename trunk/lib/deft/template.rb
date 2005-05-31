@@ -22,6 +22,10 @@ def template( nameString, &block )
 end
 
 module Deft
+  module Exception
+    class UnknownTemplateTypeException < ::Exception; end
+  end
+
   # テンプレートの管理用クラス
   #--
   # FIXME: update コマンドでタイムスタンプを更新

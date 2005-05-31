@@ -8,11 +8,8 @@
 require 'lucie/string'
 require 'time-stamp'
 
-update(%q$LastChangedDate$)
-
 module Deft
   module Exception
-    class UnknownTemplateTypeException < ::Exception; end
     class InvalidAttributeException < ::Exception; end
     class RequiredAttributeException < ::Exception; end
   end

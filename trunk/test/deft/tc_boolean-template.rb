@@ -107,13 +107,6 @@ Description-ja: TEST SHORT DESCRIPTION JA
       @boolean_template.choices = 'THIS MUST RAISE EXCEPTION'
     end
   end
-
-  # inspect の返り値をテスト
-  public
-  def test_inspect
-    assert_equal( %{#<Deft::BooleanTemplate: @name="TEST BOOLEAN TEMPLATE">},
-                  @boolean_template.inspect, "inspect が正しい値を返さない" )
-  end
 end
 
 ### Local variables:

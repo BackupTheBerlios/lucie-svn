@@ -10,22 +10,40 @@ $LOAD_PATH.unshift './lib'
 require 'deft/template'
 require 'test/unit'
 
+# Debconf ¤Î¥Æ¥ó¥×¥ì¡¼¥È
+#
+# * string 
+# * boolean
+# * select
+# * multiselect
+# * note
+# * text
+# * password
+#
+# ¤¬¤¹¤Ù¤Æ¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤ë¤³¤È¤ò¥Æ¥¹¥È
 class TC_TemplateUnknownTemplateTypeException < Test::Unit::TestCase
+  public
+  def setup
+    Deft::Template.clear
+  end
+
   public
   def teardown
     Deft::Template.clear
   end
   
+  # Deft::Exception::UnknownTemplateTypeException ¤¬ raise ¤µ¤ì¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_exception_raised
     assert_raises( Deft::Exception::UnknownTemplateTypeException,
-                   'UnknownTemplateTypeException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
+                   'template_type= ¥á¥½¥Ã¥É¤Ç UnknownTemplateTypeException ¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
       template( 'TEST TEMPLATE' ) do |template|
         template.template_type = 'UNKNOWN'
       end
     end
   end
-  
+
+  # Debconf ¤Î 7 ¼ïÎà¤Î¥Æ¥ó¥×¥ì¡¼¥È¤¬¤¹¤Ù¤Æ¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_exception_not_raised
     begin
@@ -51,7 +69,7 @@ class TC_TemplateUnknownTemplateTypeException < Test::Unit::TestCase
         template.template_type = 'password'
       end
     rescue 
-      fail 'ƒeƒ“ƒvƒŒ[ƒg‚ª‚·‚×‚ÄƒTƒ|[ƒg‚³‚ê‚Ä‚¢‚È‚¢'
+      fail 'Debconf ¤Î¥Æ¥ó¥×¥ì¡¼¥È¤¬¤¹¤Ù¤Æ¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤Ê¤¤'
     end
   end
 end

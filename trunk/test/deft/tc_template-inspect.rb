@@ -11,6 +11,9 @@ require 'deft/template'
 require 'test/unit'
 
 # 各テンプレートクラスの inspect メソッドをテスト
+#--
+# FIXME: 各テンプレートの inspect メソッドのテストをここにまとめる
+#++
 class TC_TemplateInspect < Test::Unit::TestCase
   public
   def setup

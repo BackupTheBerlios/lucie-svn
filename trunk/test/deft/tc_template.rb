@@ -38,13 +38,50 @@ class TC_Template < Test::Unit::TestCase
     assert_equal( %{#<Deft::Template: @name="TEST/TEMPLATE">}, template.inspect,
                   "inspect の返す値が正しくない" )
   end
+
+  # template_type= で正しくないテンプレートの型を指定したときに例外が raise されることをテスト
+  public
+  def test_unknown_template_type_exception
+    test_template = template( 'TEST/TEMPLATE' )
+    assert_raises( Deft::Exception::UnknownTemplateTypeException, 
+                   "template_type= で Deft::Exception::UnknownTemplateTypeException が raise されなかった" ) do 
+      test_template.template_type= 'WRONG TEMPLATE TYPE'
+    end
+  end
+
+  # template_type= でテンプレートの型を設定できることを確認
+  public
+  def test_template_type
+    test_template = template( 'TEST/TEMPLATE' )
+
+    test_template.template_type = 'string'
+    assert_kind_of Deft::StringTemplate, Deft::Template['TEST/TEMPLATE']
+
+    test_template.template_type = 'boolean'
+    assert_kind_of Deft::BooleanTemplate, Deft::Template['TEST/TEMPLATE']
+
+    test_template.template_type = 'select'
+    assert_kind_of Deft::SelectTemplate, Deft::Template['TEST/TEMPLATE']
+
+    test_template.template_type = 'multiselect'
+    assert_kind_of Deft::MultiselectTemplate, Deft::Template['TEST/TEMPLATE']
+
+    test_template.template_type = 'note'
+    assert_kind_of Deft::NoteTemplate, Deft::Template['TEST/TEMPLATE']
+
+    test_template.template_type = 'text'
+    assert_kind_of Deft::TextTemplate, Deft::Template['TEST/TEMPLATE']
+
+    test_template.template_type = 'password'
+    assert_kind_of Deft::PasswordTemplate, Deft::Template['TEST/TEMPLATE']
+  end
   
   # 登録されているテンプレートが空のときに、
   # template_defined? が nil を返すことを確認
   public
   def test_template_defined_fail
     assert_nil( Deft::Template.template_defined?( 'NOT DEFINED TEMPLATE' ),
-                '登録されていないはずのテンプレートがある' )
+    '登録されていないはずのテンプレートがある' )
   end
   
   # テンプレートを登録し、template_defined? で登録が確認できることをテスト

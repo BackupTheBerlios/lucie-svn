@@ -44,8 +44,6 @@ module Deft
     def_delegator :@template, :short_description=
     def_delegator :@template, :short_description_ja
     def_delegator :@template, :short_description_ja=
-    def_delegator :@template, :template_type     
-    def_delegator :@template, :template_type=
     
     # Template が登録されていればそれを返す
     # 登録されていなければ nil を返す
@@ -99,13 +97,15 @@ module Deft
     def self.lookup( nameString )
       return TEMPLATES[nameString] ||= self.new( nameString )
     end
-    
+
+    # テンプレートの型を設定する
     public
     def template_type=( templateTypeString )
       if template_table[templateTypeString].nil?
         raise Exception::UnknownTemplateTypeException, templateTypeString
       end
       @template = template_table[templateTypeString].new( @name )
+      register
     end
 
     # テンプレート名 => 実装クラスのテーブル

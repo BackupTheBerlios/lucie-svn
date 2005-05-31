@@ -10,9 +10,9 @@ require 'deft/template'
 require 'time-stamp'
 
 module Deft  
-  # select タイプの Template をあらわすクラス
+  # select 型のテンプレートを表すクラス
   class SelectTemplate < AbstractTemplate
-    # SelectTemplate をあらわす String オブジェクトを返す
+    # SelectTemplate の RFC822 による表現を返す
     public
     def to_s
       return template_string( 'select', 'default', 'choices' )

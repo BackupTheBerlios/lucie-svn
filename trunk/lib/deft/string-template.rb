@@ -10,9 +10,9 @@ require 'deft/template'
 require 'time-stamp'
 
 module Deft
-  # string タイプの Template をあらわすクラス
+  # string 型の Template をあらわすクラス
   class StringTemplate < AbstractTemplate   
-    # StringTemplate をあらわす String オブジェクトを返す
+    # StringTemplate の RFC822 による表現を返す
     public
     def to_s
       return template_string( 'string', 'default' )

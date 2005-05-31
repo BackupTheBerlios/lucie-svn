@@ -90,15 +90,6 @@ Description-ja: TEST SHORT DESCRIPTION JA
    BOOLEAN_TEMPLATE
   end
 
-  # template_type が 'boolean' を返すことをテスト
-  #--
-  # FIXME: このメソッドはなぜ必要？
-  #++
-  public
-  def test_template_type
-    assert_equal 'boolean', @boolean_template.template_type, "template_type が正しい値を返さない"
-  end
-  
   # @choices= が Deft::Exception::InvalidAttributeException を返すことをテスト
   public 
   def test_setter_choices_raises_invalid_attribute_exception

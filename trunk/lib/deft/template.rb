@@ -68,7 +68,6 @@ module Deft
     private
     def register
       @actions.each { |each| result = each.call( self ) }
-      $stderr.puts "Template #{@name} (#{@template.template_type}) ¤òÅÐÏ¿" if $trace
       if @template     
         TEMPLATES[@name] = @template      
         return @template

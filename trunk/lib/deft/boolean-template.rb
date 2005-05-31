@@ -8,8 +8,6 @@
 require 'deft/abstract-template'
 require 'time-stamp'
 
-update(%q$LastChangedDate$)
-
 module Deft  
   # boolean 型のテンプレートを表すクラス
   class BooleanTemplate < AbstractTemplate   
@@ -21,12 +19,6 @@ module Deft
         raise Exception::RequiredAttributeException
       end
       return template_string( 'boolean', 'default' )
-    end
-    
-    # テンプレートの型を文字列で返す
-    public
-    def template_type
-      return 'boolean'
     end
     
     # boolean template では choices 属性は利用できない

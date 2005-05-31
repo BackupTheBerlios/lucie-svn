@@ -68,9 +68,13 @@ Description-ja: TEST SHORT DESCRIPTION JA
   end
 
   # to_s で select テンプレートの templates 文字列が正しく生成されることをテスト
+  #--
+  # TODO: default= の引数チェック (Choices: にあるものだけ受け付ける)
+  #++ 
   public
   def test_select_template
     @select_template.default = 'TEST DEFAULT'
+    @select_template.choices = ['TEST DEFAULT', 'CHOICE #2', 'CHOICE #3']
     @select_template.short_description = 'TEST SHORT DESCRIPTION'
     @select_template.extended_description = 'TEST EXTENDED DESCRIPTION'
     @select_template.short_description_ja = 'TEST SHORT DESCRIPTION JA'
@@ -78,6 +82,7 @@ Description-ja: TEST SHORT DESCRIPTION JA
     assert_equal( (<<-SELECT_TEMPLATE).chomp, @select_template.to_s, "select テンプレートの to_s が正しい値を返さない" )
 Template: TEST SELECT TEMPLATE
 Type: select
+Choices: TEST DEFAULT, CHOICE #2, CHOICE #3
 Default: TEST DEFAULT
 Description: TEST SHORT DESCRIPTION
  TEST EXTENDED DESCRIPTION

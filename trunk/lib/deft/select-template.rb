@@ -9,24 +9,16 @@ require 'deft/abstract-template'
 require 'deft/template'
 require 'time-stamp'
 
-update(%q$LastChangedDate$)
-
 module Deft  
-  # select ƒ^ƒCƒv‚Ì Template ‚ð‚ ‚ç‚í‚·ƒNƒ‰ƒX
+  # select ¥¿¥¤¥×¤Î Template ¤ò¤¢¤é¤ï¤¹¥¯¥é¥¹
   class SelectTemplate < AbstractTemplate
-    # SelectTemplate ‚ð‚ ‚ç‚í‚· String ƒIƒuƒWƒFƒNƒg‚ð•Ô‚·
+    # SelectTemplate ¤ò¤¢¤é¤ï¤¹ String ¥ª¥Ö¥¸¥§¥¯¥È¤òÊÖ¤¹
     public
     def to_s
       return template_string( 'select', 'default', 'choices' )
     end
-    
-    # ƒeƒ“ƒvƒŒ[ƒg‚ÌŒ^‚ð•Ô‚·
-    public
-    def template_type
-      return 'select'
-    end
-    
-    # ƒfƒoƒbƒO—p
+
+    # ¥Ç¥Ð¥Ã¥°ÍÑ
     public
     def inspect
       return "#<Deft::SelectTemplate: @name=\"#{@name}\">"

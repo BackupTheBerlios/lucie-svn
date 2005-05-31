@@ -9,24 +9,16 @@ require 'deft/template'
 require 'deft/abstract-template'
 require 'time-stamp'
 
-update(%q$LastChangedDate$)
-
 module Deft 
-  # multiselect ƒ^ƒCƒv‚Ì Template ‚ð‚ ‚ç‚í‚·ƒNƒ‰ƒX
+  # multiselect ¥¿¥¤¥×¤Î Template ¤ò¤¢¤é¤ï¤¹¥¯¥é¥¹
   class MultiselectTemplate < AbstractTemplate
-    # MultiselectTemplate ‚ð‚ ‚ç‚í‚· String ƒIƒuƒWƒFƒNƒg‚ð•Ô‚·
+    # MultiselectTemplate ¤ò¤¢¤é¤ï¤¹ String ¥ª¥Ö¥¸¥§¥¯¥È¤òÊÖ¤¹
     public
     def to_s
       return template_string( 'multiselect', 'default', 'choices' )
     end
     
-    # ƒeƒ“ƒvƒŒ[ƒg‚ÌŒ^‚ð•Ô‚·
-    public
-    def template_type
-      return 'multiselect'
-    end    
-    
-    # ƒfƒoƒbƒO—p
+    # ¥Ç¥Ð¥Ã¥°ÍÑ
     public
     def inspect
       return "#<Deft::MultiselectTemplate: @name=\"#{@name}\">"

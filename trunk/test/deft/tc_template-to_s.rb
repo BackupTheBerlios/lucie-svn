@@ -95,6 +95,7 @@ Description-ja: TEST SHORT DESCRIPTION JA
   public
   def test_multiselect_template
     @multiselect_template.default = 'TEST DEFAULT'
+    @multiselect_template.choices = ['TEST DEFAULT', 'CHOICE #2', 'CHOICE #3']
     @multiselect_template.short_description = 'TEST SHORT DESCRIPTION'
     @multiselect_template.extended_description = 'TEST EXTENDED DESCRIPTION'
     @multiselect_template.short_description_ja = 'TEST SHORT DESCRIPTION JA'
@@ -102,6 +103,7 @@ Description-ja: TEST SHORT DESCRIPTION JA
     assert_equal( (<<-MULTISELECT_TEMPLATE).chomp, @multiselect_template.to_s, "multiselect テンプレートの to_s が正しい値を返さない" )
 Template: TEST MULTISELECT TEMPLATE
 Type: multiselect
+Choices: TEST DEFAULT, CHOICE #2, CHOICE #3
 Default: TEST DEFAULT
 Description: TEST SHORT DESCRIPTION
  TEST EXTENDED DESCRIPTION

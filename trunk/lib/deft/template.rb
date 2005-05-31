@@ -32,6 +32,7 @@ module Deft
     TEMPLATES = {}
     
     attr_reader :name
+    def_delegator :@template, :class
     def_delegator :@template, :choices
     def_delegator :@template, :choices=
     def_delegator :@template, :default
@@ -105,7 +106,7 @@ module Deft
         raise Exception::UnknownTemplateTypeException, templateTypeString
       end
       @template = template_table[templateTypeString].new( @name )
-      register
+      TEMPLATES[@name] = @template
     end
 
     # テンプレート名 => 実装クラスのテーブル

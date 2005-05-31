@@ -75,6 +75,19 @@ class TC_Template < Test::Unit::TestCase
     test_template.template_type = 'password'
     assert_kind_of Deft::PasswordTemplate, Deft::Template['TEST/TEMPLATE']
   end
+
+  public
+  def test_enhance
+    test_template = template( 'TEST/TEMPLATE' )
+    test_template.enhance do |_template|
+      _template.template_type = 'boolean'
+      _template.short_description = 'SHORT DESCRIPTION'
+      _template.extended_description = 'EXTENDED DESCRIPTION'
+    end
+    assert_kind_of( Deft::BooleanTemplate, Deft::Template['TEST/TEMPLATE'] )
+    assert_equal( 'SHORT DESCRIPTION', Deft::Template['TEST/TEMPLATE'].short_description )
+    assert_equal( 'EXTENDED DESCRIPTION', Deft::Template['TEST/TEMPLATE'].extended_description )
+  end
   
   # 登録されているテンプレートが空のときに、
   # template_defined? が nil を返すことを確認

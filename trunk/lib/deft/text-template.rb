@@ -9,10 +9,8 @@ require 'deft/abstract-template'
 require 'deft/template'
 require 'time-stamp'
 
-update(%q$LastChangedDate$)
-
 module Deft  
-  # text ƒ^ƒCƒv‚Ì Template ‚ð‚ ‚ç‚í‚·ƒNƒ‰ƒX
+  # text ·¿¤Î Template ¤ò¤¢¤é¤ï¤¹¥¯¥é¥¹
   class TextTemplate < AbstractTemplate  
     public
     def choices=( choicesString ) # :nodoc:
@@ -24,19 +22,13 @@ module Deft
       raise Exception::InvalidAttributeException
     end
     
-    # ƒeƒ“ƒvƒŒ[ƒg‚ÌŒ^‚ð•Ô‚·
-    public
-    def template_type
-      return 'text'
-    end
-    
-    # TextTemplate ‚ð‚ ‚ç‚í‚· String ƒIƒuƒWƒFƒNƒg‚ð•Ô‚·
+    # TextTemplate ¤Î RFC822 ¤Ë¤è¤ëÉ½¸½¤òÊÖ¤¹
     public
     def to_s
       return template_string( 'text' )
     end
     
-    # ƒfƒoƒbƒO—p
+    # ¥Ç¥Ð¥Ã¥°ÍÑ
     public
     def inspect
       return "#<Deft::TextTemplate: @name=\"#{@name}\">"

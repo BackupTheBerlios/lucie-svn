@@ -92,6 +92,9 @@ Description-ja: TEST SHORT DESCRIPTION JA
   end
 
   # to_s で multiselect テンプレートの templates 文字列が正しく生成されることをテスト
+  #--
+  # TODO: default= の引数チェック (Choices: にあるものだけ受け付ける)
+  #++ 
   public
   def test_multiselect_template
     @multiselect_template.default = 'TEST DEFAULT'
@@ -149,6 +152,7 @@ Description-ja: TEST SHORT DESCRIPTION JA
   # to_s で password テンプレートの templates 文字列が正しく生成されることをテスト
   public
   def test_password_template
+    @password_template.default = 'TEST DEFAULT'
     @password_template.short_description = 'TEST SHORT DESCRIPTION'
     @password_template.extended_description = 'TEST EXTENDED DESCRIPTION'
     @password_template.short_description_ja = 'TEST SHORT DESCRIPTION JA'
@@ -156,6 +160,7 @@ Description-ja: TEST SHORT DESCRIPTION JA
     assert_equal( (<<-PASSWORD_TEMPLATE).chomp, @password_template.to_s, "password テンプレートの to_s が正しい値を返さない" )
 Template: TEST PASSWORD TEMPLATE
 Type: password
+Default: TEST DEFAULT
 Description: TEST SHORT DESCRIPTION
  TEST EXTENDED DESCRIPTION
 Description-ja: TEST SHORT DESCRIPTION JA

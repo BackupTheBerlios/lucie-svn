@@ -9,21 +9,13 @@ require 'deft/abstract-template'
 require 'deft/template'
 require 'time-stamp'
 
-update(%q$LastChangedDate$)
-
 module Deft
-  # password ƒ^ƒCƒv‚Ì Template ‚ð‚ ‚ç‚í‚·ƒNƒ‰ƒX
+  # password ·¿¤Î Template ¤ò¤¢¤é¤ï¤¹¥¯¥é¥¹
   class PasswordTemplate < AbstractTemplate   
-    # PasswordTemplate ‚ð‚ ‚ç‚í‚· Password ƒIƒuƒWƒFƒNƒg‚ð•Ô‚·
+    # PasswordTemplate ¤Î RFC822 ¤Ë¤è¤ëÉ½¸½¤òÊÖ¤¹
     public
     def to_s
-      return template_string( 'password' )
-    end
-    
-    # ƒeƒ“ƒvƒŒ[ƒg‚ÌŒ^‚ð•Ô‚·
-    public
-    def template_type
-      return 'password'
+      return template_string( 'password', 'default' )
     end
     
     public
@@ -31,7 +23,7 @@ module Deft
       raise Deft::Exception::InvalidAttributeException
     end
     
-    # ƒfƒoƒbƒO—p
+    # ¥Ç¥Ð¥Ã¥°ÍÑ
     public
     def inspect
       return "#<Deft::PasswordTemplate: @name=\"#{@name}\">"

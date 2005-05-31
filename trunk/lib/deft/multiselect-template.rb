@@ -10,9 +10,9 @@ require 'deft/abstract-template'
 require 'time-stamp'
 
 module Deft 
-  # multiselect タイプの Template をあらわすクラス
+  # multiselect 型の Template をあらわすクラス
   class MultiselectTemplate < AbstractTemplate
-    # MultiselectTemplate をあらわす String オブジェクトを返す
+    # MultiselectTemplate の RFC822 による表現を返す
     public
     def to_s
       return template_string( 'multiselect', 'default', 'choices' )

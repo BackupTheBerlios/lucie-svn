@@ -9,23 +9,15 @@ require 'deft/abstract-template'
 require 'deft/template'
 require 'time-stamp'
 
-update(%q$LastChangedDate$)
-
 module Deft  
-  # note ƒ^ƒCƒv‚Ì Template ‚ð‚ ‚ç‚í‚·ƒNƒ‰ƒX
+  # note ·¿¤Î Template ¤ò¤¢¤é¤ï¤¹¥¯¥é¥¹
   class NoteTemplate < AbstractTemplate
-    # NoteTemplate ‚ð‚ ‚ç‚í‚· String ƒIƒuƒWƒFƒNƒg‚ð•Ô‚·
+    # NoteTemplate ¤Î RFC822 ¤Ë¤è¤ëÉ½¸½¤òÊÖ¤¹
     public
     def to_s
       return template_string( 'note' )
     end
     
-    # ƒeƒ“ƒvƒŒ[ƒg‚ÌŒ^‚ð•Ô‚·
-    public
-    def template_type
-      return 'note'
-    end
-   
     public 
     def choices=( choicesString ) # :nodoc:
       raise Deft::Exception::InvalidAttributeException
@@ -36,7 +28,7 @@ module Deft
       raise Exception::InvalidAttributeException
     end
     
-    # ƒfƒoƒbƒO—p
+    # ¥Ç¥Ð¥Ã¥°ÍÑ
     public
     def inspect
       return "#<Deft::NoteTemplate: @name=\"#{@name}\">"

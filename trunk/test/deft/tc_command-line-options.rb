@@ -23,9 +23,9 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                 "return value of the method parse was not nil" )
   end
   
-  # ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ƒIƒvƒVƒ‡ƒ“‚ÌƒfƒtƒHƒ‹ƒg’l‚ÌƒeƒXƒg ###################
+  # ¥³¥Þ¥ó¥É¥é¥¤¥ó¥ª¥×¥·¥ç¥ó¤Î¥Ç¥Õ¥©¥ë¥ÈÃÍ¤Î¥Æ¥¹¥È ###################
   
-  # ƒfƒtƒHƒ‹ƒg‚Å trace ƒIƒvƒVƒ‡ƒ“‚ªƒIƒt‚Å‚ ‚é‚±‚Æ‚ðƒeƒXƒg
+  # ¥Ç¥Õ¥©¥ë¥È¤Ç trace ¥ª¥×¥·¥ç¥ó¤¬¥ª¥Õ¤Ç¤¢¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_default_trace_option_is_false
     @commandline_options.parse( [] )
@@ -33,7 +33,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                   "default value for trace option was not set to OFF" )
   end
   
-  # ƒfƒtƒHƒ‹ƒg‚Å help ƒIƒvƒVƒ‡ƒ“‚ªƒIƒt‚Å‚ ‚é‚±‚Æ‚ðƒeƒXƒg
+  # ¥Ç¥Õ¥©¥ë¥È¤Ç help ¥ª¥×¥·¥ç¥ó¤¬¥ª¥Õ¤Ç¤¢¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_default_help_option_is_false
     @commandline_options.parse( [] )
@@ -41,7 +41,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                   "default value for help option was not set to OFF" )
   end
   
-  # ƒfƒtƒHƒ‹ƒg‚Å version ƒIƒvƒVƒ‡ƒ“‚ªƒIƒt‚Å‚ ‚é‚±‚Æ‚ðƒeƒXƒg
+  # ¥Ç¥Õ¥©¥ë¥È¤Ç version ¥ª¥×¥·¥ç¥ó¤¬¥ª¥Õ¤Ç¤¢¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_default_version_option_is_false
     @commandline_options.parse( [] )
@@ -49,15 +49,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                   "defalut value for version was not set to OFF" )
   end
   
-  # ƒfƒtƒHƒ‹ƒg‚Å ruby-code ƒIƒvƒVƒ‡ƒ“‚ª nil ‚Å‚ ‚é‚±‚Æ‚ðƒeƒXƒg
-  public
-  def test_default_ruby_code_option_is_false
-    @commandline_options.parse( [] )
-    assert_nil( @commandline_options.ruby_code,
-                "defalut value for ruby-code was not set to OFF" )
-  end
-  
-  # ƒfƒtƒHƒ‹ƒg‚Å emulate ƒIƒvƒVƒ‡ƒ“‚ª nil ‚Å‚ ‚é‚±‚Æ‚ðƒeƒXƒg
+  # ¥Ç¥Õ¥©¥ë¥È¤Ç emulate ¥ª¥×¥·¥ç¥ó¤¬ nil ¤Ç¤¢¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_default_emulate_option_is_false
     @commandline_options.parse( [] )
@@ -65,7 +57,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                 "defalut value for emulate was not set to OFF" )
   end
   
-  # ƒfƒtƒHƒ‹ƒg‚Å input ƒIƒvƒVƒ‡ƒ“‚ª nil ‚Å‚ ‚é‚±‚Æ‚ðƒeƒXƒg
+  # ¥Ç¥Õ¥©¥ë¥È¤Ç input ¥ª¥×¥·¥ç¥ó¤¬ nil ¤Ç¤¢¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_default_input_option_is_false
     @commandline_options.parse( [] )
@@ -73,7 +65,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                 "defalut value for input was not set to OFF" )
   end
   
-  # ƒfƒtƒHƒ‹ƒg‚Å run ƒIƒvƒVƒ‡ƒ“‚ª nil ‚Å‚ ‚é‚±‚Æ‚ðƒeƒXƒg
+  # ¥Ç¥Õ¥©¥ë¥È¤Ç run ¥ª¥×¥·¥ç¥ó¤¬ nil ¤Ç¤¢¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_default_run_option_is_false
     @commandline_options.parse( [] )
@@ -81,7 +73,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                 "defalut value for run was not set to OFF" )
   end
   
-  # ƒfƒtƒHƒ‹ƒg‚Å template ƒIƒvƒVƒ‡ƒ“‚ª false ‚Å‚ ‚é‚±‚Æ‚ðƒeƒXƒg
+  # ¥Ç¥Õ¥©¥ë¥È¤Ç template ¥ª¥×¥·¥ç¥ó¤¬ false ¤Ç¤¢¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_default_template_option_is_false
     @commandline_options.parse( [] )
@@ -89,7 +81,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                   "defalut value for template was not set to OFF" )
   end 
   
-  # ƒfƒtƒHƒ‹ƒg‚Å question ƒIƒvƒVƒ‡ƒ“‚ª false ‚Å‚ ‚é‚±‚Æ‚ðƒeƒXƒg
+  # ¥Ç¥Õ¥©¥ë¥È¤Ç question ¥ª¥×¥·¥ç¥ó¤¬ false ¤Ç¤¢¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_default_template_option_is_false
     @commandline_options.parse( [] )
@@ -97,7 +89,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                   "defalut value for question was not set to OFF" )
   end 
   
-  # ƒfƒtƒHƒ‹ƒg‚Å build ƒIƒvƒVƒ‡ƒ“‚ª nil ‚Å‚ ‚é‚±‚Æ‚ðƒeƒXƒg
+  # ¥Ç¥Õ¥©¥ë¥È¤Ç build ¥ª¥×¥·¥ç¥ó¤¬ nil ¤Ç¤¢¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_default_build_option_is_nil
     @commandline_options.parse( [] )
@@ -105,7 +97,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                 "defalut value for build was not set to OFF" )
   end     
   
-  # ŽÀÛ‚ÉƒRƒ}ƒ“ƒhƒ‰ƒCƒ“ƒIƒvƒVƒ‡ƒ“‚ðƒp[ƒY‚µA’l‚ªŽæ“¾‚Å‚«‚é‚©‚Ç‚¤‚©‚ÌƒeƒXƒg ##############
+  # ¼ÂºÝ¤Ë¥³¥Þ¥ó¥É¥é¥¤¥ó¥ª¥×¥·¥ç¥ó¤ò¥Ñ¡¼¥º¤·¡¢ÃÍ¤¬¼èÆÀ¤Ç¤­¤ë¤«¤É¤¦¤«¤Î¥Æ¥¹¥È ##############
   
   public
   def test_parse_trace_option
@@ -123,13 +115,6 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   def test_parse_version_option
     @commandline_options.parse( ['--version'] )
     assert( @commandline_options.version, "couldn't get value for version option" )
-  end
-  
-  public
-  def test_parse_ruby_code_option
-    @commandline_options.parse( ['--ruby-code=hello'] )
-    assert_equal( 'hello', @commandline_options.ruby_code,
-                  "couldn't get value for ruby-code option" )
   end
   
   public
@@ -174,7 +159,7 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                   "couldn't get value for build option" )   
   end
 
-  # ‚»‚Ì‘¼‚ÌƒeƒXƒg ###################################################################
+  # ¤½¤ÎÂ¾¤Î¥Æ¥¹¥È ###################################################################
   
   public
   def test_inspect
@@ -186,8 +171,6 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                   "couldn't inspect help option" )
     assert_match( /version=\S+/,  @commandline_options.inspect,
                   "couldn't inspect version option" )
-    assert_match( /ruby-code=\S+/,  @commandline_options.inspect,
-                  "couldn't inspect ruby-code option" )
     assert_match( /template=\S+/,  @commandline_options.inspect,
                   "couldn't inspect template option" )
     assert_match( /question=\S+/,  @commandline_options.inspect,
@@ -233,13 +216,6 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   def test_parse_wrong_command_line_option_raises_exception
     assert_raises( GetoptLong::InvalidOption, "getoptlong exception was not raised" ) do 
       @commandline_options.parse( ['--WRONG-OPTION'] )
-    end
-  end
-  
-  public
-  def test_parse_argument_required_option_with_noargument_raises_exception
-    assert_raises( GetoptLong::MissingArgument, "getoptlong exception was not raised" ) do 
-      @commandline_options.parse( ['--ruby-code'] )
     end
   end
   

@@ -10,8 +10,6 @@ require 'getoptlong'
 require 'time-stamp'
 require 'singleton'
 
-update(%q$Date$)
-
 module Deft
   # We handle the parsing of options, and subsequently as a singleton
   # object to be queried for option values
@@ -22,7 +20,6 @@ module Deft
     attr_reader :run
     attr_reader :input
     attr_reader :help 
-    attr_reader :ruby_code
     attr_reader :template
     attr_reader :trace 
     attr_reader :version
@@ -35,8 +32,6 @@ module Deft
           'run debconf.' ],
       [ '--input',          '-i',   'input string', \
           'emulate users input string.' ],
-      [ '--ruby-code',      '-r',   'question name', \
-          'show concrete state definition in Ruby code.' ],
       [ '--emulate',        '-e',   'question name', \
           'emulate state transition.' ],
       [ '--trace',          '-T',   nil, \
@@ -93,8 +88,6 @@ module Deft
             @question = argument
           when '--template'
             @template = argument
-          when '--ruby-code'
-            @ruby_code = argument
           when '--trace'
             @trace = true
           when '--help'
@@ -111,11 +104,10 @@ module Deft
     public
     def inspect
       return '[CommandLineOptions: ' +
-      ["trace=#{@trace.inspect}", "help=#{@help.inspect}",
-       "emulate=#{@emulate.inspect}", "version=#{@version.inspect}",
-       "ruby-code=#{@ruby_code.inspect}", "template=#{@template.inspect}",
-       "question=#{@question.inspect}", "input=#{@input.inspect}",
-       "run=#{@run.inspect}", "build=#{@build.inspect}"].join(', ') + ']'
+        ["trace=#{@trace.inspect}", "help=#{@help.inspect}",
+        "emulate=#{@emulate.inspect}", "version=#{@version.inspect}",
+        "template=#{@template.inspect}", "question=#{@question.inspect}",
+        "input=#{@input.inspect}", "run=#{@run.inspect}", "build=#{@build.inspect}"].join(', ') + ']'
     end
     
     private

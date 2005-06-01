@@ -1,3 +1,4 @@
+# =³Æ¥Æ¥ó¥×¥ì¡¼¥È¤Ë¤Ä¤¤¤Æ Deft::Exception::InvalidAttributeException ¤¬ raise ¤µ¤ì¤ë¤³¤È¤ò¥Æ¥¹¥È
 #
 # $Id$
 #
@@ -10,76 +11,122 @@ $LOAD_PATH.unshift './lib'
 require 'deft/template'
 require 'test/unit'
 
-class TC_TemplateInvalidAttributeException < Test::Unit::TestCase
+# string ¥Æ¥ó¥×¥ì¡¼¥È¤Ç¤Î¥Æ¥¹¥È
+class TC_StringTemplateInvalidAttributeException < Test::Unit::TestCase
   public
   def teardown
     Deft::Template.clear
   end
-  
+
+  # string ¥Æ¥ó¥×¥ì¡¼¥È¤Ç¤Ï Choices: Â°À­¤ÏÌµ¸ú
   public
-  def test_exception_raised_text_template
+  def test_exception_raised
     assert_raises( Deft::Exception::InvalidAttributeException,
-                   'InvalidAttributeException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      template( 'TEST TEMPLATE' ) do |template|
-        template.template_type = 'text'
-        template.default = 'DEFAULT'
-      end
-    end    
-    Deft::Template.clear
-    assert_raises( Deft::Exception::InvalidAttributeException,
-              'InvalidAttributeException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      template( 'TEST TEMPLATE' ) do |template|
-        template.template_type = 'text'
-        template.choices = 'CHOICES'
-      end
-    end    
-  end
-  
-  public
-  def test_exception_raised_note_template
-    assert_raises( Deft::Exception::InvalidAttributeException,
-                   'InvalidAttributeException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      template( 'TEST TEMPLATE' ) do |template|
-        template.template_type = 'note'
-        template.default = 'DEFAULT'
-      end
-    end
-    Deft::Template.clear
-    assert_raises( Deft::Exception::InvalidAttributeException,
-              'InvalidAttributeException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      template( 'TEST TEMPLATE' ) do |template|
-        template.template_type = 'note'
-        template.choices = 'CHOICES'
-      end
-    end      
-  end
-  
-  public
-  def test_exception_raised_boolean_template
-    assert_raises( Deft::Exception::InvalidAttributeException,
-              'InvalidAttributeException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
-      template( 'TEST TEMPLATE' ) do |template|
-        template.template_type = 'boolean'
-        template.choices = 'CHOICES'
-      end
-    end 
-  end
-  
-  public
-  def test_exception_raised_string_template
-    assert_raises( Deft::Exception::InvalidAttributeException,
-              'InvalidAttributeException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
+                   'InvalidAttributeException ¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
       template( 'TEST TEMPLATE' ) do |template|
         template.template_type = 'string'
         template.choices = 'CHOICES'
       end
     end
   end
+end
+
+# boolean ¥Æ¥ó¥×¥ì¡¼¥È¤Ç¤Î¥Æ¥¹¥È
+class TC_BooleanTemplateInvalidAttributeException < Test::Unit::TestCase
+  public
+  def teardown
+    Deft::Template.clear
+  end
+
+  # boolean ¥Æ¥ó¥×¥ì¡¼¥È¤Ç¤Ï Choices: Â°À­¤ÏÌµ¸ú
+  public
+  def test_exception_raised
+    assert_raises( Deft::Exception::InvalidAttributeException,
+                   'InvalidAttributeException ¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
+      template( 'TEST TEMPLATE' ) do |template|
+        template.template_type = 'boolean'
+        template.choices = 'CHOICES'
+      end
+    end 
+  end
+end
+
+# note ¥Æ¥ó¥×¥ì¡¼¥È¤Ç¤Î¥Æ¥¹¥È
+class TC_NoteTemplateInvalidAttributeException < Test::Unit::TestCase
+  public
+  def teardown
+    Deft::Template.clear
+  end
+
+  # note ¥Æ¥ó¥×¥ì¡¼¥È¤Ç¤Ï Default: Â°À­¤ÏÌµ¸ú
+  public
+  def test_exception_raised_with_default_attribute
+    assert_raises( Deft::Exception::InvalidAttributeException,
+                   'InvalidAttributeException ¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
+      template( 'TEST TEMPLATE' ) do |template|
+        template.template_type = 'note'
+        template.default = 'DEFAULT'
+      end
+    end
+  end
   
+  # note ¥Æ¥ó¥×¥ì¡¼¥È¤Ç¤Ï Choices: Â°À­¤ÏÌµ¸ú
+  public
+  def test_exception_raised_with_choices_attribute
+    assert_raises( Deft::Exception::InvalidAttributeException,
+                   'InvalidAttributeException ¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
+      template( 'TEST TEMPLATE' ) do |template|
+        template.template_type = 'note'
+        template.choices = 'CHOICES'
+      end
+    end      
+  end
+end
+
+# text ¥Æ¥ó¥×¥ì¡¼¥È¤Ç¤Î¥Æ¥¹¥È
+class TC_TextTemplateInvalidAttributeException < Test::Unit::TestCase
+  public
+  def teardown
+    Deft::Template.clear
+  end
+
+  # text ¥Æ¥ó¥×¥ì¡¼¥È¤Ç¤Ï Default: Â°À­¤ÏÌµ¸ú
+  public
+  def test_exception_raised_with_default_attribute
+    assert_raises( Deft::Exception::InvalidAttributeException,
+                   'InvalidAttributeException ¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
+      template( 'TEST TEMPLATE' ) do |template|
+        template.template_type = 'text'
+        template.default = 'DEFAULT'
+      end
+    end    
+  end
+
+  # text ¥Æ¥ó¥×¥ì¡¼¥È¤Ç¤Ï Choices: Â°À­¤ÏÌµ¸ú
+  public
+  def test_exception_raised_with_choices_attribute
+    assert_raises( Deft::Exception::InvalidAttributeException,
+                   'InvalidAttributeException ¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
+      template( 'TEST TEMPLATE' ) do |template|
+        template.template_type = 'text'
+        template.choices = 'CHOICES'
+      end
+    end    
+  end
+end
+
+# password ¥Æ¥ó¥×¥ì¡¼¥È¤Ç¤Î¥Æ¥¹¥È
+class TC_PasswordTemplateInvalidAttributeException < Test::Unit::TestCase
+  public
+  def teardown
+    Deft::Template.clear
+  end
+  
+  # password ¥Æ¥ó¥×¥ì¡¼¥È¤Ç¤Ï Choices: Â°À­¤ÏÌµ¸ú
   public
   def test_exception_raised_password_template
     assert_raises( Deft::Exception::InvalidAttributeException,
-              'InvalidAttributeException ‚ª raise ‚³‚ê‚È‚©‚Á‚½' ) do
+                   'InvalidAttributeException ¤¬ raise ¤µ¤ì¤Ê¤«¤Ã¤¿' ) do
       template( 'TEST TEMPLATE' ) do |template|
         template.template_type = 'password'
         template.choices = 'CHOICES'

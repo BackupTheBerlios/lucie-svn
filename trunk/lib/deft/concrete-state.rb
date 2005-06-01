@@ -7,37 +7,35 @@
 
 require 'time-stamp'
 
-update(%q$Date$)
-
 module Deft
-  # Concrete State ‚ğŠÇ—‚·‚éƒNƒ‰ƒXB
+  # Concrete State ¤ò´ÉÍı¤¹¤ë¥¯¥é¥¹¡£
   class ConcreteState
     STATES = {}
     
     @@first_state = nil
     
-    # “o˜^‚³‚ê‚Ä‚¢‚é Concrete State ‚ÌƒŠƒXƒg‚ğƒNƒŠƒA‚·‚é
+    # ÅĞÏ¿¤µ¤ì¤Æ¤¤¤ë Concrete State ¤Î¥ê¥¹¥È¤ò¥¯¥ê¥¢¤¹¤ë
     def self.clear
       STATES.clear
     end
     
-    # “o˜^‚³‚ê‚Ä‚¢‚é Concrete State ‚ÌƒŠƒXƒg‚ğ•Ô‚·
+    # ÅĞÏ¿¤µ¤ì¤Æ¤¤¤ë Concrete State ¤Î¥ê¥¹¥È¤òÊÖ¤¹
     def self.states
       return STATES.values
     end
     
-    # “o˜^‚³‚ê‚Ä‚¢‚é Concrete State ƒIƒuƒWƒFƒNƒg‚ğ–¼‘O‚ÅŒŸõ‚·‚é
+    # ÅĞÏ¿¤µ¤ì¤Æ¤¤¤ë Concrete State ¥ª¥Ö¥¸¥§¥¯¥È¤òÌ¾Á°¤Ç¸¡º÷¤¹¤ë
     def self.[]( stateNameString )
       return STATES[stateNameString]
     end
     
-    # Concrete State ‚ğ–¼‘O‚Å“o˜^‚·‚é
+    # Concrete State ¤òÌ¾Á°¤ÇÅĞÏ¿¤¹¤ë
     def self.[]=( stateNameString, concreteState )
       STATES[stateNameString] = concreteState
       @@first_state = concreteState if concreteState.first_state
     end
     
-    # Å‰‚Ì Concrete State ‚ğ•Ô‚·
+    # ºÇ½é¤Î Concrete State ¤òÊÖ¤¹
     def self.first_state
       return @@first_state
     end

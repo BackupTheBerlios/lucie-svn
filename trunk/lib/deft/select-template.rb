@@ -15,6 +15,7 @@ module Deft
     # SelectTemplate の RFC822 による表現を返す
     public
     def to_s
+      super
       return template_string( 'select', 'default', 'choices' )
     end
 

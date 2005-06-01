@@ -25,6 +25,7 @@ module Deft
     # TextTemplate の RFC822 による表現を返す
     public
     def to_s
+      super
       return template_string( 'text' )
     end
     

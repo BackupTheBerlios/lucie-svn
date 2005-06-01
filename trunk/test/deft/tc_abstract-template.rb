@@ -93,14 +93,6 @@ class TC_AbstractTemplate < Test::Unit::TestCase
     assert_equal( %{#<Deft::AbstractTemplate: @name="TEST ABSTRACT TEMPLATE">},
                   @abstract_template.inspect, "inspect が正しい値を返さない" )
   end
-  
-  # to_s で NotImplementedError が raise されることを確認
-  public
-  def test_to_s_raises_not_implemented_error
-    assert_raises( NotImplementedError, "NotImplementedError が to_s で raise されなかった" ) do
-      @abstract_template.to_s
-    end
-  end
 end
 
 ### Local variables:

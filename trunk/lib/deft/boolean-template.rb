@@ -14,10 +14,7 @@ module Deft
     # BooleanTemplate の RFC822 による表現を返す
     public
     def to_s
-      unless ( (@short_description and @extended_description) or
-               (@short_description_ja and @extended_description_ja) )
-        raise Exception::RequiredAttributeException
-      end
+      super
       return template_string( 'boolean', 'default' )
     end
     

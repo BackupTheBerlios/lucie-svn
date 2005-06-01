@@ -6,7 +6,6 @@
 # License::  GPL2
 
 require 'deft/abstract-template'
-require 'deft/template'
 require 'time-stamp'
 
 module Deft
@@ -15,6 +14,7 @@ module Deft
     # StringTemplate の RFC822 による表現を返す
     public
     def to_s
+      super
       return template_string( 'string', 'default' )
     end
 

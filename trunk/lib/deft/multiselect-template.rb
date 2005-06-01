@@ -15,6 +15,7 @@ module Deft
     # MultiselectTemplate の RFC822 による表現を返す
     public
     def to_s
+      super
       return template_string( 'multiselect', 'default', 'choices' )
     end
     

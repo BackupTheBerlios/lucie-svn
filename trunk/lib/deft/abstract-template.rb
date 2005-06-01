@@ -39,7 +39,10 @@ module Deft
     # 文字列に変換する
     public
     def to_s
-      raise NotImplementedError, 'Abstract Method.'
+      unless ( (@short_description and @extended_description) or
+               (@short_description_ja and @extended_description_ja) )
+        raise Exception::RequiredAttributeException
+      end
     end
     
     private

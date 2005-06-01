@@ -1,7 +1,7 @@
-# = Deft 儔僀僽儔儕偺儊僀儞僼傽僀儖
+# = Deft ライブラリのメインファイル
 #
-# Deft 愝掕僼傽僀儖偺摢偱偼杮僼傽僀儖 (deft.rb) 傪偐側傜偢 require 偟丄
-# template, question 側偳偺僩僢僾儗儀儖娭悢傪撉傒崬傓偙偲丅
+# Deft 肋年ファイルの片では塑ファイル (deft.rb) をかならず require し、
+# template, question などのトップレベル簇眶を粕み哈むこと。
 #
 # $Id$
 #
@@ -34,30 +34,19 @@ class DeftApp
   DEFT_VERSION = '0.0.1'
   VERSION_STRING = ['deft', DEFT_VERSION, '('+$svn_date+')'].join(' ')
   
-  # +questionNameString+ 偱昞偝傟傞 Question 偺 Ruby 僐乕僪偵傛傞昞尰傪曉偡
-  public
-  def ruby_code( questionNameString )
-    question = Deft::Question[questionNameString]
-    if question.nil? 
-      raise( Deft::Question::Exception::InvalidQuestionException,
-              "幙栤 '#{questionNameString}' 偼搊榐偝傟偰偄傑偣傫" )
-    end
-    return question.marshal_concrete_state
-  end
-  
-  # +templateNameString+ 偱昞偝傟傞 Template 偺 RFC-822 偵傛傞昞尰傪曉偡
+  # +templateNameString+ で山される Template の RFC-822 による山附を手す
   public
   def template( templateNameString )
     return Deft::Template[templateNameString].to_s
   end
   
-  # DeftApp 僆僽僕僃僋僩傪曉偡
+  # DeftApp オブジェクトを手す
   public
   def initialize
     @command_line_options = Deft::CommandLineOptions.instance
   end
   
-  # 儊僀儞儖乕僠儞
+  # メインル〖チン
   public
   def main
     begin 
@@ -107,7 +96,9 @@ class DeftApp
   
   private
   def build
+    require File.join( File.dirname(@command_line_options.build), 'deft.rb' )
     require @command_line_options.build
+    p File.join( File.dirname(@command_line_options.build), 'deft.rb' )
     Task['package'].invoke
   end
   
@@ -147,7 +138,7 @@ end
  
     ENV['DEBCONF_DEBUG'] = '.*'
     FileUtils.chmod( 0755, backend.path )    
-    exec "/usr/share/debconf/frontend #{backend.path} #{ARGV.join(' ')}"
+    exec %{/usr/share/debconf/frontend #{backend.path} #{ARGV.join(' ')}}
   end
 
   private
@@ -197,9 +188,6 @@ end
     if @command_line_options.emulate
       emulate
       exit( 0 )
-    end
-    if @command_line_options.ruby_code        
-      puts ruby_code( @command_line_options.ruby_code )        
     end
     if @command_line_options.template
       require @command_line_options.template

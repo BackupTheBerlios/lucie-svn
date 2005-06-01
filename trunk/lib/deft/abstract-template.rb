@@ -23,6 +23,18 @@ module Deft
     attr_accessor :short_description_ja
     attr_accessor :short_description
     attr_accessor :default
+
+    # テンプレートクラス名 => テンプレート名のハッシュテーブル
+    public
+    def self.template2class_table
+      { Deft::TextTemplate => 'text',
+        Deft::SelectTemplate => 'select',
+        Deft::NoteTemplate => 'note',
+        Deft::BooleanTemplate => 'boolean',
+        Deft::StringTemplate => 'string',
+        Deft::MultiselectTemplate => 'multiselect',
+        Deft::PasswordTemplate => 'password' }
+    end
     
     # 新しい AbstractTemplate オブジェクトを返す
     public
@@ -44,7 +56,13 @@ module Deft
         raise Exception::RequiredAttributeException
       end
     end
-    
+
+    # テンプレート名を返す
+    public
+    def template_type
+      return AbstractTemplate.template2class_table[self.class]
+    end
+
     private
     def template_string( typeString, *optionalFieldsArray )     
       _template_string =  "Template: #{name}\n"

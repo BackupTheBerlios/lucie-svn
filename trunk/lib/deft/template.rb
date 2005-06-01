@@ -115,13 +115,7 @@ module Deft
     # テンプレート名 => 実装クラスのテーブル
     private
     def template_table
-      { 'text'        => Deft::TextTemplate,
-        'select'      => Deft::SelectTemplate,
-        'note'        => Deft::NoteTemplate,
-        'boolean'     => Deft::BooleanTemplate,
-        'string'      => Deft::StringTemplate,
-        'multiselect' => Deft::MultiselectTemplate,
-        'password'    => Deft::PasswordTemplate }
+      return AbstractTemplate.template2class_table.invert
     end
     
     # 新しい Template オブジェクトを返す

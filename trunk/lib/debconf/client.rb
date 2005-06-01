@@ -40,7 +40,7 @@ module Debconf
       "fget", "purge", "metaget", "version", "clear"
     ]
     
-    # Debconf ‚©‚ç‚ÌƒŒƒXƒ|ƒ“ƒX‚ğƒp[ƒY‚·‚é
+    # Debconf ¤«¤é¤Î¥ì¥¹¥İ¥ó¥¹¤ò¥Ñ¡¼¥º¤¹¤ë
     def parse_response( responseString )
       if /(\d+)( (.*))?/ =~ responseString
         case $1.to_i
@@ -74,7 +74,8 @@ module Debconf
           stdout = $stdout_mock ? $stdout_mock : STDOUT
           stdin  = $stdin_mock  ? $stdin_mock  : STDIN          
           stdout.print(("#{command.upcase} " + args.join(' ')).rstrip + "\n")
-          parse_response stdin.gets.chomp
+          response = stdin.gets
+          parse_response( response.chomp ) unless response.nil?
         end
         module_function :#{command}
       -

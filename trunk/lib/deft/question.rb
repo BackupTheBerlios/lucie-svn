@@ -9,17 +9,15 @@ require 'deft/state'
 require 'deft/template'
 require 'time-stamp'
 
-# V‚µ‚¢¿–â€–Ú‚ğ“o˜^‚·‚é
+# ¿·¤·¤¤¼ÁÌä¹àÌÜ¤òÅĞÏ¿¤¹¤ë
 def question( nameString, &block )
   return Deft::Question.define_question( nameString, &block )
 end
 
-update(%q$LastChangedDate$)
-
 module Deft
-  # Debconf ‚Ì¿–â€–Ú‚ğ•\Œ»‚·‚éƒNƒ‰ƒX
+  # Debconf ¤Î¼ÁÌä¹àÌÜ¤òÉ½¸½¤¹¤ë¥¯¥é¥¹
   class Question
-    # Question ‚Ì '–¼‘O' => ƒCƒ“ƒXƒ^ƒ“ƒX ‚Ì Hash
+    # Question ¤Î 'Ì¾Á°' => ¥¤¥ó¥¹¥¿¥ó¥¹ ¤Î Hash
     QUESTIONS = {}
     # Very trivial items that have defaults that will work
     # in the vast majority of cases.
@@ -31,36 +29,36 @@ module Deft
     # Items that will probably break the system without user intervention.
     PRIORITY_CRITICAL = 'critical'.freeze
     
-    # ¿–â‚Ì‘®«‚ğŒˆ‚ß‚éƒuƒƒbƒN
+    # ¼ÁÌä¤ÎÂ°À­¤ò·è¤á¤ë¥Ö¥í¥Ã¥¯
     attr :actions
-    # ¿–â‚Ì–¼‘O
+    # ¼ÁÌä¤ÎÌ¾Á°
     attr :name
-    # ¿–â‚Ì Template
+    # ¼ÁÌä¤Î Template
     attr_accessor :template
-    # ¿–â‚Ì—Dæ“x
+    # ¼ÁÌä¤ÎÍ¥ÀèÅÙ
     attr_accessor :priority
-    # Ÿ‚Ì¿–â
+    # ¼¡¤Î¼ÁÌä
     attr_accessor :next_question
-    # Å‰‚Ì¿–â‚Å‚ ‚é‚©‚Ç‚¤‚©‚ğ•\‚·
+    # ºÇ½é¤Î¼ÁÌä¤Ç¤¢¤ë¤«¤É¤¦¤«¤òÉ½¤¹
     attr_accessor :first_question
-    # ˆê‚Â‘O‚Ì¿–â‚Ö–ß‚é
+    # °ì¤ÄÁ°¤Î¼ÁÌä¤ØÌá¤ë
     attr_accessor :backup
     
-    # Question ‚ğ lookup ‚·‚éB
-    # ‚à‚µ‚İ‚Â‚©‚ê‚Î‚İ‚Â‚©‚Á‚½ Question ‚ğ•Ô‚µA‚İ‚Â‚©‚ç‚È‚¯‚ê‚Î
-    # V‚µ‚¢ Question ‚ğ new ‚µ‚Ä•Ô‚·B
+    # Question ¤ò lookup ¤¹¤ë¡£
+    # ¤â¤·¤ß¤Ä¤«¤ì¤Ğ¤ß¤Ä¤«¤Ã¤¿ Question ¤òÊÖ¤·¡¢¤ß¤Ä¤«¤é¤Ê¤±¤ì¤Ğ
+    # ¿·¤·¤¤ Question ¤ò new ¤·¤ÆÊÖ¤¹¡£
     public
     def self.lookup( questionNameString )
       return QUESTIONS[questionNameString] ||= self.new( questionNameString )
     end
     
-    # “o˜^‚³‚ê‚Ä‚¢‚é Question ‚ÌƒŠƒXƒg‚ğ•Ô‚·
+    # ÅĞÏ¿¤µ¤ì¤Æ¤¤¤ë Question ¤Î¥ê¥¹¥È¤òÊÖ¤¹
     public
     def self.questions
       return QUESTIONS.values
     end
     
-    # “o˜^‚³‚ê‚Ä‚¢‚é Question ƒIƒuƒWƒFƒNƒg‚ğ–¼‘O‚ÅŒŸõ‚·‚é
+    # ÅĞÏ¿¤µ¤ì¤Æ¤¤¤ë Question ¥ª¥Ö¥¸¥§¥¯¥È¤òÌ¾Á°¤Ç¸¡º÷¤¹¤ë
     public
     def self.[]( questionNameString )
       return QUESTIONS[questionNameString]
@@ -82,29 +80,28 @@ module Deft
       return question.enhance( &block )
     end
     
-    # “o˜^‚³‚ê‚Ä‚¢‚é Question ƒIƒuƒWƒFƒNƒg‚ğƒNƒŠƒA‚·‚é
+    # ÅĞÏ¿¤µ¤ì¤Æ¤¤¤ë Question ¥ª¥Ö¥¸¥§¥¯¥È¤ò¥¯¥ê¥¢¤¹¤ë
     public
     def self.clear
       QUESTIONS.clear
     end
     
-    # Question ‚ª’è‹`‚³‚ê‚Ä‚¢‚ê‚Î‚»‚ê‚ğ•Ô‚µA‚»‚¤‚Å‚È‚¯‚ê‚Î nil ‚ğ•Ô‚µ‚Ü‚·
+    # Question ¤¬ÄêµÁ¤µ¤ì¤Æ¤¤¤ì¤Ğ¤½¤ì¤òÊÖ¤·¡¢¤½¤¦¤Ç¤Ê¤±¤ì¤Ğ nil ¤òÊÖ¤·¤Ş¤¹
     public
     def self.question_defined?( questionNameString )
       return QUESTIONS[questionNameString]
     end
     
-    # Question ƒIƒuƒWƒFƒNƒg‚ÌŠe‘®«‚ğƒZƒbƒg‚·‚é
+    # Question ¥ª¥Ö¥¸¥§¥¯¥È¤Î³ÆÂ°À­¤ò¥»¥Ã¥È¤¹¤ë
     public
     def enhance( &block )
       @actions << block if block_given?
       @actions.each { |each| result = each.call( self ) }
       register_concrete_state
-      puts "Question #{@name} (ƒeƒ“ƒvƒŒ[ƒg : #{@template}) ‚ğ“o˜^" if $trace
       return self
     end
     
-    # ‚ ‚½‚ç‚µ‚¢ Question ƒIƒuƒWƒFƒNƒg‚ğ•Ô‚·
+    # ¤¢¤¿¤é¤·¤¤ Question ¥ª¥Ö¥¸¥§¥¯¥È¤òÊÖ¤¹
     public
     def initialize( nameString )
       @priority = nil
@@ -150,9 +147,9 @@ module Deft
       return eval(state_class_name)
     end
     
-    # ¿–â–¼ => concrete state ƒNƒ‰ƒX–¼‚Ö•ÏŠ·
+    # ¼ÁÌäÌ¾ => concrete state ¥¯¥é¥¹Ì¾¤ØÊÑ´¹
     # 
-    # —á : 'lucie/hello-world' => 'Deft::State::Lucie__HelloWorld'
+    # Îã : 'lucie/hello-world' => 'Deft::State::Lucie__HelloWorld'
     #
     public
     def state_class_name

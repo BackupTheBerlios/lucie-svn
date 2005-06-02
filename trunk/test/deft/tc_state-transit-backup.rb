@@ -28,8 +28,8 @@ class TC_StateTransitBackup < Test::Unit::TestCase
   def test_transit
     template( 'start' ) do |template|
       template.template_type = 'note'
-      template.short_description_ja = 'スタート'
-      template.extended_description_ja = 'スタート'
+      template.short_description_ja = '･ｹ･ｿ｡ｼ･ﾈ'
+      template.extended_description_ja = '･ｹ･ｿ｡ｼ･ﾈ'
     end    
     question( 'start' => 'error' ) do |question|
       question.priority = Deft::Question::PRIORITY_MEDIUM
@@ -37,8 +37,8 @@ class TC_StateTransitBackup < Test::Unit::TestCase
     end    
     template( 'error' ) do |template|
       template.template_type = 'note'
-      template.short_description_ja = 'エラーメッセージ'
-      template.extended_description_ja = 'エラーメッセージ'
+      template.short_description_ja = '･ｨ･鬘ｼ･皈ﾃ･ｻ｡ｼ･ｸ'
+      template.extended_description_ja = '･ｨ･鬘ｼ･皈ﾃ･ｻ｡ｼ･ｸ'
     end    
     question( 'error' ) do |question|
       question.priority = Deft::Question::PRIORITY_MEDIUM
@@ -50,10 +50,6 @@ class TC_StateTransitBackup < Test::Unit::TestCase
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
     $stdout_mock.__next( :print ) do |argument| 
-      assert_equal( "FSET start seen false\n", argument ) 
-    end
-    $stdin_mock.__next( :gets ) do '0' end
-    $stdout_mock.__next( :print ) do |argument| 
       assert_equal( "INPUT medium start\n", argument ) 
     end
     $stdin_mock.__next( :gets ) do '0' end    
@@ -63,10 +59,6 @@ class TC_StateTransitBackup < Test::Unit::TestCase
     $stdin_mock.__next( :gets ) do '0' end
     
     $stdout_mock.__next( :print ) do |argument| 
-      assert_equal( "FSET error seen false\n", argument ) 
-    end
-    $stdin_mock.__next( :gets ) do '0' end
-    $stdout_mock.__next( :print ) do |argument| 
       assert_equal( "INPUT medium error\n", argument ) 
     end
     $stdin_mock.__next( :gets ) do '0' end    
@@ -75,7 +67,7 @@ class TC_StateTransitBackup < Test::Unit::TestCase
     end    
     $stdin_mock.__next( :gets ) do '0' end    
     
-    # start -> error -> start と遷移
+    # start -> error -> start ､ﾈﾁｫｰﾜ
     debconf_context.transit
     debconf_context.transit
     

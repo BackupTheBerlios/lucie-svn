@@ -28,8 +28,8 @@ class TC_StateTransitFinish < Test::Unit::TestCase
   def test_transit
     template( 'start' ) do |template|
       template.template_type = 'note'
-      template.short_description_ja = 'ƒXƒ^[ƒg'
-      template.extended_description_ja = 'ƒXƒ^[ƒg'
+      template.short_description_ja = '¥¹¥¿¡¼¥È'
+      template.extended_description_ja = '¥¹¥¿¡¼¥È'
     end    
     question( 'start' => 'finish' ) do |question|
       question.priority = Deft::Question::PRIORITY_MEDIUM
@@ -38,8 +38,8 @@ class TC_StateTransitFinish < Test::Unit::TestCase
     
     template( 'finish' ) do |template|
       template.template_type = 'note'
-      template.short_description_ja = 'ƒtƒBƒjƒbƒVƒ…'
-      template.extended_description_ja = 'ƒtƒBƒjƒbƒVƒ…'
+      template.short_description_ja = '¥Õ¥£¥Ë¥Ã¥·¥å'
+      template.extended_description_ja = '¥Õ¥£¥Ë¥Ã¥·¥å'
     end    
     question( 'finish' ) do |question|
       question.priority = Deft::Question::PRIORITY_MEDIUM
@@ -50,10 +50,6 @@ class TC_StateTransitFinish < Test::Unit::TestCase
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
     $stdout_mock.__next( :print ) do |argument| 
-      assert_equal( "FSET start seen false\n", argument ) 
-    end
-    $stdin_mock.__next( :gets ) do '0' end
-    $stdout_mock.__next( :print ) do |argument| 
       assert_equal( "INPUT medium start\n", argument ) 
     end
     $stdin_mock.__next( :gets ) do '0' end    
@@ -62,10 +58,6 @@ class TC_StateTransitFinish < Test::Unit::TestCase
     end    
     $stdin_mock.__next( :gets ) do '0' end
     
-    $stdout_mock.__next( :print ) do |argument| 
-      assert_equal( "FSET finish seen false\n", argument ) 
-    end
-    $stdin_mock.__next( :gets ) do '0' end
     $stdout_mock.__next( :print ) do |argument| 
       assert_equal( "INPUT medium finish\n", argument ) 
     end
@@ -87,8 +79,8 @@ class TC_StateTransitFinish < Test::Unit::TestCase
   def test_transit_backup
     template( 'start' ) do |template|
       template.template_type = 'note'
-      template.short_description_ja = 'ƒXƒ^[ƒg'
-      template.extended_description_ja = 'ƒXƒ^[ƒg'
+      template.short_description_ja = '¥¹¥¿¡¼¥È'
+      template.extended_description_ja = '¥¹¥¿¡¼¥È'
     end    
     question( 'start' => 'finish' ) do |question|
       question.priority = Deft::Question::PRIORITY_MEDIUM
@@ -97,8 +89,8 @@ class TC_StateTransitFinish < Test::Unit::TestCase
     
     template( 'finish' ) do |template|
       template.template_type = 'note'
-      template.short_description_ja = 'ƒtƒBƒjƒbƒVƒ…'
-      template.extended_description_ja = 'ƒtƒBƒjƒbƒVƒ…'
+      template.short_description_ja = '¥Õ¥£¥Ë¥Ã¥·¥å'
+      template.extended_description_ja = '¥Õ¥£¥Ë¥Ã¥·¥å'
     end    
     question( 'finish' ) do |question|
       question.priority = Deft::Question::PRIORITY_MEDIUM
@@ -109,10 +101,6 @@ class TC_StateTransitFinish < Test::Unit::TestCase
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
     $stdout_mock.__next( :print ) do |argument| 
-      assert_equal( "FSET start seen false\n", argument ) 
-    end
-    $stdin_mock.__next( :gets ) do '0' end
-    $stdout_mock.__next( :print ) do |argument| 
       assert_equal( "INPUT medium start\n", argument ) 
     end
     $stdin_mock.__next( :gets ) do '0' end    
@@ -121,10 +109,6 @@ class TC_StateTransitFinish < Test::Unit::TestCase
     end    
     $stdin_mock.__next( :gets ) do '0' end
     
-    $stdout_mock.__next( :print ) do |argument| 
-      assert_equal( "FSET finish seen false\n", argument ) 
-    end
-    $stdin_mock.__next( :gets ) do '0' end
     $stdout_mock.__next( :print ) do |argument| 
       assert_equal( "INPUT medium finish\n", argument ) 
     end

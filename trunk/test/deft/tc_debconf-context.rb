@@ -36,13 +36,10 @@ class TC_DebconfContext < Test::Unit::TestCase
     @debconf_context = Deft::DebconfContext.new
   end
   
-  # transit ‚ÅŽŸ‚Ì State ‚Ö‘JˆÚ‚·‚é‚±‚Æ‚ðŠm”F
+  # transit ¤Ç¼¡¤Î State ¤ØÁ«°Ü¤¹¤ë¤³¤È¤ò³ÎÇ§
   public
   def test_transit
     $stdout_mock = Mock.new( '[STDOUT]' )
-    $stdout_mock.__next( :print ) do |output| 
-      assert_equal( "FSET TEST/TEMPLATE1 seen false\n", output )
-    end
     $stdout_mock.__next( :print ) do |output| 
       assert_equal( "INPUT medium TEST/TEMPLATE1\n", output )
     end
@@ -50,7 +47,6 @@ class TC_DebconfContext < Test::Unit::TestCase
       assert_equal( "GO\n", output )
     end
     $stdin_mock = Mock.new( '[STDIN]' )
-    $stdin_mock.__next( :gets ) do '0 TRUE' end
     $stdin_mock.__next( :gets ) do '0 TRUE' end
     $stdin_mock.__next( :gets ) do '0 TRUE' end
     
@@ -63,7 +59,7 @@ class TC_DebconfContext < Test::Unit::TestCase
     $stdin_mock.__verify
   end
   
-  # ó‘Ô‘JˆÚ‚ÌŠJŽn’n“_‚Ì State ‚ªŽæ“¾‚Å‚«‚é‚±‚Æ‚ðŠm”F
+  # ¾õÂÖÁ«°Ü¤Î³«»ÏÃÏÅÀ¤Î State ¤¬¼èÆÀ¤Ç¤­¤ë¤³¤È¤ò³ÎÇ§
   public
   def test_start_state
     assert_kind_of( Deft::State, @debconf_context.current_state )
@@ -75,26 +71,22 @@ class TC_DebconfContext < Test::Unit::TestCase
   def test_backup
     $stdout_mock = Mock.new( '#<STDOUT>' )
     $stdout_mock.__next( :print ) do |output| 
-      assert_equal( "FSET TEST/TEMPLATE1 seen false\n", output )
-    end
-    $stdout_mock.__next( :print ) do |output| 
       assert_equal( "INPUT medium TEST/TEMPLATE1\n", output )
     end
     $stdout_mock.__next( :print ) do |output|
       assert_equal( "GO\n", output )
     end
     $stdin_mock = Mock.new( '#<STDIN>' )
-    $stdin_mock.__next( :gets ) do '0 TRUE' end
     $stdin_mock.__next( :gets ) do '0 TRUE' end    
     $stdin_mock.__next( :gets ) do '0 TRUE' end  
     
     first_state = @debconf_context.current_state
     @debconf_context.transit
     assert_equal( first_state, @debconf_context.last_state,
-                  '’¼‘O‚Ìó‘Ô‚ªŽæ‚èo‚¹‚È‚¢' )
+                  'Ä¾Á°¤Î¾õÂÖ¤¬¼è¤ê½Ð¤»¤Ê¤¤' )
     @debconf_context.backup
     assert_equal( first_state, @debconf_context.current_state,
-                  'backup ‚Å’¼‘O‚Ìó‘Ô‚É–ß‚ç‚È‚¢' )
+                  'backup ¤ÇÄ¾Á°¤Î¾õÂÖ¤ËÌá¤é¤Ê¤¤' )
   end
 end
 

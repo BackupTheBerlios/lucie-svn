@@ -9,15 +9,13 @@ require 'English'
 require 'deft'
 require 'deft/concrete-state'
 
-update(%q$Date$)
-
 module Deft
-  # Debconf ‚É‚æ‚é‰æ–Ê‘JˆÚ‚ğ•\‚·ƒNƒ‰ƒX
+  # Debconf ¤Ë¤è¤ë²èÌÌÁ«°Ü¤òÉ½¤¹¥¯¥é¥¹
   class DebconfContext   
-    # Œ»İ‚Ì Concrete State
+    # ¸½ºß¤Î Concrete State
     attr_reader :current_state
     
-    # ‚ ‚½‚ç‚µ‚¢ DebconfContext ƒIƒuƒWƒFƒNƒg‚ğ•Ô‚·
+    # ¤¢¤¿¤é¤·¤¤ DebconfContext ¥ª¥Ö¥¸¥§¥¯¥È¤òÊÖ¤¹
     public
     def initialize
       @state_stack = []
@@ -25,26 +23,26 @@ module Deft
       @state_stack.push( @current_state )
     end
     
-    # Ÿ‚Ì¿–â‚Ö‘JˆÚ‚·‚é
+    # ¼¡¤Î¼ÁÌä¤ØÁ«°Ü¤¹¤ë
     public
     def transit
       @current_state.transit self
     end
 
-    # ’¼‘O‚Ì Concrete State ‚ğ•Ô‚·
+    # Ä¾Á°¤Î Concrete State ¤òÊÖ¤¹
     public
     def last_state
       return @state_stack.last
     end
     
-    # Œ»İ‚Ìó‘Ô‚ğ•ÏX‚·‚é
+    # ¸½ºß¤Î¾õÂÖ¤òÊÑ¹¹¤¹¤ë
     public
     def current_state=( aState )
       @state_stack.push( @current_state )
       @current_state = aState
     end
     
-    # ’¼‘O‚Ìó‘Ô‚É–ß‚é
+    # Ä¾Á°¤Î¾õÂÖ¤ËÌá¤ë
     public
     def backup
       @current_state = @state_stack.pop

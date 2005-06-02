@@ -121,7 +121,6 @@ module Deft
   end
 end
 
-
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

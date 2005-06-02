@@ -16,6 +16,29 @@ class TC_Specification < Test::Unit::TestCase
     @specification = LMP::Specification.new
   end
 
+  # ------------------------- 属性のテスト.
+  
+  public
+  def test_setter_methods
+    [:name, :version, :section, :maintainer, :architecture,
+      :short_description, :extended_description, :changelog,
+      :priority, :readme, :control, :postinst, :rules, :deft,
+      :templates, :package, :config, :copyright, :files].each do |each|
+      setter_method_test each
+    end
+  end
+
+  private
+  def setter_method_test( attributeNameSymbol )
+    begin
+      LMP::Specification.new do |spec|
+        spec.send( attributeNameSymbol.to_s + '=', nil )
+      end
+    rescue
+      fail "#{attributeNameString} 属性に値をセットするときにエラーが発生"
+    end
+  end
+
   # ------------------------- Template メソッドのテスト.
 
   # 生成されるテンプレートの内容については考えず、テンプレート生成メソッ

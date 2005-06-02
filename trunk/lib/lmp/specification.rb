@@ -79,7 +79,7 @@ module LMP
     required_attribute :section, 'misc'
     required_attribute :maintainer
     required_attribute :architecture, 'all'
-#    required_attribute :depends
+#    required_attribute :depends  # TODO: implement this.
     required_attribute :short_description
     required_attribute :extended_description
     required_attribute :changelog

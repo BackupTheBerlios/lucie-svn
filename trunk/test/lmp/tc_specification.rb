@@ -17,7 +17,41 @@ class TC_Specification < Test::Unit::TestCase
   end
 
   # ------------------------- 属性のテスト.
-  
+
+  public
+  def test_section_default_value
+    assert_equal( 'misc', @specification.section, 
+                  "Specification#section のデフォルト値が正しくない" )
+  end
+
+  public
+  def test_architecture_default_value
+    assert_equal( 'all', @specification.architecture, 
+                  "Specification#architecture のデフォルト値が正しくない" )
+  end
+
+  public
+  def test_priority_default_value
+    assert_equal( 'optional', @specification.priority, 
+                  "Specification#priority のデフォルト値が正しくない" )
+  end
+
+  public
+  def test_package_default_value
+    assert_kind_of( String, @specification.package, 
+                    "Specification#package のデフォルト値が正しくない" )
+  end
+
+  public
+  def test_files_default_value
+    assert_equal( ['debian/README.Debian', 'debian/changelog',
+                    'debian/config', 'debian/control',
+                    'debian/copyright', 'debian/postinst',
+                    'debian/rules', 'debian/templates', 'package'],
+                  @specification.files,  "Specification#files のデフォルト値が正しくない" )
+  end
+
+  # 各属性に値をセットできることをテスト
   public
   def test_setter_methods
     [:name, :version, :section, :maintainer, :architecture,

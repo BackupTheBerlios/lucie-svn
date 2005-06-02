@@ -8,12 +8,12 @@
 require 'lmp/template'
 
 module LMP
-  # LMP ‚ÌƒXƒyƒbƒN‚ğŠÇ—‚·‚éƒNƒ‰ƒX
+  # LMP ¤Î¥¹¥Ú¥Ã¥¯¤ò´ÉÍı¤¹¤ë¥¯¥é¥¹
   class Specification
-    # ƒAƒgƒŠƒrƒ…[ƒg–¼‚ÌƒŠƒXƒg: [:name, :version, ...]
+    # ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤Î¥ê¥¹¥È: [:name, :version, ...]
     @@required_attributes = []
     
-    # _‚·‚×‚Ä‚Ì_ ƒAƒgƒŠƒrƒ…[ƒg–¼ ‚ÆƒfƒtƒHƒ‹ƒg’l‚ÌƒŠƒXƒg: [[:name, nil], [:version, '0.0.1'], ...]
+    # _¤¹¤Ù¤Æ¤Î_ ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾ ¤È¥Ç¥Õ¥©¥ë¥ÈÃÍ¤Î¥ê¥¹¥È: [[:name, nil], [:version, '0.0.1'], ...]
     @@attributes = []
     
     # ------------------------- Convenience class methods.
@@ -90,7 +90,7 @@ module LMP
     required_attribute :rules
     required_attribute :deft
     required_attribute :templates 
-    required_attribute :packages, Template.packages
+    required_attribute :package, Template.package
     required_attribute :config
     required_attribute :copyright, 'Copyright: GPL2'
     required_attribute :files, ['debian/README.Debian', 
@@ -101,16 +101,18 @@ module LMP
                                 'debian/postinst',
                                 'debian/rules',
                                 'debian/templates',
-                                'packages']
+                                'package']
+    read_only :config
     read_only :section
     read_only :architecture
     read_only :priority                            
     read_only :templates 
     read_only :control
     read_only :rules                               
-    read_only :packages
+    read_only :package
     read_only :files
-    read_only :deft
+    read_only :readme
+    read_only :changelog
         
     # ------------------------- OPTIONAL LMP attributes.
     
@@ -124,7 +126,7 @@ module LMP
       yield self if block_given?
     end
     
-    # ‘¦’lˆÈŠO‚Í +obj+ ‚ğ dup ‚µ‚Ä•Ô‚·
+    # Â¨ÃÍ°Ê³°¤Ï +obj+ ¤ò dup ¤·¤ÆÊÖ¤¹
     private
     def copy_of( obj )
       case obj
@@ -136,13 +138,6 @@ module LMP
     end
     
     # ------------------------- Template methods.
-    
-    public
-    def deft
-      Deft::ConcreteState.states.map do |each|
-        each.to_ruby
-      end.join("\n")
-    end
     
     public
     def config

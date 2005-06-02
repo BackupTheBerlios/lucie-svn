@@ -57,6 +57,50 @@ class TC_Specification < Test::Unit::TestCase
             "Specificatoin#templates メソッドが無い" )
   end
 
+  # すべてのテンプレート生成メソッドが read only であることをテスト
+
+  public
+  def test_config_read_only
+    assert_raises( NoMethodError, "Specification#config が Read Only でない" ) do 
+      @specification.config = nil
+    end
+  end
+
+  public
+  def test_control_read_only
+    assert_raises( NoMethodError, "Specification#control が Read Only でない" ) do 
+      @specification.control = nil
+    end
+  end
+
+  public
+  def test_rules_read_only
+    assert_raises( NoMethodError, "Specification#rules が Read Only でない" ) do 
+      @specification.rules = nil
+    end
+  end
+
+  public
+  def test_readme_read_only
+    assert_raises( NoMethodError, "Specification#readme が Read Only でない" ) do 
+      @specification.readme = nil
+    end
+  end
+
+  public
+  def test_changelog_read_only
+    assert_raises( NoMethodError, "Specification#changelog が Read Only でない" ) do 
+      @specification.changelog = nil
+    end
+  end
+
+  public
+  def test_templates_read_only
+    assert_raises( NoMethodError, "Specification#templates が Read Only でない" ) do 
+      @specification.templates = nil
+    end
+  end
+
   # ------------------------- Debug メソッドのテスト.
 
   public

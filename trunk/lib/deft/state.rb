@@ -13,11 +13,9 @@ require 'singleton'
 
 include Debconf::Client
 
-update(%q$Date$)
-
 module Deft
-  # Question ƒIƒuƒWƒFƒNƒg‚©‚ç State ƒpƒ^[ƒ“‚ÌŠe concrete state ƒNƒ‰ƒX‚ğ
-  # ¶¬‚·‚éƒNƒ‰ƒXB‚Ü‚½A‚·‚×‚Ä‚Ì concrete state ƒNƒ‰ƒX‚Ìe‚Æ‚È‚éƒNƒ‰ƒXB
+  # Question ¥ª¥Ö¥¸¥§¥¯¥È¤«¤é State ¥Ñ¥¿¡¼¥ó¤Î³Æ concrete state ¥¯¥é¥¹¤ò
+  # À¸À®¤¹¤ë¥¯¥é¥¹¡£¤Ş¤¿¡¢¤¹¤Ù¤Æ¤Î concrete state ¥¯¥é¥¹¤Î¿Æ¤È¤Ê¤ë¥¯¥é¥¹¡£
   class State    
     include Singleton
     
@@ -25,14 +23,14 @@ module Deft
     attr_reader :first_state
     attr_reader :priority
     
-    # ƒfƒoƒbƒO—p
+    # ¥Ç¥Ğ¥Ã¥°ÍÑ
     public
     def inspect
       return "#<State: @name=\"#{@name}\", @first_state=\"#{@first_state}\">"
     end
     
-    # –¼‘OAÅ‰‚Ì State ‚Å‚ ‚é‚©‚Ç‚¤‚©‚ğƒZƒbƒg‚µA
-    # ConcreteState ‚Æ‚µ‚Ä“o˜^‚·‚éB
+    # Ì¾Á°¡¢ºÇ½é¤Î State ¤Ç¤¢¤ë¤«¤É¤¦¤«¤ò¥»¥Ã¥È¤·¡¢
+    # ConcreteState ¤È¤·¤ÆÅĞÏ¿¤¹¤ë¡£
     public
     def enhance( aQuestion )
       @question = aQuestion
@@ -44,7 +42,6 @@ module Deft
 
     private
     def communicate_debconf( questionNameString, priorityString ) 
-      fset( questionNameString, 'seen', 'false' )
       input( priorityString, questionNameString )
       rc = go
       return rc

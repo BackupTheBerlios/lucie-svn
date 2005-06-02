@@ -13,15 +13,15 @@ require 'deft/state'
 require 'mock'
 require 'test/unit'
 
-class TC_StateTransitHashState < Test::Unit::TestCase
+class TC_StateTransitProcState < Test::Unit::TestCase
   public
   def setup
     clear
     
     template( 'start' ) do |template|
       template.template_type = 'note'
-      template.short_description_ja = 'スタート'
-      template.extended_description_ja = 'スタート'
+      template.short_description_ja = '･ｹ･ｿ｡ｼ･ﾈ'
+      template.extended_description_ja = '･ｹ･ｿ｡ｼ･ﾈ'
     end    
     question( 'start' => proc do |user_input| 
       case user_input
@@ -75,10 +75,6 @@ class TC_StateTransitHashState < Test::Unit::TestCase
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
     $stdout_mock.__next( :print ) do |argument| 
-      assert_equal( "FSET start seen false\n", argument ) 
-    end
-    $stdin_mock.__next( :gets ) do '0' end
-    $stdout_mock.__next( :print ) do |argument| 
       assert_equal( "INPUT medium start\n", argument ) 
     end
     $stdin_mock.__next( :gets ) do '0' end    
@@ -104,10 +100,6 @@ class TC_StateTransitHashState < Test::Unit::TestCase
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
     $stdout_mock.__next( :print ) do |argument| 
-      assert_equal( "FSET start seen false\n", argument ) 
-    end
-    $stdin_mock.__next( :gets ) do '0' end
-    $stdout_mock.__next( :print ) do |argument| 
       assert_equal( "INPUT medium start\n", argument ) 
     end
     $stdin_mock.__next( :gets ) do '0' end    
@@ -132,10 +124,6 @@ class TC_StateTransitHashState < Test::Unit::TestCase
   def test_transit_error    
     $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
     $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
-    $stdout_mock.__next( :print ) do |argument| 
-      assert_equal( "FSET start seen false\n", argument ) 
-    end
-    $stdin_mock.__next( :gets ) do '0' end
     $stdout_mock.__next( :print ) do |argument| 
       assert_equal( "INPUT medium start\n", argument ) 
     end

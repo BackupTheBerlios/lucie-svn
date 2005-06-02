@@ -9,6 +9,8 @@ require 'deft/abstract-template'
 require 'deft/template'
 require 'time-stamp'
 
+update(%q$Id$)
+
 module Deft  
   # select 型のテンプレートを表すクラス
   class SelectTemplate < AbstractTemplate

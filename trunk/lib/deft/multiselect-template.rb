@@ -9,6 +9,8 @@ require 'deft/template'
 require 'deft/abstract-template'
 require 'time-stamp'
 
+update(%q$Id$)
+
 module Deft 
   # multiselect 型の Template をあらわすクラス
   class MultiselectTemplate < AbstractTemplate

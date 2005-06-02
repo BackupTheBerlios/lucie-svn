@@ -8,6 +8,8 @@
 require 'deft/abstract-template'
 require 'time-stamp'
 
+update(%q$Id$)
+
 module Deft  
   # boolean 型のテンプレートを表すクラス
   class BooleanTemplate < AbstractTemplate   

@@ -13,6 +13,8 @@ require 'singleton'
 
 include Debconf::Client
 
+update(%q$Id$)
+
 module Deft
   # Question オブジェクトから State パターンの各 concrete state クラスを
   # 生成するクラス。また、すべての concrete state クラスの親となるクラス。

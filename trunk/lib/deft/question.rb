@@ -9,6 +9,8 @@ require 'deft/state'
 require 'deft/template'
 require 'time-stamp'
 
+update(%q$Id$)
+
 # 新しい質問項目を登録する
 def question( nameString, &block )
   return Deft::Question.define_question( nameString, &block )

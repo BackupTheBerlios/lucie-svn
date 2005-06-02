@@ -7,6 +7,8 @@
 
 require 'time-stamp'
 
+update(%q$Id$)
+
 module Deft
   # Concrete State を管理するクラス。
   class ConcreteState

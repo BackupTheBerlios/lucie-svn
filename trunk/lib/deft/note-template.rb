@@ -9,6 +9,8 @@ require 'deft/abstract-template'
 require 'deft/template'
 require 'time-stamp'
 
+update(%q$Id$)
+
 module Deft  
   # note 型の Template をあらわすクラス
   class NoteTemplate < AbstractTemplate

@@ -16,6 +16,8 @@ require 'forwardable'
 require 'lucie/string'
 require 'time-stamp'
 
+update(%q$Id$)
+
 # テンプレートを登録
 def template( nameString, &block )
   return Deft::Template.define_template( nameString, &block )

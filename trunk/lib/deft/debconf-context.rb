@@ -9,6 +9,8 @@ require 'English'
 require 'deft'
 require 'deft/concrete-state'
 
+update(%q$Id$)
+
 module Deft
   # Debconf による画面遷移を表すクラス
   class DebconfContext   

@@ -8,6 +8,8 @@
 require 'deft/abstract-template'
 require 'time-stamp'
 
+update(%q$Id$)
+
 module Deft
   # string 型の Template をあらわすクラス
   class StringTemplate < AbstractTemplate   

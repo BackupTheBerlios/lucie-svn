@@ -8,6 +8,8 @@
 require 'lucie/string'
 require 'time-stamp'
 
+update(%q$Id$)
+
 module Deft
   module Exception
     class InvalidAttributeException < ::Exception; end

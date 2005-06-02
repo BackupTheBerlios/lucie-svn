@@ -28,10 +28,12 @@ require 'singleton'
 require 'tempfile'
 require 'nkf'
 
+update(%q$Id$)
+
 class DeftApp
   include Singleton
   
-  DEFT_VERSION = '0.0.1'
+  DEFT_VERSION = '0.0.2'
   VERSION_STRING = ['deft', DEFT_VERSION, '('+$svn_date+')'].join(' ')
   
   # +templateNameString+ で表される Template の RFC-822 による表現を返す

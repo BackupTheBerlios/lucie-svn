@@ -43,8 +43,6 @@ def update( svn_timestamp )
   return $svn_date
 end
 
-update(%q$LastChangedDate$)
-
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

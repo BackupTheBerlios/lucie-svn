@@ -18,22 +18,16 @@ module Deft
     
     attr_reader :build
     attr_reader :run
-    attr_reader :input
     attr_reader :help 
     attr_reader :template
     attr_reader :trace 
     attr_reader :version
     attr_reader :question
-    attr_reader :emulate
 
     module OptionList
       OPTION_LIST = [
       [ '--run',            '-R',   'file path', \
           'run debconf.' ],
-      [ '--input',          '-i',   'input string', \
-          'emulate users input string.' ],
-      [ '--emulate',        '-e',   'question name', \
-          'emulate state transition.' ],
       [ '--trace',          '-T',   nil, \
           'displays lots on internal stuff.' ],
       [ '--help',           '-h',   nil, \
@@ -80,10 +74,6 @@ module Deft
             @build = argument
           when '--run'
             @run = argument
-          when '--input'
-            @input= argument
-          when '--emulate'
-            @emulate = argument
           when '--question'
             @question = argument
           when '--template'
@@ -105,9 +95,8 @@ module Deft
     def inspect
       return '[CommandLineOptions: ' +
         ["trace=#{@trace.inspect}", "help=#{@help.inspect}",
-        "emulate=#{@emulate.inspect}", "version=#{@version.inspect}",
-        "template=#{@template.inspect}", "question=#{@question.inspect}",
-        "input=#{@input.inspect}", "run=#{@run.inspect}", "build=#{@build.inspect}"].join(', ') + ']'
+        "version=#{@version.inspect}", "template=#{@template.inspect}", 
+        "question=#{@question.inspect}", "run=#{@run.inspect}", "build=#{@build.inspect}"].join(', ') + ']'
     end
     
     private

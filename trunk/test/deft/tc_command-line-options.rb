@@ -49,22 +49,6 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                   "defalut value for version was not set to OFF" )
   end
   
-  # デフォルトで emulate オプションが nil であることをテスト
-  public
-  def test_default_emulate_option_is_false
-    @commandline_options.parse( [] )
-    assert_nil( @commandline_options.emulate,
-                "defalut value for emulate was not set to OFF" )
-  end
-  
-  # デフォルトで input オプションが nil であることをテスト
-  public
-  def test_default_input_option_is_false
-    @commandline_options.parse( [] )
-    assert_nil( @commandline_options.input,
-                "defalut value for input was not set to OFF" )
-  end
-  
   # デフォルトで run オプションが nil であることをテスト
   public
   def test_default_run_option_is_false
@@ -118,20 +102,6 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   end
   
   public
-  def test_parse_emulate_option
-    @commandline_options.parse( ['--emulate=hello'] )
-    assert_equal( 'hello', @commandline_options.emulate,
-                  "couldn't get value for emulate option" )
-  end
-  
-  public
-  def test_parse_input_option
-    @commandline_options.parse( ['--input=true'] )
-    assert_equal( 'true', @commandline_options.input,
-                  "couldn't get value for input option" )
-  end
-  
-  public
   def test_parse_run_option
     @commandline_options.parse( ['--run=data/lucie_vm_template'] )
     assert_equal( 'data/lucie_vm_template', @commandline_options.run,
@@ -175,10 +145,6 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                   "couldn't inspect template option" )
     assert_match( /question=\S+/,  @commandline_options.inspect,
                   "couldn't inspect question option" )
-    assert_match( /emulate=\S+/, @commandline_options.inspect,
-                  "couldn't inspect emulate option" )
-    assert_match( /input=\S+/, @commandline_options.inspect,
-                  "couldn't inspect input option" )
     assert_match( /run=\S+/, @commandline_options.inspect,
                   "couldn't inspect run option" )
     assert_match( /build=\S+/, @commandline_options.inspect,

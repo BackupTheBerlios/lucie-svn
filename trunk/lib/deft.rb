@@ -142,34 +142,9 @@ end
   end
 
   private
-  def emulate
-    $stdin_mock = STDIN.dup
-    def $stdin_mock.gets
-      return "0"
-    end
-    debconf_definition, question_name = @command_line_options.emulate.gsub(/\s/, '').split(',')
-    require debconf_definition
-    next_question = Deft::Question::QUESTIONS[question_name].next_question
-    case next_question
-    when String
-      puts "`#{question_name}' => `#{next_question}'"
-    when Hash
-      raise '--input option is not set' if @command_line_options.input.nil?
-      puts "`#{question_name}' => `#{next_question[@command_line_options.input]}'"
-    when Proc
-      raise '--input option is not set' if @command_line_options.input.nil?
-      puts "`#{question_name}' => `#{next_question.call( @command_line_options.input )}'"
-    else
-      raise "This shouldn't happen."
-    end
-  end
-    
-  private
   def do_option    
     @command_line_options.parse ARGV.dup
-    if @command_line_options.trace
-      $trace = true
-    end
+    $trace = true if @command_line_options.trace
     if @command_line_options.version
       puts VERSION_STRING
       exit( 0 )
@@ -184,10 +159,6 @@ end
     end
     if @command_line_options.run      
       run
-    end
-    if @command_line_options.emulate
-      emulate
-      exit( 0 )
     end
     if @command_line_options.template
       require @command_line_options.template

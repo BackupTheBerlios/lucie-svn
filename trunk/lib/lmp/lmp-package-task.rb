@@ -5,25 +5,24 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'rubygems'
 require 'rake/packagetask'
 require 'lmp/builder'
 
 module Rake
-  # Specification ‚ÉŠî‚Ã‚¢‚Ä LMP ‚ğƒrƒ‹ƒh‚·‚éƒ^ƒXƒNB
+  # Specification ¤Ë´ğ¤Å¤¤¤Æ LMP ¤ò¥Ó¥ë¥É¤¹¤ë¥¿¥¹¥¯¡£
   #
-  # PackageTask ‚É‚æ‚Á‚Ä¶¬‚³‚ê‚é Rake ƒ^[ƒQƒbƒg‚É‰Á‚¦A
-  # LMPPackageTask ‚ÍŸ‚Ìƒ^ƒXƒN‚ğ¶¬‚·‚éB
+  # ¿Æ¥¯¥é¥¹¤Ç¤¢¤ë Rake::PackageTask ¤Ë¤è¤Ã¤Æ¼«Æ°Åª¤ËÀ¸À®¤µ¤ì¤ë Rake 
+  # ¥¿¡¼¥²¥Ã¥È¤Ë²Ã¤¨¡¢LMPPackageTask ¤Ï¼¡¤Î¥¿¡¼¥²¥Ã¥È¤òÀ¸À®¤¹¤ë¡£
   #
-  # [<b>"<em>package_dir</em>/<em>name</em>-<em>version</em>.deb"</b>]
-  #  —^‚¦‚ç‚ê‚½–¼‘O‚Æƒo[ƒWƒ‡ƒ“‚ğŒ³‚É LMP ƒpƒbƒP[ƒW‚ğì¬‚·‚é
+  # [<b>"<em>package_dir</em>/<em>name</em>_<em>version</em>_<em>architecture</em>.deb"</b>]
+  #  Í¿¤¨¤é¤ì¤¿Ì¾Á°¤È¥Ğ¡¼¥¸¥ç¥ó¤ò¸µ¤Ë LMP ¥Ñ¥Ã¥±¡¼¥¸¤òºîÀ®¤¹¤ë
   #
-  # LMP ‚Ì Specification ‚ğ—p‚¢‚½ê‡‚Ìg—p—á:
+  # LMP::Specification ¤òÍÑ¤¤¤¿¾ì¹ç¤Î»ÈÍÑÎã:
   #
   #  spec = LMP::Specification.new do |spec|
   #    spec.name = "c-dev"
   #    spec.version = "0.0.1"
-  #    spec.short_description = '[ƒƒ^ƒpƒbƒP[ƒW] C ŠJ”­ŠÂ‹«'
+  #    spec.short_description = '[¥á¥¿¥Ñ¥Ã¥±¡¼¥¸] C ³«È¯´Ä¶­'
   #    spec.extended_description = <<-EXTENDED_DESCRIPTION
   #  Included packages:
   #   o autoconf - automatic configure script builder
@@ -70,19 +69,21 @@ module Rake
   #    pkg.need_deb = true
   #  end
   #
-  #
+  #--
+  # TODO: need_rpm ¥¢¥È¥ê¥Ó¥å¡¼¥È¤Î¥µ¥İ¡¼¥È
+  #++
   class LMPPackageTask < PackageTask
-    # LMP ƒpƒbƒP[ƒW‚Ìƒƒ^ƒf[ƒ^‚ğŠÜ‚ŞƒXƒyƒbƒNBƒpƒbƒP[ƒW–¼Aƒo[ƒWƒ‡ƒ“ 
-    # ‚¨‚æ‚Ñ package_files ‚Í©“®“I‚É LMP ƒXƒyƒbƒN‚©‚çŒˆ’è‚³‚ê‚é‚½‚ßA–¾  
-    # ¦“I‚É“n‚·•K—v‚Í–³‚¢B
+    # LMP ¥Ñ¥Ã¥±¡¼¥¸¤Î¥á¥¿¥Ç¡¼¥¿¤ò´Ş¤à¥¹¥Ú¥Ã¥¯¡£¥Ñ¥Ã¥±¡¼¥¸Ì¾¡¢¥Ğ¡¼¥¸¥ç
+    # ¥ó ¤ª¤è¤Ó @package_files ¤Ï¼«Æ°Åª¤Ë LMP ¥¹¥Ú¥Ã¥¯¤«¤é·èÄê¤µ¤ì¤ë¤¿
+    # ¤á¡¢ÌÀ ¼¨Åª¤ËÅÏ¤¹É¬Í×¤ÏÌµ¤¤¡£
     attr_accessor :lmp_spec
-    # deb ƒtƒ@ƒCƒ‹‚ğ¶¬‚·‚é‚Æ‚«‚Í true (ƒfƒtƒHƒ‹ƒg : false)
+    # deb ¥Õ¥¡¥¤¥ë¤òÀ¸À®¤¹¤ë¤È¤­¤Ï true (¥Ç¥Õ¥©¥ë¥È : false)
     attr_accessor :need_deb 
 
-    # LMP ƒpƒbƒP[ƒW—p Rake ƒ^ƒXƒN‚Ìƒ‰ƒCƒuƒ‰ƒŠ‚ğ¶¬‚·‚éB
-    # ƒuƒƒbƒN‚ª—^‚¦‚ç‚ê‚½ê‡A©“®“I‚É LMP ‚ğ’è‹`‚·‚éB
-    # ‚à‚µ—^‚¦‚ç‚ê‚È‚©‚Á‚½ê‡Aƒ^ƒXƒN‚ğ’è‹`‚·‚é‚½‚ß‚É‚Í–¾¦“I‚É
-    # +define+ ‚ğŒÄ‚Ño‚·•K—v‚ª‚ ‚éB    
+    # LMP ¥Ñ¥Ã¥±¡¼¥¸ÍÑ Rake ¥¿¥¹¥¯¤Î¥é¥¤¥Ö¥é¥ê¤òÀ¸À®¤¹¤ë¡£
+    # ¥Ö¥í¥Ã¥¯¤¬Í¿¤¨¤é¤ì¤¿¾ì¹ç¡¢¼«Æ°Åª¤Ë LMP ¤òÄêµÁ¤¹¤ë¡£
+    # ¤â¤·Í¿¤¨¤é¤ì¤Ê¤«¤Ã¤¿¾ì¹ç¡¢¥¿¥¹¥¯¤òÄêµÁ¤¹¤ë¤¿¤á¤Ë¤ÏÌÀ¼¨Åª¤Ë
+    # +define+ ¤ò¸Æ¤Ó½Ğ¤¹É¬Í×¤¬¤¢¤ë¡£    
     public
     def initialize( aSpecification )
       init( aSpecification )
@@ -90,8 +91,8 @@ module Rake
       define if block_given?
     end
     
-    # ƒ^ƒXƒN‚ğ‰Šú‰»‚·‚éB
-    # "yield self" ‚â define ‚Ì‘O‚ÉÀs‚³‚ê‚éB
+    # ¥¿¥¹¥¯¤ò½é´ü²½¤¹¤ë¡£
+    # "yield self" ¤ä define ¤ÎÁ°¤Ë¼Â¹Ô¤µ¤ì¤ë¡£
     public
     def init( aSpecification )
       super( aSpecification.name, aSpecification.version )
@@ -99,8 +100,8 @@ module Rake
       @package_files += @lmp_spec.files if @lmp_spec.files
     end
     
-    # LMPPackageTask ‚Åw’è‚³‚ê‚é Rake ‚Ìƒ^ƒXƒN‚ÆƒAƒNƒVƒ‡ƒ“‚ğ’è‹`‚·‚éB
-    # (ƒuƒƒbƒN‚ª +new+ ‚Ö“n‚³‚ê‚½Û‚É‚Í +define+ ‚Í©“®“I‚ÉŒÄ‚Î‚ê‚é)
+    # LMPPackageTask ¤Ç»ØÄê¤µ¤ì¤ë Rake ¤Î¥¿¥¹¥¯¤È¥¢¥¯¥·¥ç¥ó¤òÄêµÁ¤¹¤ë¡£
+    # (¥Ö¥í¥Ã¥¯¤¬ +new+ ¤ØÅÏ¤µ¤ì¤¿ºİ¤Ë¤Ï +define+ ¤Ï¼«Æ°Åª¤Ë¸Æ¤Ğ¤ì¤ë)
     public
     def define
       super

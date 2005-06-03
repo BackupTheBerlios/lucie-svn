@@ -8,16 +8,16 @@
 require 'rake'
 
 module LMP
-  # LMP ƒpƒbƒP[ƒWì¬‚É•K—v‚Èƒtƒ@ƒCƒ‹‚Ì Rake ƒ^[ƒQƒbƒg‚Ì“o˜^A
-  # ‚¨‚æ‚Ñ LMP ƒpƒbƒP[ƒW‚Ìƒrƒ‹ƒh‚ğs‚¤
+  # LMP ¥Ñ¥Ã¥±¡¼¥¸ºîÀ®¤ËÉ¬Í×¤Ê¥Õ¥¡¥¤¥ë¤Î Rake ¥¿¡¼¥²¥Ã¥È¤ÎÅĞÏ¿¡¢
+  # ¤ª¤è¤Ó LMP ¥Ñ¥Ã¥±¡¼¥¸¤Î¥Ó¥ë¥É¤ò¹Ô¤¦
   class Builder
-    # ƒpƒbƒP[ƒWì¬‚É•K—v‚ÈŠeƒtƒ@ƒCƒ‹‚Ì Rake ƒ^[ƒQƒbƒg‚ğ’è‹`‚·‚é
+    # ¥Ñ¥Ã¥±¡¼¥¸ºîÀ®¤ËÉ¬Í×¤Ê³Æ¥Õ¥¡¥¤¥ë¤Î Rake ¥¿¡¼¥²¥Ã¥È¤òÄêµÁ¤¹¤ë
     public
     def initialize( aSpecification, buildDirPathString )
       @spec = aSpecification
       @build_dir = buildDirPathString
       
-      define_file_task( File.join(@build_dir, 'packages') )
+      define_file_task( File.join(@build_dir, 'package') )
       define_file_task( File.join(@build_dir, 'debian', 'README.Debian'), :readme )
       define_file_task( File.join(@build_dir, 'debian', 'changelog') )
       define_file_task( File.join(@build_dir, 'debian', 'config') )
@@ -28,7 +28,7 @@ module LMP
       define_file_task( File.join(@build_dir, 'debian', 'templates') )
     end
     
-    # Specification ‚ğŒ³‚É LMP ‚ğƒrƒ‹ƒh‚·‚éB
+    # Specification ¤ò¸µ¤Ë LMP ¤ò¥Ó¥ë¥É¤¹¤ë¡£
     public
     def build
       sh "cd #{@build_dir} && debuild" do |ok, res|

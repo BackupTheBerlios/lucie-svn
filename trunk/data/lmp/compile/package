@@ -1,6 +1,6 @@
 PACKAGES install
 
-# fortran
+# Fortran
 g77 
 g77-2.95
 g77-3.0
@@ -24,6 +24,14 @@ g++-3.2
 g++-3.3
 g++-3.4
 
+# C
+gcc 
+gcc-2.95
+gcc-3.0
+gcc-3.2
+gcc-3.3
+gcc-3.4
+
 electric-fence
 bin86
 m4 
@@ -38,7 +46,6 @@ bison
 flex 
 cutils 
 cxref 
-gcc 
 gdb 
 glibc-doc 
 libtool

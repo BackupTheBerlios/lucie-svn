@@ -118,6 +118,9 @@ module Deft
       concrete_state.enhance( self )
     end   
 
+    #--
+    # FIXME: 'lucie-client/compile/g++' => Deft::State::LucieClient__Compile__G++ となり '++' でコンパルエラー
+    #++
     private 
     def define_concrete_state
       eval( "class #{state_class_name} < Deft::State; end" )

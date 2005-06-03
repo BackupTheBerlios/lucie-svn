@@ -24,14 +24,14 @@ class TC_Builder < Test::Unit::TestCase
     assert_file_task_defined( "./debian/postinst" )
     assert_file_task_defined( "./debian/rules" )
     assert_file_task_defined( "./debian/templates" )
-    assert_file_task_defined( "./packages" )    
+    assert_file_task_defined( "./package" )    
     lmp_spec.__verify
   end
   
   private
   def assert_file_task_defined( filePathString )
     assert( Task.task_defined?( filePathString ), 
-            "ƒtƒ@ƒCƒ‹ `#{filePathString}' ‚Ìƒ^ƒXƒN‚ª define ‚³‚ê‚Ä‚¢‚È‚¢" )
+            "¥Õ¥¡¥¤¥ë `#{filePathString}' ¤Î¥¿¥¹¥¯¤¬ define ¤µ¤ì¤Æ¤¤¤Ê¤¤" )
   end
 end
 

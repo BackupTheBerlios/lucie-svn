@@ -16,6 +16,14 @@ cpp-3.2
 cpp-3.3
 cpp-3.4
 
+# C++
+g++ 
+g++-2.95
+g++-3.0
+g++-3.2
+g++-3.3
+g++-3.4
+
 electric-fence
 bin86
 m4 
@@ -30,7 +38,6 @@ bison
 flex 
 cutils 
 cxref 
-g++ 
 gcc 
 gdb 
 glibc-doc 

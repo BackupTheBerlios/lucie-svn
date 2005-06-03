@@ -90,7 +90,26 @@ template( 'lucie-client/compile/cpp' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-client/compile/cpp' ) do |question|
+question( 'lucie-client/compile/cpp' => 'lucie-client/compile/gpp' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+end
+
+# ------------------------- g++ のバージョン選択
+
+template( 'lucie-client/compile/gpp' ) do |template|
+  template.template_type = 'select'
+  template.choices = ['2.95', '3.0', '3.2', '3.3', '3.4']
+  template.short_description = 'Choice of default g++ version'
+  template.extended_description = <<-DESCRIPTION
+  Which version do you use for default g++ compiler?
+  DESCRIPTION
+  template.short_description_ja = 'デフォルト g++ バージョンの選択'
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  デフォルトとして g++ コンパイラのどのバージョンを使いますか ?
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/compile/gpp' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
 end
 

@@ -51,9 +51,47 @@ template( 'lucie-client/compile/hello' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-client/compile/hello' ) do |question|
+question( 'lucie-client/compile/hello' => 'lucie-client/compile/g77' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
   question.first_question = true
+end
+
+# ------------------------- g77 のバージョン選択
+
+template( 'lucie-client/compile/g77' ) do |template|
+  template.template_type = 'select'
+  template.choices = ['2.95', '3.0', '3.2', '3.3', '3.4']
+  template.short_description = 'Choice of default g77 version'
+  template.extended_description = <<-DESCRIPTION
+  Which version do you use for default g77 compiler?
+  DESCRIPTION
+  template.short_description_ja = 'デフォルト g77 バージョンの選択'
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  デフォルトとして g77 コンパイラのどのバージョンを使いますか ?
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/compile/g77' => 'lucie-client/compile/cpp' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+end
+
+# ------------------------- cpp のバージョン選択
+
+template( 'lucie-client/compile/cpp' ) do |template|
+  template.template_type = 'select'
+  template.choices = ['2.95', '3.0', '3.2', '3.3', '3.4']
+  template.short_description = 'Choice of default cpp version'
+  template.extended_description = <<-DESCRIPTION
+  Which version do you use for default cpp compiler?
+  DESCRIPTION
+  template.short_description_ja = 'デフォルト cpp バージョンの選択'
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  デフォルトとして cpp コンパイラのどのバージョンを使いますか ?
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/compile/cpp' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
 end
 
 ### Local variables:

@@ -1,9 +1,24 @@
 PACKAGES install
 
+# fortran
+g77 
+g77-2.95
+g77-3.0
+g77-3.2
+g77-3.3
+g77-3.4
+
+# C pre processor
+cpp 
+cpp-2.95
+cpp-3.0
+cpp-3.2
+cpp-3.3
+cpp-3.4
+
 electric-fence
 bin86
 m4 
-g77 
 byacc 
 cvs
 ddd
@@ -13,7 +28,6 @@ automake1.8
 binutils 
 bison 
 flex 
-cpp 
 cutils 
 cxref 
 g++ 

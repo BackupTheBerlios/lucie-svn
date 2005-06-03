@@ -9,17 +9,18 @@ require 'date'
 require 'lucie/string'
 
 module LMP
-  # LMP ƒƒ^ƒf[ƒ^ƒtƒ@ƒCƒ‹‚Ìƒeƒ“ƒvƒŒ[ƒg‚ğŠÇ—‚·‚éƒ‚ƒWƒ…[ƒ‹
+  # LMP ¥á¥¿¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë¤Î¥Æ¥ó¥×¥ì¡¼¥È¤ò´ÉÍı¤¹¤ë¥â¥¸¥å¡¼¥ë
   module Template
     public
     def config( aSpecification )
+      command_line_options = Deft::CommandLineOptions.instance
       require 'deft'
       require 'deft/concrete-state'
       return <<-CONFIG
-#!/usr/bin/ruby
+#!/usr/bin/ruby1.8
 require 'deft/debconf-context'
 
-#{aSpecification.deft}
+#{File.open(File.join(File.dirname(command_line_options.build), 'deft.rb'), 'r').readlines.join}
 
 capb  'backup'
 title '#{aSpecification.name}'
@@ -33,7 +34,7 @@ end
     module_function :config
 
     public
-    # (LMP ƒrƒ‹ƒhƒfƒBƒŒƒNƒgƒŠ)/debian/changelog ‚Ìƒeƒ“ƒvƒŒ[ƒg•¶š—ñ‚ğ•Ô‚·
+    # (LMP ¥Ó¥ë¥É¥Ç¥£¥ì¥¯¥È¥ê)/debian/changelog ¤Î¥Æ¥ó¥×¥ì¡¼¥ÈÊ¸»úÎó¤òÊÖ¤¹
     def changelog( aSpecification )
       return <<-CHANGELOG
 #{aSpecification.name} (#{aSpecification.version}) stable; urgency=low
@@ -45,7 +46,7 @@ end
     end
     module_function :changelog
     
-    # (LMP ƒrƒ‹ƒhƒfƒBƒŒƒNƒgƒŠ)/debian/control ‚Ìƒeƒ“ƒvƒŒ[ƒg•¶š—ñ‚ğ•Ô‚·
+    # (LMP ¥Ó¥ë¥É¥Ç¥£¥ì¥¯¥È¥ê)/debian/control ¤Î¥Æ¥ó¥×¥ì¡¼¥ÈÊ¸»úÎó¤òÊÖ¤¹
     public
     def control( aSpecification )
       return (<<-SPECIFICATION) + aSpecification.extended_description.unindent_auto.to_rfc822
@@ -63,7 +64,7 @@ Description: #{aSpecification.short_description}
     end
     module_function :control
     
-    # (LMP ƒrƒ‹ƒhƒfƒBƒŒƒNƒgƒŠ)/debian/README.Debian ‚Ìƒeƒ“ƒvƒŒ[ƒg•¶š—ñ‚ğ•Ô‚·
+    # (LMP ¥Ó¥ë¥É¥Ç¥£¥ì¥¯¥È¥ê)/debian/README.Debian ¤Î¥Æ¥ó¥×¥ì¡¼¥ÈÊ¸»úÎó¤òÊÖ¤¹
     public
     def readme( packageNameString )
       return <<-README
@@ -74,7 +75,7 @@ This package is #{packageNameString} Lucie Meta Package.
     end
     module_function :readme
     
-    # (LMP ƒrƒ‹ƒhƒfƒBƒŒƒNƒgƒŠ)/debian/rules ‚Ìƒeƒ“ƒvƒŒ[ƒg•¶š—ñ‚ğ•Ô‚·
+    # (LMP ¥Ó¥ë¥É¥Ç¥£¥ì¥¯¥È¥ê)/debian/rules ¤Î¥Æ¥ó¥×¥ì¡¼¥ÈÊ¸»úÎó¤òÊÖ¤¹
     public
     def rules( packageNameString )
       return (<<-RULES).tabify(4)
@@ -119,11 +120,11 @@ install: build
     # Add here commands to install the package into debian/lmp-test.
     # $(MAKE) install DESTDIR=$(CURDIR)/debian/lmp-test
     install -d $(CURDIR)/debian/tmp/etc/lucie/package
-    cp $(CURDIR)/packages $(CURDIR)/debian/tmp/etc/lucie/package/#{packageNameString}
+    cp $(CURDIR)/package $(CURDIR)/debian/tmp/etc/lucie/package/#{packageNameString}
 #    install -d $(CURDIR)/debian/tmp/etc/lucie/files/
 #    -cp -a $(CURDIR)/files/* $(CURDIR)/debian/tmp/etc/lucie/lmp/#{packageNameString}/file/
-    install -d $(CURDIR)/debian/tmp/etc/lucie/script/
-#    -cp -a $(CURDIR)/scripts/* $(CURDIR)/debian/tmp/etc/lucie/lmp/#{packageNameString}/script/
+    install -d $(CURDIR)/debian/tmp/etc/lucie/script/#{packageNameString}
+    -cp -a $(CURDIR)/script/* $(CURDIR)/debian/tmp/etc/lucie/script/#{packageNameString}
 
 
 # Build architecture-independent files here.
@@ -153,36 +154,36 @@ binary: binary-indep binary-arch
     end
     module_function :rules
     
-    # (LMP ƒrƒ‹ƒhƒfƒBƒŒƒNƒgƒŠ)/packages ‚Ìƒeƒ“ƒvƒŒ[ƒg•¶š—ñ‚ğ•Ô‚·
+    # (LMP ¥Ó¥ë¥É¥Ç¥£¥ì¥¯¥È¥ê)/package ¤Î¥Æ¥ó¥×¥ì¡¼¥ÈÊ¸»úÎó¤òÊÖ¤¹
     public
-    def packages
-      return <<-PACKAGES
-# packages ƒTƒ“ƒvƒ‹ƒtƒ@ƒCƒ‹
+    def package
+      return <<-PACKAGE
+# package ¥µ¥ó¥×¥ë¥Õ¥¡¥¤¥ë
 #
-# ƒRƒƒ“ƒg‚ÍƒnƒbƒVƒ… (#) ‚Ån‚Ü‚ès––‚Ü‚Å‘±‚«‚Ü‚·B
-# ‚·‚×‚Ä‚ÌƒRƒ}ƒ“ƒh‚Í PACKAGES ‚Æ‚¢‚¤’PŒê‚Ån‚Ü‚èAƒRƒ}ƒ“ƒh–¼‚ª‘±‚«‚Ü‚·B
-# ƒRƒ}ƒ“ƒh–¼‚Í apt-get ‚Æ—‚Ä‚¢‚Ü‚·BˆÈ‰º‚ªƒTƒ|[ƒg‚µ‚Ä‚¢‚éƒRƒ}ƒ“ƒh–¼‚Ì
-# ƒŠƒXƒg‚Å‚·B
+# ¥³¥á¥ó¥È¤Ï¥Ï¥Ã¥·¥å (#) ¤Ç»Ï¤Ş¤ê¹ÔËö¤Ş¤ÇÂ³¤­¤Ş¤¹¡£
+# ¤¹¤Ù¤Æ¤Î¥³¥Ş¥ó¥É¤Ï PACKAGES ¤È¤¤¤¦Ã±¸ì¤Ç»Ï¤Ş¤ê¡¢¥³¥Ş¥ó¥ÉÌ¾¤¬Â³¤­¤Ş¤¹¡£
+# ¥³¥Ş¥ó¥ÉÌ¾¤Ï apt-get ¤È»÷¤Æ¤¤¤Ş¤¹¡£°Ê²¼¤¬¥µ¥İ¡¼¥È¤·¤Æ¤¤¤ë¥³¥Ş¥ó¥ÉÌ¾¤Î
+# ¥ê¥¹¥È¤Ç¤¹¡£
 #
 # hold:
-#    ƒpƒbƒP[ƒW‚ğƒz[ƒ‹ƒh‚µ‚Ü‚·Bƒz[ƒ‹ƒh‚µ‚½ƒpƒbƒP[ƒW‚ÍƒAƒbƒvƒOƒŒ[ƒh‚³‚ê‚Ü‚¹
-#    ‚ñB
+#    ¥Ñ¥Ã¥±¡¼¥¸¤ò¥Û¡¼¥ë¥É¤·¤Ş¤¹¡£¥Û¡¼¥ë¥É¤·¤¿¥Ñ¥Ã¥±¡¼¥¸¤Ï¥¢¥Ã¥×¥°¥ì¡¼¥É¤µ¤ì¤Ş¤»
+#    ¤ó¡£
 #    
 # install:
-#    Œã‚Ìs‚É‘±‚­‚·‚×‚Ä‚ÌƒpƒbƒP[ƒW‚ªƒCƒ“ƒXƒg[ƒ‹‚³‚ê‚Ü‚·B
+#    ¸å¤Î¹Ô¤ËÂ³¤¯¤¹¤Ù¤Æ¤Î¥Ñ¥Ã¥±¡¼¥¸¤¬¥¤¥ó¥¹¥È¡¼¥ë¤µ¤ì¤Ş¤¹¡£
 #
 # remove:
-#    Œã‚Ìs‚É‘±‚­‚·‚×‚Ä‚ÌƒpƒbƒP[ƒW‚ªƒAƒ“ƒCƒ“ƒXƒg[ƒ‹‚³‚ê‚Ü‚·B
+#    ¸å¤Î¹Ô¤ËÂ³¤¯¤¹¤Ù¤Æ¤Î¥Ñ¥Ã¥±¡¼¥¸¤¬¥¢¥ó¥¤¥ó¥¹¥È¡¼¥ë¤µ¤ì¤Ş¤¹¡£
 #
 # taskinst:
-#    tasksel(1)‚É‚æ‚Á‚ÄŒã‚Ìs‚É‘±‚­ƒ^ƒXƒN‚ÉŠÜ‚Ü‚ê‚é‚·‚×‚Ä‚ÌƒpƒbƒP[ƒW‚ªƒCƒ“ƒXƒg
-#    [ƒ‹‚³‚ê‚Ü‚·B
+#    tasksel(1)¤Ë¤è¤Ã¤Æ¸å¤Î¹Ô¤ËÂ³¤¯¥¿¥¹¥¯¤Ë´Ş¤Ş¤ì¤ë¤¹¤Ù¤Æ¤Î¥Ñ¥Ã¥±¡¼¥¸¤¬¥¤¥ó¥¹¥È
+#    ¡¼¥ë¤µ¤ì¤Ş¤¹¡£
 #
 # dselect-upgrade
-#    Œã‚Ìs‚É‘±‚­ƒpƒbƒP[ƒW‚ÅƒpƒbƒP[ƒWƒZƒŒƒNƒVƒ‡ƒ“‚ğƒZƒbƒg‚µAw’è‚³‚ê‚½ƒpƒbƒP
-#    [ƒW‚ğƒCƒ“ƒXƒg[ƒ‹‚à‚µ‚­‚ÍƒAƒ“ƒCƒ“ƒXƒg[ƒ‹‚µ‚Ü‚·B
+#    ¸å¤Î¹Ô¤ËÂ³¤¯¥Ñ¥Ã¥±¡¼¥¸¤Ç¥Ñ¥Ã¥±¡¼¥¸¥»¥ì¥¯¥·¥ç¥ó¤ò¥»¥Ã¥È¤·¡¢»ØÄê¤µ¤ì¤¿¥Ñ¥Ã¥±
+#    ¡¼¥¸¤ò¥¤¥ó¥¹¥È¡¼¥ë¤â¤·¤¯¤Ï¥¢¥ó¥¤¥ó¥¹¥È¡¼¥ë¤·¤Ş¤¹¡£
 #
-# İ’è—á:
+# ÀßÄêÎã:
 # 
 # PACKAGES taskinst
 # german science
@@ -197,9 +198,9 @@ binary: binary-indep binary-arch
 # PACKAGES dselect-upgrade
 # ddd                     install
 # a2ps                    install    
-      PACKAGES
+      PACKAGE
     end
-    module_function :packages
+    module_function :package
   end
 end
 

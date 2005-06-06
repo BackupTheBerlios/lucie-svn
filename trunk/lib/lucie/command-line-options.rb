@@ -14,8 +14,6 @@ require 'log4r'
 
 module Lucie
 
-  update(%q$Date$)
-
   ####################################################################
   # We handle the parsing of options, and subsequently as a singleton
   # object to be queried for option values
@@ -36,6 +34,7 @@ module Lucie
     attr_reader :installer_base
     attr_reader :log_file
     attr_reader :logging_level
+    attr_reader :lmp_install
 
     module OptionList # :nodoc:
       OPTION_LIST = [
@@ -61,10 +60,12 @@ module Lucie
           "use the debug trace mode."],
         [ "--installer-base",     "-I",   nil, \
           "build installer base tarball only."],
-        [ "--log-file",           "-l",    "file path", \
+        [ "--log-file",           "-l",   "file path", \
           "specify log file path."],
-        [ "--logging-level",      "-L",    "logging level", \
+        [ "--logging-level",      "-L",   "logging level", \
           "set the logger level."],
+        [ "--lmp-install",        "-a",   "package name", \
+          "install lmp."],
       ]
 
       public
@@ -127,6 +128,8 @@ module Lucie
               'ERROR' => Log4r::ERROR,
               'FATAL' => Log4r::FATAL
             }[argument.upcase]
+          when '--lmp-install'
+            @lmp_install = argument
           end
         end
       ensure
@@ -150,6 +153,7 @@ module Lucie
       @log_file = '/var/log/lucie-setup.log'
       Log4r.define_levels(*Log4r::Log4rConfig::LogLevels) # ensure levels are loaded.
       @logging_level = Log4r::INFO
+      @lmp_install = nil
     end
   end
 end

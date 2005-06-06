@@ -17,8 +17,6 @@ require 'singleton'
 
 module Lucie
   
-  update(%q$Date$)
-  
   ##############################################################################
   # Lucie main application object.  When invoking +lucie-setup+ from the command
   # line, a Setup object is created and run.
@@ -34,6 +32,9 @@ module Lucie
     def main
       begin
         do_option
+      rescue RuntimeError => ex
+        $stderr.puts( "ERROR: " + ex.message )
+        exit(9)
       rescue SystemExit => ex
         $stderr.puts( ex.message ) unless( ex.success? )
         exit(0)
@@ -61,11 +62,15 @@ module Lucie
     
     private
     def umount_dirs
-      sh_option = {:verbose => @commandline_options.verbose}
-      sh %{LC_ALL=C chroot #{nfsroot_dir} dpkg-divert --package lucie-client --rename --remove /sbin/discover-modprobe}, sh_option rescue nil
+      sh %{chroot #{nfsroot_dir} dpkg-divert --package lucie-client --rename --remove /sbin/discover-modprobe}, sh_option rescue nil
       sh %{[ -d #{File.join(nfsroot_dir, 'proc/self')} ] && umount #{File.join(nfsroot_dir, 'proc')} || true}, sh_option
       sh %{[ -d #{File.join(nfsroot_dir, 'proc/self')} ] && umount #{File.join(nfsroot_dir, 'dev/pts')} || true}, sh_option
       sh %{mount | grep "on #{nfsroot_dir} " || true}, sh_option     
+    end
+
+    private
+    def sh_option
+      return {:verbose => @commandline_options.verbose}
     end
 
     private
@@ -89,6 +94,16 @@ module Lucie
       load_configuration
       if @commandline_options.list_resource
         list_resource 
+        exit
+      end
+      if @commandline_options.lmp_install
+        unless i_am_root
+          $stderr.puts "Run this program as root."
+          exit(9)
+        end
+        raise "Specify installer name with --installer-name option." unless @commandline_options.installer_name
+        sh %{chroot #{nfsroot_dir} apt-get update}
+        sh %{chroot #{nfsroot_dir} apt-get install #{@commandline_options.lmp_install}}
         exit
       end
     end

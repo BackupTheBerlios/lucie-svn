@@ -95,11 +95,14 @@ exit 0
     public
     def installer_resource
       require '/etc/lucie/resource.rb'
-      cmdline = %x(cat /proc/cmdline)
-      installer_name = cmdline[cmdline.index('BOOT_IMAGE')+11..-1].strip
       return Config::Installer[installer_name]
     end
 
+    private
+    def installer_name
+      return %x(cat /etc/lucie/.installer_name)
+    end
+    
     # DHCP サーバ情報を返す
     public
     def dhcp_server_resource

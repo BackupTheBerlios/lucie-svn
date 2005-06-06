@@ -9,46 +9,7 @@ require 'lucie/time-stamp'
 require 'rake'
 require 'rake/tasklib'
 
-Lucie::update(%q$Date$)
-
 module Rake
-  #
-  # ’¥¤’¥ó’¥¹’¥È’¡¼’¥é’¤Î NFSROOT ’¤ò’¥Ó’¥ë’¥É’¤¹’¤ë’¥¿’¥¹’¥¯’¤ò’À¸’À®’¤¹’¤ë’¡£
-  #
-  # NfsrootTask ’¤Ï’¼¡’¤Î’¥¿’¡¼’¥²’¥Ã’¥È’¤ò’ºî’À®’¤¹’¤ë:
-  #
-  # [<b><em>nfsroot</em></b>]
-  #   Nfsroot ’¥¿’¥¹’¥¯’¤Î’¥á’¥¤’¥ó’¥¿’¥¹’¥¯
-  # [<b><em>:clobber_nfsroot</em></b>]
-  #   ’¤¹’¤Ù’¤Æ’¤Î NFSROOT ’´Ø’Ï¢’¥Õ’¥¡’¥¤’¥ë’¤ò’¾Ã’µî’¤¹’¤ë’¡£
-  #   ’¤³’¤Î’¥¿’¡¼’¥²’¥Ã’¥È’¤Ï’¼«’Æ°’Åª’¤Ë’¥á’¥¤’¥ó’¤Î clobber ’¥¿’¡¼’¥²’¥Ã’¥È’¤Ë’ÄÉ’²Ã’¤µ’¤ì’¤ë
-  #
-  # ’Îã:
-  #   NfsrootTask.new do |nfsroot|
-  #     nfsroot.dir = "tmp"
-  #     nfsroot.package_server = "http://www.debian.or.jp/debian"
-  #     nfsroot.distribution_version = "woody"
-  #     nfsroot.kernel_package = "/etc/lucie/kernel/kernel-image-2.4.27-fai_1_i386.deb"
-  #     nfsroot.kernel_version = "2.2.18"
-  #     nfsroot.installer_base = "/tmp/presto_cluster/var/tmp/debian_woody.tgz"
-  #     installer_base.root_password = "h29SP9GgVbLHE"
-  #   end
-  #
-  # ’ºî’À®’¤¹’¤ë InstallerBaseTask ’¤Ë’¤Ï’¥Ç’¥Õ’¥©’¥ë’¥È’¤Î’Ì¾’Á°’°Ê’³°’¤Ë’¼«’Ê¬’¤Î’¹¥’¤­’¤Ê’Ì¾’Á°’¤ò
-  # ’¤Ä’¤±’¤ë’¤³’¤È’¤â’¤Ç’¤­’¤ë’¡£
-  #
-  #   NfsrootTask.new( :presto_installer ) do |nfsroot|
-  #     nfsroot.dir = "tmp"
-  #     nfsroot.package_server = "http://www.debian.or.jp/debian"
-  #     nfsroot.distribution_version = "woody"
-  #     nfsroot.kernel_package = "/etc/lucie/kernel/kernel-image-2.4.27-fai_1_i386.deb"
-  #     nfsroot.kernel_version = "2.2.18"
-  #     nfsroot.installer_base = "/tmp/presto_cluster/var/tmp/debian_woody.tgz"
-  #     installer_base.root_password = "h29SP9GgVbLHE"
-  #   end
-  #
-  #
-  #
   class NfsrootTask < TaskLib
     attr_accessor :name
     attr_accessor :dir
@@ -60,7 +21,6 @@ module Rake
     attr_accessor :root_password
     attr_accessor :extra_packages
     
-    # Nfsroot ’¥¿’¥¹’¥¯’¤ò’ºî’À®’¤¹’¤ë’¡£
     public
     def initialize( name=:nfsroot ) # :yield: self
       @name = name
@@ -90,7 +50,6 @@ module Rake
       task @name => nfsroot_target
       
       file nfsroot_target => [paste("clobber_", @name), @dir] do
-        ENV['LC_ALL'] = 'C'
         extract_installer_base        
         hoax_some_packages
         upgrade
@@ -102,6 +61,14 @@ module Rake
         # TODO: setup_ssh
         install_kernel_nfsroot
         setup_dhcp
+        finish
+      end
+    end
+
+    private
+    def finish
+      File.open( nfsroot('/etc/lucie/.installer_name'), 'w+' ) do |file|
+        file.print @name
       end
     end
 
@@ -235,9 +202,11 @@ module Rake
     private
     def add_additional_packages
       info "Adding additional packages to nfsroot."
-      additional_packages = ['dhcp3-client', 'ruby1.8', 'liblog4r-ruby',
-        'rake', 'perl-modules', 'discover', 'libapt-pkg-perl', 'file', 'cfengine']
-      sh_log %{LC_ALL=C chroot #{@dir} apt-get -y --fix-missing install #{additional_packages.join(' ')} </dev/null 2>&1}, sh_option, &apt_block
+      additional_packages = ['dhcp3-client', 'ruby1.8',
+        'liblog4r-ruby', 'locales', 'rake', 'perl-modules',
+        'discover', 'libapt-pkg-perl', 'file', 'cfengine']
+      # FIXME: locales ¤Î Debconf ¤Ç¥­¡¼ÆþÎÏ¤ò¤Ê¤¯¤¹
+      system %{chroot #{@dir} apt-get -y --fix-missing install #{additional_packages.join(' ')}}
       if @extra_packages
         info "Adding extra packages to nfsroot: #{@extra_packages.join(', ')}"
         sh_log %{LC_ALL=C chroot #{@dir} apt-get -y --fix-missing install #{@extra_packages.join(' ')} </dev/null 2>&1}, sh_option, &apt_block
@@ -359,15 +328,6 @@ exit 0
       sh %{chroot #{@dir} dpkg --get-selections | egrep 'install$' | awk '{print $1}' > #{nfsroot( 'var/tmp/base-packages.list' )}}, sh_option
     end
     
-    # hoaks some packages
-    # liloconfig, dump and raidtool2 need these files
-    #
-    # * raidtool2: ’¶õ’¤Î /etc/fstab, /etc/raidtab ’¤ò’ºî’À®
-    # * lvm: ’¶õ’¤Î /lib/modules/’¥«’¡¼’¥Í’¥ë’¥Ð’¡¼’¥¸’¥ç’¥ó, /lib/modules/’¥«’¡¼’¥Í’¥ë’¥Ð’¡¼’¥¸’¥ç’¥ó/modules.dep ’¤ò’ºî’À®
-    # * /etc/default/ntp-servers
-    # * /var/state
-    # * apt-get: /etc/hosts ’¤Ë localhost, lucie.sourceforge.net ’¤ò’ÄÉ’²Ã, /etc/apt/sources-list ’¤ò’ºî’À®, /etc/apt/preferences ’¤ò’¥³’¥Ô’¡¼
-    # 
     private
     def hoax_some_packages
       info "Modifying nfsroot to avoid errors caused by some packages."

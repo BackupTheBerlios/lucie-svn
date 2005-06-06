@@ -119,7 +119,7 @@ desc 'Lucie クライアント関連パッケージのアップロード'
 task :upload_lucie_client => [:deb] do 
   tmp_dir = '../upload/lucie-client'
   scp_destination = File.join( SOURCEFORGE_URI,
-                               'packages/lucie-client/debian/woody/' )
+                               'packages/lucie-client/debian/sarge/' )
   mkdir_p tmp_dir
   sh %{mv ../lucie-client*.deb #{tmp_dir}}
   sh %{cd #{tmp_dir} && apt-ftparchive packages . | gzip -c9 > Packages.gz}

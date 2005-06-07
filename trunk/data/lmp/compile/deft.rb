@@ -14,11 +14,40 @@ template( 'lucie-client/compile/hello' ) do |template|
   template.template_type = 'note'
   template.short_description = 'Welcome to lmp-compile setup wizard.'
   template.extended_description = <<-DESCRIPTION
-  This metapackage will setup packages for developing software.
+  This metapackage will generate Lucie configuration of installing development software packages.
+  Packages installed with this metapackage are follows:
+
+   o electric-fence: A malloc(3) debugger
+   o bin86: 16-bit x86 assembler and loader
+   o m4: a macro processing language
+   o g77: The GNU Fortran 77 compiler
+   o byacc: The Berkeley LALR parser generator
+   o cvs: Concurrent Versions System
+   o ddd: The Data Display Debugger, a graphical debugger frontend
+   o indent: C language source code formatting program
+   o autoconf: automatic configure script builder
+   o automake1.8: A tool for generating GNU Standards-compliant Makefiles
+   o binutils: The GNU assembler, linker and binary utilities
+   o bison: A parser generator that is compatible with YACC
+   o flex: A fast lexical analyzer generator
+   o cpp: The GNU C preprocessor (cpp)
+   o cutils: C source code utilities
+   o cxref: Generates latex and HTML documentation for C programs
+   o g++: The GNU C++ compiler
+   o gcc: The GNU C compiler
+   o gdb: The GNU Debugger
+   o glibc-doc: GNU C Library: Documentation
+   o libtool: Generic library support script
+   o ltrace: Tracks runtime library calls in dynamically linked programs
+   o make: The GNU version of the "make" utility.
+   o manpages-dev: Manual pages about using GNU/Linux for development
+   o patch: Apply a diff file to an original
+   o stl-manual: C++-STL documentation in HTML
+   o strace: A system call tracer
   DESCRIPTION
   template.short_description_ja = 'lmp-compile セットアップウィザードへようこそ'
   template.extended_description_ja = <<-DESCRIPTION_JA
-  このメタパッケージは開発用ソフトウェアの設定を Lucie サーバへ行います。
+  このメタパッケージは C や C++ 関連の開発用ソフトウェアの設定を Lucie サーバへ行います。
   このメタパッケージによってクラスタノードにインストールされるパッケージの一覧は以下の通りです。
 
    o electric-fence: malloc(3) デバッガ
@@ -51,9 +80,63 @@ template( 'lucie-client/compile/hello' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-client/compile/hello' => 'lucie-client/compile/g77' ) do |question|
+question( 'lucie-client/compile/hello' => 'lucie-client/compile/configuration-level' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
   question.first_question = true
+end
+
+# ------------------------- 設定方法の選択
+
+template( 'lucie-client/compile/configuration-level' ) do |template|
+  template.template_type = 'select'
+  template.choices = ['basic', 'custom']
+  template.short_description = 'Choose configuration level'
+  template.extended_description = <<-DESCRIPTION
+  Choose configuration level.
+  With "basic" configuration, you can select a predefined set of compilers with the same version number.
+  This is for beginners.
+  With "custom" configuration, you can individually specify versions to use for each C/C++ compilers.
+  This is advanced option.
+  DESCRIPTION
+  template.short_description_ja = '設定方法の選択'
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  設定オプションを選んでください。
+  「basic」設定では C や C++ コンパイラのバージョンを一括して設定します。
+  よくわからない場合はこちらを選択してください。
+  「custom」設定ではコンパイラ別に設定を行います。上級者向けです。
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/compile/configuration-level' => 
+          { 'basic' => 'lucie-client/compile/basic', 'custom' => 'lucie-client/compile/g77' } ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+end
+
+# ------------------------- basic 設定
+
+template( 'lucie-client/compile/basic' ) do |template|
+  template.template_type = 'select'
+  template.choices = ['2.95', '3.0', '3.2', '3.3', '3.4']
+  template.short_description = "Choose compilers' version"
+  template.extended_description = <<-DESCRIPTION
+  Which version do you use for default Fortran/CPP/C++/C compilers?
+  Compilers of the version specified at this question are installed to cluster nodes.
+  DESCRIPTION
+  template.short_description_ja = 'コンパイラバージョンの選択'
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  デフォルトとしてコンパイラのどのバージョンを使いますか ?
+  ここで指定されたバージョンの g77, cpp, g++, gcc がクラスタノードにインストールされます。
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/compile/basic' => 
+          proc do |user_input|
+            set 'lucie-client/compile/g77', user_input
+            set 'lucie-client/compile/cpp', user_input
+            set 'lucie-client/compile/gpp', user_input
+            set 'lucie-client/compile/gcc', user_input
+          end ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
 end
 
 # ------------------------- g77 のバージョン選択

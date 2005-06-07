@@ -9,10 +9,6 @@ yes 'n' | dpkg --root=/tmp/target -i /etc/lucie/kernel/%%%kernel_package%%%
 
 initrd_img=$(cd /tmp/target/boot; ls initrd.img*)
 
-# if the installed kernel is using an initial ramdisk
-# if [ -L /tmp/target/initrd.img ]; then
-#   initrdopt="initrd=/initrd.img"
-# fi
 # write lilo.conf and install lilo to disk
 echo "Creating lilo.conf for /vmlinuz"
 cat > /tmp/target/etc/lilo.conf <<-EOF

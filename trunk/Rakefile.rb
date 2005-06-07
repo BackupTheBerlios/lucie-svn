@@ -58,7 +58,7 @@ Rake::RDocTask.new( :rdoc ) do |rdoc|
   rdoc.options << '--diagram'
   rdoc.rdoc_files.include( 'lib/*.rb', 'lib/debconf/*.rb', 'lib/deft/*.rb', 
                            'lib/lucie/*.rb', 'lib/lucie/config/*.rb', 'lib/lmp/*.rb', 
-                           'data/lmp/compile/*.rb', 'data/lmp/lilo/*.rb',
+                           'data/lmp/compile/*.rb', 'data/lmp/lilo/*.rb', 'data/lmp/network/*.rb',
                            'lib/lucie/rake/*.rb' )
 end
 

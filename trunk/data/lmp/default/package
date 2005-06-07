@@ -64,3 +64,4 @@ rdate
 nfs-common
 nscd
 memtest86
+fileutils

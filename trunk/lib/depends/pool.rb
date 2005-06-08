@@ -1,3 +1,4 @@
+#
 # = pool.rb - Pools all of package dependency information.
 # 
 # $Id: pool.rb,v 1.9 2004/06/30 06:54:06 takamiya Exp $
@@ -8,11 +9,8 @@
 
 require 'English'
 
-
 module Depends
   class Pool
-
-
     ##
     # Returns a new Pool object.
     #
@@ -34,12 +32,10 @@ module Depends
                     @npackage, n_virtual_packages, n_installed_packages)
     end
 
-
     public
     def package( packageNameString )
       name2package packageNameString
     end
-
     
     private
     def packages( statusString )
@@ -50,18 +46,15 @@ module Depends
       end
     end
 
-
     private
     def n_virtual_packages
       @pool.values.select { |each| each.status[0] == 'virtual' }.size
     end
 
-
     private
     def n_installed_packages
       @pool.size - n_virtual_packages
     end
-
 
     private
     def cache_dependency
@@ -72,7 +65,6 @@ module Depends
         }}
     end
 
-
     private
     def register_package( controlString )
       package = Package.new( controlString )
@@ -82,7 +74,6 @@ module Depends
         @pool[each] = Package.new( "Package: #{each}\nStatus: virtual" )
       }
     end
-
 
     # Check if +packageNameString+ conflicts with +otherPackageNameString+?
     # This method returns boolean value.
@@ -102,7 +93,6 @@ module Depends
       conflict_dependency.relation.call other_package 
     end
 
-
     ##
     # Returns an Array of Dependency object containing conflicting
     # packages' dependency information.
@@ -120,7 +110,6 @@ module Depends
         []
       end
     end
-
 
     ##
     # Returns all of the package dependency information in a Hash
@@ -183,7 +172,6 @@ module Depends
       dependencies
     end
 
-
     private
     def conflict_dependency( packageNameString, otherPackageNameString )
       conflicts( packageNameString ).select { |c|
@@ -191,7 +179,6 @@ module Depends
       }[0]
     end
     
-
     private
     def name2package( packageNameString )
       if @pool[packageNameString]
@@ -202,7 +189,6 @@ module Depends
 	@pool[packageNameString] = Package.new(rec)
       end
     end
-
 
     private
     def forward_dependency( packageNameString, level )
@@ -219,7 +205,6 @@ module Depends
       end
     end
 
-
     private
     def reverse_dependency( packageNameString, level )
       return if level == 0
@@ -231,18 +216,14 @@ module Depends
       result.uniq
     end
 
-
     private
     def provided_dependency( aPackage, level )
       aPackage.provides.collect { |each| 
 	reverse_dependency each, level
       }.flatten
     end
-
-
   end
 end 
-
 
 ### Local variables:
 ### mode: Ruby

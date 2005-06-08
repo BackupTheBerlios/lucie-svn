@@ -1,16 +1,13 @@
+#
 # $Id: dependency.rb,v 1.3 2004/06/30 06:46:14 takamiya Exp $
 #
 # Author:: Yasuhito TAKAMIYA <mailto:takamiya@matsulab.is.titech.ac.jp>
 # Revision:: $Revision: 1.3 $
 # License::  GPL2
 
-
 module Depends
   class Dependency
-    
-    
     attr_reader :name, :relation, :version
-    
     
     public
     def initialize( dependencyString )
@@ -36,24 +33,20 @@ module Depends
       end
     end
 
-
     public 
     def inspect #:nodoc:
       '<Dependency: ' + @dependency_description + '>'
     end
-
 
     public
     def _dump( limit ) #:nodoc:
       @dependency_description
     end
 
-
     public 
     def self._load( serializedString ) #:nodoc:
       self.new serializedString
     end
-
 
     private
     def relation_proc
@@ -63,11 +56,8 @@ module Depends
 	'<=' => Proc.new { |other_version| other_version <= @version },
 	'='  => Proc.new { |other_version| other_version == @version } }
     end
-
-    
   end
 end
-
 
 ### Local variables:
 ### mode: Ruby

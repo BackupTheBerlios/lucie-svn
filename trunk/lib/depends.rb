@@ -8,7 +8,6 @@
 # TODO:
 # * RPM support.
 #++
-#
 
 module Depends
   VERSION = '0.0.2'.freeze
@@ -19,7 +18,6 @@ require 'depends/cache'
 require 'depends/dependency'
 require 'depends/package'
 require 'depends/pool'
-
 
 ### Local variables:
 ### mode: Ruby

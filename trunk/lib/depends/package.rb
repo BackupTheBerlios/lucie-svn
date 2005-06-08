@@ -1,3 +1,4 @@
+#
 # = package.rb - A class representing package's metadata.
 #
 # $Id: package.rb,v 1.7 2004/06/30 06:46:14 takamiya Exp $
@@ -6,20 +7,15 @@
 # Revision:: $Revision: 1.7 $
 # License:: GPL2
 
-
 module Depends
-
 
   # Package class is an internal one and is usually not used directly
   # by users.
   class Package
-
-
     attr_accessor :name, :status, :priority, :section, :size,
       :maintainer, :source, :version, :replaces, :depends,
       :description, :short_description, :provides, :recommends, :suggests, :conflicts,
       :essential, :conffiles
-
 
     # Returns a new Package object.
     # Argument +rec+ is an object of String
@@ -123,7 +119,6 @@ module Depends
       @description = @description.join("\n")
     end
 
-
     # for debugging
     public
     def inspect #:nodoc:
@@ -132,17 +127,13 @@ module Depends
         "\t" + each
       }.join("\n") + "\n>\n"
     end
-    
 
     public
     def <=>( other ) #:nodoc:
       @name <=> other.name
     end
-
-
   end
 end 
-
 
 ### Local variables:
 ### mode: Ruby

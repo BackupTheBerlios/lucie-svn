@@ -6,20 +6,13 @@
 # Revision:: $Revision: 1.5 $
 # License:: GPL2
 
-
 module Depends
-
-
   # Cache class for dependency object pool.
   class Cache
-
-
     DEFAULT_CACHE_DIRECTORY = File.expand_path('/var/cache/depends/')
     DEFAULT_CACHE_FILENAME = 'depends.cache'
     attr :pool
 
-
-    #
     # Returns a new Cache object.
     #
     # _Example_:
@@ -44,36 +37,30 @@ module Depends
       end
     end
 
-
     public
     def inspect #:nodoc:
       "<Cache: cachefile='#{cache_filepath}'>"
     end
-
 
     private
     def cache_exists?
       test(?f, cache_filepath)
     end
 
-
     private
     def status_timestamp
       File.stat( STATUS ).mtime
     end
-
 
     private
     def cache_timestamp
       File.stat( cache_filepath ).mtime
     end
 
-
     private
     def cache_filepath
       @cache_directory + '/' + @cache_filename
     end
-
     
     private
     def update_cache
@@ -83,18 +70,14 @@ module Depends
       }
     end
 
-
     private
     def load_cache
       File.open( cache_filepath, 'r' ){ |file|
 	@pool = Marshal.load( file )
       }
     end
-
-
   end
 end 
-
 
 ### Local variables:
 ### mode: Ruby

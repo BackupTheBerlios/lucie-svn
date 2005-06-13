@@ -52,6 +52,8 @@ class LMPApp
     end
     if @command_line_options.conflict_with
       pool = Depends::Pool.new
+      package_list_inconsistency_check( pool )
+
       config_reader = LMP::ReadConfig.new
       config_reader.read( @command_line_options.conflict_with )
       other_package_list = config_reader.packages[:install]
@@ -63,6 +65,17 @@ class LMPApp
     end
     if @command_line_options.depend_to
       puts @command_line_options.depend_to
+    end
+  end
+
+  private
+  def package_list_inconsistency_check( aPool )
+    package_list.each_with_index do |each, index|
+      (0..(package_list.size-1)).each do |other_index|
+        if (index != other_index) && aPool.conflict?( each, package_list[other_index] )
+          puts %{#{each} <=> #{package_list[other_index]}} 
+        end
+      end
     end
   end
 

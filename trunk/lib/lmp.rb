@@ -23,6 +23,8 @@ class LMPApp
   # メインルーチン
   public
   def main
+    $trace = true
+    @pool = nil
     begin 
       do_option
     rescue SystemExit
@@ -51,28 +53,43 @@ class LMPApp
       exit( 0 )
     end
     if @command_line_options.conflict_with
-      pool = Depends::Pool.new
-      package_list_inconsistency_check( pool )
+      @pool ||= Depends::Pool.new
+      package_list_inconsistency_check
 
       config_reader = LMP::ReadConfig.new
       config_reader.read( @command_line_options.conflict_with )
       other_package_list = config_reader.packages[:install]
       package_list.each do |each| 
         other_package_list.each do |other_package|
-          puts %{#{each} <=> #{other_package}} if pool.conflict?( each, other_package )
+          puts %{#{each} <=> #{other_package}} if @pool.conflict?( each, other_package )
         end
       end
     end
     if @command_line_options.depend_to
-      puts @command_line_options.depend_to
+      @pool ||= Depends::Pool.new
+      config_reader = LMP::ReadConfig.new
+      config_reader.read( @command_line_options.depend_to )
+
+      # depends の計算
+      other_package_list = config_reader.packages[:install]
+      package_list.each do |each|
+        depends = (@pool.deps( each, 10 )[:forward].collect do |package| package.name end).uniq
+        puts %{#{each} => #{(depends & other_package_list).join(', ')}} if ((depends & other_package_list) != [] )
+      end
+
+      # provided-depends の計算
+      package_list.each do |each|
+        provided_depends = (@pool.deps( each, 10 )[:provided].collect do |package| package.name end).uniq
+        puts %{#{(provided_depends & other_package_list).join(', ')} => #{each}} if ((provided_depends & other_package_list) != [] )
+      end
     end
   end
 
   private
-  def package_list_inconsistency_check( aPool )
+  def package_list_inconsistency_check
     package_list.each_with_index do |each, index|
       (0..(package_list.size-1)).each do |other_index|
-        if (index != other_index) && aPool.conflict?( each, package_list[other_index] )
+        if (index != other_index) && @pool.conflict?( each, package_list[other_index] )
           puts %{#{each} <=> #{package_list[other_index]}} 
         end
       end

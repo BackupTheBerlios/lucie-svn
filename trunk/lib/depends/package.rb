@@ -10,6 +10,9 @@ require 'depends/dependency'
 module Depends
 
   # パッケージ情報を表すクラス。内部的に使用。
+  #--
+  # TODO: 各アトリビュートの rdoc を追加
+  #++ 
   class Package
     attr_reader :conffiles
     attr_reader :conflicts

@@ -1,8 +1,8 @@
 #
-# $Id: package.rb,v 1.7 2004/06/30 06:46:14 takamiya Exp $
+# $Id$
 #
 # Author:: Yasuhito TAKAMIYA, <mailto:takamiya@matsulab.is.titech.ac.jp>
-# Revision:: $Revision: 1.7 $
+# Revision:: $Revision$
 # License:: GPL2
 
 require 'depends/dependency'

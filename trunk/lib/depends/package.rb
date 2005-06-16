@@ -17,6 +17,7 @@ module Depends
   # TODO: 各アトリビュートの rdoc を追加
   #++ 
   class Package
+    attr_reader :architecture
     attr_reader :conffiles
     attr_reader :conflicts
     attr_reader :depends
@@ -86,6 +87,22 @@ module Depends
           conffiles = false unless (field_name == 'Conffiles')
           description = false unless (field_name == 'Description')
           case field_name
+          when 'Config-Version' 
+            @config_version = field_value
+          when 'Enhances'
+            @enhances = field_value
+          when 'Size'
+            @size = field_value
+          when 'Filename'
+            @filename = field_value
+          when 'Bugs'
+            @bugs = field_value
+          when 'Origin'
+            @origin = field_value
+          when 'Pre-Depends'
+            @pre_depends = field_value
+          when 'Architecture'
+            @architecture = field_value
           when 'Package'
             @name = field_value
           when 'Status'

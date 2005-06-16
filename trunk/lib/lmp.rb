@@ -23,7 +23,6 @@ class LMPApp
   # メインルーチン
   public
   def main
-    $trace = true
     @pool = nil
     begin 
       do_option

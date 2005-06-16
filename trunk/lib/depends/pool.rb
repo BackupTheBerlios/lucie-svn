@@ -24,12 +24,12 @@ module Depends
 
       packages( statusString ).each { |each|
         register_package each
-        STDERR.print @npackage, "\r" 
+        STDERR.print @npackage, "\r" if $trace
       }
       cache_dependency
       
       STDERR.printf("%d packages and %d virtual packages available, %d installed\n",
-                    @npackage, n_virtual_packages, n_installed_packages)
+                    @npackage, n_virtual_packages, n_installed_packages) if $trace
     end
 
     public
@@ -194,7 +194,8 @@ module Depends
     def forward_dependency( packageNameString, level )
       return if level == 0
       if level == 1
-        @pool[packageNameString].depends.collect { |each| @pool[each.name] }
+        name2package(packageNameString).depends.collect { |each| @pool[each.name] }
+        # @pool[packageNameString].depends.collect { |each| @pool[each.name] }
       elsif level >=2
         (@pool[packageNameString].depends + 
          @pool[packageNameString].depends.collect { |each| each.name }.collect { |each|

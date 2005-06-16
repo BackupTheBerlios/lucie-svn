@@ -23,15 +23,17 @@ module LMP
 
     module OptionList
       OPTION_LIST = [
-      [ '--help',           '-h',   nil, \
+        [ '--trace',          '-t',   nil, \
+          "use the debug trace mode."],
+        [ '--help',           '-h',   nil, \
           "you're looking at it." ],
-      [ '--version',        '-v',   nil, \
+        [ '--version',        '-v',   nil, \
           "display lucie-setup's version and exit." ],
-      [ '--package-list',   '-p',   '[PACKAGE LIST]', \
+        [ '--package-list',   '-p',   '[PACKAGE LIST]', \
           "specify LMP package list file path." ],
-      [ '--depend-to?',     '-d',   '[OTHER PACKAGE LIST]', \
+        [ '--depend-to?',     '-d',   '[OTHER PACKAGE LIST]', \
           "display if this package depends to other package." ],
-      [ '--conflict-with?',  '-c',  '[OTHER PACKAGE LIST]', \
+        [ '--conflict-with?',  '-c',  '[OTHER PACKAGE LIST]', \
           "display if this package conflicts with other package." ],
       ]
 
@@ -63,6 +65,8 @@ module LMP
 
         getopt_long.each do |option, argument|
           case option
+          when '--trace'
+            $trace = true
           when '--depend-to?'
             @depend_to = argument
           when '--conflict-with?'
@@ -87,6 +91,7 @@ module LMP
       @conflict_with = nil
       @depend_to = nil
       @package_list = nil
+      $trace = false
     end
   end
 end

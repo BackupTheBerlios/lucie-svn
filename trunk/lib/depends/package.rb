@@ -133,15 +133,6 @@ module Depends
       @description = @description.join("\n")
     end
 
-    # for debugging
-    public
-    def inspect #:nodoc:
-      "<Package:\n" + 
-      @control.split('\n').collect { |each|
-        "\t" + each
-      }.join("\n") + "\n>\n"
-    end
-
     public
     def <=>( other ) #:nodoc:
       @name <=> other.name

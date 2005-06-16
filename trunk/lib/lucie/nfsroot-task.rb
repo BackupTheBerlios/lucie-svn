@@ -46,7 +46,7 @@ module Rake
         info "Removing #{@dir}"
         sh %{umount #{nfsroot( 'dev/pts' )} 1>/dev/null 2>&1}, sh_option rescue nil
         sh %{rm -rf #{nfsroot( '.??*' )} #{nfsroot( '*' )}}, sh_option
-        sh %{[ -d #{@dir} ] && find #{@dir} ! -type d -xdev -maxdepth 1 | xargs -r rm -f}, sh_option 
+        sh %{[ -d #{@dir} ] && find #{@dir} ! -type d -xdev -maxdepth 1 | xargs -r rm -f}, sh_option rescue nil
       end
       
       directory @dir
@@ -206,8 +206,8 @@ module Rake
     def add_additional_packages
       info "Adding additional packages to nfsroot."
       additional_packages = ['dhcp3-client', 'ruby1.8',
-        'liblog4r-ruby', 'locales', 'rake', 'perl-modules',
-        'discover', 'libapt-pkg-perl', 'file', 'cfengine']
+        'liblog4r-ruby', 'rake', 'perl-modules', 'discover',
+        'libapt-pkg-perl', 'file', 'cfengine']
       # FIXME: locales の Debconf でキー入力をなくす
       system %{chroot #{@dir} apt-get -y --fix-missing install #{additional_packages.join(' ')}}
       if @extra_packages
@@ -266,6 +266,11 @@ DPkg
       info "Extracting installer base tarball. This may take a long time."
       sh %{tar -C #{@dir} -xzf #{installer_base}}, sh_option
       cp installer_base, nfsroot( '/var/tmp' ), sh_option
+      File.open( nfsroot('/etc/locale.gen'), 'w+' ) do |file|
+        file.puts "ja_JP.EUC-JP EUC-JP"
+        file.puts "en_US ISO-8859-1"
+      end
+      sh %{chroot #{@dir} locale-gen}
     end
 
     private

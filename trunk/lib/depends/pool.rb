@@ -195,12 +195,13 @@ module Depends
       return if level == 0
       if level == 1
         name2package(packageNameString).depends.collect { |each| @pool[each.name] }
-        # @pool[packageNameString].depends.collect { |each| @pool[each.name] }
       elsif level >=2
-        (@pool[packageNameString].depends + 
-         @pool[packageNameString].depends.collect { |each| each.name }.collect { |each|
+        (name2package(packageNameString).depends + 
+           name2package(packageNameString).depends.collect do |each| 
+           each.name 
+         end.collect do |each|
            forward_dependency each, level-1
-         }).flatten
+         end).flatten.compact
       else
         raise 'this shouldn\'t happen'
       end

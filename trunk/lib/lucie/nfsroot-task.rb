@@ -11,6 +11,9 @@ require 'rake/tasklib'
 
 module Rake
   class NfsrootTask < TaskLib
+    BASE_DIR = '/var/lib/lucie/nfsroot/'.freeze
+    INSTALLER_STAMP = '/etc/lucie/.installer_name'.freeze
+
     attr_accessor :name
     attr_accessor :dir
     attr_accessor :installer_base
@@ -24,7 +27,7 @@ module Rake
     public
     def initialize( name=:nfsroot ) # :yield: self
       @name = name
-      @dir = '/var/lib/lucie/nfsroot/'
+      @dir = BASE_DIR
       @package_server = 'http://www.debian.or.jp/debian'
       @distribution_version = 'stable'
       @root_password = "h29SP9GgVbLHE"
@@ -67,7 +70,7 @@ module Rake
 
     private
     def finish
-      File.open( nfsroot('/etc/lucie/.installer_name'), 'w+' ) do |file|
+      File.open( nfsroot(INSTALLER_STAMP), 'w+' ) do |file|
         file.print @name
       end
     end
@@ -178,7 +181,7 @@ module Rake
       ln_sf '/dev/null', nfsroot('etc/network/ifstate'), sh_option
       sh %{[ -d #{nfsroot('var/yp')} ] && ln -s /tmp/binding #{nfsroot('var/yp/binding')}}, sh_option rescue nil
 
-      sh %{[ -d #{nfsroot('var/log/ksymoops')} ] && rmdir #{nfsroot('var/log/ksymoops')}}, sh_option
+      sh %{[ -d #{nfsroot('var/log/ksymoops')} ] && rmdir #{nfsroot('var/log/ksymoops')}}, sh_option rescue nil
       ln_s  '/dev/null', nfsroot('var/log/ksymoops'), sh_option
 
       sh %{echo "iface lo inet loopback" > #{nfsroot( 'etc/network/interfaces' )}}, sh_option

@@ -83,6 +83,10 @@ module Lucie
     def do_option
       @commandline_options = CommandLineOptions.instance
       @commandline_options.parse ARGV.dup      
+      if @commandline_options.list_installer
+        list_installer
+        exit(0)
+      end
       if @commandline_options.help
         help
         exit
@@ -108,6 +112,18 @@ module Lucie
       end
     end
     
+    private
+    def list_installer
+      Dir.glob( File.join(Rake::NfsrootTask::BASE_DIR, "[^\.]*") ).each do |each|
+        installer_stamp = File.join( each, Rake::NfsrootTask::INSTALLER_STAMP )
+        if FileTest.exist?( installer_stamp )
+          puts each + %{ (#{File.stat(installer_stamp).mtime})}
+        else
+          puts each + " (broken)"
+        end
+      end
+    end
+
     private
     def nfsroot_task
       Rake::NfsrootTask.new( installer.name ) do |nfsroot|
@@ -209,7 +225,7 @@ module Lucie
         puts
       end
     end
-
+    
     class UnknownResourceTypeException < ::Exception; end
   end 
 end

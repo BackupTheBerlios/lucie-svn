@@ -21,20 +21,21 @@ module Lucie
   class CommandLineOptions #:nodoc:
     include Singleton
     
+    attr_reader :config_dir
     attr_reader :debug 
     attr_reader :help 
-    attr_reader :installer_name
-    attr_reader :list_resource 
-    attr_reader :version
-    attr_reader :config_dir
-    attr_reader :installer_base_dir
-    attr_reader :nfsroot_dir
-    attr_reader :verbose
-    attr_reader :trace
     attr_reader :installer_base
+    attr_reader :installer_base_dir
+    attr_reader :installer_name
+    attr_reader :list_installer
+    attr_reader :list_resource 
+    attr_reader :lmp_install
     attr_reader :log_file
     attr_reader :logging_level
-    attr_reader :lmp_install
+    attr_reader :nfsroot_dir
+    attr_reader :trace
+    attr_reader :verbose
+    attr_reader :version
 
     module OptionList # :nodoc:
       OPTION_LIST = [
@@ -66,6 +67,8 @@ module Lucie
           "set the logger level."],
         [ "--lmp-install",        "-a",   "package name", \
           "install lmp."],
+        [ "--list-installer",     "-s",   nil, \
+          "list up installers."],
       ]
 
       public
@@ -96,6 +99,8 @@ module Lucie
         
         getopt_long.each do |option, argument|
           case option
+          when "--list-installer"
+            @list_installer = true
           when "--list-resource"
             @list_resource = argument
           when "--installer-name"
@@ -142,6 +147,7 @@ module Lucie
       @debug = false
       @help = false
       @installer_name = nil
+      @list_installer = false
       @list_resource = nil
       @version = false
       @config_dir = '/etc/lucie/'

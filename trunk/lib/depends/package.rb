@@ -8,6 +8,9 @@
 require 'depends/dependency'
 
 module Depends
+  module Exception
+    class InconsistentPackageListException < ::Exception; end
+  end
 
   # パッケージ情報を表すクラス。内部的に使用。
   #--

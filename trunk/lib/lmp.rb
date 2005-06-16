@@ -14,6 +14,7 @@ class LMPApp
 
   LMP_VERSION = '0.0.2'
   VERSION_STRING = ['lmp', LMP_VERSION].join(' ')
+  DEPENDENCY_TRACE_LEVEL = 10 
 
   public
   def initialize
@@ -29,13 +30,9 @@ class LMPApp
     rescue SystemExit
       # Do Nothing
     rescue Exception => ex
-      puts "lmp aborted!"
-      puts ex.message
-      if $trace
-        puts ex.backtrace.join("\n")
-      else
-        # puts ex.backtrace.find { |str| str =~ /#{@rakefile}/ } || ""
-      end
+      STDERR.puts "lmp aborted!"
+      STDERR.puts ex.message
+      STDERR.puts ex.backtrace.join("\n") if $trace
       exit( 1 )
     end
   end
@@ -66,19 +63,20 @@ class LMPApp
     end
     if @command_line_options.depend_to
       @pool ||= Depends::Pool.new
+      package_list_inconsistency_check
+
       config_reader = LMP::ReadConfig.new
       config_reader.read( @command_line_options.depend_to )
-
       # depends ¤Î·×»»
       other_package_list = config_reader.packages[:install]
       package_list.each do |each|
-        depends = (@pool.deps( each, 10 )[:forward].collect do |package| package.name end).uniq
+        depends = (@pool.deps( each, DEPENDENCY_TRACE_LEVEL )[:forward].collect do |package| package.name end).uniq
         puts %{#{each} => #{(depends & other_package_list).join(', ')}} if ((depends & other_package_list) != [] )
       end
 
       # provided-depends ¤Î·×»»
       package_list.each do |each|
-        provided_depends = (@pool.deps( each, 10 )[:provided].collect do |package| package.name end).uniq
+        provided_depends = (@pool.deps( each, DEPENDENCY_TRACE_LEVEL )[:provided].collect do |package| package.name end).uniq
         puts %{#{(provided_depends & other_package_list).join(', ')} => #{each}} if ((provided_depends & other_package_list) != [] )
       end
     end
@@ -89,7 +87,8 @@ class LMPApp
     package_list.each_with_index do |each, index|
       (0..(package_list.size-1)).each do |other_index|
         if (index != other_index) && @pool.conflict?( each, package_list[other_index] )
-          puts %{#{each} <=> #{package_list[other_index]}} 
+          raise( Depends::Exception::InconsistentPackageListException, 
+                 %{Package inconsistency found in #{@command_line_options.package_list}: #{each} <=> #{package_list[other_index]}} )
         end
       end
     end

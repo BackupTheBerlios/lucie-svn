@@ -1,28 +1,40 @@
 #
-# = package.rb - A class representing package's metadata.
-#
 # $Id: package.rb,v 1.7 2004/06/30 06:46:14 takamiya Exp $
 #
 # Author:: Yasuhito TAKAMIYA, <mailto:takamiya@matsulab.is.titech.ac.jp>
 # Revision:: $Revision: 1.7 $
 # License:: GPL2
 
+require 'depends/dependency'
+
 module Depends
 
-  # Package class is an internal one and is usually not used directly
-  # by users.
+  # パッケージ情報を表すクラス。内部的に使用。
   class Package
-    attr_accessor :name, :status, :priority, :section, :size,
-      :maintainer, :source, :version, :replaces, :depends,
-      :description, :short_description, :provides, :recommends, :suggests, :conflicts,
-      :essential, :conffiles
+    attr_reader :conffiles
+    attr_reader :conflicts
+    attr_reader :depends
+    attr_reader :description
+    attr_reader :essential
+    attr_reader :installed_size
+    attr_reader :maintainer
+    attr_reader :name
+    attr_reader :priority
+    attr_reader :provides
+    attr_reader :recommends
+    attr_reader :replaces
+    attr_reader :section
+    attr_reader :short_description
+    attr_reader :source
+    attr_reader :status
+    attr_reader :suggests
+    attr_reader :version 
 
     # Returns a new Package object.
-    # Argument +rec+ is an object of String
     # 
     # _Example_:
     #
-    #  rec_str = <<CONTROL
+    #  spec = <<CONTROL
     #   Package: lv
     #   Priority: optional
     #   Section: text
@@ -48,7 +60,7 @@ module Depends
     #   Task: japanese
     #  CONTROL
     #
-    #  Depends::Package.new(rec_str)  #=> aNewPackageObj
+    #  Depends::Package.new(spec)  #=> aNewPackageObj
     #
     def initialize( controlString )
       conffiles = false
@@ -78,7 +90,7 @@ module Depends
             # NOTE make this an array? split on possible '/' (e.g. non-free)
             @section = field_value
           when 'Installed-Size'
-            @size = field_value
+            @installed_size = field_value.to_i
           when 'Maintainer'
             @maintainer = field_value
           when 'Source'
@@ -107,12 +119,11 @@ module Depends
             @short_description = field_value
             description = true
           else
-            # STDERR.puts "Package: unknown field: #{field_name}."
+            STDERR.puts "Package: unknown field: #{field_name}." if $trace
           end
         else
           @conffiles << each[1..-1] if conffiles
           conffiles = true if (each=='Conffiles:') or conffiles
-
           @description << each[1..-1] if description
         end
       }

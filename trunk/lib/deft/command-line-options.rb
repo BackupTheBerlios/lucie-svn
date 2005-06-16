@@ -18,7 +18,6 @@ module Deft
   class CommandLineOptions
     include Singleton
     
-    attr_reader :build
     attr_reader :run
     attr_reader :help 
     attr_reader :template
@@ -28,20 +27,18 @@ module Deft
 
     module OptionList
       OPTION_LIST = [
-      [ '--run',            '-R',   'file path', \
+        [ '--run',            '-R',   'file path', \
           'run debconf.' ],
-      [ '--trace',          '-T',   nil, \
+        [ '--trace',          '-T',   nil, \
           'displays lots on internal stuff.' ],
-      [ '--help',           '-h',   nil, \
+        [ '--help',           '-h',   nil, \
           "you're looking at it." ],
-      [ '--version',        '-v',   nil, \
+        [ '--version',        '-v',   nil, \
           "display  lucie-setup's version and exit." ],
-      [ '--template',       '-t',   'file path', \
+        [ '--template',       '-t',   'file path', \
           'show all the registered templates and exit.' ],
-      [ '--question',       '-q',   'file path', \
+        [ '--question',       '-q',   'file path', \
           'show all the registered questions and exit.' ],
-      [ '--build',          '-b',   'file path', \
-          'build lmp using template/question definition file.'],
       ]
 
       public
@@ -72,8 +69,6 @@ module Deft
 
         getopt_long.each do |option, argument|
           case option
-          when '--build'
-            @build = argument
           when '--run'
             @run = argument
           when '--question'
@@ -93,14 +88,6 @@ module Deft
       end
     end
 
-    public
-    def inspect
-      return '[CommandLineOptions: ' +
-        ["trace=#{@trace.inspect}", "help=#{@help.inspect}",
-        "version=#{@version.inspect}", "template=#{@template.inspect}", 
-        "question=#{@question.inspect}", "run=#{@run.inspect}", "build=#{@build.inspect}"].join(', ') + ']'
-    end
-    
     private
     def set_default_options
       @help = false

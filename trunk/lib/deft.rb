@@ -97,14 +97,6 @@ class DeftApp
   end
   
   private
-  def build
-    require File.join( File.dirname(@command_line_options.build), 'deft.rb' )
-    require @command_line_options.build
-    p File.join( File.dirname(@command_line_options.build), 'deft.rb' )
-    Task['package'].invoke
-  end
-  
-  private
   def run
     backend = Tempfile.new( 'deft' )
     
@@ -153,10 +145,6 @@ end
     end
     if @command_line_options.help
       help
-      exit( 0 )
-    end
-    if @command_line_options.build
-      build
       exit( 0 )
     end
     if @command_line_options.run      

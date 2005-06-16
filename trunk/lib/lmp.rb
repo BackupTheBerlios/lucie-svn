@@ -48,6 +48,10 @@ class LMPApp
       help
       exit( 0 )
     end
+    if @command_line_options.build
+      build
+      exit( 0 )
+    end
     if @command_line_options.conflict_with
       @pool ||= Depends::Pool.new
       package_list_inconsistency_check
@@ -80,6 +84,13 @@ class LMPApp
         puts %{#{(provided_depends & other_package_list).join(', ')} => #{each}} if ((provided_depends & other_package_list) != [] )
       end
     end
+  end
+
+  private
+  def build
+    require File.join( File.dirname(@command_line_options.build), 'deft.rb' )
+    require @command_line_options.build
+    Task['package'].invoke
   end
 
   private

@@ -14,7 +14,8 @@ module LMP
   # object to be queried for option values
   class CommandLineOptions
     include Singleton
-    
+
+    attr_reader :build    
     attr_reader :conflict_with
     attr_reader :depend_to
     attr_reader :help 
@@ -35,6 +36,8 @@ module LMP
           "display if this package depends to other package." ],
         [ '--conflict-with?',  '-c',  '[OTHER PACKAGE LIST]', \
           "display if this package conflicts with other package." ],
+        [ '--build',          '-b',   'file path', \
+          'build lmp using template/question definition file.'],
       ]
 
       public
@@ -65,6 +68,8 @@ module LMP
 
         getopt_long.each do |option, argument|
           case option
+          when '--build'
+            @build = argument
           when '--trace'
             $trace = true
           when '--depend-to?'

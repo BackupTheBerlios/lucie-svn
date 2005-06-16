@@ -73,14 +73,6 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                   "defalut value for question was not set to OFF" )
   end 
   
-  # デフォルトで build オプションが nil であることをテスト
-  public
-  def test_default_build_option_is_nil
-    @commandline_options.parse( [] )
-    assert_nil( @commandline_options.build,
-                "defalut value for build was not set to OFF" )
-  end     
-  
   # 実際にコマンドラインオプションをパーズし、値が取得できるかどうかのテスト ##############
   
   public
@@ -122,35 +114,8 @@ class TC_CommandLineOptions < Test::Unit::TestCase
                   "couldn't get value for question option" )
   end
   
-  public
-  def test_parse_build_option
-    @commandline_options.parse( ['--build=foo/bar/baz.rb'] )
-    assert_equal( 'foo/bar/baz.rb', @commandline_options.build,
-                  "couldn't get value for build option" )   
-  end
-
   # その他のテスト ###################################################################
   
-  public
-  def test_inspect
-    assert_match( /\A\[CommandLineOptions:\s*(\w+=.*)+\]\Z/,
-                  @commandline_options.inspect, "bad format of inspection String" )
-    assert_match( /trace=\S+/, @commandline_options.inspect,
-                  "couldn't inspect trace option" )
-    assert_match( /help=\S+/, @commandline_options.inspect,
-                  "couldn't inspect help option" )
-    assert_match( /version=\S+/,  @commandline_options.inspect,
-                  "couldn't inspect version option" )
-    assert_match( /template=\S+/,  @commandline_options.inspect,
-                  "couldn't inspect template option" )
-    assert_match( /question=\S+/,  @commandline_options.inspect,
-                  "couldn't inspect question option" )
-    assert_match( /run=\S+/, @commandline_options.inspect,
-                  "couldn't inspect run option" )
-    assert_match( /build=\S+/, @commandline_options.inspect,
-                  "couldn't inspect build option" )
-  end
-
   public
   def test_OPTION_LIST
     assert( Deft::CommandLineOptions::OptionList.const_defined?( :OPTION_LIST ),

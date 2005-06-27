@@ -1,9 +1,9 @@
 # =パッケージ間依存情報のキャッシュ管理用クラス定義
 #
-# $Id: cache.rb,v 1.5 2004/06/30 06:50:19 takamiya Exp $
+# $Id$
 #
 # Author:: Yasuhito TAKAMIYA, <mailto:takamiya@matsulab.is.titech.ac.jp>
-# Revision:: $Revision: 1.5 $
+# Revision:: $LastChangedRevision$
 # License:: GPL2
 
 module Depends

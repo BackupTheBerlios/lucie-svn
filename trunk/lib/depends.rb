@@ -1,3 +1,10 @@
+# =libdepends メインファイル
+#
+# libdepends のメインファイル。libdepends を使用する場合にはこのファイ
+# ルを以下のように +require+ すること。
+#
+#  require 'depends'
+#
 # $Id$
 #
 # Author:: Yasuhito TAKAMIYA <mailto:takamiya@matsulab.is.titech.ac.jp>
@@ -6,11 +13,13 @@
 #
 #--
 # TODO:
-# * RPM support.
+# * Support RPM and other formats.
 #++
 
 module Depends
+  # バージョン番号
   VERSION = '0.0.2'.freeze
+  # 使用できるパッケージ状態
   STATUS  = '/var/lib/dpkg/status'.freeze
 end
 

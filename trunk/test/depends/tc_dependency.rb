@@ -234,7 +234,7 @@ STATUS
 
   public
   def test_exception
-    assert_raises( RuntimeError ) { 
+    assert_raises( Depends::Exception::UnknownDependencyException ) { 
       Depends::Dependency.new( 'wrong dependency string' )
     }
   end

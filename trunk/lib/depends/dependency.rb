@@ -1,60 +1,74 @@
 #
-# $Id: dependency.rb,v 1.3 2004/06/30 06:46:14 takamiya Exp $
+# $Id$
 #
 # Author:: Yasuhito TAKAMIYA <mailto:takamiya@matsulab.is.titech.ac.jp>
-# Revision:: $Revision: 1.3 $
+# Revision:: $Revision$
 # License::  GPL2
 
 module Depends
+  module Exception
+    class UnknownDependencyException < ::Exception; end
+  end
+
+  # パッケージ間の依存関係を表すクラス。libdepends 内で内部的に使用さ
+  # れる。
   class Dependency
-    attr_reader :name, :relation, :version
-    
+    # パッケージ名
+    attr_reader :name
+    # 依存関係
+    attr_reader :relation
+    # バージョン
+    attr_reader :version
+
     public
     def initialize( dependencyString )
       @dependency_description = dependencyString
+      parse_description
+    end
+
+    public 
+    def inspect #:nodoc:
+      return '<Dependency: ' + @dependency_description + '>'
+    end
+
+    public
+    def _dump( limit ) #:nodoc:
+      return @dependency_description
+    end
+
+    public 
+    def self._load( serializedString ) #:nodoc:
+      return self.new( serializedString )
+    end
+
+    private
+    def parse_description
       case @dependency_description
       when /(.*) \(([<>=]+)\s*(.*)\)/
 	@name = $1
 	relation = $2
 	@version = $3
-	@relation = 
-	  Proc.new { |other_package|
+	@relation = Proc.new do |other_package|
 	  (other_package.name == @name) and relation_proc[relation].call( other_package.version )
-	}
+        end
       when /^(\S+)$/
 	@name = $1
 	@version = '*'
-	@relation = 
-	  Proc.new { |other_package| 
+	@relation = Proc.new do |other_package| 
 	  other_package.name == @name 
-	}
+        end
       else
-	raise "Dependency: could not parse string #{@dependency_description}."
+	raise Exception::UnknownDependencyException, "Dependency: could not parse string #{@dependency_description}."
       end
-    end
-
-    public 
-    def inspect #:nodoc:
-      '<Dependency: ' + @dependency_description + '>'
-    end
-
-    public
-    def _dump( limit ) #:nodoc:
-      @dependency_description
-    end
-
-    public 
-    def self._load( serializedString ) #:nodoc:
-      self.new serializedString
     end
 
     private
     def relation_proc
-      { '>>' => Proc.new { |other_version| other_version >  @version },
-	'<<' => Proc.new { |other_version| other_version <  @version },
-	'>=' => Proc.new { |other_version| other_version >= @version },
-	'<=' => Proc.new { |other_version| other_version <= @version },
-	'='  => Proc.new { |other_version| other_version == @version } }
+      { '>>' => Proc.new do |other_version| other_version >  @version end,
+	'<<' => Proc.new do |other_version| other_version <  @version end,
+	'>=' => Proc.new do |other_version| other_version >= @version end,
+	'<=' => Proc.new do |other_version| other_version <= @version end,
+	'='  => Proc.new do |other_version| other_version == @version end }
     end
   end
 end

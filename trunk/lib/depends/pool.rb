@@ -140,7 +140,9 @@ module Depends
       dependencies[:provided] = provided_dependency( packageNameString, level )
       @pool.each_pair do |name, package|
         package.provides.each do |each|
-          dependencies[:reverse] += reverse_dependency( name, level ) if each == packageNameString
+          if each == packageNameString
+            dependencies[:reverse] += reverse_dependency( name, level ) 
+          end
         end
       end
       return dependencies
@@ -162,7 +164,8 @@ module Depends
     def string2package( packageNameString )
       return @pool[packageNameString] if @pool[packageNameString]
       rec = `apt-cache show #{packageNameString}`.split('\n\n')[0]
-      raise Exception::UnknownPackageException, "Package '#{packageNameString}' not found." unless rec
+      raise( Exception::UnknownPackageException,
+             "Package '#{packageNameString}' not found." ) unless rec
       @pool[packageNameString] = Package.new(rec)
       return @pool[packageNameString]
     end
@@ -171,8 +174,12 @@ module Depends
     def forward_dependency( packageNameString, level )
       return if level == 0
       if level >=2
-        depend_packages = string2package(packageNameString).depends.collect do |each| each.name end
-        forward_forward_dependency = depend_packages.collect do |each| forward_dependency( each, level-1 ) end
+        depend_packages = string2package(packageNameString).depends.collect do |each|
+          each.name 
+        end
+        forward_forward_dependency = depend_packages.collect do |each| 
+          forward_dependency( each, level-1 ) 
+        end
         return (string2package(packageNameString).depends + forward_forward_dependency).flatten.compact
       elsif level == 1
         return string2package(packageNameString).depends.collect do |each| @pool[each.name] end

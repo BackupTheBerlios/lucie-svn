@@ -172,14 +172,14 @@ STATUS
 Package: a
 Status: install ok installed
 STATUS
-    assert_raises( RuntimeError ) { pool.conflict?('a', 'b') }
+    assert_raises( Depends::Exception::UnknownPackageException ) { pool.conflict?('a', 'b') }
 
     # 指定されたパッケージがみつからない場合。
     pool = Depends::Pool.new(<<STATUS)
 Package: b
 Status: install ok installed
 STATUS
-    assert_raises( RuntimeError ) { pool.conflict?('a', 'b') }
+    assert_raises( Depends::Exception::UnknownPackageException ) { pool.conflict?('a', 'b') }
   end
 
 

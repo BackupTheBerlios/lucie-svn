@@ -1,101 +1,80 @@
-#
-# = pool.rb - Pools all of package dependency information.
 # 
-# $Id: pool.rb,v 1.9 2004/06/30 06:54:06 takamiya Exp $
+# $Id$
 #
 # Author:: Yasuhito TAKAMIYA <mailto:takamiya@matsulab.is.titech.ac.jp>
-# Revision:: $Revision: 1.9 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 require 'English'
 
 module Depends
+  module Exception
+    class UnknownPackageException < ::Exception; end
+  end
+
+  # パッケージ間依存情報をプールするためのクラス
   class Pool
-    ##
-    # Returns a new Pool object.
-    #
-    # _Example_:
-    #  Pool.new -> aNewPool
-    #
     def initialize( statusString = nil )
       @pool = {}
       @packages_depends_to = Hash.new([])
-      @npackage = 0
-
-      packages( statusString ).each { |each|
+      packages( statusString ).each do |each|
         register_package each
-        STDERR.print @npackage, "\r" if $trace
-      }
+      end
       cache_dependency
-      
-      STDERR.printf("%d packages and %d virtual packages available, %d installed\n",
-                    @npackage, n_virtual_packages, n_installed_packages) if $trace
     end
 
     public
     def package( packageNameString )
-      name2package packageNameString
+      string2package packageNameString
     end
     
     private
     def packages( statusString )
       if statusString
-        statusString.split "\n\n"
+        return statusString.split( "\n\n" )
       else
-        IO.readlines STATUS, "\n\n"
+        return IO.readlines( STATUS, "\n\n" )
       end
     end
 
     private
-    def n_virtual_packages
-      @pool.values.select { |each| each.status[0] == 'virtual' }.size
-    end
-
-    private
-    def n_installed_packages
-      @pool.size - n_virtual_packages
-    end
-
-    private
     def cache_dependency
-      @pool.values.each { |package|
-        package.depends.each { |dependency|
+      @pool.values.each do |package|
+        package.depends.each do |dependency|
           next if @pool[dependency.name].nil?
           @packages_depends_to[dependency.name] |= [package]
-        }}
+        end
+      end
     end
 
     private
     def register_package( controlString )
       package = Package.new( controlString )
-      @npackage += 1
-      @pool[package.name] = package if (package.status and ( package.status[2] == "installed" ))
-      package.provides.each { |each| 
+      @pool[package.name] = package if package.installed?
+      package.provides.each do |each| 
         @pool[each] = Package.new( "Package: #{each}\nStatus: virtual" )
-      }
+      end
     end
 
-    # Check if +packageNameString+ conflicts with +otherPackageNameString+?
-    # This method returns boolean value.
+    # +packageNameString+ が +otherPackageNameString+ と衝突するかどう
+    # かを boolean で返す。
     #
     # _Example_:
     #  aPool.conflict?('gcc', 'lv')    #=> false
     #  aPool.conflict?('lam', 'mpich') #=> true
     #
-    # a RuntimeError will be thrown when +packageNameString+ or
-    # +otherPackageNameString+ package not found.
-    #
+    # +packageNameString+ や +otherPackageNameString+ パッケージが見つ
+    # からない場合には Exception::UnknownPackageException を raise する。
     public
     def conflict?( packageNameString, otherPackageNameString )
-      other_package = name2package( otherPackageNameString )
-      conflict_dependency = conflict_dependency( packageNameString, otherPackageNameString )
-      return false unless conflict_dependency
-      conflict_dependency.relation.call other_package 
+      other_package = string2package( otherPackageNameString )
+      dependency = conflict_dependency( packageNameString, otherPackageNameString )
+      return false unless dependency
+      return dependency.relation.call( other_package )
     end
 
-    ##
-    # Returns an Array of Dependency object containing conflicting
-    # packages' dependency information.
+    # +packageNameString+ パッケージに衝突するパッケージの依存関係を表
+    # す Dependency オブジェクトからなる Array を返す
     #
     # _Example_:
     #  aPool.conflicts('gcc') #=>
@@ -103,15 +82,14 @@ module Depends
     # 
     public
     def conflicts( packageNameString )
-      package = name2package( packageNameString )
+      package = string2package( packageNameString )
       if package.conflicts
-        return package.conflicts.split(/,\s*/).collect { |each| Dependency.new each }
+        return package.conflicts.split(/,\s*/).collect do |each| Dependency.new( each ) end
       else
-        []
+        return []
       end
     end
 
-    ##
     # Returns all of the package dependency information in a Hash
     # object. Each value of Hash is an Array of Package object.
     # Argument +packageNameString+ is a name of package to track
@@ -154,75 +132,71 @@ module Depends
     #  pd[1].name #=> 'libtool'
     # We can see that `gcc' provides c-compiler, and package
     # 'kernel-package' and 'libtool' depend on it.
-    #
     public
     def deps( packageNameString, level=1 )
       dependencies = Hash.new([])
-      @pool.each { |name, package|
-	if name == packageNameString
-	  dependencies[:forward] += forward_dependency( packageNameString, level )
-	  dependencies[:reverse] += reverse_dependency( packageNameString, level )
-	  dependencies[:provided] += provided_dependency( package, level )
-	else
-	  package.provides.each { |each|
-            dependencies[:reverse] += reverse_dependency( name, level ) if each == packageNameString
-	  }
-	end
-      }
-      dependencies
+      dependencies[:forward]  = forward_dependency(  packageNameString, level )
+      dependencies[:reverse]  = reverse_dependency(  packageNameString, level )
+      dependencies[:provided] = provided_dependency( packageNameString, level )
+      @pool.each_pair do |name, package|
+        package.provides.each do |each|
+          dependencies[:reverse] += reverse_dependency( name, level ) if each == packageNameString
+        end
+      end
+      return dependencies
     end
 
     private
     def conflict_dependency( packageNameString, otherPackageNameString )
-      conflicts( packageNameString ).select { |c|
-	otherPackageNameString == c.name
-      }[0]
-    end
-    
-    private
-    def name2package( packageNameString )
-      if @pool[packageNameString]
-        return @pool[packageNameString]
-      else
-	rec = `apt-cache show #{packageNameString}`.split('\n\n')[0]
-        raise "Package '#{packageNameString}' not found." unless rec
-	@pool[packageNameString] = Package.new(rec)
+      target = conflicts( packageNameString ).select do |each|
+	otherPackageNameString == each.name
       end
+      return target.first
+    end
+
+    # パッケージ名から Package オブジェクトを返す。
+    # +@pool+ に入っているのは現在システムにインストールされているパッケー
+    # ジ情報のみなので、もし知らないパッケージがあった場合には 
+    # +apt-cache+ コマンドで調べて返す。
+    private
+    def string2package( packageNameString )
+      return @pool[packageNameString] if @pool[packageNameString]
+      rec = `apt-cache show #{packageNameString}`.split('\n\n')[0]
+      raise Exception::UnknownPackageException, "Package '#{packageNameString}' not found." unless rec
+      @pool[packageNameString] = Package.new(rec)
+      return @pool[packageNameString]
     end
 
     private
     def forward_dependency( packageNameString, level )
       return if level == 0
-      if level == 1
-        name2package(packageNameString).depends.collect { |each| @pool[each.name] }
-      elsif level >=2
-        (name2package(packageNameString).depends + 
-           name2package(packageNameString).depends.collect do |each| 
-           each.name 
-         end.collect do |each|
-           forward_dependency each, level-1
-         end).flatten.compact
+      if level >=2
+        depend_packages = string2package(packageNameString).depends.collect do |each| each.name end
+        forward_forward_dependency = depend_packages.collect do |each| forward_dependency( each, level-1 ) end
+        return (string2package(packageNameString).depends + forward_forward_dependency).flatten.compact
+      elsif level == 1
+        return string2package(packageNameString).depends.collect do |each| @pool[each.name] end
       else
         raise 'this shouldn\'t happen'
       end
     end
-
+    
     private
     def reverse_dependency( packageNameString, level )
       return if level == 0
       result = []
-      @packages_depends_to[packageNameString].each { |each|
+      @packages_depends_to[packageNameString].each do |each|
 	result << each
         result += reverse_dependency(each.name, level-1) if level >= 2
-      }
-      result.uniq
+      end
+      return result.uniq
     end
 
     private
-    def provided_dependency( aPackage, level )
-      aPackage.provides.collect { |each| 
+    def provided_dependency( packageNameString, level )
+      @pool[packageNameString].provides.collect do |each| 
 	reverse_dependency each, level
-      }.flatten
+      end.flatten
     end
   end
 end 

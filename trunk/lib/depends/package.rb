@@ -154,6 +154,11 @@ module Depends
     end
 
     public
+    def installed?
+      return (@status and ( @status[2] == 'installed' ))
+    end
+
+    public
     def <=>( other ) #:nodoc:
       @name <=> other.name
     end

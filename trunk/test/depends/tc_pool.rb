@@ -4,26 +4,12 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-$LOAD_PATH.unshift '../../lib'
+$LOAD_PATH.unshift './lib'
 
 require 'depends'
 require 'test/unit'
 
 class TC_Pool < Test::Unit::TestCase
-  public
-  def test_package
-    pool = Depends::Pool.new
-    package = pool.package('ruby')
-    assert_kind_of Depends::Package, package
-    assert_equal 'ruby', package.name
-  end
-
-  public
-  def test_new
-    pool = Depends::Pool.new
-    assert_kind_of Depends::Pool, pool
-  end
-
   public
   def test_conflict?
     # conflict しない場合
@@ -34,7 +20,7 @@ Status: install ok installed
 Package: b
 Status: install ok installed
 STATUS
-    assert_equal false, pool.conflict?('a', 'b')
+    assert_equal( false, pool.conflict?('a', 'b'), 'coflict の検出が正しくない' )
 
     # conflict する場合
     pool = Depends::Pool.new(<<STATUS)
@@ -45,7 +31,7 @@ Conflicts: b
 Package: b
 Status: install ok installed
 STATUS
-    assert_equal true, pool.conflict?('a', 'b')
+    assert_equal( true, pool.conflict?('a', 'b'), 'coflict の検出が正しくない' )
 
     # conflict しない場合、バージョン指定あり。
     pool = Depends::Pool.new(<<STATUS)
@@ -57,7 +43,7 @@ Package: b
 Status: install ok installed
 Version: 1.1    
 STATUS
-    assert_equal false, pool.conflict?('a', 'b')
+    assert_equal( false, pool.conflict?('a', 'b'), 'coflict の検出が正しくない' )
 
     # conflict する場合、バージョン指定あり。
     pool = Depends::Pool.new(<<STATUS)
@@ -69,7 +55,7 @@ Package: b
 Status: install ok installed
 Version: 1.0
 STATUS
-    assert_equal true, pool.conflict?('a', 'b')
+    assert_equal( true, pool.conflict?('a', 'b'), 'coflict の検出が正しくない' )
 
     # conflict しない場合、バージョン指定 (>>) あり。
     pool = Depends::Pool.new(<<STATUS)
@@ -81,7 +67,7 @@ Package: b
 Status: install ok installed
 Version: 1.0
 STATUS
-    assert_equal false, pool.conflict?('a', 'b')
+    assert_equal( false, pool.conflict?('a', 'b'), 'coflict の検出が正しくない' )
 
     # conflict する場合、バージョン指定 (>>) あり。
     pool = Depends::Pool.new(<<STATUS)
@@ -93,7 +79,7 @@ Package: b
 Status: install ok installed
 Version: 1.1
 STATUS
-    assert_equal true, pool.conflict?('a', 'b')
+    assert_equal( true, pool.conflict?('a', 'b'), 'coflict の検出が正しくない' )
 
     # conflict しない場合、バージョン指定 (>=) あり。
     pool = Depends::Pool.new(<<STATUS)
@@ -105,7 +91,7 @@ Package: b
 Status: install ok installed
 Version: 0.9
 STATUS
-    assert_equal false, pool.conflict?('a', 'b')
+    assert_equal( false, pool.conflict?('a', 'b'), 'coflict の検出が正しくない' )
 
     # conflict する場合、バージョン指定 (>=) あり。
     pool = Depends::Pool.new(<<STATUS)
@@ -117,7 +103,7 @@ Package: b
 Status: install ok installed
 Version: 1.0
 STATUS
-    assert_equal true, pool.conflict?('a', 'b')
+    assert_equal( true, pool.conflict?('a', 'b'), 'coflict の検出が正しくない' )
 
     # conflict しない場合、バージョン指定 (<<) あり。
     pool = Depends::Pool.new(<<STATUS)
@@ -129,8 +115,8 @@ Package: b
 Status: install ok installed
 Version: 1.0
 STATUS
-    assert_equal false, pool.conflict?('a', 'b')
-
+    assert_equal( false, pool.conflict?('a', 'b'), 'coflict の検出が正しくない' )
+    
     # conflict する場合、バージョン指定 (<<) あり。
     pool = Depends::Pool.new(<<STATUS)
 Package: a
@@ -141,7 +127,7 @@ Package: b
 Status: install ok installed
 Version: 0.9
 STATUS
-    assert_equal true, pool.conflict?('a', 'b')
+    assert_equal( true, pool.conflict?('a', 'b'), 'coflict の検出が正しくない' )
 
     # conflict しない場合、バージョン指定 (<=) あり。
     pool = Depends::Pool.new(<<STATUS)
@@ -153,7 +139,7 @@ Package: b
 Status: install ok installed
 Version: 1.1
 STATUS
-    assert_equal false, pool.conflict?('a', 'b')
+    assert_equal( false, pool.conflict?('a', 'b'), 'coflict の検出が正しくない' )
 
     # conflict する場合、バージョン指定 (<=) あり。
     pool = Depends::Pool.new(<<STATUS)
@@ -165,21 +151,27 @@ Package: b
 Status: install ok installed
 Version: 1.0
 STATUS
-    assert_equal true, pool.conflict?('a', 'b')
+    assert_equal( true, pool.conflict?('a', 'b'), 'coflict の検出が正しくない' )
 
     # 指定されたパッケージがみつからない場合。
     pool = Depends::Pool.new(<<STATUS)
 Package: a
 Status: install ok installed
 STATUS
-    assert_raises( Depends::Exception::UnknownPackageException ) { pool.conflict?('a', 'b') }
+    assert_raises( Depends::Exception::UnknownPackageException,
+                   'UnknownPackageException が raise されなかった' ) do 
+      pool.conflict?('a', 'b') 
+    end
 
     # 指定されたパッケージがみつからない場合。
     pool = Depends::Pool.new(<<STATUS)
 Package: b
 Status: install ok installed
 STATUS
-    assert_raises( Depends::Exception::UnknownPackageException ) { pool.conflict?('a', 'b') }
+    assert_raises( Depends::Exception::UnknownPackageException,
+                   'UnknownPackageException が raise されなかった' ) do
+      pool.conflict?('a', 'b') 
+    end
   end
 
 
@@ -192,10 +184,16 @@ Conflicts: libc5-dev, egcc (<< 2.91.63-1.1)
 
 Package: bar
 Status: install ok installed
-    assert_equal '[<Dependency: libc5-dev>, <Dependency: egcc (<< 2.91.63-1.1)>]',  pool.conflicts( 'gcc-2.95' ).inspect
+STATUS
+    assert_equal( '[<Dependency: libc5-dev>, <Dependency: egcc (<< 2.91.63-1.1)>]', 
+                  pool.conflicts( 'gcc-2.95' ).inspect,
+                  'conflicts の結果が正しくない' )
 
-    assert_raises( RuntimeError ) { pool.conflicts( 'foo' ) }
-    assert_equal [], pool.conflicts( 'bar' )
+    assert_raises( Depends::Exception::UnknownPackageException,
+                   'UnknownPackageException が raise されなかった' ) do 
+      pool.conflicts( 'foo' ) 
+    end
+    assert_equal( [], pool.conflicts( 'bar' ), 'conflicts の結果が正しくない' )
   end
 
 

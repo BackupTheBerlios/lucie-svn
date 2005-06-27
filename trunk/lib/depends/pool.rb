@@ -23,11 +23,6 @@ module Depends
       cache_dependency
     end
 
-    public
-    def package( packageNameString )
-      string2package packageNameString
-    end
-    
     private
     def packages( statusString )
       if statusString

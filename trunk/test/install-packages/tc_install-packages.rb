@@ -25,13 +25,6 @@ class TC_InstallPackages < Test::Unit::TestCase
   end
 
   public
-  def test_fetch_prerequires
-    $dry_run = true
-    @install_packages.read_config( 'test/install-packages/install-packages.conf' )
-    @install_packages.fetch_prerequires
-  end
-
-  public
   def test_read_config_raises_exception
     assert_raises( Errno::ENOENT, '例外が raise されなかった' ) do 
       @install_packages.read_config( 'NO_SUCH_FILE' )
@@ -41,9 +34,9 @@ class TC_InstallPackages < Test::Unit::TestCase
   public
   def test_read_config
     list = @install_packages.read_config( 'test/install-packages/install-packages.conf' )
-    assert_equal( ['install'], list.keys,
+    assert_equal( [InstallPackages::Command::Install], list.keys,
                   'インストールタイプの数が正しくない' )
-    assert_equal( packages_tobeinstalled, list['install'],
+    assert_equal( packages_tobeinstalled, list[InstallPackages::Command::Install],
                   'インストールされるパッケージが正しくない' )
   end
 

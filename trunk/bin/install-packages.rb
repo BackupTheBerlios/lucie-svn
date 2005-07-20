@@ -165,14 +165,101 @@ module InstallPackages
     end
   end
 
-  # install-packages のアプリケーションクラス
-  class App
-    include Singleton
-
+  class AbstractCommand
     # 同時にインストールできるパッケージの数
     MAX_PACKAGE_LIST = 99
     # apt のデフォルトオプション
-    APT_OPTION = %{-y -o Dpkg::Optios::="--force-confdef" -o Dpkg::Options::="--force-confold"}
+    APT_OPTION = %{-y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"}
+
+    public
+    def initialize( listHash )
+      @list = listHash
+    end
+
+    public
+    def go
+      case commandline
+      when String
+        execute commandline
+      when Array
+        commandline.each do |each|
+          execute each
+        end
+      end
+    end
+    
+    # execute a command or only print it
+    #--
+    # XXX: --dry_run モードのサポート
+    #++
+    private
+    def execute( commandLineString )
+      if $dry_run
+        $stderr.puts commandLineString 
+        return
+      end
+      rc = system( commandLineString )
+      $stderr.puts "ERROR: #{$?.exitstatus}" unless rc
+    end
+
+    #--
+    # XXX /tmp/target のパスは Lucie のライブラリから取得
+    #++
+    private
+    def root_command
+      return ($LUCIE_ROOT == '/') ? '' : "chroot /tmp/target" 
+    end
+  end
+
+  module Command
+    class Hold
+      public
+      def commandline
+      end
+    end 
+    
+    class Taskrm
+    end
+
+    class Taskinst
+    end
+
+    class Clean < AbstractCommand
+      public
+      def commandline
+        return %{#{root_command} apt-get clean}
+      end
+    end
+
+    class Aptitude
+    end
+
+    class Install < AbstractCommand
+      public
+      def commandline
+        # XXX do not execute 'apt-get clean' always
+        return [%{#{root_command} apt-get #{APT_OPTION} --force-yes --fix-missing install #{short_list}}, 'apt-get clean']
+      end
+
+      private
+      def short_list
+        return @list['install'][0..MAX_PACKAGE_LIST].join(' ')
+      end
+    end
+
+    class Remove
+    end
+
+    class DselectUpgrade
+    end
+
+    class AptitudeR
+    end
+  end
+  
+  # install-packages のアプリケーションクラス
+  class App
+    include Singleton
 
     #--
     # XXX /tmp/target のパスは Lucie のライブラリから取得
@@ -209,8 +296,8 @@ module InstallPackages
     public
     def do_commands
       commands.each do |each|
-        if each == 'clean'
-          execute( "#{root_command} #{command['clean']}" )
+        if each == Command::Clean
+          each.new( @list ).go
           next
         end
 
@@ -224,45 +311,24 @@ module InstallPackages
 
         # TODO: hold
 
-        if( each == 'install' || each == 'aptitude' )
+        if( each == Command::Install || each == 'aptitude' )
           # TODO: 知らないパッケージを libapt-pkg で調べる
-          shortlist = @list[each][0..MAX_PACKAGE_LIST].join(' ')
-          execute( "#{root_command} #{command[each]} #{shortlist}" ) if shortlist
-          execute( "#{root_command} #{command['clean']}" ) # XXX do not execute always
+          each.new( @list ).go
           next
         end
 
         # TODO: tasklist, taskrm
 
         # other types
-        package_list = @list[each].join(' ')
-        execute( "#{root_command} #{command[each]} #{package_list}" ) if package_list
+#         execute( get_command(each) ) if package_list( each )
       end
-    end
-
-    private
-    def command
-      return { 'clean'   => 'apt-get clean',
-               'install' => "apt-get #{APT_OPTION} --force-yes --fix-missing install" }
     end
 
     private
     def commands
-      %w(hold taskrm taskinst clean aptitude install remove dselect-upgrade)
-    end
-
-    # execute a command or only print it
-    #--
-    # XXX: --dry_run モードのサポート
-    #++
-    private
-    def execute( commandLineString )
-      if $dry_run
-        $stderr.puts commandLineString 
-        return
-      end
-      rc = system( commandLineString )
-      $stderr.puts "ERROR: #{$?.exitstatus}" unless rc
+      return [Command::Hold, Command::Taskrm, Command::Taskinst,
+        Command::Clean, Command::AptitudeR, Command::Aptitude,
+        Command::Install, Command::Remove, Command::DselectUpgrade]
     end
 
     # prerequire で指定されているファイルを取得する
@@ -309,9 +375,14 @@ module InstallPackages
           $stderr.puts "PACKAGES .. line missing in #{configPathString}"
           next
         end
-        @list[type] += each.split
+        @list[string2command[type]] += each.split
       end
       return @list
+    end
+    
+    private
+    def string2command
+      return { 'install' => Command::Install }
     end
   end
 end

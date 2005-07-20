@@ -11,11 +11,12 @@ require 'singleton'
 require 'uri'
 
 module InstallPackages
+  # コマンドラインオプションを管理するクラス
   class Options
     PROGRAM_NAME   = 'install_packages'.freeze
     VERSION        = '0.0.1'.freeze
     VERSION_STRING = [PROGRAM_NAME, VERSION].join(' ')
-
+    # サポートされているコマンドラインオプション
     OPTIONS = { '--debug' => { :long_option => "--debug",
                                :short_option => "-D",
                                :argument => nil,
@@ -108,13 +109,21 @@ module InstallPackages
       end
     end
     
+    # あたらしいオブジェクトを返す。シングルトンであることに注意。
     public
     def initialize
       register_options
       set_default_options
     end
 
-    # Parse command line options.
+    # コマンドラインオプションをパーズする。
+    # 設定されたオプションはインスタンス変数としてアクセスできる。
+    #
+    # Example:
+    #  % command --foo='barbaz'
+    #  Options.instance.parse( ARGV ).foo 
+    #   => 'barbaz'
+    # 
     public
     def parse( argvArray )
       set_default_options
@@ -139,13 +148,6 @@ module InstallPackages
       return self
     end
 
-    public
-    def inspect
-      OptionList.registered_options.map do |each|
-        "#{each} = #{self.send(each)}"
-      end.join("\n")
-    end
-
     private
     def register_options
       OPTIONS.values.each do |each|
@@ -163,14 +165,24 @@ module InstallPackages
     end
   end
 
+  # install-packages のアプリケーションクラス
   class App
     include Singleton
 
+    # 同時にインストールできるパッケージの数
     MAX_PACKAGE_LIST = 99
+    # apt のデフォルトオプション
     APT_OPTION = %{-y -o Dpkg::Optios::="--force-confdef" -o Dpkg::Options::="--force-confold"}
-    # XXX /tmp/target のパスは Lucie のライブラリから取得
-    ROOT_COMMAND = ($LUCIE_ROOT == '/') ? '' : "chroot /tmp/target" 
 
+    #--
+    # XXX /tmp/target のパスは Lucie のライブラリから取得
+    #++
+    private
+    def root_command
+      return ($LUCIE_ROOT == '/') ? '' : "chroot /tmp/target" 
+    end
+
+    # あたらしいオブジェクトを返す。シングルトンであることに注意。
     public
     def initialize
       @list = Hash.new( [] )
@@ -178,6 +190,7 @@ module InstallPackages
       @preloadrm_list = [] 
     end
 
+    # install-packages のメインルーチン
     public
     def main
       begin
@@ -192,11 +205,12 @@ module InstallPackages
       end
     end
 
+    # install, clean 等のコマンドを実際に実行する
     public
     def do_commands
       commands.each do |each|
         if each == 'clean'
-          execute( "#{ROOT_COMMAND} #{command['clean']}" )
+          execute( "#{root_command} #{command['clean']}" )
           next
         end
 
@@ -213,8 +227,8 @@ module InstallPackages
         if( each == 'install' || each == 'aptitude' )
           # TODO: 知らないパッケージを libapt-pkg で調べる
           shortlist = @list[each][0..MAX_PACKAGE_LIST].join(' ')
-          execute( "#{ROOT_COMMAND} #{command[each]} #{shortlist}" ) if shortlist
-          execute( "#{ROOT_COMMAND} #{command['clean']}" ) # XXX do not execute always
+          execute( "#{root_command} #{command[each]} #{shortlist}" ) if shortlist
+          execute( "#{root_command} #{command['clean']}" ) # XXX do not execute always
           next
         end
 
@@ -222,7 +236,7 @@ module InstallPackages
 
         # other types
         package_list = @list[each].join(' ')
-        execute( "#{ROOT_COMMAND} #{command[each]} #{package_list}" ) if package_list
+        execute( "#{root_command} #{command[each]} #{package_list}" ) if package_list
       end
     end
 
@@ -238,6 +252,9 @@ module InstallPackages
     end
 
     # execute a command or only print it
+    #--
+    # XXX: --dry_run モードのサポート
+    #++
     private
     def execute( commandLineString )
       if $dry_run
@@ -248,6 +265,7 @@ module InstallPackages
       $stderr.puts "ERROR: #{$?.exitstatus}" unless rc
     end
 
+    # prerequire で指定されているファイルを取得する
     public
     def fetch_prerequires
       # FIXME: '/' が 2 個連続するのを修正 (File.join を使う) 
@@ -261,6 +279,10 @@ module InstallPackages
       end
     end
 
+    # 設定ファイルを読み込む
+    #--
+    # TODO: 設定ファイルの書式を Ruby スクリプトにする
+    #++
     public
     def read_config( configPathString )
       @list.clear

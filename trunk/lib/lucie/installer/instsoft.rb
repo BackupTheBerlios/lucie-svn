@@ -5,9 +5,7 @@
 # Revision:: $Revision: 557 $
 # License::  GPL2
 
-# TODO: install_packages ¤ÎºÆ¼ÂÁõ
-classes = Dir.entries('/etc/lucie/package') - ['.', '..'] 
-sh( %{classes="#{classes.join(' ')}" install_packages </dev/null >> #{$software_log} 2>&1}, $sh_option )
+sh( %{install_packages </dev/null >> #{$software_log} 2>&1}, $sh_option )
 
 ### Local variables:
 ### mode: Ruby

@@ -212,9 +212,12 @@ module InstallPackages
   end
 
   module Command
-    class Hold
+    class Hold < AbstractCommand
       public
       def commandline
+        return @list['hold'].map do |each|
+          %{echo #{each} hold | #{root_command} dpkg --set-selections}
+        end
       end
     end 
     
@@ -337,7 +340,10 @@ module InstallPackages
           next
         end
 
-        # TODO: hold
+        if each == Command::Hold
+          each.new( @list ).go
+          next
+        end
 
         if( each == Command::Install || each == 'aptitude' )
           # TODO: 知らないパッケージを libapt-pkg で調べる

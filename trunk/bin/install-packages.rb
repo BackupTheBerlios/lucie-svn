@@ -224,7 +224,13 @@ module InstallPackages
     class Taskrm
     end
 
-    class Taskinst
+    class Taskinst < AbstractCommand
+      public
+      def commandline
+        return @list['taskinst'].map do |each|
+          %{#{root_command} tasksel -n install #{each}}
+        end
+      end
     end
 
     class Clean < AbstractCommand

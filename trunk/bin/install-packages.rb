@@ -234,14 +234,27 @@ module InstallPackages
       end
     end
 
-    class Aptitude
+    class Aptitude < AbstractCommand
+      public
+      def commandline
+        # XXX do not execute 'apt-get clean' always
+        return [%{#{root_command} aptitude #{APT_OPTION} install #{short_list}}, 
+          %{#{root_command} apt-get clean}]
+      end
+
+      # XXX: Install と重複
+      private
+      def short_list
+        return @list['aptitude'][0..MAX_PACKAGE_LIST].join(' ')
+      end
     end
 
     class Install < AbstractCommand
       public
       def commandline
         # XXX do not execute 'apt-get clean' always
-        return [%{#{root_command} apt-get #{APT_OPTION} --force-yes --fix-missing install #{short_list}}, 'apt-get clean']
+        return [%{#{root_command} apt-get #{APT_OPTION} --force-yes --fix-missing install #{short_list}},
+          %{#{root_command} apt-get clean}]
       end
 
       private
@@ -345,7 +358,7 @@ module InstallPackages
           next
         end
 
-        if( each == Command::Install || each == 'aptitude' )
+        if( each == Command::Install || each == Command::Aptitude )
           # TODO: 知らないパッケージを libapt-pkg で調べる
           each.new( @list ).go
           next

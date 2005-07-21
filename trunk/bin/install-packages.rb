@@ -250,7 +250,35 @@ module InstallPackages
     class Remove
     end
 
-    class DselectUpgrade
+    class DselectUpgrade < AbstractCommand
+      public
+      def initialize( listHash )
+        super listHash
+        if $dry_run
+          @list['dselect-upgrade'].each do |each|
+            puts( each[:package] + ' ' + each[:action] )
+          end
+        else
+          File.open( tempfile, 'w' ) do |file|
+            @list['dselect-upgrade'].each do |each|
+              file.puts( each[:package] + ' ' + each[:action] )
+            end
+          end
+        end
+      end
+
+      public
+      def commandline
+        return [%{#{root_command} dpkg --set-selections < #{tempfile}},
+          %{#{root_command} apt-get #{APT_OPTION} dselect-upgrade},
+          %{rm #{tempfile}}]
+      end
+      
+      # TODO: use better uniq filename
+      private
+      def tempfile
+        return %{/tmp/target/tmp/dpkg-selections.tmp}
+      end
     end
 
     class AptitudeR
@@ -304,8 +332,8 @@ module InstallPackages
         # skip if empty list
         next if @list[each].empty?
 
-        if each == 'dselect-upgrade'
-          dselect_upgrade
+        if each == Command::DselectUpgrade
+          each.new( @list ).go
           next
         end
 

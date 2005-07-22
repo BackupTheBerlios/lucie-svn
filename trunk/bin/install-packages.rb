@@ -169,15 +169,9 @@ module InstallPackages
   require 'install-packages/command/hold'
   require 'install-packages/command/taskrm'
   require 'install-packages/command/taskinst'
+  require 'install-packages/command/clean'
 
   module Command
-    class Clean < AbstractCommand
-      public
-      def commandline
-        return %{#{root_command} apt-get clean}
-      end
-    end
-
     class Aptitude < AbstractCommand
       public
       def commandline

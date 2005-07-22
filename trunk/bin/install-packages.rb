@@ -171,22 +171,9 @@ module InstallPackages
   require 'install-packages/command/taskinst'
   require 'install-packages/command/clean'
   require 'install-packages/command/aptitude'
+  require 'install-packages/command/install'
 
   module Command
-    class Install < AbstractCommand
-      public
-      def commandline
-        # XXX do not execute 'apt-get clean' always
-        return [%{#{root_command} apt-get #{APT_OPTION} --force-yes --fix-missing install #{short_list}},
-          %{#{root_command} apt-get clean}]
-      end
-
-      private
-      def short_list
-        return @list['install'][0..MAX_PACKAGE_LIST].join(' ')
-      end
-    end
-
     class Remove < AbstractCommand
       public
       def commandline

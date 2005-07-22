@@ -274,7 +274,12 @@ module InstallPackages
       end
     end
 
-    class Remove
+    class Remove < AbstractCommand
+      public
+      def commandline
+        package_list = @list['remove'].join(' ')
+        return %{#{root_command} apt-get --purge remove #{package_list}}
+      end
     end
 
     class DselectUpgrade < AbstractCommand
@@ -392,7 +397,8 @@ module InstallPackages
           next
         end
 
-        # TODO: other types (remove ·Ï)
+        # other types
+        each.new( @list ).go
       end
     end
 

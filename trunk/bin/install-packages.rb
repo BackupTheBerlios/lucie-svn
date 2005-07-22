@@ -7,6 +7,16 @@
 # License::  GPL2
 
 require 'English'
+require 'install-packages/abstract-command'
+require 'install-packages/command/aptitude'
+require 'install-packages/command/aptitude-r'
+require 'install-packages/command/clean'
+require 'install-packages/command/dselect-upgrade'
+require 'install-packages/command/hold'
+require 'install-packages/command/install'
+require 'install-packages/command/remove'
+require 'install-packages/command/taskinst'
+require 'install-packages/command/taskrm'
 require 'singleton'
 require 'uri'
 
@@ -165,26 +175,6 @@ module InstallPackages
     end
   end
 
-  require 'install-packages/abstract-command'
-  require 'install-packages/command/hold'
-  require 'install-packages/command/taskrm'
-  require 'install-packages/command/taskinst'
-  require 'install-packages/command/clean'
-  require 'install-packages/command/aptitude'
-  require 'install-packages/command/install'
-  require 'install-packages/command/remove'
-  require 'install-packages/command/dselect-upgrade'
-
-  module Command
-    class AptitudeR < AbstractCommand
-      public
-      def commandline
-        package_list = @list['aptitude-r'].join(' ')
-        return %{#{root_command} aptitude -r #{APT_OPTION} install #{package_list}}
-      end
-    end
-  end
-  
   # install-packages のアプリケーションクラス
   class App
     include Singleton

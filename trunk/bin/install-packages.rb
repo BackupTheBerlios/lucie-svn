@@ -171,6 +171,19 @@ module InstallPackages
     # apt のデフォルトオプション
     APT_OPTION = %{-y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"}
 
+    # execute a command or only print it
+    #--
+    # XXX: --dry_run モードのサポート
+    #++
+    def self.execute( commandLineString )
+      if $dry_run
+        $stderr.puts commandLineString 
+        return
+      end
+      rc = system( commandLineString )
+      $stderr.puts "ERROR: #{$?.exitstatus}" unless rc
+    end
+
     public
     def initialize( listHash )
       @list = listHash
@@ -180,28 +193,14 @@ module InstallPackages
     def go
       case commandline
       when String
-        execute commandline
+        AbstractCommand.execute commandline
       when Array
         commandline.each do |each|
-          execute each
+          AbstractCommand.execute each
         end
       end
     end
     
-    # execute a command or only print it
-    #--
-    # XXX: --dry_run モードのサポート
-    #++
-    private
-    def execute( commandLineString )
-      if $dry_run
-        $stderr.puts commandLineString 
-        return
-      end
-      rc = system( commandLineString )
-      $stderr.puts "ERROR: #{$?.exitstatus}" unless rc
-    end
-
     #--
     # XXX /tmp/target のパスは Lucie のライブラリから取得
     #++
@@ -221,7 +220,13 @@ module InstallPackages
       end
     end 
     
-    class Taskrm
+    class Taskrm < AbstractCommand
+      public
+      def commandline
+        return @list['taskrm'].map do |each|
+          %{#{root_command} tasksel -n remove #{each}}
+        end
+      end
     end
 
     class Taskinst < AbstractCommand
@@ -339,7 +344,19 @@ module InstallPackages
       Dir.glob('/etc/lucie/package/*').each do |each|
         read_config( each )
         do_commands
+        clean_exit
       end
+    end
+
+    private
+    def clean_exit
+      # in case of unconfigured packages because of apt errors
+      # retry configuration 
+      AbstractCommand.execute %{#{root_command} dpkg --configure --pending}
+      # check if all went right
+      AbstractCommand.execute %{#{root_command} dpkg -C}
+      # clean apt cache
+      AbstractCommand.execute %{#{root_command} apt-get clean}
     end
 
     # install, clean 等のコマンドを実際に実行する
@@ -370,10 +387,12 @@ module InstallPackages
           next
         end
 
-        # TODO: tasklist, taskrm
+        if( each == Command::Taskinst || each == Command::Taskrm )
+          each.new( @list ).go
+          next
+        end
 
-        # other types
-#         execute( get_command(each) ) if package_list( each )
+        # TODO: other types (remove 系)
       end
     end
 

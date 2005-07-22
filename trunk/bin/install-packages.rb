@@ -172,16 +172,9 @@ module InstallPackages
   require 'install-packages/command/clean'
   require 'install-packages/command/aptitude'
   require 'install-packages/command/install'
+  require 'install-packages/command/remove'
 
   module Command
-    class Remove < AbstractCommand
-      public
-      def commandline
-        package_list = @list['remove'].join(' ')
-        return %{#{root_command} apt-get --purge remove #{package_list}}
-      end
-    end
-
     class DselectUpgrade < AbstractCommand
       public
       def initialize( listHash )

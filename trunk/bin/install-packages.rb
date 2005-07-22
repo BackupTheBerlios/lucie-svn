@@ -313,7 +313,12 @@ module InstallPackages
       end
     end
 
-    class AptitudeR
+    class AptitudeR < AbstractCommand
+      public
+      def commandline
+        package_list = @list['aptitude-r'].join(' ')
+        return %{#{root_command} aptitude -r #{APT_OPTION} install #{package_list}}
+      end
     end
   end
   

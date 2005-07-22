@@ -168,17 +168,9 @@ module InstallPackages
   require 'install-packages/abstract-command'
   require 'install-packages/command/hold'
   require 'install-packages/command/taskrm'
+  require 'install-packages/command/taskinst'
 
   module Command
-    class Taskinst < AbstractCommand
-      public
-      def commandline
-        return @list['taskinst'].map do |each|
-          %{#{root_command} tasksel -n install #{each}}
-        end
-      end
-    end
-
     class Clean < AbstractCommand
       public
       def commandline

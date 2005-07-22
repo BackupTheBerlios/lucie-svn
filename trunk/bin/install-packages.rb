@@ -165,50 +165,7 @@ module InstallPackages
     end
   end
 
-  class AbstractCommand
-    # 同時にインストールできるパッケージの数
-    MAX_PACKAGE_LIST = 99
-    # apt のデフォルトオプション
-    APT_OPTION = %{-y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"}
-
-    # execute a command or only print it
-    #--
-    # XXX: --dry_run モードのサポート
-    #++
-    def self.execute( commandLineString )
-      if $dry_run
-        $stderr.puts commandLineString 
-        return
-      end
-      rc = system( commandLineString )
-      $stderr.puts "ERROR: #{$?.exitstatus}" unless rc
-    end
-
-    public
-    def initialize( listHash )
-      @list = listHash
-    end
-
-    public
-    def go
-      case commandline
-      when String
-        AbstractCommand.execute commandline
-      when Array
-        commandline.each do |each|
-          AbstractCommand.execute each
-        end
-      end
-    end
-    
-    #--
-    # XXX /tmp/target のパスは Lucie のライブラリから取得
-    #++
-    private
-    def root_command
-      return ($LUCIE_ROOT == '/') ? '' : "chroot /tmp/target" 
-    end
-  end
+  require 'install-packages/abstract-command'
 
   module Command
     class Hold < AbstractCommand

@@ -1,8 +1,8 @@
 #
-# $Id: install-packages.rb 773 2005-07-22 09:05:04Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 773 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 require 'singleton'

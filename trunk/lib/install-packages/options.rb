@@ -1,8 +1,8 @@
 #
-# $Id: install-packages.rb 772 2005-07-22 09:02:39Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 772 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 module InstallPackages

@@ -1,8 +1,8 @@
 #
-# $Id: tc_abstract-template.rb 645 2005-06-01 07:08:14Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 645 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 $LOAD_PATH.unshift './bin'

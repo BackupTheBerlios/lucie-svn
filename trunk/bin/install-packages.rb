@@ -166,17 +166,9 @@ module InstallPackages
   end
 
   require 'install-packages/abstract-command'
+  require 'install-packages/command/hold'
 
   module Command
-    class Hold < AbstractCommand
-      public
-      def commandline
-        return @list['hold'].map do |each|
-          %{echo #{each} hold | #{root_command} dpkg --set-selections}
-        end
-      end
-    end 
-    
     class Taskrm < AbstractCommand
       public
       def commandline

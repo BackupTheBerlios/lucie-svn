@@ -10,7 +10,7 @@ module InstallPackages
     class Taskrm < AbstractCommand
       public
       def commandline
-        return @list['taskrm'].map do |each|
+        return @list.map do |each|
           %{#{root_command} tasksel -n remove #{each}}
         end
       end

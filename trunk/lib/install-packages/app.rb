@@ -163,7 +163,7 @@ module InstallPackages
       return { 'install' => Command::Install, 'aptitude-r' => Command::AptitudeR, 
         'aptitude' => Command::Aptitude, 'clean' => Command::Clean,
         'dselect-upgrade' => Command::DselectUpgrade, 'hold' => Command::Hold,
-        'remove' => Command::Remove, 'taskinst' => Command::Taskinst }
+        'remove' => Command::Remove, 'taskinst' => Command::Taskinst, 'taskrm' => Command::Taskrm }
     end
   end
 end

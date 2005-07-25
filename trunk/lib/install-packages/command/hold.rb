@@ -10,7 +10,7 @@ module InstallPackages
     class Hold < AbstractCommand
       public
       def commandline
-        return @list['hold'].map do |each|
+        return @list.map do |each|
           %{echo #{each} hold | #{root_command} dpkg --set-selections}
         end
       end

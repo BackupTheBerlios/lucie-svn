@@ -78,7 +78,6 @@ module InstallPackages
         next if @list[each].empty?
 
         if each == Command::DselectUpgrade
-          p "hoge"
           each.new( @list[each] ).go
           next
         end
@@ -163,7 +162,7 @@ module InstallPackages
     def string2command
       return { 'install' => Command::Install, 'aptitude-r' => Command::AptitudeR, 
         'aptitude' => Command::Aptitude, 'clean' => Command::Clean,
-        'dselect-upgrade' => Command::DselectUpgrade}
+        'dselect-upgrade' => Command::DselectUpgrade, 'hold' => Command::Hold}
     end
   end
 end

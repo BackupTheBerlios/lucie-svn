@@ -12,6 +12,9 @@ module InstallPackages
     # apt のデフォルトオプション
     APT_OPTION = %{-y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"}
 
+    attr_reader :list
+    attr_writer :list
+    
     # execute a command or only print it
     #--
     # XXX: --dry_run モードのサポート
@@ -26,7 +29,7 @@ module InstallPackages
     end
 
     public
-    def initialize( packageArray )
+    def initialize( packageArray = [] )
       @list = packageArray
     end
 

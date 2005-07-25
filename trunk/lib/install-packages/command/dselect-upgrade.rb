@@ -9,19 +9,19 @@ module InstallPackages
   module Command
     class DselectUpgrade < AbstractCommand
       public
-      def initialize( packageList )
-        super packageList
+      def go
         if $dry_run
-          while @list.size > 0 do 
-            $stderr.puts( @list.shift + ' ' + @list.shift )
+          @list.each do |each|
+            $stderr.puts( each[:package] + ' ' + each[:action] )
           end
         else
           File.open( tempfile, 'w' ) do |file|
-            while @list.size > 0 do 
-              file.puts( @list.shift + ' ' + @list.shift )
+            @list.each do |each|
+              file.puts( each[:package] + ' ' + each[:action] )
             end
           end
         end
+        super
       end
 
       public
@@ -38,6 +38,13 @@ module InstallPackages
       end
     end
   end
+end
+
+# dselect-upgrade コマンド
+def dselect_upgrade( &block )
+  dselect_upgrade_command = InstallPackages::Command::DselectUpgrade.new
+  block.call( dselect_upgrade_command )
+  InstallPackages::App.register dselect_upgrade_command
 end
 
 ### Local variables:

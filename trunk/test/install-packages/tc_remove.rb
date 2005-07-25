@@ -12,6 +12,11 @@ require 'test/unit'
 
 class TC_Remove < Test::Unit::TestCase
   public
+  def test_remove
+    remove( ["foo", "bar", "baz"] )
+  end
+
+  public
   def test_commandline
     remove = InstallPackages::Command::Remove.new( ['FOO', 'BAR', 'BAZ'] )
     assert_equal( 'chroot /tmp/target apt-get --purge remove FOO BAR BAZ',

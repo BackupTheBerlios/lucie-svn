@@ -12,6 +12,11 @@ require 'test/unit'
 
 class TC_Taskinst < Test::Unit::TestCase
   public
+  def test_taskinst
+    taskinst ["foo", "bar", "baz"]
+  end
+
+  public
   def test_commandline
     taskinst = InstallPackages::Command::Taskinst.new( ['FOO', 'BAR', 'BAZ'] )
     assert_equal( 'chroot /tmp/target tasksel -n install FOO', 

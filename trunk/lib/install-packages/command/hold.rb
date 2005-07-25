@@ -18,6 +18,12 @@ module InstallPackages
   end
 end
 
+# hold コマンド
+def hold( packageList )
+  hold_command = InstallPackages::Command::Hold.new( packageList )
+  InstallPackages::App.register hold_command
+end
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

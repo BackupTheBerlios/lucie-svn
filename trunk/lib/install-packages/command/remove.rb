@@ -17,6 +17,12 @@ module InstallPackages
   end
 end
 
+# remove コマンド
+def remove( packageList )
+  remove_command = InstallPackages::Command::Remove.new( packageList )
+  InstallPackages::App.register remove_command
+end
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

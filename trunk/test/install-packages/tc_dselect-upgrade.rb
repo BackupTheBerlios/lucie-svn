@@ -12,6 +12,15 @@ require 'test/unit'
 
 class TC_DselectUpgrade < Test::Unit::TestCase
   public
+  def test_dselect_upgrade
+    dselect_upgrade do |dselect_upgrade|
+      dselect_upgrade.list << { :package => 'foo', :action => 'install' }
+      dselect_upgrade.list << { :package => 'bar', :action => 'install' }
+      dselect_upgrade.list << { :package => 'baz', :action => 'install' }
+    end
+  end
+
+  public
   def test_commandline
     $dry_run = true
     dselect_upgrade = InstallPackages::Command::DselectUpgrade.new( ['foo', 'install', 'bar', 'deinstall'] )

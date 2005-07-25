@@ -5,6 +5,8 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+# TODO: preload, preloadrm オプション 
+
 module InstallPackages
   module Command
     class Install < AbstractCommand
@@ -21,6 +23,13 @@ module InstallPackages
       end
     end
   end
+end
+
+# install コマンド
+def install( &block )
+  install_command = InstallPackages::Command::Install.new
+  block.call( install_command )
+  InstallPackages::App.register install_command
 end
 
 ### Local variables:

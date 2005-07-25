@@ -16,6 +16,12 @@ module InstallPackages
   end
 end
 
+# clean コマンド
+def clean
+  clean_command = InstallPackages::Command::Clean.new
+  InstallPackages::App.register clean_command
+end
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

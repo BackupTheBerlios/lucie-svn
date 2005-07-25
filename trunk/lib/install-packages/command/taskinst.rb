@@ -18,6 +18,12 @@ module InstallPackages
   end
 end
 
+# taskinst コマンド
+def taskinst( packageList )
+  taskinst_command = InstallPackages::Command::Taskinst.new( packageList )
+  InstallPackages::App.register taskinst_command
+end
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

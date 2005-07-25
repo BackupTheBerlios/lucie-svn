@@ -5,12 +5,24 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+require 'pp'
 require 'singleton'
 
 module InstallPackages
   # install-packages のアプリケーションクラス
   class App
     include Singleton
+    
+    @@list = {}
+
+    public
+    def self.register( aCommand )
+      if @@list[aCommand.class].nil?
+        @@list[aCommand.class] = [aCommand]
+      else
+        @@list[aCommand.class] << aCommand
+      end
+    end
 
     #--
     # XXX /tmp/target のパスは Lucie のライブラリから取得
@@ -18,14 +30,6 @@ module InstallPackages
     private
     def root_command
       return ($LUCIE_ROOT == '/') ? '' : "chroot /tmp/target" 
-    end
-
-    # あたらしいオブジェクトを返す。シングルトンであることに注意。
-    public
-    def initialize
-      @list = Hash.new( [] )
-      @preload_list = [] 
-      @preloadrm_list = [] 
     end
 
     # install-packages のメインルーチン
@@ -49,7 +53,7 @@ module InstallPackages
 
     private
     def do_install( configFileString )
-      read_config( configFileString )
+      load( configFileString )
       do_commands
       clean_exit
     end
@@ -66,40 +70,54 @@ module InstallPackages
     end
 
     # install, clean 等のコマンドを実際に実行する
-    public
+    #--
+    # XXX: リファクタリング
+    #++
+    private
     def do_commands
       commands.each do |each|
-        if each == Command::Clean
-          each.new( @list[each] ).go
+        if (each == Command::Clean) && @@list[each]
+          @@list[each].each do |command| command.go end
           next
         end
 
         # skip if empty list
-        next if @list[each].empty?
+        next if @@list[each].nil?
 
         if each == Command::DselectUpgrade
-          each.new( @list[each] ).go
+          @@list[each].each do |command| command.go end
           next
         end
 
         if each == Command::Hold
-          each.new( @list[each] ).go
+          @@list[each].each do |command| command.go end
           next
         end
 
         if( each == Command::Install || each == Command::Aptitude )
           # TODO: 知らないパッケージを libapt-pkg で調べる
-          each.new( @list[each] ).go
+          @@list[each].each do |command| command.go end
           next
         end
 
-        if( each == Command::Taskinst || each == Command::Taskrm )
-          each.new( @list[each] ).go
+        if( each == Command::Aptitude )
+          # TODO: 知らないパッケージを libapt-pkg で調べる
+          @@list[each].each do |command| command.go end
+          next
+        end
+
+        if( each == Command::Taskinst )
+          @@list[each].each do |command| command.go end
+          next
+        end
+
+        if( each == Command::Taskrm )
+          @@list[each].each do |command| command.go end
           next
         end
 
         # other types
-        each.new( @list[each] ).go
+        @@list[each].each do |command| command.go end
       end
     end
 
@@ -122,48 +140,6 @@ module InstallPackages
           execute( "wget -nv -P/etc/lucie/#{each[:directory]} #{each[:url]}" )
         end
       end
-    end
-
-    # 設定ファイルを読み込む
-    #--
-    # TODO: 設定ファイルの書式を Ruby スクリプトにする
-    #++
-    public
-    def read_config( configPathString )
-      @list.clear
-      type = nil
-      File.open( configPathString, 'r' ).each_line do |each|
-        next if /^#/=~ each      # skip comments
-        each.gsub!( /#.*$/, '' ) # delete comments
-        next if /^\s*$/=~ each   # skip empty lines
-        each.chomp!
-        if /^PRELOAD\s+(\S+)\s+(\S+)/=~ each
-          @preload_list.push( { :url => $1, :directory => $2} )
-          next
-        end
-        if /^PRELOADRM\s+(\S+)\s+(\S+)/=~ each
-          @preloadrm_list.push( { :url => $1, :directory => $2} )
-          next
-        end
-        if /^PACKAGES\s+(\S+)\s*/=~ each
-          type = $1
-          next
-        end
-        unless type
-          $stderr.puts "PACKAGES .. line missing in #{configPathString}"
-          next
-        end
-        @list[string2command[type]] += each.split
-      end
-      return @list
-    end
-    
-    private
-    def string2command
-      return { 'install' => Command::Install, 'aptitude-r' => Command::AptitudeR, 
-        'aptitude' => Command::Aptitude, 'clean' => Command::Clean,
-        'dselect-upgrade' => Command::DselectUpgrade, 'hold' => Command::Hold,
-        'remove' => Command::Remove, 'taskinst' => Command::Taskinst, 'taskrm' => Command::Taskrm }
     end
   end
 end

@@ -12,6 +12,13 @@ require 'test/unit'
 
 class TC_Aptitude < Test::Unit::TestCase
   public
+  def test_aptitude
+    aptitude do |aptitude|
+      aptitude.list << "initrd-tools" << "lilo"
+    end
+  end
+
+  public
   def test_commandline
     aptitude = InstallPackages::Command::Aptitude.new( ['FOO', 'BAR', 'BAZ'] )
     assert_equal( %{chroot /tmp/target aptitude -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install FOO BAR BAZ},

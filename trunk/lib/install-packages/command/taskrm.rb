@@ -18,6 +18,12 @@ module InstallPackages
   end
 end
 
+# taskrm コマンド
+def taskrm( packageList )
+  taskrm_command = InstallPackages::Command::Taskrm.new( packageList )
+  InstallPackages::App.register( taskrm_command )
+end
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

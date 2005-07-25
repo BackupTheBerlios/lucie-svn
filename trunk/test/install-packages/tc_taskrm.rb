@@ -12,6 +12,11 @@ require 'test/unit'
 
 class TC_Taskrm < Test::Unit::TestCase
   public
+  def test_taskrm
+    taskrm ["foo", "bar", "baz"]
+  end
+
+  public
   def test_commandline
     taskrm = InstallPackages::Command::Taskrm.new( ['FOO', 'BAR', 'BAZ'] )
     assert_equal( 'chroot /tmp/target tasksel -n remove FOO', 

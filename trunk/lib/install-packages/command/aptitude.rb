@@ -5,6 +5,8 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+# TODO: preload, preloadrm オプション 
+
 module InstallPackages
   module Command
     class Aptitude < AbstractCommand
@@ -22,6 +24,13 @@ module InstallPackages
       end
     end
   end
+end
+
+# aptitude コマンド
+def aptitude( &block )
+  aptitude_command = InstallPackages::Command::Aptitude.new
+  block.call( aptitude_command )
+  InstallPackages::App.register aptitude_command
 end
 
 ### Local variables:

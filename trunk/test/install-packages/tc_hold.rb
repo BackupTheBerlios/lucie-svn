@@ -12,6 +12,11 @@ require 'test/unit'
 
 class TC_Hold < Test::Unit::TestCase
   public
+  def test_hold
+    hold( ["foo", "bar", "baz"] )
+  end
+
+  public
   def test_commandline
     hold = InstallPackages::Command::Hold.new( ['FOO', 'BAR', 'BAZ'] )
     assert_equal( 'echo FOO hold | chroot /tmp/target dpkg --set-selections',

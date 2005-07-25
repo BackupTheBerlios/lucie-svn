@@ -10,7 +10,7 @@ module InstallPackages
     class Remove < AbstractCommand
       public
       def commandline
-        package_list = @list['remove'].join(' ')
+        package_list = @list.join(' ')
         return %{#{root_command} apt-get --purge remove #{package_list}}
       end
     end

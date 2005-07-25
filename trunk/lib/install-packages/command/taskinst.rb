@@ -10,7 +10,7 @@ module InstallPackages
     class Taskinst < AbstractCommand
       public
       def commandline
-        return @list['taskinst'].map do |each|
+        return @list.map do |each|
           %{#{root_command} tasksel -n install #{each}}
         end
       end

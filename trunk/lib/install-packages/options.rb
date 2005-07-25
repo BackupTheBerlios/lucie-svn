@@ -30,6 +30,12 @@ module InstallPackages
                                :description => "display #{PROGRAM_NAME}'s version and exit.",
                                :default => nil,
                                :proc => Proc.new do |argument| puts VERSION_STRING end },
+              '--dry-run' => { :long_option => "--dry-run",
+                               :short_option => "-d",
+                               :argument => nil,
+                               :description => "no action.",
+                               :default => nil,
+                               :proc => Proc.new do |argument| $dry_run = true end },
     }
 
     require 'getoptlong'

@@ -37,11 +37,21 @@ module InstallPackages
       rescue GetoptLong::InvalidOption, GetoptLong::MissingArgument
         exit 1
       end
-      Dir.glob('/etc/lucie/package/*').each do |each|
-        read_config( each )
-        do_commands
-        clean_exit
+      if $config_file
+        do_install( $config_file )
+      else
+        # XXX: /etc/lucie のパスを Lucie ライブラリから取得
+        Dir.glob('/etc/lucie/package/*').each do |each|
+          do_install( each )
+        end
       end
+    end
+
+    private
+    def do_install( configFileString )
+      read_config( configFileString )
+      do_commands
+      clean_exit
     end
 
     private
@@ -79,7 +89,7 @@ module InstallPackages
 
         if( each == Command::Install || each == Command::Aptitude )
           # TODO: 知らないパッケージを libapt-pkg で調べる
-          each.new( @list ).go
+          each.new( @list[each] ).go
           next
         end
 

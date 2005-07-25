@@ -36,6 +36,12 @@ module InstallPackages
                                :description => "no action.",
                                :default => nil,
                                :proc => Proc.new do |argument| $dry_run = true end },
+          '--config-file' => { :long_option => '--config-file',
+                               :short_option => '-c',
+                               :argument => '[FILE]',
+                               :description => 'specify a configuration file to use.',
+                               :default => nil,
+                               :proc => Proc.new do |argument| $config_file = argument end },
     }
 
     require 'getoptlong'

@@ -99,7 +99,7 @@ module InstallPackages
         end
 
         # other types
-        each.new( @list ).go
+        each.new( @list[each] ).go
       end
     end
 
@@ -161,7 +161,7 @@ module InstallPackages
     
     private
     def string2command
-      return { 'install' => Command::Install }
+      return { 'install' => Command::Install, 'aptitude-r' => Command::AptitudeR }
     end
   end
 end

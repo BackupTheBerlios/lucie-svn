@@ -10,7 +10,7 @@ module InstallPackages
     class AptitudeR < AbstractCommand
       public
       def commandline
-        package_list = @list['aptitude-r'].join(' ')
+        package_list = @list.join(' ')
         return %{#{root_command} aptitude -r #{APT_OPTION} install #{package_list}}
       end
     end

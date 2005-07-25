@@ -26,8 +26,8 @@ module InstallPackages
     end
 
     public
-    def initialize( listHash )
-      @list = listHash
+    def initialize( packageArray )
+      @list = packageArray
     end
 
     public

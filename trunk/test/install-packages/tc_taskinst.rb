@@ -13,7 +13,7 @@ require 'test/unit'
 class TC_Taskinst < Test::Unit::TestCase
   public
   def test_commandline
-    taskinst = InstallPackages::Command::Taskinst.new( { 'taskinst' => ['FOO', 'BAR', 'BAZ'] } )
+    taskinst = InstallPackages::Command::Taskinst.new( ['FOO', 'BAR', 'BAZ'] )
     assert_equal( 'chroot /tmp/target tasksel -n install FOO', 
                   taskinst.commandline[0],
                   'コマンドライン文字列が正しくない' )

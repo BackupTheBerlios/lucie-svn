@@ -14,11 +14,7 @@ class TC_DselectUpgrade < Test::Unit::TestCase
   public
   def test_commandline
     $dry_run = true
-    dselect_upgrade = InstallPackages::Command::DselectUpgrade.new( { 'dselect-upgrade' =>
-                                                                        [{ :package => 'aalib1',
-                                                                          :action  => 'install' },
-                                                                        { :package => 'kvim',
-                                                                          :action  => 'deinstall' }] } )
+    dselect_upgrade = InstallPackages::Command::DselectUpgrade.new( ['foo', 'install', 'bar', 'deinstall'] )
     assert_equal( %{chroot /tmp/target dpkg --set-selections < /tmp/target/tmp/dpkg-selections.tmp},
                   dselect_upgrade.commandline[0],
                   'コマンドライン文字列が正しくない' )

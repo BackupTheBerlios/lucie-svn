@@ -161,7 +161,8 @@ module InstallPackages
     
     private
     def string2command
-      return { 'install' => Command::Install, 'aptitude-r' => Command::AptitudeR }
+      return { 'install' => Command::Install, 'aptitude-r' => Command::AptitudeR, 
+        'aptitude' => Command::Aptitude}
     end
   end
 end

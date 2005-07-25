@@ -18,7 +18,7 @@ module InstallPackages
       # XXX: Install §»Ω≈ £
       private
       def short_list
-        return @list['aptitude'][0..MAX_PACKAGE_LIST].join(' ')
+        return @list[0..MAX_PACKAGE_LIST].join(' ')
       end
     end
   end

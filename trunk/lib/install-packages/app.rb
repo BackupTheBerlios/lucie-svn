@@ -70,7 +70,7 @@ module InstallPackages
     def do_commands
       commands.each do |each|
         if each == Command::Clean
-          each.new( @list ).go
+          each.new( @list[each] ).go
           next
         end
 
@@ -162,7 +162,7 @@ module InstallPackages
     private
     def string2command
       return { 'install' => Command::Install, 'aptitude-r' => Command::AptitudeR, 
-        'aptitude' => Command::Aptitude}
+        'aptitude' => Command::Aptitude, 'clean' => Command::Clean}
     end
   end
 end

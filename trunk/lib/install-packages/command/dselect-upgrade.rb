@@ -9,16 +9,16 @@ module InstallPackages
   module Command
     class DselectUpgrade < AbstractCommand
       public
-      def initialize( listHash )
-        super listHash
+      def initialize( packageList )
+        super packageList
         if $dry_run
-          @list['dselect-upgrade'].each do |each|
-            puts( each[:package] + ' ' + each[:action] )
+          while @list.size > 0 do 
+            $stderr.puts( @list.shift + ' ' + @list.shift )
           end
         else
           File.open( tempfile, 'w' ) do |file|
-            @list['dselect-upgrade'].each do |each|
-              file.puts( each[:package] + ' ' + each[:action] )
+            while @list.size > 0 do 
+              file.puts( @list.shift + ' ' + @list.shift )
             end
           end
         end

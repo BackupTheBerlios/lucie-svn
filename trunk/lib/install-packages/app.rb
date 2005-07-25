@@ -78,12 +78,13 @@ module InstallPackages
         next if @list[each].empty?
 
         if each == Command::DselectUpgrade
-          each.new( @list ).go
+          p "hoge"
+          each.new( @list[each] ).go
           next
         end
 
         if each == Command::Hold
-          each.new( @list ).go
+          each.new( @list[each] ).go
           next
         end
 
@@ -94,7 +95,7 @@ module InstallPackages
         end
 
         if( each == Command::Taskinst || each == Command::Taskrm )
-          each.new( @list ).go
+          each.new( @list[each] ).go
           next
         end
 
@@ -147,7 +148,6 @@ module InstallPackages
         end
         if /^PACKAGES\s+(\S+)\s*/=~ each
           type = $1
-          cllist = $POSTMATCH
           next
         end
         unless type
@@ -162,7 +162,8 @@ module InstallPackages
     private
     def string2command
       return { 'install' => Command::Install, 'aptitude-r' => Command::AptitudeR, 
-        'aptitude' => Command::Aptitude, 'clean' => Command::Clean}
+        'aptitude' => Command::Aptitude, 'clean' => Command::Clean,
+        'dselect-upgrade' => Command::DselectUpgrade}
     end
   end
 end

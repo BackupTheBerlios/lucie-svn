@@ -43,6 +43,7 @@
 #
 # <em>Œ„</em>
 #  install do |install|
+#    install.preload << { :url => %{http://foo.bar/baz.tgz}, :directory => %{preload} }
 #    install.list = %w(ssh tcsh cfengine rsync)
 #  end
 #

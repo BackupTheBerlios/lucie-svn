@@ -15,21 +15,30 @@ module InstallPackages
         # XXX do not execute 'apt-get clean' always
         return( preload_commandline +
                   [%{#{root_command} apt-get #{APT_OPTION} --force-yes --fix-missing install #{short_list}},
-                  %{#{root_command} apt-get clean}] )
+                  %{#{root_command} apt-get clean}] +
+                  preloadrm_teardown_commandline)
       end
 
       private
       def preload_commandline
-        (@preload + @preloadrm).map do |each|
+        return (@preload + @preloadrm).map do |each|
           if URI.regexp(%w(file))=~ each[:url]
             file = URI.parse(each[:url]).path
-            %{cp #{File.join('/etc/lucie/', file)} #{File.join('/etc/lucie/', each[:directory])}}
+            %{cp #{File.join('/etc/lucie/', file)} #{File.join('/tmp/target/', each[:directory])}}
           else
-            %{wget -nv -P#{File.join('/etc/lucie/', each[:directory])} #{each[:url]}}
+            %{wget -nv -P#{File.join('/tmp/target/', each[:directory])} #{each[:url]}}
           end 
         end
       end
       
+      private
+      def preloadrm_teardown_commandline
+        return @preloadrm.map do |each|
+          basename = File.basename(URI.parse(each[:url]).path)
+          %{rm #{File.join('/tmp/target/', each[:directory], basename)}}
+        end
+      end
+
       private
       def short_list
         return @list[0..MAX_PACKAGE_LIST].join(' ')

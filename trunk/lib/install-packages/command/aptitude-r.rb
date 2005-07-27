@@ -13,7 +13,9 @@ module InstallPackages
       public
       def commandline
         package_list = @list.join(' ')
-        return %{#{root_command} aptitude -r #{APT_OPTION} install #{package_list}}
+        return( preload_commandline +  
+                  [%{#{root_command} aptitude -r #{APT_OPTION} install #{package_list}}] +
+                  preloadrm_teardown_commandline )
       end
     end
   end

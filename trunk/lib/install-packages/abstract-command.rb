@@ -58,6 +58,26 @@ module InstallPackages
     def root_command
       return ($LUCIE_ROOT == '/') ? '' : "chroot /tmp/target" 
     end
+
+    private
+    def preload_commandline
+      return (@preload + @preloadrm).map do |each|
+        if URI.regexp(%w(file))=~ each[:url]
+          file = URI.parse(each[:url]).path
+          %{cp #{File.join('/etc/lucie/', file)} #{File.join('/tmp/target/', each[:directory])}}
+        else
+          %{wget -nv -P#{File.join('/tmp/target/', each[:directory])} #{each[:url]}}
+        end 
+      end
+    end
+    
+    private
+    def preloadrm_teardown_commandline
+      return @preloadrm.map do |each|
+        basename = File.basename(URI.parse(each[:url]).path)
+        %{rm #{File.join('/tmp/target/', each[:directory], basename)}}
+      end
+    end
   end
 end
 

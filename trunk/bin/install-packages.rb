@@ -111,9 +111,7 @@
 #
 #--
 # TODO: utils/chkdebnames、チェックオプションの移植
-# TODO: preload, preloadrm のちゃんとしたサポート
 # TODO: hold 引数での文字列サポート
-# TODO: install コマンドでの preloadXX のサポート
 # TODO: ブロック引数を取らない install 形式のサポート
 # TODO: remove 引数での文字列サポート
 # TODO: taskinst 引数での文字列サポート

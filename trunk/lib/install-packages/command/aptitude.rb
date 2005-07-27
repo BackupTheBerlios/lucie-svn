@@ -13,8 +13,10 @@ module InstallPackages
       public
       def commandline
         # XXX do not execute 'apt-get clean' always
-        return [%{#{root_command} aptitude #{APT_OPTION} install #{short_list}}, 
-          %{#{root_command} apt-get clean}]
+        return( preload_commandline + 
+                  [%{#{root_command} aptitude #{APT_OPTION} install #{short_list}}, 
+                  %{#{root_command} apt-get clean}] +
+                  preloadrm_teardown_commandline )
       end
 
       # XXX: Install §»Ω≈ £

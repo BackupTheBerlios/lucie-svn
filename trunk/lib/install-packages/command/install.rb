@@ -13,10 +13,23 @@ module InstallPackages
       public
       def commandline
         # XXX do not execute 'apt-get clean' always
-        return [%{#{root_command} apt-get #{APT_OPTION} --force-yes --fix-missing install #{short_list}},
-          %{#{root_command} apt-get clean}]
+        return( preload_commandline +
+                  [%{#{root_command} apt-get #{APT_OPTION} --force-yes --fix-missing install #{short_list}},
+                  %{#{root_command} apt-get clean}] )
       end
 
+      private
+      def preload_commandline
+        (@preload + @preloadrm).map do |each|
+          if URI.regexp(%w(file))=~ each[:url]
+            file = URI.parse(each[:url]).path
+            %{cp #{File.join('/etc/lucie/', file)} #{File.join('/etc/lucie/', each[:directory])}}
+          else
+            %{wget -nv -P#{File.join('/etc/lucie/', each[:directory])} #{each[:url]}}
+          end 
+        end
+      end
+      
       private
       def short_list
         return @list[0..MAX_PACKAGE_LIST].join(' ')

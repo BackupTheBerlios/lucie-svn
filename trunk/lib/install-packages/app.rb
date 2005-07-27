@@ -22,6 +22,7 @@ module InstallPackages
       else
         @@list[aCommand.class] << aCommand
       end
+      return aCommand
     end
 
     #--
@@ -126,20 +127,6 @@ module InstallPackages
       return [Command::Hold, Command::Taskrm, Command::Taskinst,
         Command::Clean, Command::AptitudeR, Command::Aptitude,
         Command::Install, Command::Remove, Command::DselectUpgrade]
-    end
-
-    # prerequire で指定されているファイルを取得する
-    public
-    def fetch_prerequires
-      # FIXME: '/' が 2 個連続するのを修正 (File.join を使う) 
-      (@preload_list + @preloadrm_list).each do |each|
-        if URI.regexp(%w(file))=~ each[:url]
-          file = URI.parse(each[:url]).path
-          execute( "cp /etc/lucie/#{file} /etc/lucie/#{each[:directory]}" )
-        else
-          execute( "wget -nv -P/etc/lucie/#{each[:directory]} #{each[:url]}" )
-        end
-      end
     end
   end
 end

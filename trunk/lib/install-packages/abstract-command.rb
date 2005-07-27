@@ -14,6 +14,10 @@ module InstallPackages
 
     attr_reader :list
     attr_writer :list
+    attr_reader :preload
+    attr_writer :preload
+    attr_reader :preloadrm
+    attr_writer :preloadrm
     
     # execute a command or only print it
     #--
@@ -31,6 +35,8 @@ module InstallPackages
     public
     def initialize( packageArray = [] )
       @list = packageArray
+      @preload = []
+      @preloadrm = []
     end
 
     public

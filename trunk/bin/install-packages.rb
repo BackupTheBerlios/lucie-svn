@@ -8,11 +8,9 @@
 #
 #   # パッケージ選択設定
 #
-#   taskinst( %w(german) )
+#   taskinst( 'german' )
 #  
-#   aptitude do |aptitude|
-#     aptitude.list = %w(adduser netstd ae less passwd)
-#   end
+#   aptitude( %w(adduser netstd ae less passwd) )
 # 
 #   remove( %w(gpm xdm) )
 #  
@@ -33,6 +31,7 @@
 # なくなります。
 #
 # <em>例</em>
+#  hold( 'vim' )
 #  hold( %w(ssh less rsync) )
 #
 # <b>install:</b>
@@ -42,6 +41,8 @@
 # ジはインストールされず削除されます。
 #
 # <em>例</em>
+#
+#  install( 'cvs' )
 #  install do |install|
 #    install.preload << { :url => %{http://foo.bar/baz.tgz}, :directory => %{preload} }
 #    install.list = %w(ssh tcsh cfengine rsync)
@@ -53,6 +54,7 @@
 # ルしたい場合には '+' をパッケージ名に続けて記述します。
 #
 # <em>例</em>
+#  remove( 'ppp' )
 #  remove( %w(rsync jove rstatd) )
 #
 # <b>taskinst:</b>
@@ -62,6 +64,7 @@
 # ともできます。
 #
 # <em>例</em>
+#  taskinst( 'japanese' )
 #  taskinst( %w(japanese german) )
 #
 # <b>aptitude:</b>
@@ -69,9 +72,7 @@
 # すべてのパッケージを +aptitude+ コマンドでインストールする。
 #
 # <em>例</em>
-#  aptitude do |aptitude|
-#    aptitude.list = %w(ssh tcsh cfengine rsync)
-#  end
+#  aptitude( %w(ssh tcsh cfengine rsync) )
 #
 # <b>aptitude-r:</b>
 #
@@ -79,9 +80,7 @@
 # プション付きで実行します
 #
 # <em>例</em>
-#  aptitude do |aptitude|
-#    aptitude.list = %w(ssh tcsh cfengine rsync)
-#  end
+#  aptitude_r( %w(ssh tcsh cfengine rsync) )
 #
 # <b>dselect-upgrade:</b>
 #

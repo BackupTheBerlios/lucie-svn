@@ -38,26 +38,6 @@ class TC_Install < Test::Unit::TestCase
   end
   
   public
-  def test_commandline_wget
-    install_command = install do |install|
-      install.preload << { :url => %{http://foo.bar/baz.tgz}, :directory => %{preload} }
-      install.list << "FOO" << "BAR" << "BAZ"
-    end
-    assert_equal( %{wget -nv -P/tmp/target/preload http://foo.bar/baz.tgz},
-                  install_command.commandline[0], 'コマンドライン文字列が正しくない' )
-  end
-  
-  public
-  def test_commandline_cp
-    install_command = install do |install|
-      install.preload << { :url => %{file:///tmp/FOO.TGZ}, :directory => %{preload} }
-      install.list << "FOO" << "BAR" << "BAZ"
-    end
-    assert_equal( %{cp /etc/lucie//tmp/FOO.TGZ /tmp/target/preload},
-                  install_command.commandline[0], 'コマンドライン文字列が正しくない' )
-  end
-
-  public
   def test_commandline_preloadrm
     install_command = install do |install|
       install.preloadrm << { :url => %{file:///tmp/FOO.TGZ}, :directory => %{preload} }

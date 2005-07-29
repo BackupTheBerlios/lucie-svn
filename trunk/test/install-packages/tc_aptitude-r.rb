@@ -35,26 +35,6 @@ class TC_AptitudeR < Test::Unit::TestCase
   end
 
   public
-  def test_commandline_wget
-    aptitude_r_command = aptitude_r do |aptitude_r|
-      aptitude_r.preload << { :url => %{http://foo.bar/baz.tgz}, :directory => %{preload} }
-      aptitude_r.list << "FOO" << "BAR" << "BAZ"
-    end
-    assert_equal( %{wget -nv -P/tmp/target/preload http://foo.bar/baz.tgz},
-                  aptitude_r_command.commandline[0], 'コマンドライン文字列が正しくない' )
-  end
-
-  public
-  def test_commandline_cp
-    aptitude_r_command = aptitude_r do |aptitude_r|
-      aptitude_r.preload << { :url => %{file:///tmp/FOO.TGZ}, :directory => %{preload} }
-      aptitude_r.list << "FOO" << "BAR" << "BAZ"
-    end
-    assert_equal( %{cp /etc/lucie//tmp/FOO.TGZ /tmp/target/preload},
-                  aptitude_r_command.commandline[0], 'コマンドライン文字列が正しくない' )
-  end
-
-  public
   def test_commandline_preloadrm
     aptitude_r_command = aptitude_r do |aptitude_r|
       aptitude_r.preloadrm << { :url => %{file:///tmp/FOO.TGZ}, :directory => %{preload} }

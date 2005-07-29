@@ -1,8 +1,8 @@
 #
-# $Id: tc_aptitude-r.rb 794 2005-07-29 01:58:07Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 794 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 $LOAD_PATH.unshift './bin'

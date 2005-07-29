@@ -10,11 +10,7 @@ module InstallPackages
     class DselectUpgrade < AbstractCommand
       public
       def go
-        if $dry_run
-          @list.each do |each|
-            $stderr.puts( each[:package] + ' ' + each[:action] )
-          end
-        else
+        unless $dry_run
           File.open( tempfile, 'w' ) do |file|
             @list.each do |each|
               file.puts( each[:package] + ' ' + each[:action] )

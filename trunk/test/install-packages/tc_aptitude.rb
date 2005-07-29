@@ -34,16 +34,6 @@ class TC_Aptitude < Test::Unit::TestCase
                   aptitude_command.commandline[0], 'コマンドライン文字列が正しくない' )
     assert_equal( %{chroot /tmp/target apt-get clean}, aptitude_command.commandline[1], 'コマンドライン文字列が正しくない' )
   end
-
-  public
-  def test_commandline_preloadrm
-    aptitude_command = aptitude do |aptitude|
-      aptitude.preloadrm << { :url => %{file:///tmp/FOO.TGZ}, :directory => %{preload} }
-      aptitude.list << "FOO" << "BAR" << "BAZ"
-    end
-    assert_equal( %{rm /tmp/target/preload/FOO.TGZ},
-                  aptitude_command.commandline[3], 'コマンドライン文字列が正しくない' )
-  end
 end
 
 ### Local variables:

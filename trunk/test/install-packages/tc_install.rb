@@ -36,16 +36,6 @@ class TC_Install < Test::Unit::TestCase
     assert_equal( %{chroot /tmp/target apt-get clean}, 
                   install_command.commandline[2], 'コマンドライン文字列が正しくない' )
   end
-  
-  public
-  def test_commandline_preloadrm
-    install_command = install do |install|
-      install.preloadrm << { :url => %{file:///tmp/FOO.TGZ}, :directory => %{preload} }
-      install.list << "FOO" << "BAR" << "BAZ"
-    end
-    assert_equal( %{rm /tmp/target/preload/FOO.TGZ}, install_command.commandline[3],
-                  'コマンドライン文字列が正しくない' )
-  end
 end
 
 ### Local variables:

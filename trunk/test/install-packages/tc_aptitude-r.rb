@@ -33,16 +33,6 @@ class TC_AptitudeR < Test::Unit::TestCase
     assert_equal( %{chroot /tmp/target aptitude -r -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install FOO BAR BAZ},
                   aptitude_r_command.commandline[0], 'コマンドライン文字列が正しくない' )
   end
-
-  public
-  def test_commandline_preloadrm
-    aptitude_r_command = aptitude_r do |aptitude_r|
-      aptitude_r.preloadrm << { :url => %{file:///tmp/FOO.TGZ}, :directory => %{preload} }
-      aptitude_r.list << "FOO" << "BAR" << "BAZ"
-    end
-    assert_equal( %{rm /tmp/target/preload/FOO.TGZ},
-                  aptitude_r_command.commandline[2], 'コマンドライン文字列が正しくない' )
-  end
 end
 
 ### Local variables:

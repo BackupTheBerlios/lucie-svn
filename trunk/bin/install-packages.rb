@@ -111,12 +111,6 @@
 #
 #--
 # TODO: utils/chkdebnames、チェックオプションの移植
-# TODO: hold 引数での文字列サポート
-# TODO: ブロック引数を取らない install 形式のサポート
-# TODO: remove 引数での文字列サポート
-# TODO: taskinst 引数での文字列サポート
-# TODO: ブロック引数を取らない aptitude 形式のサポート 
-# TODO: ブロック引数を取らない aptitude-r 形式のサポート 
 #++
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)

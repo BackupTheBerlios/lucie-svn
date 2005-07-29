@@ -18,19 +18,18 @@ module InstallPackages
                   %{#{root_command} apt-get clean}] +
                   preloadrm_teardown_commandline)
       end
-
-      private
-      def short_list
-        return @list[0..MAX_PACKAGE_LIST].join(' ')
-      end
     end
   end
 end
 
 # install コマンド
-def install( &block )
+def install( packageList=[], &block )
   install_command = InstallPackages::Command::Install.new
-  block.call( install_command )
+  if block_given?
+    block.call( install_command )
+  else
+    install_command.list = packageList
+  end
   InstallPackages::App.register install_command
 end
 

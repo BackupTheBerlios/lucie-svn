@@ -10,7 +10,14 @@ module InstallPackages
     class Remove < AbstractCommand
       public
       def commandline
-        package_list = @list.join(' ')
+        case @list
+        when String
+          package_list = @list
+        when Array
+          package_list = @list.join(' ')
+        else
+          raise "this shouldn't happen"
+        end
         return %{#{root_command} apt-get --purge remove #{package_list}}
       end
     end

@@ -12,15 +12,17 @@ require 'test/unit'
 
 class TC_Remove < Test::Unit::TestCase
   public
-  def test_remove
-    remove( ["foo", "bar", "baz"] )
+  def test_remove_stringarg
+    remove_command = remove( "FOO" )
+    assert_equal( 'chroot /tmp/target apt-get --purge remove FOO',
+                  remove_command.commandline, 'コマンドライン文字列が正しくない' )
   end
 
   public
-  def test_commandline
-    remove = InstallPackages::Command::Remove.new( ['FOO', 'BAR', 'BAZ'] )
+  def test_remove
+    remove_command = remove( ["FOO", "BAR", "BAZ"] )
     assert_equal( 'chroot /tmp/target apt-get --purge remove FOO BAR BAZ',
-                  remove.commandline, 'コマンドライン文字列が正しくない' )
+                  remove_command.commandline, 'コマンドライン文字列が正しくない' )
   end
 end
 

@@ -18,20 +18,18 @@ module InstallPackages
                   %{#{root_command} apt-get clean}] +
                   preloadrm_teardown_commandline )
       end
-
-      # XXX: Install と重複
-      private
-      def short_list
-        return @list[0..MAX_PACKAGE_LIST].join(' ')
-      end
     end
   end
 end
 
 # aptitude コマンド
-def aptitude( &block )
+def aptitude( packageList=[], &block )
   aptitude_command = InstallPackages::Command::Aptitude.new
-  block.call( aptitude_command )
+  if block_given?
+    block.call( aptitude_command )
+  else
+    aptitude_command.list = packageList
+  end
   InstallPackages::App.register aptitude_command
 end
 

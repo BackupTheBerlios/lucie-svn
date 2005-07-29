@@ -12,7 +12,14 @@ module InstallPackages
     class AptitudeR < AbstractCommand
       public
       def commandline
-        package_list = @list.join(' ')
+        case @list
+        when Array
+          package_list = @list.join(' ')
+        when String
+          package_list = @list
+        else 
+          raise "This shouldn't happen"
+        end
         return( preload_commandline +  
                   [%{#{root_command} aptitude -r #{APT_OPTION} install #{package_list}}] +
                   preloadrm_teardown_commandline )
@@ -22,9 +29,13 @@ module InstallPackages
 end
 
 # aptitude_r コマンド
-def aptitude_r( &block )
+def aptitude_r( packageList=[], &block )
   aptitude_r_command = InstallPackages::Command::AptitudeR.new
-  block.call( aptitude_r_command )
+  if block_given?
+    block.call( aptitude_r_command )
+  else
+    aptitude_r_command.list = packageList
+  end
   InstallPackages::App.register aptitude_r_command
 end
 

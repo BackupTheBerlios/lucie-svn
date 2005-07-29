@@ -33,8 +33,8 @@ module InstallPackages
     end
 
     public
-    def initialize( packageArray = [] )
-      @list = packageArray
+    def initialize( packageList = [] )
+      @list = packageList
       @preload = []
       @preloadrm = []
     end
@@ -50,6 +50,18 @@ module InstallPackages
         end
       end
     end
+
+    private
+    def short_list
+      case @list
+      when Array
+        return @list[0..MAX_PACKAGE_LIST].join(' ')
+      when String
+        return @list
+      else
+        raise "This shouldn't happen"
+      end
+    end
     
     #--
     # XXX /tmp/target のパスは Lucie のライブラリから取得
@@ -62,7 +74,7 @@ module InstallPackages
     private
     def preload_commandline
       return (@preload + @preloadrm).map do |each|
-        if URI.regexp(%w(file))=~ each[:url]
+        if URI.regexp('file')=~ each[:url]
           file = URI.parse(each[:url]).path
           %{cp #{File.join('/etc/lucie/', file)} #{File.join('/tmp/target/', each[:directory])}}
         else

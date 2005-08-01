@@ -114,7 +114,7 @@ end
 
 # ------------------------- basic 設定
 
-$GNU_COMPILER_VERSIONS = ['2.95', '3.2', '3.3', '3.4'] # 選択可能な gcc, cpp, g77, g++ のバージョン
+$GNU_COMPILER_VERSIONS = ['2.95', '3.0', '3.2', '3.3', '3.4'] # 選択可能な gcc, cpp, g77, g++ のバージョン
 
 template( 'lucie-client/compile/basic' ) do |template|
   template.template_type = 'select'

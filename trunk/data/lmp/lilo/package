@@ -1,4 +1,14 @@
-PACKAGES install
-initrd-tools
-lilo
-grub-
+#
+# $Id$
+#
+# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Revision:: $LastChangedRevision$
+# License::  GPL2
+
+install( %w(initrd-tools lilo) )
+remove( 'grub' )
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

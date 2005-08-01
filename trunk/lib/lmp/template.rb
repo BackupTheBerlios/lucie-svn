@@ -13,7 +13,7 @@ module LMP
   module Template
     public
     def config( aSpecification )
-      command_line_options = Deft::CommandLineOptions.instance
+      command_line_options = LMP::CommandLineOptions.instance
       require 'deft'
       require 'deft/concrete-state'
       return <<-CONFIG

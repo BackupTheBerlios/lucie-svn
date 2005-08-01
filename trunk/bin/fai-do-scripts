@@ -129,6 +129,13 @@ do_script() {
 	    fc_check_status $file $? | tee -a $LOGDIR/expect.log
 	;;
 
+	*"ruby1.8 script"*)
+	    echo "Executing    ruby: $file"
+	    echo "=====   ruby: $file   =====" >> $LOGDIR/ruby.log 2>&1
+	    ./$file >> $LOGDIR/ruby.log 2>&1
+	    fc_check_status $file $? | tee -a $LOGDIR/ruby.log
+	;;
+
 	*) echo "File $file has unsupported type $filetype." ;;
     esac
 }

@@ -114,9 +114,11 @@ end
 
 # ------------------------- basic 設定
 
+$GNU_COMPILER_VERSIONS = ['2.95', '3.2', '3.3', '3.4'] # 選択可能な gcc, cpp, g77, g++ のバージョン
+
 template( 'lucie-client/compile/basic' ) do |template|
   template.template_type = 'select'
-  template.choices = ['2.95', '3.0', '3.2', '3.3', '3.4']
+  template.choices = $GNU_COMPILER_VERSIONS
   template.short_description = "Choose compilers' version"
   template.extended_description = <<-DESCRIPTION
   Which version do you use for default Fortran/CPP/C++/C compilers?
@@ -143,7 +145,7 @@ end
 
 template( 'lucie-client/compile/g77' ) do |template|
   template.template_type = 'select'
-  template.choices = ['2.95', '3.0', '3.2', '3.3', '3.4']
+  template.choices = $GNU_COMPILER_VERSIONS
   template.short_description = 'Choice of default g77 version'
   template.extended_description = <<-DESCRIPTION
   Which version do you use for default g77 compiler?
@@ -162,7 +164,7 @@ end
 
 template( 'lucie-client/compile/cpp' ) do |template|
   template.template_type = 'select'
-  template.choices = ['2.95', '3.0', '3.2', '3.3', '3.4']
+  template.choices = $GNU_COMPILER_VERSIONS
   template.short_description = 'Choice of default cpp version'
   template.extended_description = <<-DESCRIPTION
   Which version do you use for default cpp compiler?
@@ -181,7 +183,7 @@ end
 
 template( 'lucie-client/compile/gpp' ) do |template|
   template.template_type = 'select'
-  template.choices = ['2.95', '3.0', '3.2', '3.3', '3.4']
+  template.choices = $GNU_COMPILER_VERSIONS
   template.short_description = 'Choice of default g++ version'
   template.extended_description = <<-DESCRIPTION
   Which version do you use for default g++ compiler?
@@ -200,7 +202,7 @@ end
 
 template( 'lucie-client/compile/gcc' ) do |template|
   template.template_type = 'select'
-  template.choices = ['2.95', '3.0', '3.2', '3.3', '3.4']
+  template.choices = $GNU_COMPILER_VERSIONS
   template.short_description = 'Choice of default gcc version'
   template.extended_description = <<-DESCRIPTION
   Which version do you use for default gcc compiler?

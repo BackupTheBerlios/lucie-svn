@@ -6,16 +6,16 @@
 # License::  GPL2
 
 # Fortran
-install( %w(g77 g77-2.95 g77-3.0 g77-3.2 g77-3.3 g77-3.4) )
+install( %w(g77 g77-2.95 g77-3.2 g77-3.3 g77-3.4) )
 
 # C pre processor
-install( %w(cpp cpp-2.95 cpp-3.0 cpp-3.2 cpp-3.3 cpp-3.4) )
+install( %w(cpp cpp-2.95 cpp-3.2 cpp-3.3 cpp-3.4) )
 
 # C++
-install( %w(g++ g++-2.95 g++-3.0 g++-3.2 g++-3.3 g++-3.4) )
+install( %w(g++ g++-2.95 g++-3.2 g++-3.3 g++-3.4) )
 
 # C
-install( %w(gcc gcc-2.95 gcc-3.0 gcc-3.2 gcc-3.3 gcc-3.4) )
+install( %w(gcc gcc-2.95 gcc-3.2 gcc-3.3 gcc-3.4) )
 
 # ¤½¤ÎÂ¾
 install( %w(electric-fence bin86 m4 byacc cvs ddd indent autoconf automake1.8 binutils bison flex cutils cxref gdb glibc-doc libtool ltrace make manpages-dev patch stl-manual strace) )

@@ -1,4 +1,4 @@
-# = Lucie 僒儞僾儖愝掕
+# = Lucie サンプル肋年
 #
 # $Id$
 #
@@ -7,8 +7,9 @@
 # License::  GPL2
 
 require 'lucie/config'
+include Lucie::Config
 
-# ------------------------- 儂僗僩偺掕媊.
+# ------------------------- ホストの年盗.
 
 host do |host|
   host.name = 'cluster_node00'
@@ -31,7 +32,7 @@ host do |host|
   host.mac_address = '00:0C:29:41:88:F2'
 end
 
-# ------------------------- 儂僗僩僌儖乕僾偺掕媊.
+# ------------------------- ホストグル〖プの年盗.
 
 host_group do |group|
   group.name = 'presto_cluster'
@@ -39,7 +40,7 @@ host_group do |group|
   group.members = [Host['cluster_node00'], Host['cluster_node01'], Host['cluster_node02']]    
 end
 
-# ------------------------- 僷僢働乕僕僒乕僶偺掕媊.
+# ------------------------- パッケ〖ジサ〖バの年盗.
 
 package_server do |pkgserver|
   pkgserver.name         = 'debian_mirror'
@@ -47,7 +48,7 @@ package_server do |pkgserver|
   pkgserver.uri          = 'http://192.168.1.100/debian/'
 end
 
-# ------------------------- DHCP 僒乕僶偺掕媊.
+# ------------------------- DHCP サ〖バの年盗.
 
 dhcp_server do |dhcp_server|
   dhcp_server.name            = 'dhcp'
@@ -60,7 +61,7 @@ dhcp_server do |dhcp_server|
   dhcp_server.domain_name     = 'is.titech.ac.jp'
 end
 
-# ------------------------- 僀儞僗僩乕儔偺掕媊.
+# ------------------------- インスト〖ラの年盗.
 
 installer do |installer|
   installer.name                 = 'presto_installer'

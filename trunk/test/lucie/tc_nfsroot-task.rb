@@ -7,6 +7,7 @@
 
 $LOAD_PATH.unshift './lib'
 
+# FIXME: gem を使っていない場合に対処
 require 'rubygems'
 require_gem 'rake'
 require 'lucie/nfsroot-task'

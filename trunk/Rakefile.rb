@@ -22,7 +22,7 @@ task :default => [:testall]
 TEST_VERBOSITY = true 
 
 # テストに含まれる全テストスイート
-TEST_SUITES = ['lucie', 'debconf', 'deft', 'lmp', 'depends', 'install-packages']
+TEST_SUITES = ['lucie', 'debconf', 'deft', 'lmp', 'depends', 'install_packages']
 
 # すべてのテストは $(TOPDIR)/test/$(テストスイート名)/ というディレクトリを作り
 # tc_*.rb という名前のテストケースに作成する
@@ -60,7 +60,7 @@ Rake::RDocTask.new( :rdoc ) do |rdoc|
                            'lib/lucie/*.rb', 'lib/lucie/config/*.rb', 'lib/lmp/*.rb', 
                            'data/lmp/default/*.rb', 'data/lmp/compile/*.rb', 
                            'data/lmp/lilo/*.rb', 'data/lmp/network/*.rb',
-                           'bin/install-packages.rb',
+                           'bin/install_packages.rb',
                            'lib/lucie/rake/*.rb' )
 end
 

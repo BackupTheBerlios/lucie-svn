@@ -7,7 +7,8 @@
 
 $LOAD_PATH.unshift './lib'
 
-require 'rake'
+require 'rubygems'
+require_gem 'rake'
 require 'lucie/nfsroot-task'
 require 'test/unit'
 

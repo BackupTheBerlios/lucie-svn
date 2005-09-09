@@ -60,9 +60,7 @@ module Deft
     #
     public
     def choices=( choiceArray )
-      unless choiceArray.is_a?( Array )
-        raise Exception::InvalidAttributeException, "Choice must be an Array object."
-      end
+      type_check( "Choice", Array, choiceArray )
       @choices = choiceArray
     end
 
@@ -81,9 +79,7 @@ module Deft
     #
     public
     def default=( defaultString )
-      unless defaultString.is_a?( String )
-        raise Exception::InvalidAttributeException, "Default must be an String."
-      end
+      type_check( "Default", String, defaultString )
       @default = defaultString
     end
 
@@ -102,9 +98,7 @@ module Deft
     #
     public
     def short_description=( descriptionString )
-      unless descriptionString.is_a?( String )
-        raise Exception::InvalidAttributeException, "Description must be an String."
-      end
+      type_check( "Short description", String, descriptionString )
       @short_description = descriptionString
     end
 
@@ -123,9 +117,7 @@ module Deft
     #
     public
     def short_description_ja=( descriptionString )
-      unless descriptionString.is_a?( String )
-        raise Exception::InvalidAttributeException, "Description must be an String."
-      end
+      type_check( "Short description JA", String, descriptionString )
       @short_description_ja = descriptionString
     end
 
@@ -144,9 +136,7 @@ module Deft
     #
     public
     def extended_description_ja=( descriptionString )
-      unless descriptionString.is_a?( String )
-        raise Exception::InvalidAttributeException, "Description must be an String."
-      end
+      type_check( "Extended description JA", String, descriptionString )
       @extended_description_ja = descriptionString
     end
 
@@ -165,9 +155,7 @@ module Deft
     #
     public
     def extended_description=( descriptionString )
-      unless descriptionString.is_a?( String )
-        raise Exception::InvalidAttributeException, "Description must be an String."
-      end
+      type_check( "Extended description", String, descriptionString )
       @extended_description = descriptionString
     end
 
@@ -194,6 +182,13 @@ module Deft
     public
     def template_type
       return AbstractTemplate.template2class_table[self.class]
+    end
+
+    private
+    def type_check( attribute, type, actualValue )
+      unless actualValue.is_a?( type )
+        raise Exception::InvalidAttributeException, "#{attribute} must be an #{type.to_s} object."
+      end
     end
 
     private

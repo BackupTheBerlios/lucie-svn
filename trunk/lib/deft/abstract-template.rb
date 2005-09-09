@@ -26,7 +26,6 @@ module Deft
     attr_accessor :extended_description_ja
     attr_accessor :extended_description
     attr_accessor :short_description_ja
-    attr_accessor :short_description
 
     # テンプレートクラス名 => テンプレート名のハッシュテーブル
     public
@@ -68,7 +67,7 @@ module Deft
 
     # デフォルト値を String で返す。
     # 
-    #   aTemplate.default = "DEFAULT VALUE"
+    #   aTemplate.default => "DEFAULT VALUE"
     #
     public
     def default
@@ -85,6 +84,27 @@ module Deft
         raise Exception::InvalidAttributeException, "Default must be an String."
       end
       @default = defaultString
+    end
+
+    # 短いパッケージ説明を String で返す。
+    # 
+    #   aTemplate.short_description => "Short description about this metapackage"
+    #
+    public
+    def short_description
+      return @short_description
+    end
+
+    # 短いパッケージ説明を String で指定する。
+    # 
+    #   aTemplate.short_description = "Short description about this metapackage"
+    #
+    public
+    def short_description=( descriptionString )
+      unless descriptionString.is_a?( String )
+        raise Exception::InvalidAttributeException, "Description must be an String."
+      end
+      @short_description = descriptionString
     end
 
     # デバッグ用

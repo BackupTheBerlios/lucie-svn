@@ -96,14 +96,17 @@ class TC_AbstractTemplate < Test::Unit::TestCase
   end
 
   # @short_description の accessor をテスト
-  #--
-  # FIXME: @short_description の型チェック (String) をここでするか？
-  #++ 
   public
   def test_short_description_accessor
+    assert_nil @abstract_template.short_description, "@short_description の初期値が nil でない"
+
     @abstract_template.short_description = 'SHORT DESCRIPTION'
     assert_equal( 'SHORT DESCRIPTION', @abstract_template.short_description,
                   "@short_description の accessor が正しく動作しない" )
+
+    assert_raises( Deft::Exception::InvalidAttributeException ) do 
+      @abstract_template.short_description = :short_description
+    end  
   end
   
   # @default の accessor をテスト

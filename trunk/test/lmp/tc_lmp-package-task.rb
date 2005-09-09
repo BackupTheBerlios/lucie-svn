@@ -32,6 +32,7 @@ class TC_LMPPackageTask < Test::Unit::TestCase
     lmp_spec = Mock.new( '#<Specification (Mock)>' )
     lmp_spec.__next( :name ) do 'LMP-TEST' end
     lmp_spec.__next( :version ) do '0.0.1' end
+    lmp_spec.__next( :architecture ) do files end
     lmp_spec.__next( :files ) do files end
     lmp_spec.__next( :files ) do files end
     lmp_spec.__next( :architecture ) do 'all' end

@@ -23,7 +23,6 @@ module Deft
   # は無い。
   class AbstractTemplate
     attr_reader :name
-    attr_accessor :choices
     attr_accessor :extended_description_ja
     attr_accessor :extended_description
     attr_accessor :short_description_ja
@@ -46,7 +45,28 @@ module Deft
     def initialize( nameString ) # :nodoc:
       @name = nameString
     end
+
+    # 選択可能な項目を String の Array で返す。
+    #
+    #   aTemplate.choices => ["CHOICE 1", "CHOICE 2", "CHOICE 3"]
+    #
+    public
+    def choices
+      return @choices
+    end
     
+    # 選択可能な項目を String の Array で指定する。
+    #
+    #   aTemplate.choices = ["CHOICE 1", "CHOICE 2", "CHOICE 3"]
+    #
+    public
+    def choices=( choiceArray )
+      unless choiceArray.is_a?( Array )
+        raise Exception::InvalidAttributeException, "Choice must be an Array object."
+      end
+      @choices = choiceArray
+    end
+
     # デバッグ用
     public
     def inspect # :nodoc:

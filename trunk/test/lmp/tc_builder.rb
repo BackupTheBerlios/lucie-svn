@@ -7,16 +7,14 @@
 
 $LOAD_PATH.unshift './lib'
 
-require_gem 'test-unit-mock'
+require 'mock'
 require 'lmp/builder'
 require 'test/unit'
 
 class TC_Builder < Test::Unit::TestCase
   public
   def test_all_file_tasks_defined
-    # FIXME: Test::Unit::Mockup の使い方はこれで正しい？
-    lmp_spec = Test::Unit::Mockup.new( '#<Specification (Mock)>' )
-    lmp_spec.activate
+    lmp_spec = Mock.new( '#<Specification (Mock)>' )   
     LMP::Builder.new( lmp_spec, '.' )
     assert_file_task_defined( './debian/README.Debian' )
     assert_file_task_defined( "./debian/changelog" )

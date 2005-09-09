@@ -8,6 +8,7 @@
 require 'lucie/string'
 require 'time-stamp'
 
+# FIXME: モジュール/クラス定義の内側へ追いやる
 update(%q$Id$)
 
 module Deft
@@ -16,7 +17,10 @@ module Deft
     class RequiredAttributeException < ::Exception; end
   end
 
-  # すべてのテンプレートの親クラス
+  # すべてのテンプレートクラスの親となるクラス。テンプレートの各アトリ
+  # ビュートへのアクセッサメソッド等の共通するメソッドを提供する。テン
+  # プレートを追加するといった場合以外にはこのクラスを直接使用すること
+  # は無い。
   class AbstractTemplate
     attr_reader :name
     attr_accessor :choices
@@ -28,7 +32,7 @@ module Deft
 
     # テンプレートクラス名 => テンプレート名のハッシュテーブル
     public
-    def self.template2class_table
+    def self.template2class_table # :nodoc:
       { Deft::TextTemplate => 'text',
         Deft::SelectTemplate => 'select',
         Deft::NoteTemplate => 'note',
@@ -38,28 +42,31 @@ module Deft
         Deft::PasswordTemplate => 'password' }
     end
     
-    # 新しい AbstractTemplate オブジェクトを返す
-    public
-    def initialize( nameString )
+    public 
+    def initialize( nameString ) # :nodoc:
       @name = nameString
     end
     
     # デバッグ用
     public
-    def inspect
+    def inspect # :nodoc:
       return "#<Deft::AbstractTemplate: @name=\"#{@name}\">"
     end
     
     # 文字列に変換する
     public
-    def to_s
+    def to_s # :nodoc:
       unless ( (@short_description and @extended_description) or
                (@short_description_ja and @extended_description_ja) )
         raise Exception::RequiredAttributeException
       end
     end
 
-    # テンプレート名を返す
+    # テンプレート名を String で返す。
+    #
+    #   aTemplate = Deft::TextTemplate.new( "text template" )
+    #   aTemplate.template_type => 'text'
+    #
     public
     def template_type
       return AbstractTemplate.template2class_table[self.class]

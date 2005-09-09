@@ -7,6 +7,7 @@
 
 $LOAD_PATH.unshift './lib'
 
+require 'deft/text-template'
 require 'deft/abstract-template'
 require 'test/unit'
 
@@ -14,6 +15,37 @@ class TC_AbstractTemplate < Test::Unit::TestCase
   public
   def setup
     @abstract_template = Deft::AbstractTemplate.new( 'TEST ABSTRACT TEMPLATE' )
+  end
+
+  public
+  def test_to_s
+    assert_raises( Deft::Exception::RequiredAttributeException) do
+      @abstract_template.to_s
+    end
+  end
+
+  public
+  def test_template_type
+    text_template = Deft::TextTemplate.new( 'text template' )
+    assert_equal( 'text', text_template.template_type )
+
+    select_template = Deft::SelectTemplate.new( 'select template' )
+    assert_equal( 'select', select_template.template_type )
+
+    note_template = Deft::NoteTemplate.new( 'note template' )
+    assert_equal( 'note', note_template.template_type )
+
+    boolean_template = Deft::BooleanTemplate.new( 'boolean template' )
+    assert_equal( 'boolean', boolean_template.template_type )
+
+    string_template = Deft::StringTemplate.new( 'string template' )
+    assert_equal( 'string', string_template.template_type )
+
+    multiselect_template = Deft::MultiselectTemplate.new( 'multiselect template' )
+    assert_equal( 'multiselect', multiselect_template.template_type )
+
+    password_template = Deft::PasswordTemplate.new( 'password template' )
+    assert_equal( 'password', password_template.template_type )
   end
 
   # @choices の accessor をテスト

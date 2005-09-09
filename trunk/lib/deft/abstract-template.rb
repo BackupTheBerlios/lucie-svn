@@ -22,11 +22,6 @@ module Deft
   # プレートを追加するといった場合以外にはこのクラスを直接使用すること
   # は無い。
   class AbstractTemplate
-    attr_reader :name
-    attr_accessor :extended_description_ja
-    attr_accessor :extended_description
-    attr_accessor :short_description_ja
-
     # テンプレートクラス名 => テンプレート名のハッシュテーブル
     public
     def self.template2class_table # :nodoc:
@@ -42,6 +37,12 @@ module Deft
     public 
     def initialize( nameString ) # :nodoc:
       @name = nameString
+    end
+
+    # テンプレート名を返す。
+    public
+    def name
+      return @name
     end
 
     # 選択可能な項目を String の Array で返す。
@@ -105,6 +106,69 @@ module Deft
         raise Exception::InvalidAttributeException, "Description must be an String."
       end
       @short_description = descriptionString
+    end
+
+    # 短いパッケージ説明(日本語)を String で返す。
+    # 
+    #   aTemplate.short_description_ja => "メタパッケージの日本語による短い説明"
+    #
+    public
+    def short_description_ja
+      return @short_description_ja
+    end
+
+    # 短いパッケージ説明(日本語)を String で指定する。
+    # 
+    #   aTemplate.short_description_ja = "メタパッケージの日本語による短い説明"
+    #
+    public
+    def short_description_ja=( descriptionString )
+      unless descriptionString.is_a?( String )
+        raise Exception::InvalidAttributeException, "Description must be an String."
+      end
+      @short_description_ja = descriptionString
+    end
+
+    # 長いパッケージ説明(日本語)を String で返す。
+    # 
+    #   aTemplate.extended_description_ja => "メタパッケージの日本語による長い説明"
+    #
+    public
+    def extended_description_ja
+      return @extended_description_ja
+    end
+
+    # 長いパッケージ説明(日本語)を String で指定する。
+    # 
+    #   aTemplate.extended_description_ja = "メタパッケージの日本語による長い説明"
+    #
+    public
+    def extended_description_ja=( descriptionString )
+      unless descriptionString.is_a?( String )
+        raise Exception::InvalidAttributeException, "Description must be an String."
+      end
+      @extended_description_ja = descriptionString
+    end
+
+    # 長いパッケージ説明を String で返す。
+    # 
+    #   aTemplate.extended_description => "Extended description about this metapackage"
+    #
+    public
+    def extended_description
+      return @extended_description
+    end
+
+    # 長いパッケージ説明を String で指定する。
+    # 
+    #   aTemplate.extended_description = "Extended description about this metapackage"
+    #
+    public
+    def extended_description=( descriptionString )
+      unless descriptionString.is_a?( String )
+        raise Exception::InvalidAttributeException, "Description must be an String."
+      end
+      @extended_description = descriptionString
     end
 
     # デバッグ用

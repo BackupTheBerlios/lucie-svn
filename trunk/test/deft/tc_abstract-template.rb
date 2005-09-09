@@ -73,26 +73,32 @@ class TC_AbstractTemplate < Test::Unit::TestCase
                   "@extended_description_ja の accessor が正しく動作しない" )
   end
 
-  # @extended_description の accessor をテスト
-  #--
-  # FIXME: @extended_description の型チェック (String) をここでするか？
-  #++ 
+  # @extended_description_ja の accessor をテスト
   public
-  def test_extended_description_accessor
-    @abstract_template.extended_description = 'EXTENDED DESCRIPTION'
-    assert_equal( 'EXTENDED DESCRIPTION', @abstract_template.extended_description,
-                  "@extended_description の accessor が正しく動作しない" )
+  def test_extended_description_ja_accessor
+    assert_nil @abstract_template.extended_description_ja, "@extended_description_ja の初期値が nil でない"
+
+    @abstract_template.extended_description_ja = 'EXTENDED DESCRIPTION JA'
+    assert_equal( 'EXTENDED DESCRIPTION JA', @abstract_template.extended_description_ja,
+                  "@extended_description_ja の accessor が正しく動作しない" )
+
+    assert_raises( Deft::Exception::InvalidAttributeException ) do 
+      @abstract_template.extended_description_ja = :extended_description_ja
+    end  
   end
 
   # @short_description_ja の accessor をテスト
-  #--
-  # FIXME: @short_description_ja の型チェック (String) をここでするか？
-  #++ 
   public
   def test_short_description_ja_accessor
+    assert_nil @abstract_template.short_description_ja, "@short_description_ja の初期値が nil でない"
+
     @abstract_template.short_description_ja = 'SHORT DESCRIPTION JA'
     assert_equal( 'SHORT DESCRIPTION JA', @abstract_template.short_description_ja,
                   "@short_description_ja の accessor が正しく動作しない" )
+
+    assert_raises( Deft::Exception::InvalidAttributeException ) do 
+      @abstract_template.short_description_ja = :short_description_ja
+    end  
   end
 
   # @short_description の accessor をテスト
@@ -106,6 +112,20 @@ class TC_AbstractTemplate < Test::Unit::TestCase
 
     assert_raises( Deft::Exception::InvalidAttributeException ) do 
       @abstract_template.short_description = :short_description
+    end  
+  end
+
+  # @extended_description の accessor をテスト
+  public
+  def test_extended_description_accessor
+    assert_nil @abstract_template.extended_description, "@extended_description の初期値が nil でない"
+
+    @abstract_template.extended_description = 'EXTENDED DESCRIPTION'
+    assert_equal( 'EXTENDED DESCRIPTION', @abstract_template.extended_description,
+                  "@extended_description の accessor が正しく動作しない" )
+
+    assert_raises( Deft::Exception::InvalidAttributeException ) do 
+      @abstract_template.extended_description = :extended_description
     end  
   end
   

@@ -27,7 +27,6 @@ module Deft
     attr_accessor :extended_description
     attr_accessor :short_description_ja
     attr_accessor :short_description
-    attr_accessor :default
 
     # テンプレートクラス名 => テンプレート名のハッシュテーブル
     public
@@ -65,6 +64,27 @@ module Deft
         raise Exception::InvalidAttributeException, "Choice must be an Array object."
       end
       @choices = choiceArray
+    end
+
+    # デフォルト値を String で返す。
+    # 
+    #   aTemplate.default = "DEFAULT VALUE"
+    #
+    public
+    def default
+      return @default
+    end
+
+    # デフォルト値を String で指定する。
+    # 
+    #   aTemplate.default = "DEFAULT VALUE"
+    #
+    public
+    def default=( defaultString )
+      unless defaultString.is_a?( String )
+        raise Exception::InvalidAttributeException, "Default must be an String."
+      end
+      @default = defaultString
     end
 
     # デバッグ用

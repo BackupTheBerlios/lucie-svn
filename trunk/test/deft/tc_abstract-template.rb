@@ -107,13 +107,16 @@ class TC_AbstractTemplate < Test::Unit::TestCase
   end
   
   # @default の accessor をテスト
-  #--
-  # FIXME: @default にはどんなオブジェクトが入るか？チェックをここでするか？
-  #++ 
   public
   def test_default_accessor 
+    assert_nil @abstract_template.default, "@default の初期値が nil でない"
+
     @abstract_template.default = 'DEFAULT'
     assert_equal 'DEFAULT', @abstract_template.default, "@default の accessor が正しく動作しない"
+
+    assert_raises( Deft::Exception::InvalidAttributeException ) do 
+      @abstract_template.default = :default
+    end  
   end
   
   # @name の getter をテスト

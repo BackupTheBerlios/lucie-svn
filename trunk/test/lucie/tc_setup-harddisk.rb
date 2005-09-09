@@ -11,6 +11,9 @@ require 'test/unit'
 require 'lucie/setup-harddisk'
 
 class TC_SetupHarddisk < Test::Unit::TestCase
+  def test_truth
+    assert true
+  end
 end
 
 ### Local variables:

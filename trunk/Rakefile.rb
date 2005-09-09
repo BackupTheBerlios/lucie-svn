@@ -35,7 +35,8 @@ Rake::TestTask.new( :testall ) do |t|
   all_tests = FileList.new
   TEST_SUITES.each do |each|
     all_tests << testcase_filelist( each )
-  end    
+  end
+  t.libs << "lib" << "test"
   t.test_files = all_tests
   t.verbose = TEST_VERBOSITY
 end

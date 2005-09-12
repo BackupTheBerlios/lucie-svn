@@ -16,28 +16,16 @@ require 'deft/string-template'
 require 'deft/text-template'
 require 'test/unit'
 
-class RequiredAttributeExceptionTest < Test::Unit::TestCase
-  # short/extended description が揃っていない場合の 
-  # Deft::Exception::RequiredAttributeException をテスト
-  public
-  def description_test( aTemplate )
-    assert_raises( Deft::Exception::RequiredAttributeException,
-                   "Deft::Exception::RequiredAttributeException が raise されなかった" ) do
-      aTemplate.to_s
-    end
-  end
-end
-
-# select テンプレートでのテスト
-class TC_SelectTemplateRequiredAttributeException < RequiredAttributeExceptionTest
-  public
-  def setup
-    @select_template = Deft::SelectTemplate.new( 'TEST SELECT TEMPLATE' )
-  end
-
+# short/extended description が揃っていない場合の 
+# Deft::Exception::RequiredAttributeException をテスト
+class TC_TemplateRequiredAttributeException < RequiredAttributeExceptionTest
   public
   def test_description_required_attribute_exception
-    description_test( @select_template )
+    @select_template = Deft::SelectTemplate.new( 'TEST SELECT TEMPLATE' )
+    assert_raises( Deft::Exception::RequiredAttributeException,
+                   "Deft::Exception::RequiredAttributeException が raise されなかった" ) do
+      @select_template.to_s
+    end
   end
 end
 

@@ -18,7 +18,7 @@ require 'test/unit'
 
 # short/extended description が揃っていない場合の 
 # Deft::Exception::RequiredAttributeException をテスト
-class TC_TemplateRequiredAttributeException < RequiredAttributeExceptionTest
+class TC_TemplateRequiredAttributeException
   public
   def test_description_required_attribute_exception
     @select_template = Deft::SelectTemplate.new( 'TEST SELECT TEMPLATE' )

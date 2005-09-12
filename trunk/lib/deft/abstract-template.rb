@@ -17,20 +17,26 @@ module Deft
     class RequiredAttributeException < ::Exception; end
   end
 
+  #--
+  # FIXME: 以下は例が平易でないので新たな例を考える。
+  #++
+  #
   # == テンプレートの基礎
   #
   # Debconf には、「テンプレート」と「変数」と呼ばれる概念があります。
-  # Debconf による設定ダイアログの開発者は、まずユーザに表示したい質問
-  # 項目をリストアップし、各質問項目に対応するテンプレートと変数を定義
-  # する必要があります。
+  # 画面に表示される各質問画面は質問内容や質問形式の定義であるテンプレー
+  # トをもとにして生成されます。ユーザが Debconf を通じて入力した内容
+  # は変数に代入されます。Debconf を用いた質問ダイアログの開発では、ま
+  # ずユーザに表示したい質問項目をリストアップし、各質問項目に対応する
+  # テンプレートと変数を定義する必要があります。
   #
-  # Debconf についてより詳しくは {こちら}[http://www.debian.org/doc/packaging-manuals/debconf_specification.html] 
-  # を参照。
+  # Debconf の仕様についてより詳しくは {Configuration Management Protocol Version 2}[http://www.debian.org/doc/packaging-manuals/debconf_specification.html] 
+  # を参照してください。
   # 
   # === テンプレート
   # 
   # テンプレートはユーザに表示する質問項目の雛形を指定するものです。テ
-  # ンプレートには名前、型、デフォルト値、説明があります
+  # ンプレートの主な属性には名前、型、デフォルト値、説明があります
   #
   #   Template: 名前
   #   Type: 型
@@ -41,13 +47,13 @@ module Deft
   # 型 (Type: フィールド) は質問の種類を指定します。質問の種類には以下
   # があります。
   #
-  # * string: 文字列
-  # * boolean: true か false
-  # * select: `Choices:' に設定されている空白もしくはコンマで区切られた複数の値から一つ
-  # * multiselect: select は一つしか選べないのに対して複数選べる
-  # * note: たんに ‘Description:’ の説明を提示するだけ。メールもおくる
-  # * text: `Description:' の説明を提示する
-  # * 入力するときに echo back しない string
+  # * string: 文字列を入力させる質問
+  # * boolean: true か false を選ばせる質問
+  # * select: 複数項目から一つを選ばせる質問
+  # * multiselect: 複数項目から複数を選ばせる質問
+  # * text: ユーザへ情報を表示する
+  # * note: ユーザへ情報を表示しメールを送る
+  # * password: パスワードなど機密情報を入力させる質問
   #
   # === 変数
   #
@@ -60,16 +66,17 @@ module Deft
   #
   # === 状態遷移
   #
-  # また、開発者はテンプレートと変数に加え、ユーザ入力に応じた画面間の
-  # 遷移を記述する必要があります。たとえば、最初の質問画面で「犬と猫は
-  # どちらが好きか？」という選択をさせた場合、ユーザが犬を選んだ場合に
-  # は犬に関する質問を続ける、というような場合です。
+  # 開発者はテンプレートと変数に加え、ユーザ入力に応じた画面間の遷移を
+  # 記述する必要があります。
   #
   # == メッセージの表示 - text テンプレート
   #
   # text 型のテンプレートを用いることによって、ユーザへメッセージを表
-  # 示することができます。以下は note 型テンプレート 
-  # lucie-vmsetup/hello の例です。
+  # 示することができます。
+  #
+  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot1.png
+  #
+  # 以下は text 型テンプレート lucie-vmsetup/hello の例です。
   #
   #   template( 'lucie-vmsetup/hello' ) do |template|
   #     template.template_type = 'text'
@@ -90,8 +97,8 @@ module Deft
   #     DESCRIPTION_JA
   #   end
   #
-  # text 型のテンプレートでは、プロパティ template_type に 
-  # TextTemplate を指定します。
+  # text 型のテンプレートでは、プロパティ template_type に 'text' を指
+  # 定します。
   #
   # 次に、このテンプレートを元にして変数 lucie-vmsetup/hello を定義し
   # ます。
@@ -108,15 +115,14 @@ module Deft
   # * next_question : 次の質問。
   # * first_question : 最初の質問である場合、true を設定します。
   #
-  # Debconf の表示は以下のようになります。
-  # 
-  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot1.png
-  #
   # == メッセージを表示し、メールも送る - note テンプレート
   #
-  # 設定情報などといったとくに重要なメッセージを表示し、また reminder 
-  # として保存させておきたい場合、note 型のテンプレートを用います。基
-  # 本的には text 型のテンプレートと変わらず、型が note になるだけです。
+  # 設定情報などといったとくに重要なメッセージを表示し、またリマインダ
+  # としてメールを送信する場合、note 型のテンプレートを用います。
+  #
+  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot1.png
+  #
+  # 基本的には text 型のテンプレートと変わらず、型が note になるだけです。
   #
   #   template( 'lucie-vmsetup/hello' ) do |template|
   #     template.template_type = 'note'
@@ -137,15 +143,13 @@ module Deft
   #     DESCRIPTION_JA
   #   end
   #
-  # もちろん、変数の書き方は text 型の場合と同じです。
-  #
-  # Debconf の表示は以下のようになります。
-  #
-  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot1.png
+  # 変数の書き方は text 型の場合と同じです。
   #
   # == YES/NO の質問を表示 - boolean テンプレート
   #
   # 「ハイ」「イイエ」で答えられる種類の質問では、boolean 型のテンプレートを用います。
+  #
+  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot3.png
   #
   #   template( 'lucie-vmsetup/use-network' ) do |template|
   #     template.template_type = 'boolean'
@@ -158,21 +162,20 @@ module Deft
   #     DESCRIPTION_JA
   #   end
   #
-  # 変数は以下のようになります。
+  # 変数は以下のようになります。next_question アトリビュートの指定では、
+  # true/false を選んだ場合のそれぞれの遷移先をハッシュで指定します。
   #
   #   question( 'lucie-vmsetup/use-network' ) do |question|
   #     question.priority = Question::PRIORITY_MEDIUM
   #     question.next_question = { 'true'=>'lucie-vmsetup/ip', 'false'=>'lucie-vmsetup/memory-size' }
   #   end  
   #
-  # Debconf の表示は以下のようになります。
-  #
-  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot3.png
-  # 
   # == 文字列を入力 - string テンプレート
   #
   # ユーザになんらかの入力をうながす種類の質問では、string 型のテンプ
   # レートを用います。
+  #
+  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot9.png
   #
   #   template( 'lucie-vmsetup/application' ) do |template|
   #     template.template_type = 'string'
@@ -190,49 +193,46 @@ module Deft
   #     DESCRIPTION_JA
   #   end
   #
-  # 変数は以下のようになります。
-  #
-  #   question( ‘lucie-vmsetup/application’ ) do |question|
-  #     question.priority = Question::PRIORITY_MEDIUM
-  #   end
-  #
-  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot9.png
-  #
   # == 選択肢の中から一つだけ選択 - select テンプレート
   #
   # 選択肢の中からひとつを選ばせる種類の質問では、select 型のテンプレートを用います。
   #
-  #   template( 'lucie-vmsetup/num-nodes' ) do |template|
-  #     template.template_type = 'select'
-  #     template.choices = '4, 8, 12, 16, 20'
-  #     template.short_description_ja = 'VM ノードの台数'
-  #     template.extended_description_ja = <<-DESCRIPTION_JA
-  #     使用したい VM の台数を選択してください。
+  # http://lucie.sourceforge.net/images/select-template.png
   #
-  #     松岡研 PrestoIII クラスタで提供できる VM クラスタのノード数は、4 台�� 64 台となっています。
-  #     他のジョブへ影響を与えないように、ジョブ実行に *最低限* 必要な台数を選択してください。
+  # テンプレート定義では、choices プロパティで選択肢を指定していること
+  # に注目してください。
+  #
+  #   template( 'example/select' ) do |template|
+  #     template.template_type = 'select'
+  #     template.choices = ['blue', 'white', 'yellow', 'red'] # 選択肢を指定
+  #     template.short_description_ja = 'あなたの好きな色は ?'
+  #     template.extended_description_ja = <<-DESCRIPTION_JA
+  #     select テンプレートではユーザに選択肢を提示し、その中から一つを選ばせることができます。
+  #
+  #     あなたの好きな色は何ですか？
   #     DESCRIPTION_JA
   #   end
   #
-  # choices プロパティで選択肢を指定していることに注目してください。
+  # 変数定義では next_question 属性にハッシュを指定することによって、
+  # ユーザ入力に応じて遷移先を変化させることができます。
   #
-  # 変数は以下のようになります。
-  #
-  #   question( 'lucie-vmsetup/num-nodes' ) do |question|
-  #     question.priority = Question::PRIORITY_MEDIUM
-  #     question.next_question = 'lucie-vmsetup/use-network'
-  #   end  
-  #
-  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot2.png
+  #   question( 'example/select' ) do |question|
+  #     question.priority = Deft::Question::PRIORITY_MEDIUM
+  #     question.first_question = true
+  #     question.next_question = { 'blue' => 'example/blue',    # ユーザ入力に応じて遷移先を振り分け
+  #                                'white' => 'example/white', 
+  #                                'yellow' => 'example/yellow', 
+  #                                'red' => 'example/red' }
+  #   end
   #
   # == 選択肢の中から複数選択 - multiselect テンプレート
   #
+  # 書き中
+  #
   # == パスワードを入力 - password テンプレート
   #
-  # すべてのテンプレートクラスの親となるクラス。テンプレートの各アトリ
-  # ビュートへのアクセッサメソッド等の共通するメソッドを提供する。テン
-  # プレートを追加するといった場合以外にはこのクラスを直接使用すること
-  # は無い。
+  # 書き中
+  #
   class AbstractTemplate
     # テンプレートクラス名 => テンプレート名のハッシュテーブル
     public

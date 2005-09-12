@@ -52,6 +52,7 @@ end
 
 Rake::RDocTask.new( :rdoc ) do |rdoc|
   rdoc.title = 'Lucie documentation'
+  rdoc.template = 'jamis'
   rdoc.rdoc_dir = 'doc/rdoc'
   rdoc.options << '--line-numbers' 
   rdoc.options << '--inline-source' 
@@ -67,7 +68,7 @@ end
 
 desc 'Upload rdoc documents'
 task :upload_rdoc => [:rdoc] do
-  sh %{tar --directory doc -czf web.tar rdoc}
+  sh %{tar --directory doc -czf web.tar rdoc images}
   sh %{scp web.tar #{SOURCEFORGE_URI}}
   sh %{ssh -l takamiya #{SOURCEFORGE_HOST} "cd #{SOURCEFORGE_DIR} && tar xzf web.tar"}   
 end

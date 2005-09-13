@@ -64,6 +64,24 @@ module Deft
   # 複数の変数を作成し、それぞれに異なった値 (ユーザ入力) を保持するこ
   # ともできます。
   #
+  # 形式は以下の様になります。
+  #
+  #   question( 質問名 ) do |question|
+  #     question.priority = 優先度
+  #     question.first_question = 最初の質問かどうか
+  #     question.next_question = 次の質問
+  #   end
+  #
+  # next_question を以下の形式で書くことによって遷移先を直感的にわかり
+  # やすくすることもできます。矢印 (=>) がありますがこれは実際にはハッ
+  # シュの矢印です。
+  #
+  #   question( 質問名 => 次の質問 ) do |question|
+  #     question.priority = 優先度
+  #     question.first_question = 最初の質問かどうか
+  #   end
+  #
+  #
   # 変数の主な属性には以下のものがあります。
   #
   # * priority : 質問の優先度。利用可能な定数は Question クラスに定義されています。
@@ -98,7 +116,6 @@ module Deft
   #
   #   question( 'example/text' ) do |question|
   #     question.priority = Deft::Question::PRIORITY_MEDIUM
-  #     question.first_question = true
   #     question.next_question = 'example/bye'
   #   end
   #
@@ -107,30 +124,24 @@ module Deft
   # 設定情報などといったとくに重要なメッセージを表示し、またリマインダ
   # としてメールを送信する場合、note 型のテンプレートを用います。
   #
-  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot1.png
+  # http://lucie.sourceforge.net/images/note-template.png
   #
   # 基本的には text 型のテンプレートと変わらず、型が note になるだけです。
   #
-  #   template( 'lucie-vmsetup/hello' ) do |template|
+  #   template( 'example/note' ) do |template|
   #     template.template_type = 'note'
-  #     template.short_description_ja = 'Lucie VM のセットアップウィザードへようこそ'
+  #     template.short_description_ja = '重要な情報'
   #     template.extended_description_ja = <<-DESCRIPTION_JA
-  #     このウィザードでは、Lucie を用いた VM セットアップの設定を入力します。
-  #     設定可能な項目は、
-  #      o 必要な VM の台数
-  #      o 外部ネットワークへの接続
-  #      o VM で使用するメモリ容量
-  #      o VM で使用するハードディスク容量
-  #      o 使用する VM の種類
-  #      o VM へインストールする Linux ディストリビューションの種類
-  #      o VM へインストールするソフトウェアの種類
-  #     です。自分が VM 上で走らせたいジョブの特性によって設定を決めてください。
-  #
-  #     「次へ」をクリックするとウィザードを開始します。
+  #     note テンプレートではユーザになんらかの重要な情報を表示することができます。
   #     DESCRIPTION_JA
   #   end
   #
-  # 変数の書き方は text 型の場合と同じです。
+  # 変数の定義は text テンプレートと同じです。
+  #
+  #   question( 'example/note' ) do |question|
+  #     question.priority = Deft::Question::PRIORITY_MEDIUM
+  #     question.next_question = 'example/bye'
+  #   end
   #
   # == YES/NO の質問を表示 - boolean テンプレート
   #
@@ -152,7 +163,6 @@ module Deft
   #
   #   question( 'example/boolean' ) do |question|
   #     question.priority = Question::PRIORITY_MEDIUM
-  #     question.first_question = true
   #     question.next_question = { 'true'  => 'example/male',
   #                                'false' => 'example/female' }
   #   end
@@ -176,7 +186,6 @@ module Deft
   #
   #   question( 'example/string' ) do |question|
   #     question.priority = Deft::Question::PRIORITY_MEDIUM
-  #     question.first_question = true
   #     question.next_question = 'example/display_your__name'
   #   end
   #
@@ -205,7 +214,6 @@ module Deft
   #
   #   question( 'example/select' ) do |question|
   #     question.priority = Deft::Question::PRIORITY_MEDIUM
-  #     question.first_question = true
   #     question.next_question = { 'blue' => 'example/blue',    # ユーザ入力に応じて遷移先を振り分け
   #                                'white' => 'example/white', 
   #                                'yellow' => 'example/yellow', 
@@ -238,7 +246,6 @@ module Deft
   #
   #  question( 'example/password' ) do |question|
   #    question.priority = Deft::Question::PRIORITY_MEDIUM
-  #    question.first_question = true
   #    question.next_question = 'example/root_login'
   #  end
   #

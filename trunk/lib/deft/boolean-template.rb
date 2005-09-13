@@ -26,8 +26,9 @@ module Deft
       raise Deft::Exception::InvalidAttributeException
     end
 
+    # 'true' か 'false' 以外の default をはねる
     public
-    def default=( defaultString )
+    def default=( defaultString ) # :nodoc:
       unless (defaultString == 'true') or (defaultString == 'false')
         raise Deft::Exception::InvalidAttributeException, "default must be 'true' or 'false'"
       end
@@ -36,7 +37,7 @@ module Deft
     
     # デバッグ用
     public
-    def inspect
+    def inspect # :nodoc:
       return "#<Deft::BooleanTemplate: @name=\"#{@name}\">"
     end
   end

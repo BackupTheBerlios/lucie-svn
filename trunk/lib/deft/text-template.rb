@@ -33,7 +33,7 @@ module Deft
     
     # デバッグ用
     public
-    def inspect
+    def inspect # :nodoc:
       return "#<Deft::TextTemplate: @name=\"#{@name}\">"
     end
   end

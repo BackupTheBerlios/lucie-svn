@@ -27,7 +27,7 @@ module Deft
     
     # デバッグ用
     public
-    def inspect
+    def inspect # :nodoc:
       return "#<Deft::StringTemplate: @name=\"#{@name}\">"
     end
   end

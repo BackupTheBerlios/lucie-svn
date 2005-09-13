@@ -149,26 +149,26 @@ module Deft
   #
   # 「ハイ」「イイエ」で答えられる種類の質問では、boolean 型のテンプレートを用います。
   #
-  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot3.png
+  # http://lucie.sourceforge.net/images/boolean-template.png
   #
-  #   template( 'lucie-vmsetup/use-network' ) do |template|
+  #   template( 'example/boolean' ) do |template|
   #     template.template_type = 'boolean'
-  #     template.default = 'false'
-  #     template.short_description_ja = 'VM の外部ネットワークへの接続'
+  #     template.default = 'true'
+  #     template.short_description_ja = 'あなたは男性ですか ?'
   #     template.extended_description_ja = <<-DESCRIPTION_JA
-  #     ジョブ実行時に VM は外部ネットワークへ接続する必要がありますか？
-  #     このオプションをオンにすると、GRAM が自動的に各 VM に連続した IP アドレスと MAC アドレスを割り当て、
-  #     Lucie をすべてのネットワーク関係の設定を行います。
+  #      boolean テンプレートでは YES/NO 形式の質問を表示できます。
   #     DESCRIPTION_JA
   #   end
   #
   # 変数は以下のようになります。next_question アトリビュートの指定では、
   # true/false を選んだ場合のそれぞれの遷移先をハッシュで指定します。
   #
-  #   question( 'lucie-vmsetup/use-network' ) do |question|
+  #   question( 'example/boolean' ) do |question|
   #     question.priority = Question::PRIORITY_MEDIUM
-  #     question.next_question = { 'true'=>'lucie-vmsetup/ip', 'false'=>'lucie-vmsetup/memory-size' }
-  #   end  
+  #     question.first_question = true
+  #     question.next_question = { 'true'  => 'example/male',
+  #                                'false' => 'example/female' }
+  #   end
   #
   # == 文字列を入力 - string テンプレート
   #

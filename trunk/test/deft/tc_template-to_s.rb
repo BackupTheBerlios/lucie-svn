@@ -43,12 +43,9 @@ Description-ja: TEST SHORT DESCRIPTION JA
   end
   
   # to_s で boolean テンプレートの templates 文字列が正しく生成されることをテスト
-  #--
-  # TODO: default= の引数チェック (yes/no だけ受け付ける)
-  #++ 
   public
   def test_boolean_template
-    @boolean_template.default = 'yes'
+    @boolean_template.default = 'true'
     @boolean_template.short_description = 'TEST SHORT DESCRIPTION'
     @boolean_template.extended_description = 'TEST EXTENDED DESCRIPTION'
     @boolean_template.short_description_ja = 'TEST SHORT DESCRIPTION JA'
@@ -56,7 +53,7 @@ Description-ja: TEST SHORT DESCRIPTION JA
     assert_equal( (<<-BOOLEAN_TEMPLATE).chomp, @boolean_template.to_s, "boolean テンプレートの to_s が正しい値を返さない" )
 Template: TEST BOOLEAN TEMPLATE
 Type: boolean
-Default: yes
+Default: true
 Description: TEST SHORT DESCRIPTION
  TEST EXTENDED DESCRIPTION
 Description-ja: TEST SHORT DESCRIPTION JA

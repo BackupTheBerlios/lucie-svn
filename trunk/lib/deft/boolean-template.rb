@@ -25,6 +25,14 @@ module Deft
     def choices=( choicesString ) # :nodoc:
       raise Deft::Exception::InvalidAttributeException
     end
+
+    public
+    def default=( defaultString )
+      unless (defaultString == 'true') or (defaultString == 'false')
+        raise Deft::Exception::InvalidAttributeException, "default must be 'true' or 'false'"
+      end
+      super
+    end
     
     # デバッグ用
     public

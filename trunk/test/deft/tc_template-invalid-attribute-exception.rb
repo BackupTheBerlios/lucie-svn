@@ -49,6 +49,18 @@ class TC_BooleanTemplateInvalidAttributeException < Test::Unit::TestCase
       end
     end 
   end
+
+  # default= の引数チェック (true/false だけ受け付ける)
+  public
+  def test_invalid_default
+    assert_raises( Deft::Exception::InvalidAttributeException,
+                   'InvalidAttributeException が raise されなかった' ) do
+      template( 'TEST TEMPLATE' ) do |template|
+        template.template_type = 'boolean'
+        template.default = 'FOO BAR BAZ'
+      end
+    end 
+  end
 end
 
 # note テンプレートでのテスト

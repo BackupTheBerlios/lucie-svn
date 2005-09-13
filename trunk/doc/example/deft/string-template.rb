@@ -1,5 +1,3 @@
-require 'deft'
-
 template( 'example/string' ) do |template|
   template.template_type = 'string'
   template.short_description_ja = 'あなたのお名前を入力してください'

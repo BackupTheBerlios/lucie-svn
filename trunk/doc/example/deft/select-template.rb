@@ -1,5 +1,3 @@
-require 'deft'
-
 template( 'example/select' ) do |template|
   template.template_type = 'select'
   template.choices = ['blue', 'white', 'yellow', 'red'] # 選択肢を指定

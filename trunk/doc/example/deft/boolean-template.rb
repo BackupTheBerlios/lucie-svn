@@ -1,5 +1,3 @@
-require 'deft'
-
 template( 'example/boolean' ) do |template|
   template.template_type = 'boolean'
   template.default = 'true'

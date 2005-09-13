@@ -1,5 +1,3 @@
-require 'deft'
-
 template( 'example/password' ) do |template|
   template.template_type = 'password'
   template.short_description_ja = 'root パスワードを入力してください'

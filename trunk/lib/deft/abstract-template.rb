@@ -64,6 +64,12 @@ module Deft
   # 複数の変数を作成し、それぞれに異なった値 (ユーザ入力) を保持するこ
   # ともできます。
   #
+  # 変数の主な属性には以下のものがあります。
+  #
+  # * priority : 質問の優先度。利用可能な定数は Question クラスに定義されています。
+  # * next_question : 次の質問。
+  # * first_question : 最初の質問である場合、true を設定します。
+  #
   # === 状態遷移
   #
   # 開発者はテンプレートと変数に加え、ユーザ入力に応じた画面間の遷移を
@@ -74,46 +80,27 @@ module Deft
   # text 型のテンプレートを用いることによって、ユーザへメッセージを表
   # 示することができます。
   #
-  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot1.png
+  # http://lucie.sourceforge.net/images/text-template.png
   #
-  # 以下は text 型テンプレート lucie-vmsetup/hello の例です。
-  #
-  #   template( 'lucie-vmsetup/hello' ) do |template|
+  #   template( 'example/text' ) do |template|
   #     template.template_type = 'text'
-  #     template.short_description_ja = 'Lucie VM のセットアップウィザードへようこそ'
+  #     template.short_description_ja = 'こんにちは deft'
   #     template.extended_description_ja = <<-DESCRIPTION_JA
-  #     このウィザードでは、Lucie を用いた VM セットアップの設定を入力します。
-  #     設定可能な項目は、
-  #      o 必要な VM の台数
-  #      o 外部ネットワークへの接続
-  #      o VM で使用するメモリ容量
-  #      o VM で使用するハードディスク容量
-  #      o 使用する VM の種類
-  #      o VM へインストールする Linux ディストリビューションの種類
-  #      o VM へインストールするソフトウェアの種類
-  #     です。自分が VM 上で走らせたいジョブの特性によって設定を決めてください。
-  #  
-  #     「次へ」をクリックするとウィザードを開始します。
+  #     text テンプレートではユーザになんらかの情報を表示することができます。
   #     DESCRIPTION_JA
   #   end
   #
   # text 型のテンプレートでは、プロパティ template_type に 'text' を指
   # 定します。
   #
-  # 次に、このテンプレートを元にして変数 lucie-vmsetup/hello を定義し
-  # ます。
+  # このテンプレートを元にした変数 lucie-vmsetup/hello の定義は以下の
+  # ようになります。
   #
-  #   question( 'lucie-vmsetup/hello' ) do |question|
-  #     question.priority = Question::PRIORITY_MEDIUM
-  #     question.next_question = 'lucie-vmsetup/num-nodes'
+  #   question( 'example/text' ) do |question|
+  #     question.priority = Deft::Question::PRIORITY_MEDIUM
   #     question.first_question = true
+  #     question.next_question = 'example/bye'
   #   end
-  #
-  # question の各プロパティの意味は以下の通りです。
-  #
-  # * priority : 質問の優先度。利用可能な定数は Question クラスに定義されています。
-  # * next_question : 次の質問。
-  # * first_question : 最初の質問である場合、true を設定します。
   #
   # == メッセージを表示し、メールも送る - note テンプレート
   #

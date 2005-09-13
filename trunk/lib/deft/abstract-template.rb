@@ -217,7 +217,33 @@ module Deft
   #
   # == 選択肢の中から複数選択 - multiselect テンプレート
   #
-  # 書き中
+  # 選択肢の中から複数を選ばせる種類の質問では、multiselect 型のテンプレートを用います。
+  #
+  # http://lucie.sourceforge.net/images/multiselect-template.png
+  #
+  # テンプレート定義は select テンプレートと同じです
+  #
+  #   template( 'example/multiselect' ) do |template|
+  #     template.template_type = 'multiselect'
+  #     template.choices = ['blue', 'white', 'yellow', 'red'] # 選択肢を指定
+  #     template.short_description_ja = 'あなたの好きな色は ? (複数回答可)'
+  #     template.extended_description_ja = <<-DESCRIPTION_JA
+  #     multiselect テンプレートではユーザに選択肢を提示し、その中から複数を選ばせることができます。
+  #     DESCRIPTION_JA
+  #   end
+  #
+  # 変数定義では next_question 属性に proc オブジェクトを指定すること
+  # によって、ユーザ入力に応じて遷移先を変化させることができます。
+  #
+  #   question( 'example/multiselect' ) do |question|
+  #     question.priority = Deft::Question::PRIORITY_MEDIUM
+  #     question.first_question = true 
+  #     question.next_question = proc do |user_nput| # ユーザ入力に応じて遷移先を振り分け
+  #       # 変数 user_input に選択内容 ('blue, yellow' などの文字列) が入る
+  #       # 必要に応じて、user_input に応じて遷移先を振り分ける処理を書く
+  #       'example/next' # proc の評価値が次の遷移先となる
+  #     end
+  #   end
   #
   # == パスワードを入力 - password テンプレート
   #

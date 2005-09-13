@@ -175,22 +175,22 @@ module Deft
   # ユーザになんらかの入力をうながす種類の質問では、string 型のテンプ
   # レートを用います。
   #
-  # http://lucie.berlios.de/images/debconf-tool-tutorial/snapshot9.png
+  # http://lucie.sourceforge.net/images/string-template.png
   #
-  #   template( 'lucie-vmsetup/application' ) do |template|
+  #   template( 'example/string' ) do |template|
   #     template.template_type = 'string'
-  #     template.short_description_ja = '使用するアプリケーション'
+  #     template.short_description_ja = 'あなたのお名前を入力してください'
   #     template.extended_description_ja = <<-DESCRIPTION_JA
-  #     VM にインストールして使用するソフトウェアパッケージを入力してください
-  #
-  #     松岡研 PrestoIII クラスタでデフォルトでインストールされるソフトウェアパッケージは以下の通りです。
-  #      o 基本パッケージ: fileutils, findutils などの基本的なユーティリティ
-  #      o シェル: tcsh, bash, zsh などのシェル
-  #      o ネットワークデーモン: ssh や rsh, ftp などのデーモン
-  #     上記に追加してインストールしたいパッケージをコンマ区切りで入力してください。
-  #
-  #     例: ruby, python, blast2
+  #     string テンプレートでは任意の文字列を入力できます。
   #     DESCRIPTION_JA
+  #   end
+  #
+  # 変数定義では特に特別な点はありません。
+  #
+  #   question( 'example/string' ) do |question|
+  #     question.priority = Deft::Question::PRIORITY_MEDIUM
+  #     question.first_question = true
+  #     question.next_question = 'example/display_your__name'
   #   end
   #
   # == 選択肢の中から一つだけ選択 - select テンプレート
@@ -231,7 +231,29 @@ module Deft
   #
   # == パスワードを入力 - password テンプレート
   #
-  # 書き中
+  # パスワードなどの機密情報を入力させる種類の質問では、password テンプレートを用います。
+  #
+  # http://lucie.sourceforge.net/images/password-template.png
+  #
+  # 入力内容がすべて '*' でマスクされるため、string テンプレートと違い
+  # 盗み見られる心配がありません。
+  #
+  # テンプレート定義、変数定義はほぼ string テンプレートと同じです。
+  #
+  #   template( 'example/password' ) do |template|
+  #     template.template_type = 'password'
+  #     template.short_description_ja = 'root パスワードを入力してください'
+  #     template.extended_description_ja = <<-DESCRIPTION_JA
+  #     password テンプレートではパスワードなどの機密情報を入力できます。
+  #     string テンプレートとの違いは、入力内容がエコーバックされない点です。
+  #     DESCRIPTION_JA
+  #   end
+  #
+  #  question( 'example/password' ) do |question|
+  #    question.priority = Deft::Question::PRIORITY_MEDIUM
+  #    question.first_question = true
+  #    question.next_question = 'example/root_login'
+  #  end
   #
   class AbstractTemplate
     # テンプレートクラス名 => テンプレート名のハッシュテーブル

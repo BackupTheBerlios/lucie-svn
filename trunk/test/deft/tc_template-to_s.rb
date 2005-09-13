@@ -62,9 +62,6 @@ Description-ja: TEST SHORT DESCRIPTION JA
   end
 
   # to_s で select テンプレートの templates 文字列が正しく生成されることをテスト
-  #--
-  # TODO: default= の引数チェック (Choices: にあるものだけ受け付ける)
-  #++ 
   public
   def test_select_template
     @select_template.default = 'TEST DEFAULT'
@@ -86,9 +83,6 @@ Description-ja: TEST SHORT DESCRIPTION JA
   end
 
   # to_s で multiselect テンプレートの templates 文字列が正しく生成されることをテスト
-  #--
-  # TODO: default= の引数チェック (Choices: にあるものだけ受け付ける)
-  #++ 
   public
   def test_multiselect_template
     @multiselect_template.default = 'TEST DEFAULT'

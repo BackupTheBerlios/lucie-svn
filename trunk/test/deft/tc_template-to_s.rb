@@ -11,19 +11,16 @@ require 'deft/template'
 require 'test/unit'
 
 # 各テンプレートクラスの to_s メソッドをテスト
-#--
-# FIXME: 各テンプレートの to_s メソッドのテストをここにまとめる
-#++
 class TC_TemplateString < Test::Unit::TestCase
   public
   def setup
-    @string_template = Deft::StringTemplate.new( 'TEST STRING TEMPLATE' )
-    @boolean_template = Deft::BooleanTemplate.new( 'TEST BOOLEAN TEMPLATE' )
-    @select_template = Deft::SelectTemplate.new( 'TEST SELECT TEMPLATE' )
+    @text_template        = Deft::TextTemplate.new( 'TEST TEXT TEMPLATE' )
+    @note_template        = Deft::NoteTemplate.new( 'TEST NOTE TEMPLATE' )
+    @boolean_template     = Deft::BooleanTemplate.new( 'TEST BOOLEAN TEMPLATE' )
+    @string_template      = Deft::StringTemplate.new( 'TEST STRING TEMPLATE' )
+    @select_template      = Deft::SelectTemplate.new( 'TEST SELECT TEMPLATE' )
     @multiselect_template = Deft::MultiselectTemplate.new( 'TEST MULTISELECT TEMPLATE' )
-    @note_template = Deft::NoteTemplate.new( 'TEST NOTE TEMPLATE' )
-    @text_template = Deft::TextTemplate.new( 'TEST TEXT TEMPLATE' )
-    @password_template = Deft::PasswordTemplate.new( 'TEST PASSWORD TEMPLATE' )
+    @password_template    = Deft::PasswordTemplate.new( 'TEST PASSWORD TEMPLATE' )
   end
 
   # to_s で string テンプレートの templates 文字列が正しく生成されることをテスト

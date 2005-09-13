@@ -17,10 +17,6 @@ module Deft
     class RequiredAttributeException < ::Exception; end
   end
 
-  #--
-  # FIXME: 以下は例が平易でないので新たな例を考える。
-  #++
-  #
   # == テンプレートの基礎
   #
   # Debconf には、「テンプレート」と「変数」と呼ばれる概念があります。
@@ -445,14 +441,7 @@ module Deft
       _template_string =  "Template: #{name}\n"
       _template_string += "Type: #{typeString}\n"
       if optionalFieldsArray.include?( 'choices' ) && choices
-        case choices
-        when String
-          _template_string += "Choices: #{choices}\n" 
-        when Array
-          _template_string += "Choices: #{choices.join(', ')}\n" 
-        else
-          raise "This shouldn't happen"
-        end
+        _template_string += "Choices: #{choices.join(', ')}\n" 
       end
       _template_string += "Default: #{default}\n" if optionalFieldsArray.include?( 'default' ) && default
       _template_string += "Description: #{short_description}\n" if short_description

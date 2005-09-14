@@ -51,15 +51,13 @@ module Deft
     
     private
     def transit_backup( aDebconfContext )
-      communicate_debconf( aDebconfContext.current_state.name, 
-                           aDebconfContext.current_state.priority )
+      communicate_debconf( aDebconfContext.current_state.name, aDebconfContext.current_state.priority )
       aDebconfContext.backup
     end
 
     private
     def transit_finish( aDebconfContext )
-      rc = communicate_debconf( aDebconfContext.current_state.name, 
-                                aDebconfContext.current_state.priority )
+      rc = communicate_debconf( aDebconfContext.current_state.name, aDebconfContext.current_state.priority )
       if rc == 30
         aDebconfContext.backup 
         return aDebconfContext.current_state
@@ -70,8 +68,7 @@ module Deft
     
     private
     def transit_string_state( aDebconfContext )
-      rc = communicate_debconf( aDebconfContext.current_state.name, 
-                                aDebconfContext.current_state.priority )
+      rc = communicate_debconf( aDebconfContext.current_state.name, aDebconfContext.current_state.priority )
       if rc == 30
         aDebconfContext.backup 
         return aDebconfContext.current_state
@@ -81,8 +78,7 @@ module Deft
 
     private
     def transit_hash_state( aDebconfContext )
-      rc = communicate_debconf( aDebconfContext.current_state.name, 
-                                aDebconfContext.current_state.priority )
+      rc = communicate_debconf( aDebconfContext.current_state.name, aDebconfContext.current_state.priority )
       if rc == 30
         aDebconfContext.backup 
         return aDebconfContext.current_state
@@ -92,8 +88,7 @@ module Deft
     
     private
     def transit_proc_state( aDebconfContext )
-      rc = communicate_debconf( aDebconfContext.current_state.name, 
-                                aDebconfContext.current_state.priority )
+      rc = communicate_debconf( aDebconfContext.current_state.name, aDebconfContext.current_state.priority )
       if rc == 30
         aDebconfContext.backup 
         return aDebconfContext.current_state

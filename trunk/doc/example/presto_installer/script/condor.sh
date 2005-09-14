@@ -2,6 +2,7 @@
 
 ##condorのパッケージをコピーし、インストールするスクリプト##
 ##script以下に実行権限付で置くことによりインストール中に実行される##
+##XXX:condorパッケージの取得方法や配置場所などを明記する##
 
 SOURCE="/etc/lucie/install"
 LOCALDIR="/var/cache/apt/archives"

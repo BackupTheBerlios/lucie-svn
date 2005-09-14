@@ -17,6 +17,11 @@ def question( nameString, &block )
 end
 
 module Deft
+   module Exception
+     class InvalidQuestionNameException < ::Exception; end
+     class InvalidNextQuestionTypeException < ::Exception; end
+   end
+
   # Debconf の質問項目を表現するクラス
   class Question
     # Question の '名前' => インスタンス の Hash
@@ -77,7 +82,7 @@ module Deft
         question.template = nameDescription.keys[0]
         question.next_question = nameDescription.values[0]
       else
-        raise "This shouldn't happen"
+        raise Deft::Exception::InvalidQuestionNameException, "Question name must be a String('name') or Hash('from' => 'to')"
       end   
       return question.enhance( &block )
     end
@@ -125,24 +130,19 @@ module Deft
     def define_concrete_state
       eval( "class #{state_class_name} < Deft::State; end" )
       if @backup
-        concrete_state_class.__send__( :define_method, :transit, 
-                                       State.instance.method(:transit_backup) )
+        concrete_state_class.__send__( :define_method, :transit, State.instance.method(:transit_backup) )
       elsif @next_question.nil?
-        concrete_state_class.__send__( :define_method, :transit, 
-                                       State.instance.method(:transit_finish) )
+        concrete_state_class.__send__( :define_method, :transit, State.instance.method(:transit_finish) )
       else   
         case @next_question
         when String
-          concrete_state_class.__send__( :define_method, :transit, 
-                                         State.instance.method(:transit_string_state) )
+          concrete_state_class.__send__( :define_method, :transit, State.instance.method(:transit_string_state) )
         when Hash
-          concrete_state_class.__send__( :define_method, :transit, 
-                                         State.instance.method(:transit_hash_state) )
+          concrete_state_class.__send__( :define_method, :transit, State.instance.method(:transit_hash_state) )
         when Proc
-          concrete_state_class.__send__( :define_method, :transit, 
-                                         State.instance.method(:transit_proc_state) )
+          concrete_state_class.__send__( :define_method, :transit, State.instance.method(:transit_proc_state) )
         else
-          raise "Unsupported next_question: #{@next_question}"
+          raise Deft::Exception::InvalidNextQuestionTypeException, "Unsupported next_question type: #{@next_question}"
         end
       end
     end
@@ -161,11 +161,6 @@ module Deft
       return 'Deft::State::' + name.gsub('-', '_').split('/').map do |each|
         each.to_pascal_style
       end.join('__')
-    end
-    
-    # TODO: need to implement Exception & Error using exception
-    module Exception
-      class InvalidQuestionException < ::Exception; end
     end
   end
 end

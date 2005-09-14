@@ -16,46 +16,66 @@ class TC_Question < Test::Unit::TestCase
     Deft::Question.clear
   end
   
-  # @name ‚Ì getter ‚ðƒeƒXƒg
+  public
+  def teardown
+    Deft::Question.clear
+  end
+  
+  public
+  def test_self_questions
+    question( 'FOO' )
+    assert_equal 1, Deft::Question.questions.size
+    assert_kind_of Deft::Question, Deft::Question.questions[0]
+    assert_equal 'FOO', Deft::Question.questions[0].name
+  end
+
+  public
+  def test_self_hashaccess
+    question( 'FOO' )
+    assert_kind_of Deft::Question, Deft::Question['FOO']
+    assert_equal 'FOO', Deft::Question['FOO'].name
+  end
+  
+  # @name ¤Î getter ¤ò¥Æ¥¹¥È
   public
   def test_name_getter
     question = Deft::Question.new( 'OVERVIEW' )
     assert_equal( 'OVERVIEW', question.name )
   end
   
-  # “o˜^‚³‚ê‚Ä‚¢‚é Question ‚ª‹ó‚Ì‚Æ‚«‚ÉA
-  # question_defined? ‚ª nil ‚ð•Ô‚·‚±‚Æ‚ðŠm”F
+  # ÅÐÏ¿¤µ¤ì¤Æ¤¤¤ë Question ¤¬¶õ¤Î¤È¤­¤Ë¡¢
+  # question_defined? ¤¬ nil ¤òÊÖ¤¹¤³¤È¤ò³ÎÇ§
   public
   def test_question_defined_fail
     Deft::Question.clear
     assert_nil( Deft::Question.question_defined?( 'NOT DEFINED QUESTION' ), 
-                '“o˜^‚³‚ê‚Ä‚¢‚È‚¢‚Í‚¸‚ÌŽ¿–â€–Ú‚ª‚ ‚é' )
+                'ÅÐÏ¿¤µ¤ì¤Æ¤¤¤Ê¤¤¤Ï¤º¤Î¼ÁÌä¹àÌÜ¤¬¤¢¤ë' )
   end
   
-  # Question ‚ð“o˜^‚µAquestion_defined? ‚Å“o˜^‚ªŠm”F‚Å‚«‚é‚±‚Æ‚ðƒeƒXƒg
+  # Question ¤òÅÐÏ¿¤·¡¢question_defined? ¤ÇÅÐÏ¿¤¬³ÎÇ§¤Ç¤­¤ë¤³¤È¤ò¥Æ¥¹¥È
   public
   def test_template_defined_success
     Deft::Question.clear
     question( 'TEST/QUESTION' )
     assert( Deft::Question.question_defined?( 'TEST/QUESTION' ),
-            'Ž¿–â€–Ú‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢' )
+            '¼ÁÌä¹àÌÜ¤¬ÅÐÏ¿¤µ¤ì¤Æ¤¤¤Ê¤¤' )
   end
   
-  # lookup ‚ÌƒeƒXƒg
+  # lookup ¤Î¥Æ¥¹¥È
   public
   def test_lookup_unknown_question
     question = Deft::Question::lookup( 'UNKNOWN QUESTION' )
-    assert_kind_of( Deft::Question, question, 'question ‚ÌŒ^‚ªˆá‚¤' )
-    assert_equal( 'UNKNOWN QUESTION', question.name, 'question ‚Ì–¼‘O‚ªˆá‚¤' )
+    assert_kind_of( Deft::Question, question, 'question ¤Î·¿¤¬°ã¤¦' )
+    assert_equal( 'UNKNOWN QUESTION', question.name, 'question ¤ÎÌ¾Á°¤¬°ã¤¦' )
   end
   
-  # lookup ‚ÌƒeƒXƒg (‚ ‚ç‚©‚¶‚ß“o˜^‚µ‚½ Question ‚ðƒ‹ƒbƒNƒAƒbƒv)
+  # lookup ¤Î¥Æ¥¹¥È (¤¢¤é¤«¤¸¤áÅÐÏ¿¤·¤¿ Question ¤ò¥ë¥Ã¥¯¥¢¥Ã¥×)
   public
   def test_lookup_known_question
     Deft::Question::QUESTIONS['KNOWN QUESTION'] = Deft::Question.new('KNOWN QUESTION')
     question = Deft::Question::lookup( 'KNOWN QUESTION' )
-    assert_kind_of( Deft::Question, question, 'question ‚ÌŒ^‚ªˆá‚¤' )
-    assert_equal( 'KNOWN QUESTION', question.name, 'question ‚Ì–¼‘O‚ªˆá‚¤' )
+    assert_kind_of( Deft::Question, question, 'question ¤Î·¿¤¬°ã¤¦' )
+    assert_equal( 'KNOWN QUESTION', question.name, 'question ¤ÎÌ¾Á°¤¬°ã¤¦' )
   end
   
   public
@@ -64,7 +84,21 @@ class TC_Question < Test::Unit::TestCase
     question.enhance do 
       # DO NOTHING
     end
-    assert_equal( 1, question.actions.size, 'ƒAƒNƒVƒ‡ƒ“‚Ì”‚ªˆá‚¤' )
+    assert_equal( 1, question.actions.size, '¥¢¥¯¥·¥ç¥ó¤Î¿ô¤¬°ã¤¦' )
+  end
+
+  public
+  def test_InvalidQuestionName_raised
+    assert_raises( Deft::Exception::InvalidQuestionNameException ) do 
+      question( nil )
+    end
+  end
+
+  public
+  def test_InvalidNextQuestionType_raised
+    assert_raises( Deft::Exception::InvalidNextQuestionTypeException ) do
+      question( 'FOO' => 1 )
+    end
   end
 end
 

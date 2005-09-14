@@ -157,6 +157,40 @@ class TC_StateTransitHashState < Test::Unit::TestCase
     $stdout_mock.__verify
     $stdin_mock.__verify
   end 
+
+  # 
+  #   CLIENT        DEBCONF
+  #   
+  #   -------------------->
+  #   'INPUT medium START'
+  #
+  #   <--------------------
+  #            '0'
+  #
+  #   -------------------->
+  #            'GO'
+  #
+  #   <--------------------
+  #            '30'
+  public
+  def test_debconf_returns_30
+    $stdout_mock = Mock.new( '#<STDOUT (Mock)>' )
+    $stdin_mock = Mock.new( '#<STDIN (Mock)>' )
+    $stdout_mock.__next( :print ) do |argument| 
+      assert_equal( "INPUT medium START\n", argument ) 
+    end
+    $stdin_mock.__next( :gets ) do '0' end    
+    $stdout_mock.__next( :print ) do |argument| 
+      assert_equal( "GO\n", argument ) 
+    end    
+    $stdin_mock.__next( :gets ) do '30' end
+
+    @debconf_context.transit
+    assert_equal( Deft::ConcreteState['START'], @debconf_context.current_state )
+
+    $stdout_mock.__verify
+    $stdin_mock.__verify
+  end
    
   private
   def clear_debconf_definition

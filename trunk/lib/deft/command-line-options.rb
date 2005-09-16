@@ -25,7 +25,7 @@ module Deft
     attr_reader :version
     attr_reader :question
 
-    module OptionList
+    module OptionList # :nodoc:
       OPTION_LIST = [
         [ '--run',            '-R',   'file path', \
           'run debconf.' ],

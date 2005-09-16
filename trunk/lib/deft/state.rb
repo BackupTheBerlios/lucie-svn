@@ -7,8 +7,8 @@
 
 require 'debconf/client'
 require 'deft/concrete-state'
+require 'deft/string'
 require 'deft/time-stamp'
-require 'lucie/string'
 require 'singleton'
 
 include Debconf::Client

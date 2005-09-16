@@ -5,8 +5,8 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+require 'deft/string'
 require 'deft/time-stamp'
-require 'lucie/string'
 
 module Deft
   update(%q$Id$)

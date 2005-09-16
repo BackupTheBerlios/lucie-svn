@@ -10,11 +10,11 @@ require 'deft/multiselect-template'
 require 'deft/note-template'
 require 'deft/password-template'
 require 'deft/select-template'
+require 'deft/string'
 require 'deft/string-template'
 require 'deft/text-template'
 require 'deft/time-stamp'
 require 'forwardable'
-require 'lucie/string'
 
 # テンプレートを登録
 def template( nameString, &block )

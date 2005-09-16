@@ -22,3 +22,13 @@ Description: The Linux Universal Configuration & Installation Engine
  automatic software installation/update of PC commodity cluster.
  . 
  See Project Page: http://developer.berlios.de/projects/lucie/
+
+Package: deft
+Architecture: all
+Section: admin
+Depends: ruby1.8, debconf
+Description: Ruby debconf library.
+ deft is a framework for building interactive debconf dialog with
+ Ruby's succinct syntax instead of resorting to shell scripts.
+ . 
+ See Project Page: http://developer.berlios.de/projects/lucie/

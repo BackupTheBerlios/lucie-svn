@@ -1,0 +1,5 @@
+debian/tmp/usr/bin/deft
+debian/tmp/usr/lib/ruby/1.8/debconf/*
+debian/tmp/usr/lib/ruby/1.8/deft.rb
+debian/tmp/usr/lib/ruby/1.8/deft/*
+debian/tmp/usr/share/doc/lucie/example/deft/*.rb

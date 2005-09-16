@@ -96,6 +96,7 @@ end
 # and the executable
 
 installBIN("bin/lucie-setup.rb", "lucie-setup")
+installBIN("bin/deft.rb", "deft")
 
 system("install -m0755 bin/start-stop-daemon #{$sbindir}")
 system("install -m0755 bin/dhclient-script #{$sbindir}")

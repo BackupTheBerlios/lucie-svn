@@ -298,14 +298,20 @@ module Deft
       return @choices
     end
     
-    # 選択可能な項目を String の Array で指定する。
+    # 選択可能な項目を String もしくは Array で以下のように指定する。
     #
     #   aTemplate.choices = ["CHOICE 1", "CHOICE 2", "CHOICE 3"]
+    #   aTemplate.choices = "CHOICE 1, CHOICE 2, CHOICE 3"
     #
     public
-    def choices=( choiceArray )
-      type_check( "Choice", Array, choiceArray )
-      @choices = choiceArray
+    def choices=( _choices )
+      type_check( "Choice", _choices, Array, String )
+      case _choices
+      when Array
+        @choices = _choices
+      when String
+        @choices = _choices.split(/\s*,\s*/)
+      end
     end
 
     # デフォルト値を String で返す。
@@ -323,7 +329,7 @@ module Deft
     #
     public
     def default=( defaultString )
-      type_check( "Default", String, defaultString )
+      type_check( "Default", defaultString, String )
       @default = defaultString
     end
 
@@ -342,7 +348,7 @@ module Deft
     #
     public
     def short_description=( descriptionString )
-      type_check( "Short description", String, descriptionString )
+      type_check( "Short description", descriptionString, String )
       @short_description = descriptionString
     end
 
@@ -361,7 +367,7 @@ module Deft
     #
     public
     def short_description_ja=( descriptionString )
-      type_check( "Short description JA", String, descriptionString )
+      type_check( "Short description JA", descriptionString, String )
       @short_description_ja = descriptionString
     end
 
@@ -380,7 +386,7 @@ module Deft
     #
     public
     def extended_description_ja=( descriptionString )
-      type_check( "Extended description JA", String, descriptionString )
+      type_check( "Extended description JA", descriptionString, String )
       @extended_description_ja = descriptionString
     end
 
@@ -399,7 +405,7 @@ module Deft
     #
     public
     def extended_description=( descriptionString )
-      type_check( "Extended description", String, descriptionString )
+      type_check( "Extended description", descriptionString, String )
       @extended_description = descriptionString
     end
 
@@ -429,9 +435,10 @@ module Deft
     end
 
     private
-    def type_check( attribute, type, actualValue )
-      unless actualValue.is_a?( type )
-        raise Exception::InvalidAttributeException, "#{attribute} must be an #{type.to_s} object."
+    def type_check( attribute,  actualValue, *types )
+      unless( types.any? do |each| actualValue.is_a?( each ) end )
+        types_string = (types.map do |each| each.to_s end).join('/')
+        raise Exception::InvalidAttributeException, "#{attribute} must be an #{types_string} object."
       end
     end
 

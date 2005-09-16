@@ -57,9 +57,9 @@ class TC_AbstractTemplate < Test::Unit::TestCase
     assert_equal( ['CHOICE 1', 'CHOICE 2', 'CHOICE 3'],
                   @abstract_template.choices, "@choices の accessor が正しく動作しない" )
 
-    assert_raises( Deft::Exception::InvalidAttributeException ) do 
-      @abstract_template.choices = 'CHOICES'
-    end
+    @abstract_template.choices = 'CHOICE 1, CHOICE 2, CHOICE 3'
+    assert_equal( ['CHOICE 1', 'CHOICE 2', 'CHOICE 3'],
+                  @abstract_template.choices, "@choices の accessor が正しく動作しない" )
   end
 
   # @extended_description_ja の accessor をテスト

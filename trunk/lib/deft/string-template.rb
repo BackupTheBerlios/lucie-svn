@@ -6,11 +6,11 @@
 # License::  GPL2
 
 require 'deft/abstract-template'
-require 'time-stamp'
-
-update(%q$Id$)
+require 'deft/time-stamp'
 
 module Deft
+  update(%q$Id$)
+       
   # string 型の Template をあらわすクラス
   class StringTemplate < AbstractTemplate   
     # StringTemplate の RFC822 による表現を返す

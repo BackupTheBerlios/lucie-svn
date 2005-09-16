@@ -6,13 +6,13 @@
 # License::  GPL2
 
 require 'English'
+require 'deft/time-stamp'
 require 'getoptlong'
-require 'time-stamp'
 require 'singleton'
 
-update(%q$Id$)
-
 module Deft
+  update(%q$Id$)
+
   # We handle the parsing of options, and subsequently as a singleton
   # object to be queried for option values
   class CommandLineOptions

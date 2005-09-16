@@ -5,11 +5,11 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'time-stamp'
-
-update(%q$Id$)
+require 'deft/time-stamp'
 
 module Deft
+  update(%q$Id$)
+
   # Concrete State を管理するクラス。
   class ConcreteState
     STATES = {}

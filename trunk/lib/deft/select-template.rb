@@ -7,11 +7,11 @@
 
 require 'deft/abstract-template'
 require 'deft/template'
-require 'time-stamp'
-
-update(%q$Id$)
+require 'deft/time-stamp'
 
 module Deft  
+  update(%q$Id$)
+
   # select 型のテンプレートを表すクラス
   class SelectTemplate < AbstractTemplate
     # SelectTemplate の RFC822 による表現を返す

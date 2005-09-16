@@ -5,13 +5,13 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'deft/template'
 require 'deft/abstract-template'
-require 'time-stamp'
-
-update(%q$Id$)
+require 'deft/template'
+require 'deft/time-stamp'
 
 module Deft 
+  update(%q$Id$)
+
   # multiselect 型の Template をあらわすクラス
   class MultiselectTemplate < AbstractTemplate
     # MultiselectTemplate の RFC822 による表現を返す

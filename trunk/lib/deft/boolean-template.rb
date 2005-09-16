@@ -6,11 +6,11 @@
 # License::  GPL2
 
 require 'deft/abstract-template'
-require 'time-stamp'
-
-update(%q$Id$)
+require 'deft/time-stamp'
 
 module Deft  
+  update(%q$Id$)
+
   # boolean 型のテンプレートを表すクラス
   class BooleanTemplate < AbstractTemplate   
     # BooleanTemplate の RFC822 による表現を返す

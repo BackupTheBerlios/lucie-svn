@@ -9,26 +9,25 @@
 # Revision:: $Revision$
 # License::  GPL2
 
-require 'lmp/specification'
-require 'lmp/lmp-package-task'
-
 require 'deft/boolean-template'
+require 'deft/command-line-options'
 require 'deft/multiselect-template'
 require 'deft/note-template'
 require 'deft/password-template'
+require 'deft/question'
 require 'deft/select-template'
 require 'deft/string-template'
-require 'deft/text-template'
-
-require 'deft/command-line-options'
-require 'deft/question'
 require 'deft/template'
+require 'deft/text-template'
+require 'deft/time-stamp'
 require 'fileutils'
+require 'lmp/lmp-package-task'
+require 'lmp/specification'
+require 'nkf'
 require 'singleton'
 require 'tempfile'
-require 'nkf'
 
-update(%q$Id$)
+Deft::update(%q$Id$)
 
 class DeftApp
   include Singleton

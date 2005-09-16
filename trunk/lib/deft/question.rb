@@ -7,9 +7,7 @@
 
 require 'deft/state'
 require 'deft/template'
-require 'time-stamp'
-
-update(%q$Id$)
+require 'deft/time-stamp'
 
 # 新しい質問項目を登録する
 def question( nameString, &block )
@@ -17,6 +15,8 @@ def question( nameString, &block )
 end
 
 module Deft
+  update(%q$Id$)
+
    module Exception
      class InvalidQuestionNameException < ::Exception; end
      class InvalidNextQuestionTypeException < ::Exception; end

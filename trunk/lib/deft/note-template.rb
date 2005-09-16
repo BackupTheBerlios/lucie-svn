@@ -7,11 +7,11 @@
 
 require 'deft/abstract-template'
 require 'deft/template'
-require 'time-stamp'
-
-update(%q$Id$)
+require 'deft/time-stamp'
 
 module Deft  
+  update(%q$Id$)
+
   # note 型の Template をあらわすクラス
   class NoteTemplate < AbstractTemplate
     # NoteTemplate の RFC822 による表現を返す

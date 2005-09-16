@@ -12,11 +12,9 @@ require 'deft/password-template'
 require 'deft/select-template'
 require 'deft/string-template'
 require 'deft/text-template'
+require 'deft/time-stamp'
 require 'forwardable'
 require 'lucie/string'
-require 'time-stamp'
-
-update(%q$Id$)
 
 # テンプレートを登録
 def template( nameString, &block )
@@ -24,6 +22,8 @@ def template( nameString, &block )
 end
 
 module Deft
+  update(%q$Id$)
+
   module Exception
     class UnknownTemplateTypeException < ::Exception; end
   end

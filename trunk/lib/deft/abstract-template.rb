@@ -5,13 +5,12 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+require 'deft/time-stamp'
 require 'lucie/string'
-require 'time-stamp'
-
-# FIXME: モジュール/クラス定義の内側へ追いやる
-update(%q$Id$)
 
 module Deft
+  update(%q$Id$)
+
   module Exception
     class InvalidAttributeException < ::Exception; end
     class RequiredAttributeException < ::Exception; end

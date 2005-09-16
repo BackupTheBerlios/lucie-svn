@@ -5,17 +5,17 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'lucie/string'
-require 'deft/concrete-state'
 require 'debconf/client'
-require 'time-stamp'
+require 'deft/concrete-state'
+require 'deft/time-stamp'
+require 'lucie/string'
 require 'singleton'
 
 include Debconf::Client
 
-update(%q$Id$)
-
 module Deft
+  update(%q$Id$)
+
   # Question オブジェクトから State パターンの各 concrete state クラスを
   # 生成するクラス。また、すべての concrete state クラスの親となるクラス。
   class State    

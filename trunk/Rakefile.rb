@@ -131,6 +131,18 @@ task :upload_lucie_client => [:deb] do
   sh %{cd #{tmp_dir} && scp * #{scp_destination}}
 end
 
+desc 'Deft パッケージのアップロード'
+task :upload_deft => [:deb] do
+  tmp_dir = '../upload/lucie/'
+  scp_destination = File.join( SOURCEFORGE_URI, 
+                               'packages/lucie/debian/sarge' )
+  mkdir_p tmp_dir
+  sh %{mv ../deft_*.deb    #{tmp_dir}}
+  sh %{cd #{tmp_dir} && apt-ftparchive packages . | gzip -c9 > Packages.gz}
+  sh %{cd #{tmp_dir} && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
+  sh %{cd #{tmp_dir} && scp * #{scp_destination}}
+end
+
 desc 'Lucie/Lucie クライアント/rdoc ドキュメントのアップロード'
 task :upload => [:upload_lucie, :upload_lucie_client, :upload_rdoc]
 

@@ -49,11 +49,9 @@ module Lucie
         puts "lucie-setup finished."
       rescue Exception => ex
         puts "lucie-setup aborted!"
-        puts ex.message
-        if @commandline_options.trace
-          puts ex.backtrace.join("\n")
-        end
-        exit(1)
+        puts "ERROR: " + ex.message
+        puts ex.backtrace.join("\n") if @commandline_options.trace
+        exit( 1 )
       ensure
         umount_dirs
       end
@@ -62,10 +60,14 @@ module Lucie
     
     private
     def umount_dirs
-      sh %{chroot #{nfsroot_dir} dpkg-divert --package lucie-client --rename --remove /sbin/discover-modprobe}, sh_option rescue nil
-      sh %{[ -d #{File.join(nfsroot_dir, 'proc/self')} ] && umount #{File.join(nfsroot_dir, 'proc')} || true}, sh_option
-      sh %{[ -d #{File.join(nfsroot_dir, 'proc/self')} ] && umount #{File.join(nfsroot_dir, 'dev/pts')} || true}, sh_option
-      sh %{mount | grep "on #{nfsroot_dir} " || true}, sh_option     
+      begin
+        sh %{chroot #{nfsroot_dir} dpkg-divert --package lucie-client --rename --remove /sbin/discover-modprobe}, sh_option
+        sh %{[ -d #{File.join(nfsroot_dir, 'proc/self')} ] && umount #{File.join(nfsroot_dir, 'proc')} || true}, sh_option
+        sh %{[ -d #{File.join(nfsroot_dir, 'proc/self')} ] && umount #{File.join(nfsroot_dir, 'dev/pts')} || true}, sh_option
+        sh %{mount | grep "on #{nfsroot_dir} " || true}, sh_option     
+      rescue
+        nil
+      end
     end
 
     private
@@ -152,6 +154,7 @@ module Lucie
     
     private
     def installer
+      raise "Please set --installer-name option." if @commandline_options.installer_name.nil?
       return Config::Installer[@commandline_options.installer_name]
     end
     

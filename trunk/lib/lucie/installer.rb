@@ -9,6 +9,8 @@ require 'lucie/time-stamp'
 
 $sh_option     = {:verbose=>true}
 $lucie_root    = '/tmp/target'
+$script_dir = '/etc/lucie/script'
+$kernel_dir = '/etc/lucie/kernel'
 # directory where temporary log files are stored.
 $logdir        = '/tmp/lucie'
 $lucie_log     = File.join( $logdir, 'lucie.log' )

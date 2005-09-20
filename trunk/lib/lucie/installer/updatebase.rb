@@ -21,7 +21,8 @@ sh( %{cp /etc/apt/* #{target('etc/apt')} || true}, $sh_option )
 
 File.open( target('etc/apt/sources.list'), 'w+' ) do |file|
   file.puts "deb #{installer_resource.package_server.uri} #{installer_resource.distribution_version} main contrib non-free"
-  file.puts "deb #{installer_resource.package_server.uri}-non-US #{installer_resource.distribution_version}/non-US main contrib non-free"
+  # TODO: sarge の non-US 廃止 ? にともなってコメントアウト。sarge かどうかで判断すべし。
+#  file.puts "deb #{installer_resource.package_server.uri}-non-US #{installer_resource.distribution_version}/non-US main contrib non-free"
 end            
 
 # some packages must access /proc even in chroot environment

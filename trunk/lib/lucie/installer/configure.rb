@@ -6,9 +6,13 @@
 # License::  GPL2
 
 # TODO: fai-do-scripts ¤ÎºÆ¼ÂÁõ
-classes = Dir.entries('/etc/lucie/script') - ['.', '..']
-kernel_package = (Dir.entries('/etc/lucie/kernel') - ['.', '..']).first
-sh %{classes="#{classes.join(' ')}" cfclasses="#{classes.join('.')}" kernel_package="#{kernel_package}" rootpw="#{installer_resource.root_password}" fai-do-scripts -L #{$logdir} /etc/lucie/script}
+classes = (Dir.entries($script_dir) - ['.', '..']).sort
+if classes.size == 0
+  puts "No configuration script were found."
+else
+  kernel_package = (Dir.entries($kernel_dir) - ['.', '..']).first
+  sh %{classes="#{classes.join(' ')}" cfclasses="#{classes.join('.')}" kernel_package="#{kernel_package}" rootpw="#{installer_resource.root_password}" fai-do-scripts -L #{$logdir} /etc/lucie/script}
+end
 
 ### Local variables:
 ### mode: Ruby

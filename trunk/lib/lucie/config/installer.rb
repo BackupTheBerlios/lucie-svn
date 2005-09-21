@@ -8,9 +8,10 @@
 # FIXME: 正規表現は可読性とメンテナンス性のためあとで変数などにくくり出す。resouce.rb あたりでまとめる？
 
 require 'lucie/config/resource'
+require 'lucie/time-stamp'
 
 module Lucie
-  update(%q$Date$)
+  update(%q$Id$)
 
   module Config
     class Installer < Resource

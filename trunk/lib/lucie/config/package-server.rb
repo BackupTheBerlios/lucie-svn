@@ -8,7 +8,7 @@
 require 'lucie/config/resource'
 
 module Lucie
-  update(%q$Date$)
+  update(%q$Id$)
 
   module Config
     class PackageServer < Resource

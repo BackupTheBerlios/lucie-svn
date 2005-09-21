@@ -1,8 +1,8 @@
 #
-# $Id: command-line-options.rb 557 2005-04-13 07:05:05Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $Revision: 557 $
+# Revision:: $Revision$
 # License::  GPL2
 
 require 'lucie/time-stamp'
@@ -22,8 +22,7 @@ $kernel_log    = File.join( $logdir, 'kernel.log' )
 $software_log  = File.join( $logdir, 'software.log' )
 
 module Lucie
-
-  update(%q$Date$)
+  update(%q$Id$)
 
   module Installer
     # インストーラを初期化する

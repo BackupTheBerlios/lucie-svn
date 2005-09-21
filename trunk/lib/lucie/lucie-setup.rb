@@ -16,6 +16,7 @@ require 'rake'
 require 'singleton'
 
 module Lucie
+  update(%q$Id$)
   
   ##############################################################################
   # Lucie main application object.  When invoking +lucie-setup+ from the command

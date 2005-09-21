@@ -29,6 +29,7 @@ module Lucie
     attr_reader :installer_base_dir
     attr_reader :installer_name
     attr_reader :list_installer
+    attr_reader :list_lmp
     attr_reader :list_resource 
     attr_reader :lmp_install
     attr_reader :log_file
@@ -70,6 +71,8 @@ module Lucie
           "install lmp."],
         [ "--list-installer",     "-s",   nil, \
           "list up installers."],
+        [ "--list-lmp",           "-m",   nil, \
+          "list up available metapackages."]
       ]
 
       public
@@ -126,6 +129,8 @@ module Lucie
             @installer_base = true
           when '--log-file'
             @log_file = argument
+          when '--list-lmp'
+            @list_lmp = true
           when '--logging-level'
             @logging_level = {
               'DEBUG' => Log4r::DEBUG,
@@ -161,6 +166,7 @@ module Lucie
       Log4r.define_levels(*Log4r::Log4rConfig::LogLevels) # ensure levels are loaded.
       @logging_level = Log4r::INFO
       @lmp_install = nil
+      @list_lmp = false
     end
   end
 end

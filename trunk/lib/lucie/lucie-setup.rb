@@ -7,11 +7,12 @@
 # License::  GPL2
 
 require 'English'
-require 'lucie/config'
-require 'lucie/nfsroot-task'
-require 'lucie/installer-base-task'
 require 'lucie/command-line-options'
+require 'lucie/config'
+require 'lucie/installer-base-task'
+require 'lucie/nfsroot-task'
 require 'lucie/time-stamp'
+require 'net/http'
 require 'rake'
 require 'singleton'
 
@@ -83,9 +84,24 @@ module Lucie
     end
        
     private
+    def list_lmp
+      Net::HTTP.version_1_2
+      Net::HTTP.start('lucie.sourceforge.net', 80) do |http|
+        response = http.get('/packages/lmp/Packages')
+        response.body.each_line do |each|
+          puts $1 if /Package: (.*)/=~ each 
+        end
+      end
+    end
+
+    private
     def do_option
       @commandline_options = CommandLineOptions.instance
       @commandline_options.parse ARGV.dup      
+      if @commandline_options.list_lmp
+        list_lmp
+        exit(0)
+      end
       if @commandline_options.list_installer
         list_installer
         exit(0)

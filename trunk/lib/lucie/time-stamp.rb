@@ -9,14 +9,14 @@ require 'parsedate'
 
 module Lucie
   # latest Subversion commit date of core libraries for lucie
-  @@svn_date = nil
+  $svn_date = nil
 
   # All the definitions of class or module in the Lucie distribution
   # should include something like this:
   #  update(%q$LastChangedDate$)
   # at the top of its {module,class} definition.
   # 
-  # This statement updates Lucie.svn_date, which is accessible from
+  # This statement updates svn_date, which is accessible from
   # any context, so is usable for printing current version info to
   # users.
   #
@@ -37,27 +37,15 @@ module Lucie
     year, month, day = ParseDate::parsedate(svn_timestamp)[0, 3]
     if (year && month && day)
       svn_date = format('%04d-%02d-%02d', year, month, day)
-      if (! @@svn_date || @@svn_date < svn_date)
-        @@svn_date = svn_date
+      if (! $svn_date || $svn_date < svn_date)
+        $svn_date = svn_date
       end
     end
-    return @@svn_date
+    return $svn_date
   end
   module_function :update
-  
-  # Returns up-to-date Subversion date id.
-  #
-  # * _Returns_ : a String of Subversion date id. If none is set, returns nil.
-  #
-  # _Example_ :
-  #  Lucie.svn_date => '2021-07-13'
-  #
-  def svn_date
-    return @@svn_date
-  end
-  module_function :svn_date
 
-  update(%q$LastChangedDate$)
+  update(%q$Id$)
 end
 
 ### Local variables:

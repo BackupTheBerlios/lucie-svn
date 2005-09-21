@@ -25,7 +25,7 @@ module Lucie
     include Singleton
     
     LUCIE_VERSION = '0.0.2alpha2'
-    VERSION_STRING = ['lucie-setup', LUCIE_VERSION, '('+Lucie::svn_date+')'].join(' ')
+    VERSION_STRING = ['lucie-setup', LUCIE_VERSION, '('+$svn_date+')'].join(' ')
     
     # lucie-setup のメインルーチンを起動
     public

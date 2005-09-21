@@ -5,9 +5,12 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+require 'lucie/command-line-options'
+require 'lucie/time-stamp'
 require 'rake'
 require 'rake/tasklib'
-require 'lucie/command-line-options'
+
+Lucie::update(%q$Id$)
 
 module Rake
   class InstallerBaseTask < TaskLib

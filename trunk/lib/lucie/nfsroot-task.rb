@@ -9,6 +9,8 @@ require 'lucie/time-stamp'
 require 'rake'
 require 'rake/tasklib'
 
+Lucie::update(%q$Id$)
+
 module Rake
   class NfsrootTask < TaskLib
     BASE_DIR = '/var/lib/lucie/nfsroot/'.freeze

@@ -1,8 +1,8 @@
 #
-# $Id: installer-base-task.rb 460 2005-03-28 08:58:11Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 460 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 require 'log4r'
@@ -11,7 +11,7 @@ require 'lucie/time-stamp'
 require 'open3'
 
 module Lucie
-  update(%q$Date$)
+  update(%q$Id$)
 
   class Logger < Log4r::Logger
     include Singleton

@@ -8,7 +8,7 @@
 require 'lucie/time-stamp'
 
 module Lucie
-  update(%q$Date$)
+  update(%q$Id$)
 
   module Config
     # すべてのリソースクラス

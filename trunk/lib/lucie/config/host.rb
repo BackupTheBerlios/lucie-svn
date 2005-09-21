@@ -6,9 +6,10 @@
 # License::  GPL2
 
 require 'lucie/config/resource'
+require 'lucie/time-stamp'
 
 module Lucie
-  update(%q$Date$)
+  update(%q$Id$)
 
   module Config
     class Host < Resource

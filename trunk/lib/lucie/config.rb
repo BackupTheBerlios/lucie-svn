@@ -14,8 +14,9 @@ require 'lucie/config/host'
 require 'lucie/config/host-group'
 require 'lucie/config/installer'
 require 'lucie/config/package-server'
+require 'lucie/time-stamp'
 
-Lucie::update(%q$Date$)
+Lucie::update(%q$Id$)
 
 # ------------------------- Convenience methods.
 

@@ -85,12 +85,33 @@ module Lucie
        
     private
     def list_lmp
+      puts lmp_array.join("\n")
+    end
+
+    private
+    def show_lmp
+      unless lmp_array.include?( @commandline_options.show_lmp )
+        raise "No such LMP: #{@commandline_options.show_lmp}" 
+      end
+      packages_body.split("\n\n").each do |each|
+        puts each if /Package: #{@commandline_options.show_lmp}/=~ each
+      end
+    end
+    
+    private
+    def lmp_array
+      lmps = []
+      packages_body.each_line do |each|
+          lmps.push $1 if /Package: (.*)/=~ each 
+      end
+      return lmps
+    end
+    
+    private
+    def packages_body
       Net::HTTP.version_1_2
       Net::HTTP.start('lucie.sourceforge.net', 80) do |http|
-        response = http.get('/packages/lmp/Packages')
-        response.body.each_line do |each|
-          puts $1 if /Package: (.*)/=~ each 
-        end
+        return http.get('/packages/lmp/Packages').body
       end
     end
 
@@ -98,6 +119,10 @@ module Lucie
     def do_option
       @commandline_options = CommandLineOptions.instance
       @commandline_options.parse ARGV.dup      
+      if @commandline_options.show_lmp
+        show_lmp
+        exit(0)
+      end
       if @commandline_options.list_lmp
         list_lmp
         exit(0)

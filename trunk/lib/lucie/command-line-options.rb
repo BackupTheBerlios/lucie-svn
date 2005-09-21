@@ -30,6 +30,7 @@ module Lucie
     attr_reader :installer_name
     attr_reader :list_installer
     attr_reader :list_lmp
+    attr_reader :show_lmp
     attr_reader :list_resource 
     attr_reader :lmp_install
     attr_reader :log_file
@@ -72,7 +73,9 @@ module Lucie
         [ "--list-installer",     "-s",   nil, \
           "list up installers."],
         [ "--list-lmp",           "-m",   nil, \
-          "list up available metapackages."]
+          "list up available metapackages."],
+        [ "--show-lmp",           "-M",   "metapackage name", \
+          "show description of metapackage."]
       ]
 
       public
@@ -131,6 +134,8 @@ module Lucie
             @log_file = argument
           when '--list-lmp'
             @list_lmp = true
+          when '--show-lmp'
+            @show_lmp = argument
           when '--logging-level'
             @logging_level = {
               'DEBUG' => Log4r::DEBUG,
@@ -167,6 +172,7 @@ module Lucie
       @logging_level = Log4r::INFO
       @lmp_install = nil
       @list_lmp = false
+      @show_lmp = nil
     end
   end
 end

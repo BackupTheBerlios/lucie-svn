@@ -94,9 +94,10 @@ end
 desc 'Lucie メタパッケージのアップロード'
 task :upload_lmp do
   tmp_dir = %{data/lmp}
-  scp_targets = %{*.gz *.dsc *.deb *.build *.changes}
+  scp_targets = %{Packages *.gz *.dsc *.deb *.build *.changes}
   scp_destination = File.join( SOURCEFORGE_URI, 'packages/lmp' )
-  sh %{cd #{tmp_dir} && apt-ftparchive packages . | gzip -c9 > Packages.gz}
+  sh %{cd #{tmp_dir} && apt-ftparchive packages . > Packages}
+  sh %{cd #{tmp_dir} && gzip -c9 Packages > Packages.gz}
   sh %{cd #{tmp_dir} && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
   sh %{cd #{tmp_dir} && scp #{scp_targets} #{scp_destination}}
 end

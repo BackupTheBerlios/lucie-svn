@@ -7,7 +7,7 @@
 
 require 'lucie/time-stamp'
 
-Lucie::update(%q$LastChangedDate$)
+Lucie::update(%q$Id$)
 
 # 標準の String クラスにインデント系のメソッドを追加
 class String

@@ -13,6 +13,7 @@ require 'singleton'
 require 'log4r'
 
 module Lucie
+  update(%q$Id$)
 
   ####################################################################
   # We handle the parsing of options, and subsequently as a singleton

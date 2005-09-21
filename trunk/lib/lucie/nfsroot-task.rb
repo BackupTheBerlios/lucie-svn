@@ -355,7 +355,7 @@ exit 0
       Lucie::Logger::instance.info "Generating sources.list on nfsroot"
       File.open( nfsroot('etc/apt/sources.list'), 'w+' ) do |file|
         file.puts "deb #{@package_server} #{@distribution_version} main contrib non-free"
-        file.puts "deb #{@package_server}-non-US #{@distribution_version}/non-US main contrib non-free"
+#        file.puts "deb #{@package_server}-non-US #{@distribution_version}/non-US main contrib non-free"
         file.puts "# lucie-client package"
         file.puts "deb http://lucie.sourceforge.net/packages/lucie-client/debian/#{@distribution_version}/ ./"
         file.puts "# lucie meta package"

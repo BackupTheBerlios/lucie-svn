@@ -1,0 +1,21 @@
+#! /bin/sh
+
+# use debconf
+. /usr/share/debconf/confmodule
+
+db_get lucie-client/compile/g77
+g77=$RET
+
+db_get lucie-client/compile/cpp
+cpp=$RET
+
+db_get lucie-client/compile/gpp
+gpp=$RET
+
+db_get lucie-client/compile/gcc
+gcc=$RET
+
+ln -sf /usr/bin/g77-${g77} /tmp/target/usr/bin/g77 
+ln -sf /usr/bin/cpp-${cpp} /tmp/target/usr/bin/cpp 
+ln -sf /usr/bin/gpp-${gpp} /tmp/target/usr/bin/gpp 
+ln -sf /usr/bin/gcc-${gcc} /tmp/target/usr/bin/gcc 

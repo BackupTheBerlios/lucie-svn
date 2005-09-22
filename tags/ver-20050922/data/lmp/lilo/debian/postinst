@@ -1,0 +1,16 @@
+#! /usr/bin/ruby1.8
+#
+# $Id: command-line-options.rb 557 2005-04-13 07:05:05Z takamiya $
+#
+# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Revision:: $Revision: 557 $
+# License::  GPL2
+
+kernel_package = (Dir.entries('/etc/lucie/kernel') - ['.', '..']).first
+system %{ruby1.8 -pi -e "gsub(/%%%kernel_package%%%/, '#{kernel_package}')" /etc/lucie/script/lmp-lilo/S01}
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:
+

@@ -1,0 +1,7 @@
+# テスト用 packages ファイル
+PACKAGES install
+initrd-tools
+lilo
+
+PACKAGES remove
+grub

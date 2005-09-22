@@ -1,0 +1,33 @@
+#! /bin/sh
+
+# (c) Thomas Lange, 2001-2005, lange@debian.org
+
+# use debconf
+. /usr/share/debconf/confmodule
+
+db_get lucie-client/default/timezone
+timezone=$RET
+
+# disable fsck on ext3 filesystems
+partitions=`mount|grep /tmp/target |grep "type ext3"|perl -ane 'print "$F[0] "'`
+for part in $partitions; do
+    echo "Disable periodic fsck on $part"
+    tune2fs -c 0 -i 0 $part
+done
+
+# create dummy link, so package kernel-image-* makes new correct link
+ln -s /boot/vmlinuz-nolink /tmp/target/vmlinuz
+fcopy /etc/kernel-img.conf
+
+fcopy /etc/hostname || hostname     > /tmp/target/etc/hostname
+echo $timezone    > /tmp/target/etc/timezone
+ln -fs /usr/share/zoneinfo/${timezone} /tmp/target/etc/localtime
+
+fcopy -iM /etc/hosts /etc/motd
+
+# make /root accessable only by root
+chmod 0700 /tmp/target/root
+chown root:root /tmp/target/root
+
+# create keyboard layput table
+dumpkeys | gzip -9f >/tmp/target/etc/console/boottime.kmap.gz

@@ -1,0 +1,4 @@
+debian/tmp/etc/lucie
+debian/tmp/usr/bin/lucie-setup
+debian/tmp/usr/lib/ruby/1.8/lucie/*
+debian/tmp/usr/share/doc/lucie/*

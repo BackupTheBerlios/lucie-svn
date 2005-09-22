@@ -1,0 +1,13 @@
+#
+# $Id$
+#
+# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Revision:: $LastChangedRevision$
+# License::  GPL2
+
+install( %w(ssh hdparm cron linuxlogo tcsh file less cfengine rsync jove rstat-client rstatd rusers rusersd rsh-client rsh-server module-init-tools sysutils time strace rdate nfs-common nscd memtest86 fileutils) )
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

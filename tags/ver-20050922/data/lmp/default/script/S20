@@ -1,0 +1,69 @@
+#! /usr/bin/cfengine
+
+control:
+   OutputPrefix = ("cfengine")
+   actionsequence = ( files directories editfiles )
+   EditFileSize = ( 30000 )
+
+files:
+   any::
+
+# floppy and cdroms are accessible for all
+        /tmp/target/dev include=fd* mode=666   action=fixall r=1
+        /tmp/target/dev include=sr* mode=444   action=fixall r=1
+
+directories:
+   any::
+	/tmp/target/tmp mode=1777 owner=0 group=0
+
+editfiles:
+   any::
+   # suppress emacs errors
+	{ /tmp/target/etc/mailname
+	  AutoCreate
+          AppendIfNoSuchLine "%%%HOSTNAME%%%"
+	}
+
+	{ /tmp/target/etc/default/rcS
+	  ReplaceAll "^UTC=.*" With "UTC=%%%UTC%%%"
+	}
+
+	{ /tmp/target/etc/init.d/sysklogd
+	  ReplaceAll "^SYSLOGD=.*" With "SYSLOGD=${dblquote}-m 360${dblquote}"
+	}
+
+	{ /tmp/target/etc/fstab
+	  AppendIfNoSuchLine "none  /proc/bus/usb  usbdevfs  defaults"
+	  AppendIfNoSuchLine "/dev/fd0  /floppy  auto  users,noauto 0 0"
+	}
+
+	{ /tmp/target/etc/locale.gen
+	  AutoCreate
+	  AppendIfNoSuchLine "en_US ISO-8859-1"
+	}
+
+	{ /tmp/target/etc/hosts
+	  AppendIfNoSuchLine "127.0.0.1       localhost"
+	}
+
+# add second root account using tcsh
+# insert encrypted root password
+	{ /tmp/target/etc/passwd
+	  LocateLineMatching 	"^root:.*"
+	  InsertLine 		"roott::0:0:root:/root:/usr/bin/tcsh"
+	  ReplaceAll 		"^root::" With "root:%%%rootpw%%%:"
+	  ReplaceAll		"^roott::" With "roott:%%%rootpw%%%:"
+	}
+
+	{ /tmp/target/etc/syslog.conf
+	  ReplaceAll "daemon.*/var/log/daemon.log"
+		With "daemon.warn${tab}${tab}${tab}-/var/log/daemon.log"
+	  ReplaceAll "kern.*/var/log/kern.log"
+		With "kern.warn${tab}${tab}${tab}-/var/log/kern.log"
+	  AppendIfNoSuchLine "local6.debug${tab}${tab}${tab}/var/log/daemon.log"
+	}
+
+	{ /tmp/target/etc/inittab
+	  ReplaceAll "/sbin/getty"
+		With "/sbin/getty -f /etc/issue.linuxlogo"
+	}

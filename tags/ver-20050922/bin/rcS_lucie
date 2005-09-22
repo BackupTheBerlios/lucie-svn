@@ -1,0 +1,30 @@
+#! /usr/bin/ruby1.8
+#
+# $Id: command-line-options.rb 557 2005-04-13 07:05:05Z takamiya $
+#
+# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Revision:: $Revision: 557 $
+# License::  GPL2
+
+require 'rake'
+require 'lucie/installer'
+
+include Lucie::Installer
+
+init
+require 'lucie/installer/confdir'
+require 'lucie/installer/setup'
+require 'lucie/installer/hwdetect'
+require 'lucie/installer/partition'
+require 'lucie/installer/mountdisks'
+require 'lucie/installer/extrbase'
+require 'lucie/installer/updatebase'
+require 'lucie/installer/instsoft'
+require 'lucie/installer/configure'
+require 'lucie/installer/finish'
+require 'lucie/installer/lucieend'
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

@@ -1,0 +1,38 @@
+#! /bin/bash
+
+. /tmp/lucie/disk_var.sh
+
+yes 'n' | dpkg --root=/tmp/target -i /etc/lucie/kernel/%%%kernel_package%%%
+
+# copyright Thomas Lange 2001-2005, lange@debian.org
+# LILO support may be dropped in a future release
+
+initrd_img=$(cd /tmp/target/boot; ls initrd.img*)
+
+# write lilo.conf and install lilo to disk
+echo "Creating lilo.conf for /vmlinuz"
+cat > /tmp/target/etc/lilo.conf <<-EOF
+boot=$BOOT_DEVICE
+root=$ROOT_PARTITION
+install=/boot/boot.b
+map=/boot/map
+vga=normal
+delay=50
+
+image=/vmlinuz
+append="devfs=nomount $kappend"
+initrd=/boot/$initrd_img
+label=linux
+read-only
+
+image=/vmlinuz.old
+label=linux.old
+read-only
+optional
+$liloappend
+EOF
+
+# now call lilo
+# you can also use this
+# $ROOTCMD lilo -v
+/tmp/target/sbin/lilo -r /tmp/target

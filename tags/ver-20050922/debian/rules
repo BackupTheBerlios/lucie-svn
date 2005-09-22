@@ -1,0 +1,127 @@
+#!/usr/bin/make -f 
+#
+# $Id: rules,v 1.28 2004/04/15 08:28:47 takamiya Exp $
+# 
+
+# Uncomment this to turn on verbose mode.
+# export DH_VERBOSE=1
+
+# This is the deblehper compatibility version to use.
+export DH_COMPAT=4
+
+# This has to be exported to make some magic below work.
+export DH_OPTIONS
+
+RUBY_VERSION = 1.6
+RUBY = /usr/bin/ruby$(RUBY_VERSION)
+
+CFLAGS = -Wall -g
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+else
+	CFLAGS += -O2
+endif
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	INSTALL_PROGRAM += -s
+endif
+
+configure: configure-stamp 
+configure-stamp:
+	dh_testdir
+
+	# do nothing.
+
+	touch configure-stamp
+
+build: configure build-stamp 
+build-stamp:
+	dh_testdir
+
+	# Add here commands to compile the package.
+
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+
+	# Add here commands to clean up after the build process.
+	rake clean
+
+	# cleanup build directories.
+
+	dh_clean build-stamp
+
+install: DH_OPTIONS=
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs 
+
+	DESTDIR='debian/tmp' rake install
+
+	install -d debian/tmp/etc/lucie
+	install -d debian/tmp/usr/share/lucie/etc
+	cp conf/dhclient.conf debian/tmp/usr/share/lucie/etc
+
+	# instal sbin/* files.
+	install -d debian/tmp/sbin
+	mv debian/tmp/usr/sbin/rcS_lucie debian/tmp/sbin
+
+	install -d debian/tmp/usr/lib/lucie
+	mv debian/tmp/usr/sbin/start-stop-daemon debian/tmp/usr/lib/lucie
+	mv debian/tmp/usr/sbin/dhclient-script debian/tmp/usr/lib/lucie
+	mv debian/tmp/usr/sbin/dhclient-perl debian/tmp/usr/lib/lucie
+
+	# install documents.
+	install -d debian/tmp/usr/share/doc/lucie/example
+	cp -pr doc/example/* debian/tmp/usr/share/doc/lucie/example/
+
+	dh_install
+
+# This single target is used to build all the packages, all at once, or
+# one at a time. So keep in mind: any options passed to commands here will
+# affect _all_ packages. Anything you want to only affect one package
+# should be put in another target, such as the install target.
+binary-common:
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs # ChangeLog
+	dh_installdocs -XCVS -X.cvsignore
+	dh_installexamples
+#	dh_installdebconf	
+#	dh_installlogrotate	
+	dh_installinit
+#	dh_installcron
+#	dh_installinfo
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_makeshlibs
+	dh_shlibdeps
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+# Build architecture independant packages using the common target.
+binary-indep: build install
+# (Uncomment this next line if you have such packages.)
+	$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
+
+# Build architecture dependant packages using the common target.
+binary-arch: build install
+	$(MAKE) -f debian/rules DH_OPTIONS=-a binary-common
+
+# Any other binary targets build just one binary package at a time.
+binary-%: build install
+	$(MAKE) -f debian/rules binary-common DH_OPTIONS=--package=$*
+
+binary: binary-indep binary-arch
+
+.PHONY: build clean binary-indep binary-arch binary install configure
+

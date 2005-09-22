@@ -1,0 +1,34 @@
+Source: lucie
+Priority: optional
+Maintainer: Yasuhito Takamiya <takamiya@matsulab.is.titech.ac.jp>
+Build-Depends: debhelper (>> 4.0.0)
+Standards-Version: 3.5.8
+
+Package: lucie-client
+Architecture: all
+Priority: optional
+Section: libs
+Description: Lucie client
+ Lucie client package needed by Lucie installer. Lucie users don't
+ need to install this package by hand, because this package is internal one
+ and is automatically installed into the nfsroot when executing lucie-setup.
+
+Package: lucie
+Architecture: all
+Section: admin
+Depends: ruby1.8, nfs-kernel-server | nfs-user-server, debootstrap
+Description: The Linux Universal Configuration & Installation Engine
+ Lucie is a fully automatic installation system aimed at daily hourly
+ automatic software installation/update of PC commodity cluster.
+ . 
+ See Project Page: http://developer.berlios.de/projects/lucie/
+
+Package: deft
+Architecture: all
+Section: admin
+Depends: ruby1.8, debconf
+Description: Ruby debconf library.
+ deft is a framework for building interactive debconf dialog with
+ Ruby's succinct syntax instead of resorting to shell scripts.
+ . 
+ See Project Page: http://developer.berlios.de/projects/lucie/

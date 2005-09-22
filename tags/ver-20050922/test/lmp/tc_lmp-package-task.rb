@@ -36,9 +36,6 @@ class TC_LMPPackageTask < Test::Unit::TestCase
     lmp_spec.__next( :files ) do files end
     lmp_spec.__next( :architecture ) do 'all' end
     lmp_spec.__next( :architecture ) do 'all' end
-    lmp_spec.__next( :architecture ) do 'all' end
-    lmp_spec.__next( :architecture ) do 'all' end
-    lmp_spec.__next( :architecture ) do 'all' end
     lmp_spec.__next( :files ) do files end
     lmp_spec.__next( :architecture ) do 'all' end
     

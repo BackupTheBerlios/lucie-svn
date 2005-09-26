@@ -5,7 +5,7 @@
 ##XXX:condorパッケージの取得方法や配置場所などを明記する##
 
 SOURCE="/etc/lucie/install"
-LOCALDIR="/var/cache/apt/archives"
+CACHE_DIR="/var/cache/apt/archives"
 CONDOR_PKG="condor_6.7.10-1_i386.deb"
 
 cp $SOURCE/$CONDOR_PKG $target/$LOCALDIR

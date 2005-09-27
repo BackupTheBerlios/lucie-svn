@@ -35,6 +35,7 @@ end
 template( 'lucie-client/default/timezone' ) do |template|
   template.template_type = 'select'
   template.choices = '${timezones}'
+  template.default = 'Asia/Tokyo'
   template.short_description = 'Configure timezone'
   template.short_description_ja = 'タイムゾーンの設定'
   template.extended_description = <<-DESCRIPTION
@@ -63,36 +64,7 @@ template( 'lucie-client/default/utc' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-client/default/utc' => proc do
-            require 'lucie/installer'
-            include Lucie::Installer
-            modules = Dir.chdir( "/lib/modules/#{installer_resource.kernel_version}" ) do 
-              Dir.glob('**/*.o').map! { |each|
-                File.basename( each, '.o' )
-              }.sort.join(', ')
-            end
-            subst 'lucie-client/default/modules', 'modules', modules
-            'lucie-client/default/modules' 
-          end ) do |question|
-  question.priority = Question::PRIORITY_MEDIUM
-end
-
-# ------------------------- Module の設定
-
-template( 'lucie-client/default/modules' ) do |template|
-  template.template_type = 'multiselect'
-  template.choices = '${modules}'
-  template.short_description = 'Configure modules'
-  template.short_description_ja = 'モジュールの設定'
-  template.extended_description = <<-DESCRIPTION
-  Select modules insmoded at boot time.
-  DESCRIPTION
-  template.extended_description_ja = <<-DESCRIPTION_JA
-  ブート時に読み込ませたいモジュールを選択してください
-  DESCRIPTION_JA
-end
-
-question( 'lucie-client/default/modules' ) do |question|
+question( 'lucie-client/default/utc' )
   question.priority = Question::PRIORITY_MEDIUM
 end
 

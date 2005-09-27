@@ -9,8 +9,9 @@ require 'lucie/time-stamp'
 
 $sh_option     = {:verbose=>true}
 $lucie_root    = '/tmp/target'
-$script_dir = '/etc/lucie/script'
+$file_dir   = '/etc/lucie/file'
 $kernel_dir = '/etc/lucie/kernel'
+$script_dir = '/etc/lucie/script'
 # directory where temporary log files are stored.
 $logdir        = '/tmp/lucie'
 $lucie_log     = File.join( $logdir, 'lucie.log' )
@@ -108,6 +109,19 @@ exit 0
     public
     def dhcp_server_resource
       return installer_resource.dhcp_server
+    end
+
+    # ホストグループ情報を返す
+    public
+    def host_group_resource
+      return installer_resource.host_group
+    end
+
+    # ホスト情報を返す
+    public
+    def host_resource
+      require '/etc/lucie/resource.rb'
+      return Config::Host[`hostname`.chomp]
     end
 
     # ターゲット上のファイルパスを返す

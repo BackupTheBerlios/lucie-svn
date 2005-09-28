@@ -64,7 +64,7 @@ template( 'lucie-client/default/utc' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-client/default/utc' )
+question( 'lucie-client/default/utc' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
 end
 

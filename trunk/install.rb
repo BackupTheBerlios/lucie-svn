@@ -103,6 +103,7 @@ system("install -m0755 bin/dhclient-script #{$sbindir}")
 system("install -m0755 bin/dhclient-perl #{$sbindir}")
 
 # /usr/sbin 用ファイル
+system("install -m0755 bin/fcopy            #{$sbindir}")
 system("install -m0755 bin/install_packages #{$sbindir}")
 system("install -m0755 bin/setup_harddisks  #{$sbindir}")
 system("install -m0755 bin/hwdetect         #{$sbindir}")

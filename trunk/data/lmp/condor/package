@@ -1,0 +1,13 @@
+#
+# $Id: package 802 2005-08-01 04:51:05Z takamiya $
+#
+# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Revision:: $LastChangedRevision: 802 $
+# License::  GPL2
+
+install( 'condor' )
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

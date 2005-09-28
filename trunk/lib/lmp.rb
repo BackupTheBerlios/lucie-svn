@@ -8,6 +8,7 @@
 require 'depends'
 require 'lmp/command-line-options'
 require 'lmp/read-config'
+require 'rake'
 
 class LMPApp
   include Singleton
@@ -88,9 +89,11 @@ class LMPApp
 
   private
   def build
+    require 'lmp/lmp-package-task'
+    require 'lmp/specification'
     require File.join( File.dirname(@command_line_options.build), 'deft.rb' )
     require @command_line_options.build
-    Task['package'].invoke
+    Task[:package].invoke
   end
 
   private

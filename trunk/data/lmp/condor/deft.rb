@@ -22,10 +22,29 @@ template( 'lucie-client/condor/hello' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-client/condor/hello' ) do |question|
+question( 'lucie-client/condor/hello' => 'lucie-client/condor/central_manager' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
   question.first_question = true
 end
+
+# ------------------------- Central Manager の入力
+
+template( 'lucie-client/condor/central_manager' ) do |template|
+  template.template_type = 'string'
+  template.short_description_ja = 'Condor セントラルマネージャの設定'
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  Condor セントラルマネージャを動作させるクラスタノード名を入力してください。
+  
+  (例: condor_central_manager)
+
+  ジョブをサブミットする際には,このセントラルマネージャを経由して行われます。
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/condor/central_manager' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+end
+
 
 ### Local variables:
 ### mode: Ruby

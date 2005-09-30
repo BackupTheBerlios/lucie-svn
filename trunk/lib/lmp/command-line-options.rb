@@ -29,15 +29,15 @@ module LMP
         [ '--help',           '-h',   nil, \
           "you're looking at it." ],
         [ '--version',        '-v',   nil, \
-          "display lucie-setup's version and exit." ],
+          "display lmp's version and exit." ],
         [ '--package-list',   '-p',   '[PACKAGE LIST]', \
           "specify LMP package list file path." ],
         [ '--depend-to?',     '-d',   '[OTHER PACKAGE LIST]', \
           "display if this package depends to other package." ],
         [ '--conflict-with?',  '-c',  '[OTHER PACKAGE LIST]', \
           "display if this package conflicts with other package." ],
-        [ '--build',          '-b',   'file path', \
-          'build lmp using template/question definition file.'],
+        [ '--build',          '-b',   '[SPEC FILE PATH]', \
+          'build lmp.'],
       ]
 
       public

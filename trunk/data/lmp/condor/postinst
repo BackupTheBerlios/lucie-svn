@@ -1,9 +1,9 @@
 #! /usr/bin/ruby1.8
 #
-# $Id: command-line-options.rb 557 2005-04-13 07:05:05Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $Revision: 557 $
+# Revision:: $Revision$
 # License::  GPL2
 
 if ENV["DEBIAN_HAS_FRONTEND"] == nil then

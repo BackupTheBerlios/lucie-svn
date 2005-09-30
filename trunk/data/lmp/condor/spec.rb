@@ -1,5 +1,5 @@
 #
-# $Id: lucie_vm_template.rb 395 2005-03-10 08:28:02Z takamiya $
+# $Id$
 #
 # lilo によるブート処理をセットアップするための Lucie メタパッケージ
 #
@@ -8,7 +8,7 @@
 #++
 #
 # Author::   Yasuhito TAKAMIYA (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 395 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 spec = LMP::Specification.new do |spec|

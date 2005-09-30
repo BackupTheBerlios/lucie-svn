@@ -1,8 +1,8 @@
 #
-# $Id: package 802 2005-08-01 04:51:05Z takamiya $
+# $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 802 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 install( 'condor' )

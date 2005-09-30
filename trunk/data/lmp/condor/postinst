@@ -1,0 +1,43 @@
+#! /usr/bin/ruby1.8
+#
+# $Id: command-line-options.rb 557 2005-04-13 07:05:05Z takamiya $
+#
+# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Revision:: $Revision: 557 $
+# License::  GPL2
+
+if ENV["DEBIAN_HAS_FRONTEND"] == nil then
+  args = ""
+  for arg in ARGV
+    args << arg << " "
+  end
+  stdout_dup = STDOUT.clone
+  stdin_dup = STDIN.clone
+  ENV["DEBCONF_RUBY_STDOUT"] = "#{stdout_dup.fileno}"
+  ENV["DEBCONF_RUBY_STDIN"] = "#{stdin_dup.fileno}"
+  exec "/usr/share/debconf/frontend #{$0} #{args}"
+end
+
+require 'debconf/client'
+require 'lucie/installer'
+require 'fileutils'
+
+include Lucie::Installer
+
+condor_host = 'lucie_client'
+condor_host_longname = 'lucie_client.is.titech.ac.jp' 
+
+system %{ruby1.8 -pi -e "gsub(/%%%CONDOR_HOST%%%/, '#{condor_host_longname}')" /etc/lucie/file/etc/condor/condor_config.server.template}
+FileUtils.mv( '/etc/lucie/file/etc/condor/condor_config.server.template', "/etc/lucie/file/etc/condor/condor_config/#{condor_host}" )
+
+system %{ruby1.8 -pi -e "gsub(/%%%CONDOR_HOST%%%/, '#{condor_host_longname}')" /etc/lucie/file/etc/condor/condor_config.client.template}
+FileUtils.mv( '/etc/lucie/file/etc/condor/condor_config.client.template', "/etc/lucie/file/etc/condor/condor_config/#{installer_resource.name}" )
+
+FileUtils.mv( '/etc/lucie/file/etc/condor/condor_config.local/condor_config.local.template', 
+              "/etc/lucie/file/etc/condor/condor_config.local/#{condor_host}" )
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:
+

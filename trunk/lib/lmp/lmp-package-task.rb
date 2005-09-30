@@ -107,7 +107,7 @@ module Rake
       super
       @builder = LMP::Builder.new( @lmp_spec, @package_dir )
       directory debian_dir
-      task :package => [:lmp]
+      task :package => [:clean, :lmp]
       task :lmp => ["#{package_dir}/#{lmp_file}"]
       package_metadata_files = @lmp_spec.files.map do |each| "#{package_dir}/#{each}" end
       file "#{package_dir}/#{lmp_file}" => [debian_dir] + package_metadata_files do

@@ -19,8 +19,6 @@ template( 'lucie-client/condor/hello' ) do |template|
   template.short_description_ja = 'lmp-condor セットアップウィザードへようこそ'
   template.extended_description_ja = <<-DESCRIPTION_JA
   このメタパッケージは condor の設定を Lucie サーバへ行います。
-  インストーラの sources.list に condor パッケージの apt-line を追加し
-  てください。
   DESCRIPTION_JA
 end
 

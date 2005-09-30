@@ -24,8 +24,8 @@ require 'fileutils'
 
 include Lucie::Installer
 
-condor_host = 'lucie_client'
-condor_host_longname = 'lucie_client.is.titech.ac.jp' 
+condor_host = Debconf::Client.get('lucie-client/condor/central_manager')
+condor_host_longname = [condor_host, dhcp_server_resource.domain_name].join(".")
 
 system %{ruby1.8 -pi -e "gsub(/%%%CONDOR_HOST%%%/, '#{condor_host_longname}')" /etc/lucie/file/etc/condor/condor_config.server.template}
 FileUtils.mv( '/etc/lucie/file/etc/condor/condor_config.server.template', "/etc/lucie/file/etc/condor/condor_config/#{condor_host}" )

@@ -184,7 +184,7 @@ module Rake
       ln_sf '/dev/null', nfsroot('etc/network/ifstate'), sh_option
       sh %{[ -d #{nfsroot('var/yp')} ] && ln -s /tmp/binding #{nfsroot('var/yp/binding')}}, sh_option rescue nil
 
-      sh %{[ -d #{nfsroot('var/log/ksymoops')} ] && rmdir #{nfsroot('var/log/ksymoops')}}, sh_option rescue nil
+      sh %{[ -d #{nfsroot('var/log/ksymoops')} ] && rm -rf #{nfsroot('var/log/ksymoops')}}, sh_option rescue nil
       ln_s  '/dev/null', nfsroot('var/log/ksymoops'), sh_option
 
       sh %{echo "iface lo inet loopback" > #{nfsroot( 'etc/network/interfaces' )}}, sh_option
@@ -211,7 +211,6 @@ module Rake
       additional_packages = ['dhcp3-client', 'ruby1.8',
         'liblog4r-ruby', 'rake', 'perl-modules', 'discover',
         'libapt-pkg-perl', 'file', 'cfengine']
-      # FIXME: locales の Debconf でキー入力をなくす
       system %{chroot #{@dir} apt-get -y --fix-missing install #{additional_packages.join(' ')}}
       if @extra_packages
         info "Adding extra packages to nfsroot: #{@extra_packages.join(', ')}"
@@ -358,7 +357,6 @@ exit 0
       Lucie::Logger::instance.info "Generating sources.list on nfsroot"
       File.open( nfsroot('etc/apt/sources.list'), 'w+' ) do |file|
         file.puts "deb #{@package_server} #{@distribution_version} main contrib non-free"
-#        file.puts "deb #{@package_server}-non-US #{@distribution_version}/non-US main contrib non-free"
         file.puts "# lucie-client package"
         file.puts "deb http://#{LMP_SERVER}/packages/lucie-client/debian/#{@distribution_version}/ ./"
         file.puts "# lucie meta package"

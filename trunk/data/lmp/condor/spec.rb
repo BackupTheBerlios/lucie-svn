@@ -1,10 +1,10 @@
 #
 # $Id$
 #
-# lilo によるブート処理をセットアップするための Lucie メタパッケージ
+# condor 環境をセットアップするための Lucie メタパッケージ
 #
 #--
-# TODO: lilo 各種オプションを priority low な質問として追加
+# XXX: condor central server の名前の質問
 #++
 #
 # Author::   Yasuhito TAKAMIYA (mailto:takamiya@matsulab.is.titech.ac.jp)

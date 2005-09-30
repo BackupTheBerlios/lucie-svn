@@ -1,0 +1,19 @@
+#!/usr/bin/ruby1.8
+#
+# condorのパッケージをインストールするスクリプト
+# XXX:condorパッケージの取得方法や配置場所などを明記する
+# 
+# $Id$
+#
+
+require 'fileutils'
+require 'lucie/installer'
+require 'rake'
+
+$apt_archives_dir="/var/cache/apt/archives"
+$condor_package="condor_6.7.10-1_i386.deb"
+
+include FileUtils
+
+cp( File.join($local_package_dir, $condor_package), File.join($lucie_root, $apt_archives_dir) )
+sh( %{chroot #{$lucie_root} dpkg -i #{File.join($apt_archives_dir, $condor_package)}} )

@@ -121,8 +121,10 @@ install: build
     # $(MAKE) install DESTDIR=$(CURDIR)/debian/lmp-test
     install -d $(CURDIR)/debian/tmp/etc/lucie/package
     cp $(CURDIR)/package $(CURDIR)/debian/tmp/etc/lucie/package/#{packageNameString}
-#    install -d $(CURDIR)/debian/tmp/etc/lucie/files/
-#    -cp -a $(CURDIR)/files/* $(CURDIR)/debian/tmp/etc/lucie/lmp/#{packageNameString}/file/
+    install -d $(CURDIR)/debian/tmp/etc/lucie/local_package/
+    -cp -a $(CURDIR)/local_package/*  $(CURDIR)/debian/tmp/etc/lucie/local_package/
+    install -d $(CURDIR)/debian/tmp/etc/lucie/file/
+    -cp -a $(CURDIR)/file/*  $(CURDIR)/debian/tmp/etc/lucie/file/
     install -d $(CURDIR)/debian/tmp/etc/lucie/script/#{packageNameString}
     -cp -a $(CURDIR)/script/* $(CURDIR)/debian/tmp/etc/lucie/script/#{packageNameString}
 

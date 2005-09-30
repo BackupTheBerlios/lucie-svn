@@ -9,9 +9,9 @@ require 'rake/clean'
 require 'rake/rdoctask'
 require 'rake/testtask'
 
-SOURCEFORGE_DIR  = %{/home/groups/l/lu/lucie/htdocs/}
-SOURCEFORGE_HOST = %{lucie.sourceforge.net}
-SOURCEFORGE_URI  = SOURCEFORGE_HOST + ':' + SOURCEFORGE_DIR
+LMP_SERVER_DIR  = %{/var/www/}
+LMP_SERVER      = %{lucie-dev.titech.hpcc.jp}
+LMP_SERVER_URI  = LMP_SERVER + ':' + LMP_SERVER_DIR
 
 desc "Default Task"
 task :default => [:testall]
@@ -69,8 +69,8 @@ end
 desc 'Upload rdoc documents'
 task :upload_rdoc => [:rdoc] do
   sh %{tar --directory doc -czf web.tar rdoc images}
-  sh %{scp web.tar #{SOURCEFORGE_URI}}
-  sh %{ssh -l takamiya #{SOURCEFORGE_HOST} "cd #{SOURCEFORGE_DIR} && tar xzf web.tar"}   
+  sh %{scp web.tar #{LMP_SERVER_URI}}
+  sh %{ssh -l takamiya #{LMP_SERVER} "cd #{LMP_SERVER_DIR} && tar xzf web.tar"}   
 end
 
 # ------------------------- Installation Tasks.
@@ -95,7 +95,7 @@ desc 'Lucie メタパッケージのアップロード'
 task :upload_lmp do
   tmp_dir = %{data/lmp}
   scp_targets = %{Packages *.gz *.dsc *.deb *.build *.changes}
-  scp_destination = File.join( SOURCEFORGE_URI, 'packages/lmp' )
+  scp_destination = File.join( LMP_SERVER_URI, 'packages/lmp' )
   sh %{cd #{tmp_dir} && apt-ftparchive packages . > Packages}
   sh %{cd #{tmp_dir} && gzip -c9 Packages > Packages.gz}
   sh %{cd #{tmp_dir} && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
@@ -107,7 +107,7 @@ end
 desc 'Lucie パッケージのアップロード'
 task :upload_lucie => [:deb] do
   tmp_dir = '../upload/lucie/'
-  scp_destination = File.join( SOURCEFORGE_URI, 
+  scp_destination = File.join( LMP_SERVER_URI, 
                                'packages/lucie/debian/sarge' )
   mkdir_p tmp_dir
   sh %{mv ../lucie_*.deb    #{tmp_dir}}
@@ -123,7 +123,7 @@ end
 desc 'Lucie クライアント関連パッケージのアップロード'
 task :upload_lucie_client => [:deb] do 
   tmp_dir = '../upload/lucie-client'
-  scp_destination = File.join( SOURCEFORGE_URI,
+  scp_destination = File.join( LMP_SERVER_URI,
                                'packages/lucie-client/debian/sarge/' )
   mkdir_p tmp_dir
   sh %{mv ../lucie-client*.deb #{tmp_dir}}
@@ -135,7 +135,7 @@ end
 desc 'Deft パッケージのアップロード'
 task :upload_deft => [:deb] do
   tmp_dir = '../upload/lucie/'
-  scp_destination = File.join( SOURCEFORGE_URI, 
+  scp_destination = File.join( LMP_SERVER_URI, 
                                'packages/lucie/debian/sarge' )
   mkdir_p tmp_dir
   sh %{mv ../deft_*.deb    #{tmp_dir}}

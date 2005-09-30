@@ -15,6 +15,7 @@ module Rake
   class NfsrootTask < TaskLib
     BASE_DIR = '/var/lib/lucie/nfsroot/'.freeze
     INSTALLER_STAMP = '/etc/lucie/.installer_name'.freeze
+    LMP_SERVER = 'lucie-dev.titech.hpcc.jp'
 
     attr_accessor :name
     attr_accessor :dir
@@ -359,15 +360,15 @@ exit 0
         file.puts "deb #{@package_server} #{@distribution_version} main contrib non-free"
 #        file.puts "deb #{@package_server}-non-US #{@distribution_version}/non-US main contrib non-free"
         file.puts "# lucie-client package"
-        file.puts "deb http://lucie.sourceforge.net/packages/lucie-client/debian/#{@distribution_version}/ ./"
+        file.puts "deb http://#{LMP_SERVER}/packages/lucie-client/debian/#{@distribution_version}/ ./"
         file.puts "# lucie meta package"
-        file.puts "deb http://lucie.sourceforge.net/packages/lmp/ ./"
+        file.puts "deb http://#{LMP_SERVER}/packages/lmp/ ./"
       end
       Lucie::Logger::instance.info "DONE"
 
       sh %{echo "127.0.0.1 localhost" >> #{nfsroot('etc/hosts')}}
       # FIXME: lookup IP address on each lucie-setup.
-      sh %{echo "66.35.250.209 lucie.sourceforge.net" >> #{nfsroot('etc/hosts')}}
+      sh %{echo "163.220.99.220 #{LMP_SERVER}" >> #{nfsroot('etc/hosts')}}
 
       cp '/etc/apt/preferences',  nfsroot('etc/apt/preferences'), sh_option rescue nil      
     end

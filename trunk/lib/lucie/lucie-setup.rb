@@ -110,7 +110,8 @@ module Lucie
     private
     def packages_body
       Net::HTTP.version_1_2
-      Net::HTTP.start('lucie.sourceforge.net', 80) do |http|
+      # XXX: サーバ名をどこかに定数としてまとめる。
+      Net::HTTP.start('lucie-dev.titech.hpcc.jp', 80) do |http|
         return http.get('/packages/lmp/Packages').body
       end
     end

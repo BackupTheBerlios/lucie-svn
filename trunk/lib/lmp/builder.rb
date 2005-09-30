@@ -25,6 +25,12 @@ module LMP
       debian_files.each do |each|
         define_file_task( each[:path], each[:template_name] )
       end
+
+      postinst_source = File.join(@build_dir, 'postinst')
+      postinst_target = File.join(@build_dir, 'debian', 'postinst')
+      file( postinst_target ) do
+        cp postinst_source, postinst_target
+      end
     end
     
     # Specification を元に LMP をビルドする。

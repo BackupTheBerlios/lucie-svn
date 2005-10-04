@@ -65,7 +65,7 @@ module Rake
       
       desc "Remove installer base filesystem"
       task paste("clobber_", name) do 
-        rm_r @dir rescue nil
+        cleanup_temporary_directory
       end
       
       task :clobber => [paste("clobber_", name)]
@@ -95,16 +95,35 @@ module Rake
           end
         end
         sh %{chroot #{@dir} apt-get clean}, sh_option
-        rm File.join(@dir, '/etc/resolv.conf'), {:force=>true}.merge( sh_option )
-
-        info "Creating installer base tarball on #{installer_base_target}."
-        sh %{tar -l -C #{@dir} -cf - . | gzip > #{installer_base_target}}, sh_option
-        
-        info "Removing temporary directories."
-        rm_rf @dir, sh_option
+        rm File.join(@dir, '/etc/resolv.conf'), { :force => true }.merge( sh_option )
+        locale_gen
+        build_installer_base_tarball
+        cleanup_temporary_directory
       end
     end
+
+    private
+    def build_installer_base_tarball
+      info "Creating installer base tarball on #{installer_base_target}."
+      sh %{tar -l -C #{@dir} -cf - . | gzip > #{installer_base_target}}, sh_option
+    end
+
+    private 
+    def cleanup_temporary_directory
+      info "Removing debootstrap temporary directory."
+      rm_rf @dir, sh_option
+    end
     
+    # メタパッケージ用に locale を作成
+    private
+    def locale_gen
+      File.open( File.join(@dir, '/etc/locale.gen'), 'w+' ) do |file|
+        file.puts "ja_JP.EUC-JP EUC-JP"
+        file.puts "en_US ISO-8859-1"
+      end
+      sh %{chroot #{@dir} locale-gen}, sh_option
+    end
+
     private
     def info( aString )
       logger.info aString

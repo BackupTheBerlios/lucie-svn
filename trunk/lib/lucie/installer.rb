@@ -5,6 +5,7 @@
 # Revision:: $Revision$
 # License::  GPL2
 
+require 'lucie/nfsroot-task'
 require 'lucie/time-stamp'
 
 $sh_option     = {:verbose=>true}
@@ -98,12 +99,12 @@ exit 0
     public
     def installer_resource
       require '/etc/lucie/resource.rb'
-      return Config::Installer[installer_name]
+      return Config::Installer[configuration_name]
     end
 
     private
-    def installer_name
-      return %x(cat /etc/lucie/.installer_name)
+    def configuration_name
+      return %x(cat #{Rake::NfsrootTask::CONFIGURATION_NAME_STAMP})
     end
     
     # DHCP サーバ情報を返す

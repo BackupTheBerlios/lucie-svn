@@ -27,6 +27,11 @@ module Rake
     attr_accessor :distribution
     # base インストーラを作成するディストリビューションのバージョン
     attr_accessor :distribution_version
+
+    # 作成される tgz ファイルのファイル名を返す
+    def self.target_fname( distribution, distribution_version )
+      return distribution + '_' + distribution_version + '.tgz'
+    end
     
     #
     # 以下のようにすることでインストーラ "my_installer" のベースインス
@@ -149,13 +154,8 @@ module Rake
     end
     
     private
-    def target_fname
-      return @distribution+'_'+@distribution_version+'.tgz'
-    end
-    
-    private
     def installer_base_target
-      return File.join(INSTALLER_BASE_DIR, target_fname)
+      return File.join(INSTALLER_BASE_DIR, InstallerBaseTask.target_fname( @distribution, @distribution_version ))
     end
     
     class DebootstrapExecutionError < ::StandardError; end

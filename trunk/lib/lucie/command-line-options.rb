@@ -28,6 +28,7 @@ module Lucie
     attr_reader :installer_base
     attr_reader :installer_base_dir
     attr_reader :installer_name
+    attr_reader :diff_installer_name
     attr_reader :list_installer
     attr_reader :list_lmp
     attr_reader :show_lmp
@@ -42,39 +43,41 @@ module Lucie
 
     module OptionList # :nodoc:
       OPTION_LIST = [
-        [ "--installer-name",     "-i",  "installer name", \
+        [ "--installer-name",      "-i",  "installer name", \
           "specify an installer name to setup." ],
-        [ "--list-resource",      "-r",   "resource type", \
+        [ "--diff-installer-name", "-d",  "installer name", \
+          "specify a diff installer name to setup." ],
+        [ "--list-resource",       "-r",   "resource type", \
           "list up registerd resource objects." ],
-        [ "--debug",              "-D",   nil, \
+        [ "--debug",               "-D",   nil, \
           "displays lots on internal stuff." ],
-        [ "--help",               "-h",   nil, \
+        [ "--help",                "-h",   nil, \
           "you're looking at it." ],
-        [ "--version",            "-V",   nil, \
+        [ "--version",             "-V",   nil, \
           "display  lucie-setup's version and exit." ],
-        [ "--config-dir",         "-c",   "directory path", \
+        [ "--config-dir",          "-c",   "directory path", \
           "specify configuration directory path." ],
-        [ "--installer-base-dir", "-b",   "directory path", \
+        [ "--installer-base-dir",  "-b",   "directory path", \
           "specify installer base directory path." ],
-        [ "--nfsroot-dir",        "-n",   "directory path", \
+        [ "--nfsroot-dir",         "-n",   "directory path", \
           "specify nfsroot directory path." ],
-        [ "--verbose",            "-v",   nil, \
+        [ "--verbose",             "-v",   nil, \
           "be verbose." ],         
-        [ "--trace",              "-t",   nil, \
+        [ "--trace",               "-t",   nil, \
           "use the debug trace mode."],
-        [ "--installer-base",     "-I",   nil, \
+        [ "--installer-base",      "-I",   nil, \
           "build installer base tarball only."],
-        [ "--log-file",           "-l",   "file path", \
+        [ "--log-file",            "-l",   "file path", \
           "specify log file path."],
-        [ "--logging-level",      "-L",   "logging level", \
+        [ "--logging-level",       "-L",   "logging level", \
           "set the logger level."],
-        [ "--lmp-install",        "-a",   "package name", \
+        [ "--lmp-install",         "-a",   "package name", \
           "install lmp."],
-        [ "--list-installer",     "-s",   nil, \
+        [ "--list-installer",      "-s",   nil, \
           "list up installers."],
-        [ "--list-lmp",           "-m",   nil, \
+        [ "--list-lmp",            "-m",   nil, \
           "list up available metapackages."],
-        [ "--show-lmp",           "-M",   "metapackage name", \
+        [ "--show-lmp",            "-M",   "metapackage name", \
           "show description of metapackage."]
       ]
 
@@ -112,6 +115,8 @@ module Lucie
             @list_resource = argument
           when "--installer-name"
             @installer_name = argument
+          when "--diff-installer-name"
+            @diff_installer_name = argument
           when "--debug"
             @debug = true
           when "--help"
@@ -158,6 +163,7 @@ module Lucie
       @debug = false
       @help = false
       @installer_name = nil
+      @diff_installer_name = nil
       @list_installer = false
       @list_resource = nil
       @version = false

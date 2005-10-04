@@ -895,11 +895,11 @@ EOM
     $filename = "$ENV{LOGDIR}/fstab";
 #    print $FileSystemTab;
     print "\nWrite fstab to $filename\n";
-    if($test != 1){
+#    if($test != 1){
 	open(FILE, ">$filename") || die "unable to write fstab $filename\n";
 	print FILE $FileSystemTab;
 	close(FILE);
-    }
+#    }
 }
 
 #****************************************************
@@ -918,7 +918,7 @@ sub WriteFAIVariables{
   my $swaps;
 
   print "Write FAI variables to file $FAIOutputFile\n";
-    return if ($test == 1);
+#    return if ($test == 1);
   $swaps = join ' ',@swaplist;
     open(FILE, ">$FAIOutputFile") || die "Unable to write file $FAIOutputFile\n";
     print FILE << "EOM";

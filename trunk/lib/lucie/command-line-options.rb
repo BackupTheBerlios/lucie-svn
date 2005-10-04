@@ -8,9 +8,12 @@
 
 require 'English'
 require 'getoptlong'
+require 'log4r'
+require 'lucie/installer-base-task'
+require 'lucie/nfsroot-task'
+require 'lucie/nfsroot-task'
 require 'lucie/time-stamp'
 require 'singleton'
-require 'log4r'
 
 module Lucie
   update(%q$Id$)
@@ -25,7 +28,7 @@ module Lucie
     attr_reader :config_dir
     attr_reader :debug 
     attr_reader :help 
-    attr_reader :installer_base
+    attr_reader :installer_base_only
     attr_reader :installer_base_dir
     attr_reader :installer_name
     attr_reader :diff_installer_name
@@ -65,7 +68,7 @@ module Lucie
           "be verbose." ],         
         [ "--trace",               "-t",   nil, \
           "use the debug trace mode."],
-        [ "--installer-base",      "-I",   nil, \
+        [ "--installer-base-only", "-I",   nil, \
           "build installer base tarball only."],
         [ "--log-file",            "-l",   "file path", \
           "specify log file path."],
@@ -133,8 +136,8 @@ module Lucie
             @verbose = true
           when '--trace'
             @trace = true
-          when '--installer-base'
-            @installer_base = true
+          when '--installer-base-only'
+            @installer_base_only = true
           when '--log-file'
             @log_file = argument
           when '--list-lmp'
@@ -168,11 +171,11 @@ module Lucie
       @list_resource = nil
       @version = false
       @config_dir = '/etc/lucie/'
-      @installer_base_dir = '/var/lib/lucie/installer_base'
-      @nfsroot_dir = '/var/lib/lucie/nfsroot'
+      @installer_base_dir = Rake::InstallerBaseTask::INSTALLER_BASE_DIR
+      @nfsroot_dir = Rake::NfsrootTask::NFSROOT_DIR
       @verbose = false
       @trace = false
-      @installer_base = false
+      @installer_base_only = false
       @log_file = '/var/log/lucie-setup.log'
       Log4r.define_levels(*Log4r::Log4rConfig::LogLevels) # ensure levels are loaded.
       @logging_level = Log4r::INFO

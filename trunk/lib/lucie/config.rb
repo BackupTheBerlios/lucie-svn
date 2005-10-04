@@ -1,7 +1,8 @@
 # = Lucie リソース設定ファイル用ライブラリ
 #
-# Lucie リソース設定ファイル <code>/etc/lucie/resource.rb</code> の先頭でこのファイルを
-# <code>require</code> すること。詳しくは <code>doc/example/resource.rb</code> を参照。
+# Lucie リソース設定ファイル <code>/etc/lucie/resource.rb</code> の先
+# 頭でこのファイルを<code>require</code> すること。詳しくは 
+# <code>doc/example/resource.rb</code> を参照。
 #
 # $Id$
 #
@@ -10,6 +11,7 @@
 # License::  GPL2
 
 require 'lucie/config/dhcp-server'
+require 'lucie/config/diff-installer'
 require 'lucie/config/host'
 require 'lucie/config/host-group'
 require 'lucie/config/installer'
@@ -43,6 +45,11 @@ end
 # package_server リソースの定義用
 def package_server( &block )
   return Lucie::Config::PackageServer.new( &block )
+end
+
+# installer リソースの定義用
+def diff_installer( &block )
+  return Lucie::Config::DiffInstaller.new( &block )
 end
 
 ### Local variables:

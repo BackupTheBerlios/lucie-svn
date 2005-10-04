@@ -28,7 +28,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
       task.distribution = 'debian'
       task.distribution_version = 'woody'
     end
-    assert_equal( ['/var/lib/lucie/installer-base/var/tmp/debian_woody.tgz'], 
+    assert_equal( ['/var/lib/lucie/installer_base/debian_woody.tgz'], 
                   Task[:installer_base].prerequisites,
                   ":installer_base タスクの prerequisites が正しくない" )
   end
@@ -79,10 +79,11 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
                   Task[:clobber_installer_base].comment, 
                   ":clobber_installer_base タスクのコメントが設定されていない" )
     
-    assert_not_nil( Task['/var/lib/lucie/installer-base/'],
-                    'var/lib/lucie/installer-base/ ディレクトリタスクが定義されていない' )
-    assert_not_nil( Task['/var/lib/lucie/installer-base/var/tmp/debian_woody.tgz'],
-                    'var/lib/lucie/installer-base/var/tmp/debian_woody.tgz ファイルタスクが定義されていない' )
+    assert_not_nil( Task['/var/lib/lucie/installer_base/'],
+                    'var/lib/lucie/installer_base/ ディレクトリタスクが定義されていない' )
+
+    assert_not_nil( Task['/var/lib/lucie/installer_base/debian_woody.tgz'],
+                    'var/lib/lucie/installer_base/var/tmp/debian_woody.tgz ファイルタスクが定義されていない' )
   end
   
   public

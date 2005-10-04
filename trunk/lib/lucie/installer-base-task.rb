@@ -14,16 +14,42 @@ Lucie::update(%q$Id$)
 
 module Rake
   class InstallerBaseTask < TaskLib
+    # base インストーラが作成されるディレクトリ
+    INSTALLER_BASE_DIR = '/var/lib/lucie/installer_base'.freeze
+
+    # base インストーラの名前
     attr_accessor :name
+    # base インストーラの作成に使用される一時ディレクトリのフルパス
     attr_accessor :dir
+    # debootstrap の実行で使用される Debian ミラーサーバの URI
     attr_accessor :mirror
+    # base インストーラを作成するディストリビューション
     attr_accessor :distribution
+    # base インストーラを作成するディストリビューションのバージョン
     attr_accessor :distribution_version
     
+    #
+    # 以下のようにすることでインストーラ "my_installer" のベースインス
+    # トーラを作成する Task が定義される。
+    #
+    #  installer_name = 'my_installer'
+    #  Rake::InstallerBaseTask.new( installer_name ) do |installer_base|
+    #    installer_base.dir = File.join( Rake::InstallerBaseTask::INSTALLER_BASE_DIR, installer_name )
+    #    installer_base.mirror = 'http://192.168.152.2:9999/debian'
+    #    installer_base.distribution = 'debian'
+    #    installer_base.distribution_version = 'sarge'
+    #  end
+    #
+    # 定義される Task は以下の通り (インストーラ名を "my_installer" とした場合)。
+    # 
+    # * _my_installer_: base インストーラの作成
+    # * _clobber_my_installer_: base インストーラの削除
+    # * _remy_installer_: base インストーラの強制再ビルド
+    # 
     public
     def initialize( name=:installer_base ) # :yield: self
       @name = name
-      @dir = '/var/lib/lucie/installer-base/'
+      @dir = INSTALLER_BASE_DIR
       @mirror = 'http://www.debian.or.jp/debian/'
       yield self if block_given?
       define
@@ -72,7 +98,10 @@ module Rake
         rm File.join(@dir, '/etc/resolv.conf'), {:force=>true}.merge( sh_option )
 
         info "Creating installer base tarball on #{installer_base_target}."
-        sh %{tar -l -C #{@dir} -cf - --exclude #{File.join('var/tmp', target_fname)} . | gzip > #{installer_base_target}}, sh_option       
+        sh %{tar -l -C #{@dir} -cf - . | gzip > #{installer_base_target}}, sh_option
+        
+        info "Removing temporary directories."
+        rm_rf @dir, sh_option
       end
     end
     
@@ -107,7 +136,7 @@ module Rake
     
     private
     def installer_base_target
-      return File.join(@dir, 'var/tmp', target_fname)
+      return File.join(INSTALLER_BASE_DIR, target_fname)
     end
     
     class DebootstrapExecutionError < ::StandardError; end

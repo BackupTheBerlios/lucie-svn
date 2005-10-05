@@ -93,9 +93,16 @@ end
 # FIXME: :upload_lmp should depend to :build_lmp?
 desc 'Lucie メタパッケージのアップロード'
 task :upload_lmp do
-  tmp_dir = %{data/lmp}
+  tmp_dir = '../upload/lmp'
   scp_targets = %{Packages *.gz *.dsc *.deb *.build *.changes}
   scp_destination = File.join( LMP_SERVER_URI, 'packages/lmp' )
+  
+  mkdir_p tmp_dir
+  sh %{mv data/lmp/*.gz      #{tmp_dir}}
+  sh %{mv data/lmp/*.dsc     #{tmp_dir}}
+  sh %{mv data/lmp/*.deb     #{tmp_dir}}
+  sh %{mv data/lmp/*.build   #{tmp_dir}}
+  sh %{mv data/lmp/*.changes #{tmp_dir}}
   sh %{cd #{tmp_dir} && apt-ftparchive packages . > Packages}
   sh %{cd #{tmp_dir} && gzip -c9 Packages > Packages.gz}
   sh %{cd #{tmp_dir} && apt-ftparchive sources  . | gzip -c9 > Sources.gz}

@@ -10,6 +10,7 @@ require 'English'
 require 'lucie/command-line-options'
 require 'lucie/config'
 require 'lucie/installer-base-task'
+require 'lucie/logger'
 require 'lucie/nfsroot-task'
 require 'lucie/time-stamp'
 require 'net/http'
@@ -23,10 +24,13 @@ module Lucie
   # Lucie main application object.  When invoking +lucie-setup+ from the command
   # line, a Setup object is created and run.
   #
+  #--
+  # TODO: commoninstaller, diffinstaller のビルドを別タスクとしてくくり出す
+  #++
   class Setup
     include Singleton
     
-    LUCIE_VERSION = '0.0.3'
+    LUCIE_VERSION = '0.0.4'
     VERSION_STRING = ['lucie-setup', LUCIE_VERSION, '('+$svn_date+')'].join(' ')
     
     # lucie-setup のメインルーチンを起動
@@ -45,9 +49,21 @@ module Lucie
         $stderr.puts "Run this program as root."
         exit(9)
       end
+      installer_base_task.invoke unless @commandline_options.diff_installer_name
+      if @commandline_options.installer_base_only
+        puts "lucie-setup finished."
+        return 
+      end
       begin
-        installer_base_task.invoke
-        nfsroot_task.invoke unless @commandline_options.installer_base
+        if @commandline_options.diff_installer_name
+          common_nfsroot_task.invoke 
+          install_common_lmp
+          diff_nfsroot_task.each do |each| each.invoke end
+          install_diff_lmp
+          modify_diff_installer
+        elsif (not @commandline_options.installer_base_only)
+          nfsroot_task.invoke 
+        end
         puts "lucie-setup finished."
       rescue Exception => ex
         puts "lucie-setup aborted!"
@@ -59,7 +75,59 @@ module Lucie
       end
       return nil
     end
-    
+
+    private
+    def modify_diff_installer
+      common_installer.installers.map do |each|
+        File.join(@commandline_options.nfsroot_dir, 
+                  diff_installer_name(common_installer.name, each.name), "/etc/init.d/rcS")
+      end.each do |rcs|
+        sh %{cp #{rcs} #{rcs}.orig}
+        File.open( rcs, "w" ) do |file|
+          File.open( rcs + ".orig", "r" ).each_line do |each|
+            if /^require 'lucie\/installer\/extrbase/=~ each
+              file.puts '# ' + each
+            else
+              file.puts each
+            end
+          end
+        end
+      end
+    end
+
+    private
+    def install_diff_lmp
+      lmp_list = get_common_lmps
+      common_lmps = lmp_list[common_installer.installers[0]] & lmp_list[common_installer.installers[1]]
+      common_installer.installers.each do |each|
+        sh %{chroot #{File.join(@commandline_options.nfsroot_dir, diff_installer_name(common_installer.name, each.name))} apt-get install #{lmp_list[each] - common_lmps}}
+      end
+    end
+
+    private
+    def install_common_lmp
+      lmp_list = get_common_lmps
+      common_lmps = lmp_list[common_installer.installers[0]] & lmp_list[common_installer.installers[1]]
+      puts %{Following LMPs are going to be installed on #{common_installer.name} installer: #{common_lmps.join(" ")}}
+      common_lmps.each do |each|
+        sh %{chroot #{File.join(@commandline_options.nfsroot_dir, common_installer.name)} apt-get install #{each}}
+      end
+    end
+
+    private
+    def get_common_lmps
+      lmp_list = {}
+      common_installer.installers.each do |si|
+        print "Following LMPs are installed on #{si.name} installer: "
+        lmp_list[si] = `chroot #{File.join(Rake::NfsrootTask::NFSROOT_DIR, si.name)} dpkg -l | grep "lmp-*"`.split("\n").map do |each|
+          /^ii\s+(lmp-\S+)\s+.*/=~ each
+          $1
+        end
+        puts lmp_list[si].join(", ")
+      end
+      return lmp_list
+    end
+
     private
     def umount_dirs
       begin
@@ -159,8 +227,8 @@ module Lucie
     
     private
     def list_installer
-      Dir.glob( File.join(Rake::NfsrootTask::BASE_DIR, "[^\.]*") ).each do |each|
-        installer_stamp = File.join( each, Rake::NfsrootTask::INSTALLER_STAMP )
+      Dir.glob( File.join(Rake::NfsrootTask::NFSROOT_DIR, "[^\.]*") ).each do |each|
+        installer_stamp = File.join( each, Rake::NfsrootTask::INSTALLER_NAME_STAMP )
         if FileTest.exist?( installer_stamp )
           puts each + %{ (#{File.stat(installer_stamp).mtime})}
         else
@@ -170,24 +238,52 @@ module Lucie
     end
 
     private
-    def nfsroot_task
-      Rake::NfsrootTask.new( installer.name ) do |nfsroot|
-        nfsroot.dir = nfsroot_dir
-        nfsroot.package_server = installer.package_server.uri
-        nfsroot.distribution_version = installer.distribution_version
-        nfsroot.kernel_package = installer.kernel_package
-        nfsroot.kernel_version = installer.kernel_version
-        nfsroot.root_password = installer.root_password
-        nfsroot.installer_base = File.join( @commandline_options.installer_base_dir, 
-                                            installer.name, 'var/tmp', basetgz_filename)
-        nfsroot.extra_packages = installer.extra_packages
+    def common_installer
+      return Config::DiffInstaller[@commandline_options.diff_installer_name]
+    end
+
+    private
+    def diff_nfsroot_task
+      tasks = []
+      common_installer.installers.each do |each|
+        tasks.push define_nfsroot_task(diff_installer_name(common_installer.name, each.name), each, common_installer)
       end
-      return Task[installer.name]
+      return tasks
+    end
+
+    private
+    def diff_installer_name( commonInstallerName, targetInstallerName )
+      commonInstallerName + "_to_" + targetInstallerName
     end
     
     private
-    def basetgz_filename
-      return "#{installer.distribution}_#{installer.distribution_version}.tgz"
+    def common_nfsroot_task
+      return define_nfsroot_task( common_installer.name, common_installer.installers[0], common_installer )
+    end
+
+    private
+    def nfsroot_task
+      return define_nfsroot_task( installer.name, installer )
+    end
+
+    private
+    def define_nfsroot_task( installerName, configInstaller, targetInstaller = nil )
+      Rake::NfsrootTask.new( installerName ) do |nfsroot|
+        nfsroot.dir = File.join( @commandline_options.nfsroot_dir, installerName )
+        if targetInstaller
+          nfsroot.source_installer = targetInstaller.installers.map do |each| each.name end
+        end
+        nfsroot.package_server       = configInstaller.package_server.uri
+        nfsroot.distribution_version = configInstaller.distribution_version
+        nfsroot.kernel_package       = configInstaller.kernel_package
+        nfsroot.kernel_version       = configInstaller.kernel_version
+        nfsroot.root_password        = configInstaller.root_password
+        nfsroot.installer_base       = File.join( @commandline_options.installer_base_dir, 
+                                                  Rake::InstallerBaseTask.target_fname(configInstaller.distribution, 
+                                                                                       configInstaller.distribution_version) )
+        nfsroot.extra_packages = configInstaller.extra_packages
+      end
+      return Task[installerName]
     end
 
     private
@@ -197,13 +293,11 @@ module Lucie
     
     private
     def installer
-      raise "Please set --installer-name option." if @commandline_options.installer_name.nil?
       return Config::Installer[@commandline_options.installer_name]
     end
     
     private
     def installer_base_task
-      require 'lucie/logger'
       raise "No such installer resource: `#{@commandline_options.installer_name}'" if installer.nil?
       Rake::InstallerBaseTask.new( installer_base_task_name( installer.name ) ) do |installer_base|
         installer_base.dir = File.join( @commandline_options.installer_base_dir, installer.name )

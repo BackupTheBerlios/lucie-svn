@@ -43,9 +43,12 @@ module Lucie
     attr_reader :trace
     attr_reader :verbose
     attr_reader :version
+    attr_reader :enable_installer
 
     module OptionList # :nodoc:
       OPTION_LIST = [
+        [ "--enable-installer",    "-e",  "installer name", \
+          "enable specified installer and restart nfs/dhcp daemons." ],
         [ "--installer-name",      "-i",  "installer name", \
           "specify an installer name to setup." ],
         [ "--diff-installer-name", "-d",  "installer name", \
@@ -112,6 +115,8 @@ module Lucie
         
         getopt_long.each do |option, argument|
           case option
+          when "--enable-installer"
+            @enable_installer = argument
           when "--list-installer"
             @list_installer = true
           when "--list-resource"
@@ -163,6 +168,7 @@ module Lucie
 
     private
     def set_default_options
+      @enable_installer = nil
       @debug = false
       @help = false
       @installer_name = nil

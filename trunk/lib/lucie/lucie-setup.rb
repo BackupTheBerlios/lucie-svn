@@ -162,7 +162,7 @@ module Lucie
         raise "No such LMP: #{@commandline_options.show_lmp}" 
       end
       packages_body.split("\n\n").each do |each|
-        puts each if /Package: #{@commandline_options.show_lmp}/=~ each
+        puts each if /^Package: #{@commandline_options.show_lmp}/=~ each
       end
     end
     
@@ -184,10 +184,37 @@ module Lucie
       end
     end
 
+    # XXX: nfsroot-task 中の似たような処理と統合する
+    private
+    def enable_installer
+      if Config::Installer[@commandline_options.enable_installer].nil?
+        raise "No such installer resource: `#{@commandline_options.enable_installer}'"
+      end
+
+      sh_option = { :verbose => @commandline_options.verbose }
+      installer_name = @commandline_options.enable_installer
+      rm_f '/etc/dhcpd.conf', sh_option
+      ln_s "/etc/dhcpd.conf.#{installer_name}", '/etc/dhcpd.conf', sh_option
+      puts %{Restarting DHCP daemon.}
+      sh %{/etc/init.d/dhcp restart}, sh_option
+      
+      rm_f '/etc/exports', sh_option
+      ln_s "/etc/exports.#{installer_name}", '/etc/exports', sh_option
+      puts %{Restarting NFS daemon.}
+      sh %{/etc/init.d/nfs-kernel-server restart}, sh_option
+
+      rm_f '/tftpboot/pxelinux.cfg', sh_option
+      ln_s "/tftpboot/pxelinux.cfg.#{installer_name}", '/tftpboot/pxelinux.cfg', sh_option
+    end
+    
     private
     def do_option
       @commandline_options = CommandLineOptions.instance
       @commandline_options.parse ARGV.dup      
+      if @commandline_options.enable_installer
+        enable_installer
+        exit(0)
+      end
       if @commandline_options.show_lmp
         show_lmp
         exit(0)

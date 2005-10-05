@@ -1,4 +1,4 @@
-#
+o#
 # $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
@@ -13,28 +13,63 @@ Lucie::update(%q$Id$)
 
 module Rake
   class NfsrootTask < TaskLib
-    BASE_DIR = '/var/lib/lucie/nfsroot/'.freeze
-    INSTALLER_STAMP = '/etc/lucie/.installer_name'.freeze
+    # NFSroot を作成するトップディレクトリ
+    NFSROOT_DIR = '/var/lib/lucie/nfsroot/'.freeze 
+    # インストール時に使用する設定名。通常は設定名 == インストーラ名。
+    # 差分インストーラ作成の時には設定名 != インストーラ名 となるため、この設定名が必要となる。
+    CONFIGURATION_NAME_STAMP = '/etc/lucie/.configuration_name'.freeze 
+    # インストール時のインストーラの名前
+    INSTALLER_NAME_STAMP = '/etc/lucie/.installer_name'.freeze 
+    # LMP リポジトリが設置してあるサーバの名前
     LMP_SERVER = 'lucie-dev.titech.hpcc.jp'
 
-    attr_accessor :name
+    # NFSroot が作成されるディレクトリ
     attr_accessor :dir
-    attr_accessor :installer_base
-    attr_accessor :package_server
+    # ディストリビューションのバージョン
     attr_accessor :distribution_version
-    attr_accessor :kernel_package
-    attr_accessor :kernel_version
-    attr_accessor :root_password
+    # NFSroot に追加インストールするパッケージの Array
     attr_accessor :extra_packages
-    
+    # NFSroot の基となるベースシステム (xxx.tgz) のフルパス
+    attr_accessor :installer_base
+    # インストーラ実行用のカーネルパッケージのフルパス
+    attr_accessor :kernel_package
+    # インストーラ実行用のカーネルパッケージのバージョン
+    attr_accessor :kernel_version
+    # NFSroot の名前
+    attr_accessor :name
+    # パッケージサーバの URI
+    attr_accessor :package_server
+    # root パスワードを暗号化したもの
+    attr_accessor :root_password
+    # 差分インストールの元となるインストーラ名の Array
+    attr_accessor :source_installer
+
+    # 
+    # 以下のようにすることで '/var/lib/lucie/nfsroot/my_installer' 以
+    # 下に nfsroot を構築するための Task が定義される。
+    #
+    #  installer_name = 'my_installer'
+    #  Rake::NfsrootTask.new( 'my_installer' ) do |nfsroot|
+    #    nfsroot.dir = File.join( Rake::NfsrootTask::NFSROOT_DIR, installer_name )
+    #    nfsroot.package_server = 'http://192.168.152.2:9999/debian'
+    #    nfsroot.distribution_version = 'sarge'
+    #    nfsroot.kernel_package = '/etc/lucie/kernel/kernel-image-2.4.27-fai_1_i386.deb'
+    #    nfsroot.kernel_version = '2.4.27-fai'
+    #    nfsroot.root_password = 'h29SP9GgVbLHE'
+    #    nfsroot.installer_base = File.join( Rake::NfsrootTask::INSTALLER_BASE_DIR, 
+    #                                        InstallerBaseTask.target_fname('debian', 'sarge' ))
+    #    nfsroot.extra_packages = ['lv', 'libdevmapper1.01']
+    #  end
+    #
     public
     def initialize( name=:nfsroot ) # :yield: self
       @name = name
-      @dir = BASE_DIR
+      @dir = NFSROOT_DIR
       @package_server = 'http://www.debian.or.jp/debian'
       @distribution_version = 'stable'
       @root_password = "h29SP9GgVbLHE"
       @extra_packages = nil
+      @source_installer = nil
       yield self if block_given?
       define
     end
@@ -67,14 +102,25 @@ module Rake
         # TODO: setup_ssh
         install_kernel_nfsroot
         setup_dhcp
-        finish
+        make_stamp
       end
     end
 
+    # INSTALLER_NAME_STAMP と CONFIGURATION_NAME_STAMP にスタンプファイルを作成する。
+    # INSTALLER_NAME_STAMP の内容はインストーラ名。
+    # CONFIGURATION_NAME_STAMP の内容は設定名 (設定ファイルとして用いるインストーラ名)
+    # これは差分インストールの時にインストーラ名と設定名が一致しない場合に用いられる。
     private
-    def finish
-      File.open( nfsroot(INSTALLER_STAMP), 'w+' ) do |file|
+    def make_stamp
+      File.open( nfsroot(INSTALLER_NAME_STAMP), 'w+' ) do |file|
         file.print @name
+      end
+      File.open( nfsroot(CONFIGURATION_NAME_STAMP), 'w+' ) do |file|
+        if @source_installer
+          file.print @source_installer[0]
+        else
+          file.print @name
+        end
       end
     end
 
@@ -88,16 +134,21 @@ module Rake
     private
     def setup_dhcp
       info "Setting up DHCP and PXE environment."
-      installer = Lucie::Config::Installer[@name]
+      if @source_installer
+        installer = Lucie::Config::Installer[@source_installer[0]]
+      else
+        installer = Lucie::Config::Installer[@name]
+      end
       dhcp_server = installer.dhcp_server
       host_group = installer.host_group
 
       cp( nfsroot("boot/vmlinuz-#{@kernel_version}"),
           "/tftpboot/#{@name}", {:preserve => true}.merge(sh_option) )
       cp( "/usr/lib/syslinux/pxelinux.0", "/tftpboot", sh_option )
-      mkdir_p( "/tftpboot/pxelinux.cfg", sh_option ) rescue nil
+      pxelinux_cfg_dir = "/tftpboot/pxelinux.cfg.#{@name}"
+      mkdir_p( pxelinux_cfg_dir, sh_option ) rescue nil
       host_group.members.each do |each|
-        target = File.join( "/tftpboot/pxelinux.cfg", pxelinux_cfg_fname( each.address ) )
+        target = File.join( pxelinux_cfg_dir, pxelinux_cfg_fname( each.address ) )
         File::open( target, 'w+' ) do |file|
           file.puts "default #{@name}"
           file.puts
@@ -107,6 +158,9 @@ module Rake
         end
         puts "Generated #{target}."
       end
+      puts %{Generated #{pxelinux_cfg_dir}.}
+      rm_f '/tftpboot/pxelinux.cfg', sh_option
+      ln_s pxelinux_cfg_dir, '/tftpboot/pxelinux.cfg', sh_option
 
       dhcpd_conf_file = "/etc/dhcpd.conf.#{@name}"
       File.open( dhcpd_conf_file, 'w+' ) do |file|
@@ -139,7 +193,11 @@ module Rake
         file.puts indent{ '}' }
         file.puts '}'
       end
-      puts %{Generated #{dhcpd_conf_file}. Please rename to /etc/dhcpd.conf and restart DHCP daemon.}
+      puts %{Generated #{dhcpd_conf_file}.}
+      rm_f '/etc/dhcpd.conf', sh_option
+      ln_s dhcpd_conf_file, '/etc/dhcpd.conf', sh_option
+      puts %{Restarting DHCP daemon.}
+      sh %{/etc/init.d/dhcp restart}, sh_option
 
       exports_file = "/etc/exports.#{@name}"
       File.open( exports_file, 'w+' ) do |file|
@@ -149,7 +207,11 @@ module Rake
           file.puts %{#{@dir} #{each.name}(ro,no_root_squash,async)}
         end
       end
-      puts %{Generated "#{exports_file}". Please rename to /etc/exports and restart NFS daemon.}
+      puts %{Generated "#{exports_file}".}
+      rm_f '/etc/exports', sh_option
+      ln_s exports_file, '/etc/exports', sh_option
+      puts %{Restarting NFS daemon.}
+      sh %{/etc/init.d/nfs-kernel-server restart}, sh_option
     end
 
     private
@@ -259,7 +321,11 @@ DPkg
       sh_log %{chroot #{@dir} apt-get install lucie-client}, sh_option, &apt_block
       sh %{chroot #{@dir} cp -p /usr/share/lucie/etc/dhclient.conf /etc/dhcp3/}, sh_option
       cp '/etc/lucie/resource.rb', nfsroot('etc/lucie'), sh_option
-      sh %{cp -Rp /etc/lucie/#{name}/* #{nfsroot('etc/lucie')}}, sh_option
+      if @source_installer
+        sh %{cp -Rp /etc/lucie/#{@source_installer[0]}/* #{nfsroot('etc/lucie')}}, sh_option
+      else
+        sh %{cp -Rp /etc/lucie/#{name}/* #{nfsroot('etc/lucie')}}, sh_option rescue nil # FIXME: /etc/lucie/[インストーラ名] が空のときを rescue
+      end
       sh %{chroot #{@dir} cp -p /usr/lib/lucie/dhclient-script /etc/dhcp3/}, sh_option      
       sh %{chroot #{@dir} cp -p /usr/lib/lucie/dhclient-perl /sbin/}, sh_option      
       sh %{chroot #{@dir} pwconv}, sh_option
@@ -270,11 +336,6 @@ DPkg
       info "Extracting installer base tarball. This may take a long time."
       sh %{tar -C #{@dir} -xzf #{installer_base}}, sh_option
       cp installer_base, nfsroot( '/var/tmp' ), sh_option
-      File.open( nfsroot('/etc/locale.gen'), 'w+' ) do |file|
-        file.puts "ja_JP.EUC-JP EUC-JP"
-        file.puts "en_US ISO-8859-1"
-      end
-      sh %{chroot #{@dir} locale-gen}
     end
 
     private

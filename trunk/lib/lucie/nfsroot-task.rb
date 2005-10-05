@@ -1,4 +1,4 @@
-o#
+#
 # $Id$
 #
 # Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)

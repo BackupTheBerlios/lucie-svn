@@ -1,3 +1,15 @@
+lucie (0.0.4-2) unstable; urgency=low
+
+  * Fixed Dependency.
+
+ -- takamiya <takamiya@localhost.localdomain>  Thu,  6 Oct 2005 14:44:53 +0900
+
+lucie (0.0.4-1) unstable; urgency=low
+
+  * New version.
+
+ -- takamiya <takamiya@localhost.localdomain>  Wed,  5 Oct 2005 15:53:34 +0900
+
 lucie (0.0.3-1) unstable; urgency=low
 
   * New version.

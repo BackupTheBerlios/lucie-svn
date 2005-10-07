@@ -30,7 +30,7 @@ module Lucie
   class Setup
     include Singleton
     
-    LUCIE_VERSION = '0.0.4'
+    LUCIE_VERSION = '0.0.5'
     VERSION_STRING = ['lucie-setup', LUCIE_VERSION, '('+$svn_date+')'].join(' ')
     
     # lucie-setup のメインルーチンを起動

@@ -8,8 +8,12 @@
 # TODO: timeserver or ntpserver のサポート
 
 # create two virtual terminals
-sh %{openvt -c2 /bin/bash}, $sh_option
-sh %{openvt -c3 /bin/bash}, $sh_option
+begin
+  sh %{openvt -c2 /bin/bash}, $sh_option
+  sh %{openvt -c3 /bin/bash}, $sh_option
+rescue 
+  STDERR.puts "WARNING: Could not open virtual terminals."
+end
 
 # TODO: sshd のサポート
 

@@ -5,7 +5,7 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-$LOAD_PATH.unshift './lib'
+$LOAD_PATH.unshift 'trunk/lib'
 
 require 'lmp/specification'
 require 'test/unit'

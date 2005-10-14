@@ -99,8 +99,10 @@ module Lucie
       def self.attribute( name, default=nil )
         if default.nil?
           module_eval %-
-            @@attributes << [:#{name}, nil]
-            @@default_value[:#{name}] = nil
+            if !@@attributes.assoc(name)
+              @@attributes << [:#{name}, nil]
+              @@default_value[:#{name}] = nil
+            end
           -
         else
          module_eval %-

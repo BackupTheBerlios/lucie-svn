@@ -266,8 +266,8 @@ SWAPLIST=#{swaps}
               raise StandardError, "Unable to preserve partitions of size 0."
             end
           else
-            # If not preserve we must know the filesystemtype
-            # TODO: Implement here
+            # If not preserve we must know the filesystemtype. Default is ext2.
+            part.fs = "ext2" if part.fs.nil?
           end
         end
       end
@@ -365,7 +365,7 @@ SWAPLIST=#{swaps}
             each.size *= @disk_unit
           end
           # align first partition for mbr
-          # TODO: dos alignment の調整は set_parition_positions 内で先にやっておくべきか
+          # XXX: dos alignment の調整は set_parition_positions 内で先にやっておくべきか
           if each.start_sector == 0
             each.start_sector += @sector_alignment
             each.size -= @sector_alignment
@@ -391,9 +391,8 @@ SWAPLIST=#{swaps}
       end
       
       # set position for every partition
-      # TODO: テスト完了後 private 化
-      # TODO: disk_unit で計算しているため多少誤差がある
-      public
+      # XXX: sector で計算するようにすべきか
+      private
       def set_partition_positions
         unpreserved_group = []
         start_position = end_position = 0
@@ -417,8 +416,7 @@ SWAPLIST=#{swaps}
       end
       
       # set position for a group of unpreserved partitions between start and end
-      # TODO: テスト完了後 private 化
-      public
+      private
       def set_unreserved_group_position(unpreserved_group, start_position, end_position)
         return if unpreserved_group.empty?
         total_size = end_position - start_position + 1
@@ -626,7 +624,6 @@ SWAPLIST=#{swaps}
         end
 
         ext_part = partition "#{@name}#{slice_num}_extended" do |part|
-          # TODO: size を指定
           part.slice = "#{@name}#{slice_num}"
           part.kind = "extended"
           part.id = PARTITION_ID_EXTENDED

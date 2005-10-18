@@ -94,8 +94,6 @@ module Lucie
       array_attribute    :format_option # -c, -f, ...
       array_attribute    :fstab_option  # options for fstab
       
-      # TODO: –¢Žg—p mount_option
-      
       # ------------------------- Constructor.
       
       public

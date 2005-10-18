@@ -16,10 +16,10 @@
 # Depends: sfdisk, blkid, mke2fs, mkswap, mkfs.reiserfs, mkfs.xfs, swapon, dd, etc.
 
 require 'English'
-require 'lucie/setup-harddisks'
+require 'lucie/setup-harddisks/setup-harddisks'
 
 if __FILE__ == $PROGRAM_NAME
-  Lucie::SetupHarddisks.instance.main
+  Lucie::SetupHarddisks::SetupHarddisks.instance.main
 end
 
 ### Local variables:

@@ -1,8 +1,8 @@
 #
-# $Id: tc_setup-harddisk.rb 595 2005-04-28 07:37:05Z takamiya $
+# $Id$
 #
 # Author::   Yoshiaki Sakae (mailto:sakae@is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 595 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 $LOAD_PATH.unshift 'trunk/lib'

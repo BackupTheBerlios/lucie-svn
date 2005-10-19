@@ -1,8 +1,8 @@
 #
-# $Id: tc_specification.rb 670 2005-06-02 08:26:55Z takamiya $
+# $Id$
 #
 # Author::   Yoshiaki Sakae (mailto:sakae@is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 670 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 $LOAD_PATH.unshift 'trunk/lib'
@@ -25,7 +25,7 @@ class TC_Partition < Test::Unit::TestCase
       part.size = (128...200)
       part.bootable = true
       part.mount_option << "rw" << "nosuid"
-      part.format_option << "-j ext3"
+      part.format_option << "-c"
     end
     
     @part2 = partition "swap" do |part|
@@ -72,7 +72,7 @@ class TC_Partition < Test::Unit::TestCase
     assert_equal( (128...200), @part1.size )
     assert_equal( true, @part1.bootable )
     assert_equal( [ "rw", "nosuid" ], @part1.mount_option )
-    assert_equal( [ "-j ext3" ], @part1.format_option )
+    assert_equal( [ "-c" ], @part1.format_option )
   end
   
   public
@@ -194,6 +194,25 @@ class TC_Partition < Test::Unit::TestCase
       @part1.kind = "logical"
       @part1.bootable = true
     }
+  end
+  
+  # -------------------------
+  
+  public
+  def test_format
+    assert_nothing_raised {
+      @part1.format
+    }
+  end
+  
+  public
+  def test_write_fstab
+    res = <<-EOF
+/dev/sda1    /                 ext3     defaults  0    1   
+proc         /proc             proc     defaults  0    0   
+    EOF
+    fstab = @part1.write_fstab
+    assert_equal(res, fstab)
   end
 
   # ------------------------- Debug メソッドのテスト.

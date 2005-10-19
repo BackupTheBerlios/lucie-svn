@@ -1,8 +1,8 @@
 #
-# $Id: setup-harddisk.rb 595 2005-04-28 07:37:05Z takamiya $
+# $Id$
 #
 # Author::   Yoshiaki Sakae (mailto:sakae@is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 595 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 require 'lucie/config/resource'
@@ -123,7 +123,7 @@ module Lucie
         unless (_slice.nil?) || ( /\A[\w\-_\/]+\z/ =~ _slice)
           raise InvalidAttributeException, "Invalid attribute for slice: #{_slice}"
         end
-        if !_slice.nil?
+        unless _slice.nil?
           sl = _slice.gsub(/^\/dev\//, '').downcase
           if @@defined_slices.has_key?(sl)
             raise InvalidAttributeException, "Slice /dev/#{sl} is redefined."
@@ -275,17 +275,17 @@ module Lucie
       end
       
       public
-      def write_fstab(boot_partition)
+      def write_fstab
         return "" if @kind == "extended"
         (@dump_enabled)? dump = 1 : dump = 0
         if @fs.fsck_enabled
-          (self == boot_partition)? fsck_order = 1 : fsck_order = 2
+          (@bootable)? fsck_order = 1 : fsck_order = 2
         else
           fsck_order = 0
         end
         fstab_options = (@fs.fstab_options + @fstab_option).uniq.join(',')
         fstab = build_fstab_line("/dev/#{@slice}", @mount_point, @fs.fs_type, fstab_options, dump, fsck_order)
-        if (self == boot_partition)
+        if @bootable
           # XXX: Proc < Filesystem ‚Å‚«‚¿‚ñ‚Æ‘Î‰ž‚µ‚½‚¢
           fstab += build_fstab_line("proc", "/proc", "proc", "defaults", 0, 0)
         end

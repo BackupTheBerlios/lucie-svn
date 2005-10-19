@@ -1,8 +1,8 @@
 #
-# $Id: tc_specification.rb 670 2005-06-02 08:26:55Z takamiya $
+# $Id$
 #
 # Author::   Yoshiaki Sakae (mailto:sakae@is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 670 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 $LOAD_PATH.unshift 'trunk/lib'

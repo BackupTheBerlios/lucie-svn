@@ -1,8 +1,8 @@
 #
-# $Id: setup-harddisk.rb 595 2005-04-28 07:37:05Z takamiya $
+# $Id$
 #
 # Author::   Yoshiaki Sakae (mailto:sakae@is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 595 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 require 'lucie/config/resource'
@@ -144,7 +144,7 @@ module Lucie
 BOOT_DEVICE=/dev/#{boot_dev}
 ROOT_PARTITION=/dev/#{root_part}
 BOOT_PARTITION=/dev/#{boot_part}
-SWAPLIST=#{swaps}
+SWAPLIST=#{swaps.join(' ')}
         EOF
         
         if $commandline_options.no_test
@@ -165,7 +165,7 @@ SWAPLIST=#{swaps}
         unless (_name.nil?) || ( /\A[\w\-_\/]+\z/ =~ _name)
           raise InvalidAttributeException, "Invalid attribute for name: #{_name}"
         end
-        @name = _name.gsub(/^\/dev\//, '').downcase if !_name.nil?
+        @name = _name.gsub(/^\/dev\//, '').downcase unless _name.nil?
       end
 
 
@@ -205,7 +205,7 @@ SWAPLIST=#{swaps}
       public
       def save_old_partition(res = nil)    # an arg is intended for test
         if res == nil
-          result = `sfdisk -d -q "/dev/#{@name}" 2> /dev/null`
+          result = `sfdisk -d -q "/dev/#{@name}"`
         else
           result = res
         end
@@ -266,7 +266,7 @@ SWAPLIST=#{swaps}
               raise StandardError, "Unable to preserve partitions of size 0."
             end
           else
-            # If not preserve we must know the filesystemtype. Default is ext2.
+            # If not preserve we must know the filesystem type. Default is ext2.
             part.fs = "ext2" if part.fs.nil?
           end
         end
@@ -328,6 +328,8 @@ SWAPLIST=#{swaps}
           if slice_number < START_NUMBER_OF_LOGICAL_PARTITION
             if each.kind.nil?
               each.kind = "primary"
+            elsif each.kind == "logical"
+              raise StandardError, "Partition before number #{START_NUMBER_OF_LOGICAL_PARTITION} must be a primary partition."
             end
           else
             if each.kind.nil?
@@ -339,7 +341,6 @@ SWAPLIST=#{swaps}
         end
       end
       
-
       public
       def calc_requested_partition_size
         @partitions.each do |part|
@@ -352,7 +353,6 @@ SWAPLIST=#{swaps}
           end
         end
       end
-
 
       public
       def build_partition_table
@@ -517,7 +517,7 @@ SWAPLIST=#{swaps}
       def write_fstab
         fstab = ""
         @partitions.each do |part|
-          fstab += part.write_fstab(@boot_partition)
+          fstab += part.write_fstab
         end
         return fstab
       end
@@ -600,7 +600,6 @@ SWAPLIST=#{swaps}
       
       private
       def insert_extended_partition
-        # TODO: logical は5以上チェック！
         return if @partitions.empty?
         idx = 0
         find_logical = false

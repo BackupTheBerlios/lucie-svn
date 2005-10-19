@@ -28,7 +28,7 @@ module Lucie
           if $commandline_options.no_test
             raise StandardError, "Cannot find #{@format_program} in the PATH"
           else
-            puts "Cannot find #{@format_program} in the PATH"
+            $stderr.puts "Cannot find #{@format_program} in the PATH"
           end
         end
       end

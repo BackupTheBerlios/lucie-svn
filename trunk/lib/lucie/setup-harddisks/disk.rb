@@ -195,7 +195,7 @@ SWAPLIST=#{swaps.join(' ')}
         end
         if SFDISK_CHS_REGEXP =~ result
           @disk_unit = $3.to_i * $4.to_i;  # heads * sectors = cylinder size in sectors
-          @disk_size = $2.to_i;       # cylinders
+          @disk_size = $2.to_i;            # cylinders
           ($commandline_options.dos_alignment == true) ? (@sector_alignment = $4.to_i) : (@sector_alignment = 1)            
         end
       end
@@ -277,7 +277,7 @@ SWAPLIST=#{swaps.join(' ')}
         @partitions.each do |part|
           if part.fs.instance_of?(Swap) && part.mount_point != "none"
             part.mount_point = "none"
-            puts "Mountpoints of swap partition should be 'none'"
+            $stderr.puts "Mountpoints of swap partition should be 'none'"
           end
         end
       end

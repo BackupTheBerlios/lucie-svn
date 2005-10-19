@@ -305,7 +305,7 @@ unit: sectors
   end
   
   public
-  def test_xxx
+  def test_all
     setup_dummy_disk_unit
     setup_dummy_old_partition
     setup_dummy_partition_attrib

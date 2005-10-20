@@ -83,8 +83,14 @@ end
 
 # ------------------------- Package Tasks.
 
+# rake TESTING=true targets...
+# でテスト用ディレクトリにアップロード
 def server_uri( pathString )
-  return File.join( LMP_SERVER_URI, pathString )
+  if ENV['TESTING']
+    return File.join( LMP_SERVER_URI, 'testing', pathString )
+  else
+    return File.join( LMP_SERVER_URI, pathString )
+  end
 end
 
 # Build Debian packages of Lucie.
@@ -99,7 +105,7 @@ desc 'Lucie メタパッケージのアップロード'
 task :upload_lmp do
   tmp_dir = '../upload/lmp'
   scp_targets = %{Packages *.gz *.dsc *.deb *.build *.changes}
-  scp_destination = File.join( LMP_SERVER_URI, 'packages/lmp' )
+  scp_destination = server_uri( 'packages/lmp' )
   
   mkdir_p tmp_dir
   cp FileList["data/lmp/*.gz"], tmp_dir

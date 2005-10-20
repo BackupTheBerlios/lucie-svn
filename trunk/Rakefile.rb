@@ -168,6 +168,11 @@ task :fixme do
   sh %{find . -name '*.rb' | grep -v './debian/' | xargs grep -n 'FIXME' -}
 end
 
+desc 'Cのソースコードをコンパイルする'
+file "vmlucie-compile" do |t|
+    sh %{gcc -o bin/vmlucie-setup src/vmlucie-setup.c}; 
+end
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

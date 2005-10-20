@@ -83,6 +83,10 @@ end
 
 # ------------------------- Package Tasks.
 
+def server_uri( pathString )
+  return File.join( LMP_SERVER_URI, pathString )
+end
+
 # Build Debian packages of Lucie.
 # For information about packages, see debian/control.
 desc 'Lucie パッケージのビルド'
@@ -98,11 +102,11 @@ task :upload_lmp do
   scp_destination = File.join( LMP_SERVER_URI, 'packages/lmp' )
   
   mkdir_p tmp_dir
-  sh %{mv data/lmp/*.gz      #{tmp_dir}}
-  sh %{mv data/lmp/*.dsc     #{tmp_dir}}
-  sh %{mv data/lmp/*.deb     #{tmp_dir}}
-  sh %{mv data/lmp/*.build   #{tmp_dir}}
-  sh %{mv data/lmp/*.changes #{tmp_dir}}
+  cp FileList["data/lmp/*.gz"], tmp_dir
+  cp FileList["data/lmp/*.dsc"], tmp_dir
+  cp FileList["data/lmp/*.deb"], tmp_dir
+  cp FileList["data/lmp/*.build"], tmp_dir
+  cp FileList["data/lmp/*.changes"], tmp_dir
   sh %{cd #{tmp_dir} && apt-ftparchive packages . > Packages}
   sh %{cd #{tmp_dir} && gzip -c9 Packages > Packages.gz}
   sh %{cd #{tmp_dir} && apt-ftparchive sources  . | gzip -c9 > Sources.gz}
@@ -114,8 +118,7 @@ end
 desc 'Lucie パッケージのアップロード'
 task :upload_lucie => [:deb] do
   tmp_dir = '../upload/lucie/'
-  scp_destination = File.join( LMP_SERVER_URI, 
-                               'packages/lucie/debian/sarge' )
+  scp_destination = server_uri( 'packages/lucie/debian/sarge' )
   mkdir_p tmp_dir
   sh %{mv ../lucie_*.deb    #{tmp_dir}}
   sh %{mv ../lucie_*.dsc    #{tmp_dir}}
@@ -130,8 +133,7 @@ end
 desc 'Lucie クライアント関連パッケージのアップロード'
 task :upload_lucie_client => [:deb] do 
   tmp_dir = '../upload/lucie-client'
-  scp_destination = File.join( LMP_SERVER_URI,
-                               'packages/lucie-client/debian/sarge/' )
+  scp_destination = server_uri( 'packages/lucie-client/debian/sarge/' )
   mkdir_p tmp_dir
   sh %{mv ../lucie-client*.deb #{tmp_dir}}
   sh %{cd #{tmp_dir} && apt-ftparchive packages . | gzip -c9 > Packages.gz}
@@ -142,8 +144,7 @@ end
 desc 'Deft パッケージのアップロード'
 task :upload_deft => [:deb] do
   tmp_dir = '../upload/lucie/'
-  scp_destination = File.join( LMP_SERVER_URI, 
-                               'packages/lucie/debian/sarge' )
+  scp_destination = server_uri( 'packages/lucie/debian/sarge' )
   mkdir_p tmp_dir
   sh %{mv ../deft_*.deb    #{tmp_dir}}
   sh %{cd #{tmp_dir} && apt-ftparchive packages . | gzip -c9 > Packages.gz}

@@ -176,8 +176,12 @@ task :fixme do
 end
 
 desc 'Cのソースコードをコンパイルする'
-file "vmlucie-compile" do |t|
-    sh %{gcc -o bin/vmlucie-setup src/vmlucie-setup.c}; 
+file "vmlucie-compile" => ["vmlucie-setup.o"] do |t|
+    sh %{gcc -o bin/vmlucie-setup src/vmlucie-setup.o}; 
+end
+
+file "vmlucie-setup.o" => ["src/vmlucie-setup.c"] do |t|
+    sh %{gcc -c -o src/vmlucie-setup.o src/vmlucie-setup.c};
 end
 
 ### Local variables:

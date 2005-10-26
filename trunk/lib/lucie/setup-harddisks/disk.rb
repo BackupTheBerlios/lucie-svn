@@ -313,13 +313,23 @@ SWAPLIST=#{swaps.join(' ')}
       
       public
       def partitions(compact = true)
-        parts = @primary_partitions + @extended_partitions + @logical_partitions
-        parts.compact! if compact
-#        if compact
-#          parts = (@primary_partitions + @extended_partitions + @logical_partitions).compact
-#        else
-#          parts = @primary_partitions + @extended_partitions.compact + @logical_partitions.compact
-#        end
+        if compact
+          parts = (@primary_partitions + @extended_partitions + @logical_partitions).compact
+        else
+          # XXX: @logical_partitions ÇÃÉTÉCÉYÇ™ç≈Ç‡ëÂÇ´Ç¢Ç±Ç∆Ç…àÀë∂ÇµÇ∑Ç¨
+          parts = []
+          @logical_partitions.each_index do |idx|
+            if !@primary_partitions[idx].nil?
+              parts[idx] = @primary_partitions[idx]
+            elsif !@extended_partitions[idx].nil?
+              parts[idx] = @extended_partitions[idx]
+            elsif !@logical_partitions[idx].nil?
+              parts[idx] = @logical_partitions[idx]
+            else
+              parts[idx] = nil
+            end
+          end
+        end
         return parts
       end
       
@@ -502,13 +512,10 @@ SWAPLIST=#{swaps.join(' ')}
           return
         end
         sfdisk_table = "# partition table of device: /dev/#{@name}\n\n"
-=begin
-        idx = 0
-        p partitions
-        p partitions(false)
-        partitions(false).each do |part|
+
+        partitions(false).each_with_index do |part, idx|
           if part.nil?
-            if idx < MAX_PRIMARIES - 1
+            if idx < MAX_PRIMARIES
               sfdisk_table += build_sfdisk_dump_line(build_slice_name(idx+1), 0, 0, 0) + "\n"
             end
           else
@@ -516,21 +523,6 @@ SWAPLIST=#{swaps.join(' ')}
             line += ", bootable" if part == boot_partition
             sfdisk_table += "#{line}\n"
           end
-          idx += 1
-        end
-=end
-        primary_no = 1
-        partitions.each do |part|
-          primary_no += 1 if part.kind =~ /primary|extended/
-          if part.slice_number == FIRST_LOGICAL &&
-              primary_no < FIRST_LOGICAL
-            (primary_no..(FIRST_LOGICAL - 1)).each do |each|
-              sfdisk_table += build_sfdisk_dump_line(build_slice_name(each), 0, 0, 0) + "\n"
-            end
-          end
-          line = build_sfdisk_dump_line(part.slice, part.start_sector, part.size, part.id.to_s(16))
-          line += ", bootable" if part == boot_partition
-          sfdisk_table += "#{line}\n"
         end
 
         sfdisk_input_file = $commandline_options.log_dir + "/#{SFDISK_PARTITION_FILE_PREFIX}." + @name.gsub('/', '_')
@@ -675,7 +667,7 @@ SWAPLIST=#{swaps.join(' ')}
           part.size = 0
           part.id = PARTITION_ID_EXTENDED
         end
-        @primary_partitions.insert(slice_num - 1, ext_part)
+        @primary_partitions[slice_num - 1] = ext_part
         return ext_part
 =end
         # primary ÇÃä‘Ç… extended Çì¸ÇÍÇ»Ç¢
@@ -686,8 +678,9 @@ SWAPLIST=#{swaps.join(' ')}
           part.size = 0
           part.id = PARTITION_ID_EXTENDED
         end
-        @extended_partitions.insert(slice_num - 1, ext_part)
+        @extended_partitions[slice_num - 1] = ext_part
         return ext_part
+
       end
       
       public

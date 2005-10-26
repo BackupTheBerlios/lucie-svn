@@ -55,6 +55,8 @@ class TC_Partition < Test::Unit::TestCase
   def setter_method_test( attributeNameSymbol )
     begin
       partition attributeNameSymbol.to_s do |part|
+        part.slice = attributeNameSymbol.to_s + "1"
+        part.preserve = true
         part.send( attributeNameSymbol.to_s + '=', nil )
       end
     rescue
@@ -104,16 +106,26 @@ class TC_Partition < Test::Unit::TestCase
   public
   def test_set_slice
     assert_raises(InvalidAttributeException) {
-      partition "root2"  do |part|
-        part.slice = "/dev/sda1"
-      end
+      @part2.slice = "hda0"         # slice number ‚Í1ˆÈã
+    }
+  end
+  
+  public
+  def test_set_kind
+    assert_nothing_raised {
+      @part2.kind = "prImary"
+      @part2.kind = "logical"
+      @part2.kind = "extended"
+      @part2.kind = nil
+    }
+    assert_raises(InvalidAttributeException) {
+      @part2.kind = "invalid"
     }
   end
   
   public
   def test_set_fs
     assert_raises(InvalidAttributeException) {
-      @part2.fs = "fat16"
       @part2.fs = "sapw"
     }
     assert_nothing_raised {
@@ -122,6 +134,8 @@ class TC_Partition < Test::Unit::TestCase
       @part2.fs = "ReiserFS"
       @part2.fs = "XFS"
       @part2.fs = "swaP"
+      @part2.fs = "fat16"
+      @part2.fs = "Fat32"
     }
   end
   
@@ -148,17 +162,6 @@ class TC_Partition < Test::Unit::TestCase
       @part2.mount_point = "SwAP"
       @part2.mount_point = "-"
     }
-    assert_raises(InvalidAttributeException) {
-      @part2.mount_point = "/"
-    }
-  end
-  
-  public
-  def test_format
-    @part1.fs = "ext3"
-    @part1.format_option = "-c"
-    @part1.slice = "/dev/hda5"
-#     @part1.format
   end
   
   public
@@ -169,6 +172,29 @@ class TC_Partition < Test::Unit::TestCase
     }
     assert_raises(InvalidAttributeException) {
       @part1.preserve = "yes"
+    }
+    assert_raises(InvalidAttributeException) {
+      partition "test1" do |part|
+        part.slice = "sda"
+        part.preserve = true
+      end
+    }
+    assert_raises(InvalidAttributeException) {
+      partition "test2" do |part|
+        part.preserve = true
+        part.slice = "sda"
+      end
+    }
+  end
+  
+  public
+  def test_set_dump_enabled
+    assert_nothing_raised {
+      @part1.dump_enabled = true
+      @part1.dump_enabled = false
+    }
+    assert_raises(InvalidAttributeException) {
+      @part1.dump_enabled = "yes"
     }
   end
   
@@ -193,6 +219,102 @@ class TC_Partition < Test::Unit::TestCase
     assert_raises(InvalidAttributeException) {
       @part1.kind = "logical"
       @part1.bootable = true
+    }
+  end
+  
+  public
+  def test_essential_attributes
+    assert_nothing_raised {
+      partition "test1" do |part|
+        part.preserve = true
+        part.slice = "hda1"
+      end
+      
+      partition "test2" do |part|
+        part.slice = "hda2"
+        part.kind = "primary"
+        part.size = 100
+      end
+
+      partition "test3" do |part|
+        part.preserve = false
+        part.slice = "hda3"
+        part.kind = "primary"
+        part.size = 100
+      end
+    }
+    
+    assert_raises(InvalidAttributeException) {
+      partition "test4" do |part|
+      end
+    }
+    
+    assert_raises(InvalidAttributeException) {
+      partition "test5" do |part|
+        part.preserve = true
+      end
+    }
+    
+    assert_raises(InvalidAttributeException) {      
+      partition "test6" do |part|
+        part.preserve = false
+        part.kind = "logical"
+        part.size = 100
+      end
+    }
+
+    assert_raises(InvalidAttributeException) {      
+      partition "test7" do |part|
+        part.preserve = false
+        part.slice = "hda7"
+        part.size = 100
+      end
+    }
+
+    assert_raises(InvalidAttributeException) {      
+      partition "test8" do |part|
+        part.preserve = false
+        part.slice = "hda8"
+        part.kind = "logical"
+      end
+    }
+  end
+  
+  public
+  def test_redundant_definition
+    partition "test" do |part|
+      part.slice = "hda1"
+      part.kind = "primary"
+      part.size = 100
+      part.mount_point = "/mnt/test"
+    end
+    
+    assert_raises(InvalidAttributeException) {
+      # label "test" is redefined
+      partition "test" do |part|
+        part.slice = "hda2"
+        part.kind = "primary"
+        part.size = 100
+      end
+    }
+
+    assert_raises(InvalidAttributeException) {
+      # slice is redefined
+      partition "test2" do |part|
+        part.slice = "hda1"
+        part.kind = "primary"
+        part.size = 100
+      end
+    }
+      
+    assert_raises(InvalidAttributeException) {
+      # mount_point is redefined
+      partition "test3" do |part|
+        part.slice = "hda3"
+        part.kind = "primary"
+        part.size = 100
+        part.mount_point = "/mnt/test"
+      end
     }
   end
   

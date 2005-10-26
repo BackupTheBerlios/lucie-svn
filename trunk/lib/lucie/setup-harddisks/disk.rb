@@ -32,7 +32,9 @@ module Lucie
       required_attribute :boot_partition
       required_attribute :sector_alignment
 
-      attr_reader :partitions
+      attr_reader :primary_partitions
+      attr_reader :logical_partitions
+      attr_reader :extended_partitions
       attr_reader :old_partitions
       attr_reader :number_of_primary_partitions
       attr_reader :number_of_logical_partitions
@@ -72,10 +74,69 @@ module Lucie
       public
       def self.assign_partition(part_list)
         # set_partition_positions などのため順序が重要
-        parts = part_list.sort_by{|key, part| part.slice}
-        parts.each do |key, part|
-          disk = part.slice.gsub(/\d*\z/, '')
+        part_list.each do |key, part|
+          disk = part.disk
           raise StandardError, "Could not read device: /dev/#{disk}" unless @@list.has_key?(disk)
+          if part.has_slice_number?
+            case part.kind
+            when "primary"
+              if part.slice_number > MAX_PRIMARIES
+                raise StandardError, "Partition after number #{MAX_PRIMARIES} must be a logical partition."
+              end
+              @@list[disk].primary_partitions[part.slice_number - 1] = part
+            when "logical"
+              if part.slice_number < FIRST_LOGICAL
+                raise StandardError, "Partition before number #{FIRST_LOGICAL} must be a primary partition."
+              end
+              @@list[disk].logical_partitions[part.slice_number - 1] = part
+            when "extended"
+            # XXX: 設定ファイルで extended を明示指定するのは未サポート
+              $stderr.puts "Extended partition is defined in config for #{part.slice}"
+              @@list[disk].extended_partitions[part.slice_number - 1] = part
+            when nil
+              # may be preserve partition
+              if part.slice_number < FIRST_LOGICAL
+                @@list[disk].primary_partitions[part.slice_number - 1] = part
+              else
+                @@list[disk].logical_partitions[part.slice_number - 1] = part
+              end
+            else
+              # should not reach here
+              raise StandardError, "Invalid partition type: #{part.kind} for #{part.slice}"
+            end
+          end
+        end
+      
+        part_list.each do |key, part|
+          disk = part.disk
+          unless part.has_slice_number?
+            case part.kind
+            when "primary"
+              idx = @@list[disk].find_first_nil_idx(@@list[disk].primary_partitions)
+              part.slice = "#{part.slice}#{idx + 1}"
+              @@list[disk].primary_partitions[idx] = part
+            when "logical"
+              idx = @@list[disk].find_first_nil_idx(@@list[disk].logical_partitions[MAX_PRIMARIES, @@list[disk].logical_partitions.length]) + MAX_PRIMARIES
+              part.slice = "#{part.slice}#{idx + 1}"
+              @@list[disk].logical_partitions[idx] = part
+            when "extended"
+              idx = @@list[disk].find_first_nil_idx(@@list[disk].extended_partitions)
+              part.slice = "#{part.slice}#{idx + 1}"
+              @@list[disk].extended_partitions[idx] = part
+            when nil
+              # preserve partition
+              if part.preserve
+                # should not reach here
+                raise StandardError, "The slice must be specified with slice number for preserve partition. (#{part.name})"
+              else
+                raise StandardError, "Unknown condition."
+              end
+            else
+              # should not reach here
+              raise StandardError, "Invalid partition type: #{part.kind} for #{part.slice}"
+            end
+          end
+
           if part.bootable
             if @@list[disk].bootable_device && @@list[disk].boot_partition != part
               raise StandardError, "Only one partition can be bootable at a time."
@@ -84,8 +145,24 @@ module Lucie
               @@list[disk].boot_partition = part
             end
           end
-          @@list[disk].partitions << part
         end
+      end
+
+      private
+      def self.slice_to_logical_idx(sl_num)
+        return sl_num - FIRST_LOGICAL
+      end
+
+      public
+      def find_first_nil_idx(array)
+        idx = 0
+        unless array.empty?
+          array.each do |each|
+            break if each.nil?
+            idx += 1
+          end
+        end
+        return idx
       end
 
       public
@@ -95,7 +172,6 @@ module Lucie
         check_swap_partition
         check_number_of_bootable_devices
         check_number_of_primary_partitions
-        check_partition_order
         calc_requested_partition_size
       end
 
@@ -176,7 +252,9 @@ SWAPLIST=#{swaps.join(' ')}
         set_default_values
         ENV['LC_ALL']='C'
         @name = dev
-        @partitions = []
+        @primary_partitions = Array.new(MAX_PRIMARIES)
+        @logical_partitions = Array.new(FIRST_LOGICAL)
+        @extended_partitions = []
         @old_partitions = {}
         yield self if block_given?
         register
@@ -234,8 +312,20 @@ SWAPLIST=#{swaps.join(' ')}
       end
       
       public
+      def partitions(compact = true)
+        parts = @primary_partitions + @extended_partitions + @logical_partitions
+        parts.compact! if compact
+#        if compact
+#          parts = (@primary_partitions + @extended_partitions + @logical_partitions).compact
+#        else
+#          parts = @primary_partitions + @extended_partitions.compact + @logical_partitions.compact
+#        end
+        return parts
+      end
+      
+      public
       def check_preserve_partition
-        @partitions.each do |part|
+        partitions.each do |part|
           if part.preserve
             slice = part.slice
             if @old_partitions.has_key?(slice)
@@ -274,76 +364,25 @@ SWAPLIST=#{swaps.join(' ')}
 
       public
       def check_swap_partition
-        @partitions.each do |part|
+        partitions.each do |part|
           if part.fs.instance_of?(Swap) && part.mount_point != "none"
             part.mount_point = "none"
             $stderr.puts "Mountpoints of swap partition should be 'none'"
           end
         end
       end
-      
+
       public
       def check_number_of_primary_partitions
-        @number_of_primary_partitions = 0
-        @number_of_logical_partitions = 0
-        @partitions.each do |part|
-          case part.kind
-            when "primary"
-              @number_of_primary_partitions += 1
-            when "logical"
-              @number_of_logical_partitions += 1
-            when nil
-              # may be preserve partition
-            else
-              # should not reach here.
-              raise StandardError, "Invalid attribute for kind: #{part.kind}"
-          end
-        end
-        if (@number_of_primary_partitions > 3 && @number_of_logical_partitions > 0) ||
-             @number_of_primary_partitions > 4
+        if (@primary_partitions.nitems > (MAX_PRIMARIES - 1) && @logical_partitions.nitems > 0) ||
+            @primary_partitions.nitems > MAX_PRIMARIES
           raise StandardError, "Too much primary partitions (max 4) for /dev/#{@name}. All logicals together need one primary too."
         end
       end
-      
-      public
-      def check_partition_order
-        no_more_logicals = false
-        once_logical = false
-        @partitions.each do |each|
-          case each.kind
-            when "primary"
-              if once_logical
-                no_more_logicals = true
-              end
-            when "logical"
-              if no_more_logicals
-                raise StandardError, "The logical partitions must be together."
-              end
-              if !once_logical
-                once_logical = true
-              end
-          end
 
-          slice_number = each.slice_number
-          if slice_number < START_NUMBER_OF_LOGICAL_PARTITION
-            if each.kind.nil?
-              each.kind = "primary"
-            elsif each.kind == "logical"
-              raise StandardError, "Partition before number #{START_NUMBER_OF_LOGICAL_PARTITION} must be a primary partition."
-            end
-          else
-            if each.kind.nil?
-              each.kind = "logical"
-            elsif each.kind == "primary"
-              raise StandardError, "Partition after number #{START_NUMBER_OF_LOGICAL_PARTITION} must be a logical partition."
-            end
-          end
-        end
-      end
-      
       public
       def calc_requested_partition_size
-        @partitions.each do |part|
+        partitions.each do |part|
           if part.size.is_a?(Range)
             part.min_size = ((part.size.first * MEGABYTE - 1) / (@disk_unit * SECTOR_SIZE)) + 1
             part.max_size = ((part.size.last  * MEGABYTE - 1) / (@disk_unit * SECTOR_SIZE)) + 1
@@ -358,14 +397,13 @@ SWAPLIST=#{swaps.join(' ')}
       def build_partition_table
         set_partition_positions
         # change units to sectors
-        @partitions.each do |each|
+        partitions.each do |each|
           unless each.preserve   # preserve partition は check_settings->check_preserve_partition でコピー済み
             each.start_sector = each.start_unit * @disk_unit
             each.end_sector = each.end_unit * @disk_unit - 1
             each.size *= @disk_unit
           end
           # align first partition for mbr
-          # XXX: dos alignment の調整は set_parition_positions 内で先にやっておくべきか
           if each.start_sector == 0
             each.start_sector += @sector_alignment
             each.size -= @sector_alignment
@@ -373,9 +411,9 @@ SWAPLIST=#{swaps.join(' ')}
         end
         
         # align all logical partitions
-        @partitions.each do |each|
-          next if each.kind == "primary"
-          if each.slice_number == START_NUMBER_OF_LOGICAL_PARTITION
+        @logical_partitions.each do |each|
+          next if each.nil?
+          if each.slice_number == FIRST_LOGICAL
             # First logical partition and start of extended partition
             @start_sector_of_extended = each.start_sector
             @start_sector_of_extended -= @sector_alignment if each.preserve
@@ -391,12 +429,11 @@ SWAPLIST=#{swaps.join(' ')}
       end
       
       # set position for every partition
-      # XXX: sector で計算するようにすべきか
       private
       def set_partition_positions
         unpreserved_group = []
         start_position = end_position = 0
-        @partitions.each do |each|
+        partitions.each do |each|
           if each.preserve
             end_position = @old_partitions[each.slice].start_unit - 1
             set_unreserved_group_position(unpreserved_group, start_position, end_position)
@@ -408,7 +445,7 @@ SWAPLIST=#{swaps.join(' ')}
         end
         end_position = @disk_size - 1
         set_unreserved_group_position(unpreserved_group, start_position, end_position)
-        @partitions.each do |each|
+        partitions.each do |each|
           if each.fs.instance_of?(Fat16) && each.size * @disk_unit * SECTOR_SIZE < 32 * MEGABYTE
             each.id = PARTITION_ID_FAT16S
           end
@@ -460,17 +497,34 @@ SWAPLIST=#{swaps.join(' ')}
 
       public
       def fdisk
-        if @partitions.empty?
+        if partitions.empty?
           puts "Skipping sfdisk on /dev/#{@name}: there is no partitions" if $commandline_options.verbose
           return
         end
         sfdisk_table = "# partition table of device: /dev/#{@name}\n\n"
+=begin
+        idx = 0
+        p partitions
+        p partitions(false)
+        partitions(false).each do |part|
+          if part.nil?
+            if idx < MAX_PRIMARIES - 1
+              sfdisk_table += build_sfdisk_dump_line(build_slice_name(idx+1), 0, 0, 0) + "\n"
+            end
+          else
+            line = build_sfdisk_dump_line(part.slice, part.start_sector, part.size, part.id.to_s(16))
+            line += ", bootable" if part == boot_partition
+            sfdisk_table += "#{line}\n"
+          end
+          idx += 1
+        end
+=end
         primary_no = 1
-        @partitions.each do |part|
+        partitions.each do |part|
           primary_no += 1 if part.kind =~ /primary|extended/
-          if part.slice_number == START_NUMBER_OF_LOGICAL_PARTITION &&
-              primary_no < START_NUMBER_OF_LOGICAL_PARTITION
-            (primary_no..(START_NUMBER_OF_LOGICAL_PARTITION - 1)).each do |each|
+          if part.slice_number == FIRST_LOGICAL &&
+              primary_no < FIRST_LOGICAL
+            (primary_no..(FIRST_LOGICAL - 1)).each do |each|
               sfdisk_table += build_sfdisk_dump_line(build_slice_name(each), 0, 0, 0) + "\n"
             end
           end
@@ -478,6 +532,7 @@ SWAPLIST=#{swaps.join(' ')}
           line += ", bootable" if part == boot_partition
           sfdisk_table += "#{line}\n"
         end
+
         sfdisk_input_file = $commandline_options.log_dir + "/#{SFDISK_PARTITION_FILE_PREFIX}." + @name.gsub('/', '_')
         if $commandline_options.no_test
           begin
@@ -487,6 +542,7 @@ SWAPLIST=#{swaps.join(' ')}
           rescue => ex
             raise
           end
+          printf sfdisk_table if $commandline_options.verbose
         else
           printf sfdisk_table
         end
@@ -500,7 +556,7 @@ SWAPLIST=#{swaps.join(' ')}
       
       public
       def format
-        @partitions.each do |each|
+        partitions.each do |each|
           each.format
         end
       end
@@ -508,7 +564,7 @@ SWAPLIST=#{swaps.join(' ')}
       public
       def mount
         # not used
-        @partitions.each do |each|
+        partitions.each do |each|
           each.mount
         end
       end
@@ -516,7 +572,7 @@ SWAPLIST=#{swaps.join(' ')}
       public
       def write_fstab
         fstab = ""
-        @partitions.each do |part|
+        partitions.each do |part|
           fstab += part.write_fstab
         end
         return fstab
@@ -541,29 +597,34 @@ SWAPLIST=#{swaps.join(' ')}
       private
       def self.check_number_of_bootable_devices
         number_of_bootable_device = 0
+        boot_part = nil
         @@list.each do |key, disk|
-          number_of_bootable_device += 1 if disk.bootable_device
+          if disk.bootable_device
+            number_of_bootable_device += 1
+            boot_part = disk.boot_partition
+          end
         end
         if number_of_bootable_device == 0
           @@list.each do |key, disk|
             disk.partitions.each do |part|
+            # XXX: /boot パーティションを優先すべきなのか？
               if part.mount_point == "/"
                 disk.bootable_device = true
+                disk.boot_partition = boot_part = part
                 number_of_bootable_device += 1
               end
             end
           end
         end
-        raise StandardError, "Only one device must be bootable." if number_of_bootable_device != 1
-      end
-            
-      private
-      def self.check_partition_order
-        @@list.each do |key, disk|
-          disk.check_partition_order
+        if number_of_bootable_device == 0
+          $stderr.puts "WARNING: There is no bootable device."
+        elsif number_of_bootable_device == 1 && boot_part.mount_point == "none"
+          $stderr.puts "WARNING: The boot partition has no mount point."
+        elsif number_of_bootable_device > 1
+          raise StandardError, "Only one device must be bootable."
         end
       end
-      
+            
       private
       def self.check_number_of_primary_partitions
         @@list.each do |key, disk|
@@ -585,55 +646,63 @@ SWAPLIST=#{swaps.join(' ')}
       def calculate_extended_partition_size
         ext_part = insert_extended_partition
         return if ext_part.nil?
-
         ext_end = @start_sector_of_extended
-        @partitions.each do |part|
-          if part.kind == "logical"
-            new_end = 
-            ext_end = part.end_sector if part.end_sector > ext_end
-          end
+        @logical_partitions.each do |part|
+          next if part.nil?
+          new_end = 
+          ext_end = part.end_sector if part.end_sector > ext_end
         end
         ext_part.start_sector = @start_sector_of_extended
         ext_part.end_sector = ext_end
         ext_part.size = ext_part.end_sector - ext_part.start_sector + 1
       end
-      
+
       private
       def insert_extended_partition
-        return if @partitions.empty?
-        idx = 0
-        find_logical = false
-        @partitions.each do |part|
-          if part.kind == "logical"
-            find_logical = true
-            break
-          end
-          idx += 1
+        return if partitions.empty?
+        return if @logical_partitions.nitems == 0
+        if @primary_partitions.nitems >= MAX_PRIMARIES
+           # should not reach here
+          raise StandardError, "There is no space for extended partition"
         end
-        return unless find_logical
-
-        if idx == 0
-          slice_num = 1
-        else
-          slice_num = @partitions[idx-1].slice_number + 1
-          if slice_num > 4
-            # should not reach here
-            raise StandardError, "There is no space for extended partition"
-          end
-        end
-
+=begin
+        # primary の間に extended を入れる
+        # この場合 extended_partitions は使用されない
+        slice_num = find_first_nil_idx(@primary_partitions) + 1
         ext_part = partition "#{@name}#{slice_num}_extended" do |part|
           part.slice = "#{@name}#{slice_num}"
           part.kind = "extended"
+          part.size = 0
           part.id = PARTITION_ID_EXTENDED
         end
-        @partitions.insert(idx, ext_part)
+        @primary_partitions.insert(slice_num - 1, ext_part)
         return ext_part
+=end
+        # primary の間に extended を入れない
+        slice_num = find_last_nil_idx(@primary_partitions[0, MAX_PRIMARIES]) + 1
+        ext_part = partition "#{@name}#{slice_num}_extended" do |part|
+          part.slice = "#{@name}#{slice_num}"
+          part.kind = "extended"
+          part.size = 0
+          part.id = PARTITION_ID_EXTENDED
+        end
+        @extended_partitions.insert(slice_num - 1, ext_part)
+        return ext_part
+      end
+      
+      public
+      def find_last_nil_idx(array)
+        idx = array.length - 1
+        array.reverse_each do |each|
+          break unless each.nil?
+          idx -= 1
+        end
+        return idx + 1
       end
 
       private
       def print_partition_table
-        @partitions.each do |each|
+        partitions.each do |each|
           if each.mount_point.nil?#
             mp = "none"
           else

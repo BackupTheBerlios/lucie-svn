@@ -20,7 +20,6 @@ include Lucie::SetupHarddisks
 module Lucie
   module SetupHarddisks
     class Partition < Lucie::Config::Resource
-    
       # 登録されている Partition のリスト
       @@list = {}
       
@@ -52,6 +51,10 @@ module Lucie
       @@defined_labels = {}
       @@defined_slices = {}
       @@defined_mount_points = {}
+      
+      # 必須属性（nil 以外の値が必要）
+      @@essential_attributes_for_preserve = [:slice]
+      @@essential_attributes_for_non_preserve = [:slice, :kind, :size]
 
       # 登録されているリソースをクリアする
       public
@@ -93,15 +96,17 @@ module Lucie
       required_attribute :dump_enabled  # dump options for fstab
       array_attribute    :format_option # -c, -f, ...
       array_attribute    :fstab_option  # options for fstab
-      
+            
       # ------------------------- Constructor.
       
       public
       def initialize( label, &block ) # :yield: self
         set_default_values
         self.name = label
+        @essential_attributes = @@essential_attributes_for_non_preserve
         yield self if block_given?
         register
+        check_essential_attributes
       end
   
       # ------------------------- Special accessor behaviours (overwriting default).
@@ -125,10 +130,18 @@ module Lucie
         end
         unless _slice.nil?
           sl = _slice.gsub(/^\/dev\//, '').downcase
-          if @@defined_slices.has_key?(sl)
-            raise InvalidAttributeException, "Slice /dev/#{sl} is redefined."
-          else
-            @@defined_slices[sl] = self
+          if has_slice_number?(sl)
+            if slice_number(sl) > 0
+              if @@defined_slices.has_key?(sl)
+                raise InvalidAttributeException, "Slice /dev/#{sl} is redefined."
+              else
+                @@defined_slices[sl] = self
+              end
+            else
+              raise InvalidAttributeException, "Slice number must be larger than 1 (#{sl})"
+            end
+          elsif @preserve
+            raise InvalidAttributeException, "Preserve partition must be specified with slice number: #{@name}:#{@slice}"
           end
         end
         @slice = sl
@@ -149,6 +162,9 @@ module Lucie
         when /swap/i
           @fs = Swap.new
           @id = PARTITION_ID_LINUX_SWAP
+          if @bootable
+            raise InvalidAttributeException, "Swap partition cannot be bootable."
+          end
         when /ext2/i
           @fs = Ext2.new
           @id = PARTITION_ID_LINUX_NATIVE
@@ -185,6 +201,16 @@ module Lucie
         unless _preserve.nil? || _preserve.instance_of?(FalseClass) || _preserve.instance_of?(TrueClass)
           raise InvalidAttributeException, "Invalid attribute for preserve: #{_preserve}"
         end
+        if _preserve
+          @essential_attributes = @@essential_attributes_for_preserve
+          unless @slice.nil?
+            unless has_slice_number?
+              raise InvalidAttributeException, "Preserve partition must be specified with slice number: #{@name}:#{@slice}"
+            end
+          end
+        else
+          @essential_attributes = @@essential_attributes_for_non_preserve
+        end
         @preserve = _preserve
       end
       
@@ -194,6 +220,9 @@ module Lucie
         end
         if _bootable && @kind == "logical"
           raise InvalidAttributeException, "Only primary partitions can be bootable."
+        end
+        if _bootable && @fs.instance_of?(Swap)
+          raise InvalidAttributeException, "Swap partition cannot be bootable."
         end
         @bootable = _bootable
       end
@@ -238,8 +267,20 @@ module Lucie
       end
       
       public
-      def slice_number
-        return @slice[/\d+/].to_i
+      def disk
+        return @slice.gsub(/\d*\z/, '')
+      end
+      
+      public
+      def slice_number(sl = nil)
+        sl = @slice if sl.nil?
+        sl_num = sl[/\d+\z/]
+        return sl_num.to_i unless sl_num.nil?
+      end
+      
+      public
+      def has_slice_number?(sl = nil)
+        return slice_number(sl) != nil
       end
       
       public
@@ -296,6 +337,15 @@ module Lucie
       def build_fstab_line(*param)
         sprintf "%-10s   %-15s   %-6s   %-8s  %-4s %-4s\n", *param;
       end
+      
+      private
+      def check_essential_attributes
+        @essential_attributes.each do |each|
+          if (self.send "#{each}").nil?
+            raise InvalidAttributeException, "Essential attributes #{each} is not set for #{@name}"
+          end
+        end
+      end
 
       # ------------------------- Debug methods.
 
@@ -312,7 +362,6 @@ module Lucie
     end
 
     class InvalidAttributeException < ::Exception; end
-
   end
 end
 ### Local variables:

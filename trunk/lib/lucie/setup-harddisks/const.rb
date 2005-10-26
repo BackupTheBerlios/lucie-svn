@@ -21,9 +21,11 @@ module Lucie
     PARTITION_ID_LINUX_NATIVE   = 0x83
     PARTITION_ID_LINUX_EXTENDED = 0x85
     
-    START_NUMBER_OF_LOGICAL_PARTITION = 5
+    MAX_PRIMARIES = 4
+    FIRST_LOGICAL = 5
     
     SFDISK_PARTITION_FILE_PREFIX = "sfdisk_table"
+    # TODO: オプションで設定できるように変更
     RESULT_FILE = "disk_var.sh"
   end
 end

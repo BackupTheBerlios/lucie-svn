@@ -52,7 +52,7 @@ module Lucie
         return result.scan(/^\/dev\/(\w+)/).flatten
       end
 
-      BLKID_PARTITION_ATTRIB_REGEXP = /\A\/dev\/(\w+)(\d+?):.*TYPE="(\w+)".*$/i
+      BLKID_PARTITION_ATTRIB_REGEXP = /\A\/dev\/([A-Za-z]+)(\d*):.*TYPE="(\w+)".*$/i
       
       public
       def self.save_old_partition_attrib(res = nil)    # an arg is indended for test

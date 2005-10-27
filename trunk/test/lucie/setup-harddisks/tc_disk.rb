@@ -21,65 +21,6 @@ class TC_Disk < Test::Unit::TestCase
     disks = ["sda", "sdb"]
     @disk_info = Array.new
     disks.each do |each| @disk_info << Disk.new(each) end
-
-=begin  
-    @part1 = partition "root" do |part|
-      part.slice = "/dev/sda"
-      part.kind = "primary"
-      part.fs = "ext3"
-      part.mount_point = "/"
-      part.size = (96...128)
-      part.bootable = true
-      part.format_option << "-v"
-      part.fstab_option << "defaults" << "errors=remount-ro"
-      part.dump_enabled = true
-    end
-    
-    @part2 = partition "swap" do |part|
-      part.slice = "sda"
-      part.kind = "primary"
-      part.fs = "swap"
-      part.mount_point = "swap"
-      part.size = (400...500)
-    end
-    
-    @part7 = partition "opt" do |part|
-      part.slice = "sda"
-      part.kind = "primary"
-      part.size = 20
-    end
-    
-    @part3 = partition "var" do |part|
-      part.slice = "sda5"
-      part.kind = "logical"
-      part.fs = "reiserfs"
-      part.mount_point = "/var"
-      part.size = 196
-      part.preserve = true
-    end
-    
-    @part6 = partition "cluster" do |part|
-      part.slice = "sda7"
-      part.kind = "logical"
-      part.fs = "xfs"
-      part.mount_point = "/var/cluster"
-      part.size = (2048...9999999)
-    end
-    
-    @part4 = partition "usr" do |part|
-      part.slice = "sda6"
-      part.kind = "logical"
-      part.fs = "fat32"
-      part.mount_point = "/usr"
-      part.size = (2048...9999999)
-    end
-    
-    @part5 = partition "home" do |part|
-      part.slice = "sdb1"
-      part.mount_point = "/home"
-      part.preserve = true
-    end
-=end
   end
   
   public

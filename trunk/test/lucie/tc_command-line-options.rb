@@ -19,6 +19,11 @@ class TC_CommandLineOptions < Test::Unit::TestCase
   end
   
   public
+  def teardown
+    @options.__send__ :set_default_options
+  end
+
+  public
   def test_default_options
     test_argv = [ ]
     @options.parse test_argv

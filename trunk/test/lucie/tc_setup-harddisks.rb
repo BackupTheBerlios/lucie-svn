@@ -5,7 +5,7 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-$LOAD_PATH.unshift 'trunk/lib'
+$LOAD_PATH.unshift './lib'
 
 require 'test/unit'
 require 'lucie/setup-harddisks/setup-harddisks'

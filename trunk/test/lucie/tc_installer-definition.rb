@@ -9,7 +9,7 @@ $LOAD_PATH.unshift './lib'
 
 require 'lucie/config'
 require 'lucie/config/installer'
-require 'mock'
+require 'test/mock'
 require 'test/unit'
 
 class TC_InstallerDefinition < Test::Unit::TestCase

@@ -1,8 +1,8 @@
 #
-# $Id: filesystem.rb 958 2005-10-19 09:46:18Z sakae $
+# $Id$
 #
 # Author::   Yoshiaki Sakae (mailto:sakae@is.titech.ac.jp)
-# Revision:: $LastChangedRevision: 958 $
+# Revision:: $LastChangedRevision$
 # License::  GPL2
 
 def method_renamed(h)

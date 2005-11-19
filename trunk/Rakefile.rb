@@ -58,12 +58,7 @@ Rake::RDocTask.new( :rdoc ) do |rdoc|
   rdoc.options << '--inline-source' 
   rdoc.options << '--charset' << 'eucjp' 
   # rdoc.options << '--diagram'
-  rdoc.rdoc_files.include( 'lib/*.rb', 'lib/debconf/*.rb', 'lib/deft/*.rb', 'lib/depends/*.rb',
-                           'lib/lucie/*.rb', 'lib/lucie/config/*.rb', 'lib/lmp/*.rb', 
-                           'data/lmp/default/*.rb', 'data/lmp/compile/*.rb', 
-                           'data/lmp/lilo/*.rb', 'data/lmp/network/*.rb',
-                           'bin/install_packages',
-                           'lib/lucie/rake/*.rb' )
+  rdoc.rdoc_files = FileList[ 'lib/*.rb', 'lib/*/*.rb', 'lib/**/*.rb' ]
 end
 
 desc 'Upload rdoc documents'

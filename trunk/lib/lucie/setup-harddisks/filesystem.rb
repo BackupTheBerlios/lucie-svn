@@ -5,17 +5,10 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require "lucie/refactoring"
-
 module Lucie
   module SetupHarddisks
     # Abstract class for specific filesystem: such as ext2, ext3, reiserfs, xfs, swap...
     class Filesystem
-      UNIX_PATH_DELIMITER='/'
-      UNIX_PATH_SEPARATOR=':'
-      WINDOWS_PATH_DELIMITER='\\'
-      WINDOWS_PATH_SEPARATOR=';'
-
       attr_reader   :fs_type
       attr_reader   :format_program
       attr_reader   :mount_program
@@ -24,8 +17,6 @@ module Lucie
       attr_accessor :mount_options
       attr_accessor :fstab_options
 
-      method_renamed :has_format_program? => :format_program_exist?
-      
       public
       def initialize
         if (not format_program_exist?) and $commandline_options.no_test
@@ -69,7 +60,7 @@ module Lucie
       public
       def mount_with_label(label, mount_point, option = nil)
         # not used
-        # label ‚ð—p‚¢‚Ä mount ‚Å‚«‚È‚¢ƒtƒ@ƒCƒ‹ƒVƒXƒeƒ€‚ª‚ ‚é
+        # label ¤òÍÑ¤¤¤Æ mount ¤Ç¤­¤Ê¤¤¥Õ¥¡¥¤¥ë¥·¥¹¥Æ¥à¤¬¤¢¤ë
         mount_command = build_mount_command_with_label(label, mount_point, option)
         msg = "Mounting #{label} (#{mount_command})"
         if $commandline_options.no_test
@@ -136,24 +127,10 @@ module Lucie
       
       private
       def format_program_exist?
-        found = false
-        case RUBY_PLATFORM
-        when "i386-linux"
-          del = UNIX_PATH_DELIMITER
-          sep = UNIX_PATH_SEPARATOR
-        when "i386-mswin32"
-          del = WINDOWS_PATH_DELIMITER
-          sep = WINDOWS_PATH_SEPARATOR
+        ENV['PATH'].split(File::PATH_SEPARATOR).each do |each|
+          return true if FileTest.executable?( File.join(each, @format_program) )
         end
-        path = ENV['PATH'].split(sep)
-        path.each do |each|
-          prog = "#{each}#{del}#{@format_program}"
-          if FileTest.executable?(prog)
-            found = true
-            break
-          end
-        end
-        return found
+        return false
       end
       
       private
@@ -177,7 +154,6 @@ module Lucie
       def dump_mount_with_label(label, mount_point)
         return build_mount_command_with_label(label, mount_point)
       end
-
     end
   end
 end

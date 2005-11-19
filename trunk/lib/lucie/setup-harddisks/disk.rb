@@ -11,16 +11,16 @@ require 'lucie/setup-harddisks/old-partition'
 module Lucie
   module SetupHarddisks
     class Disk < Lucie::Config::Resource
-      # “o˜^‚³‚ê‚Ä‚¢‚é Disk ‚ÌƒŠƒXƒg
+      # ÅÐÏ¿¤µ¤ì¤Æ¤¤¤ë Disk ¤Î¥ê¥¹¥È
       @@list = {}
       
-      # ƒAƒgƒŠƒrƒ…[ƒg–¼‚ÌƒŠƒXƒg: [:name, :version, ...]
+      # ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤Î¥ê¥¹¥È: [:name, :version, ...]
       @@required_attributes = []
       
-      # _‚·‚×‚Ä‚Ì_ ƒAƒgƒŠƒrƒ…[ƒg–¼‚ÆƒfƒtƒHƒ‹ƒg’l‚ÌƒŠƒXƒg: [[:name, nil], [:version, '0.0.1'], ...]
+      # _¤¹¤Ù¤Æ¤Î_ ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤È¥Ç¥Õ¥©¥ë¥ÈÃÍ¤Î¥ê¥¹¥È: [[:name, nil], [:version, '0.0.1'], ...]
       @@attributes = [[:bootable_device, false]]
       
-      # ƒAƒgƒŠƒrƒ…[ƒg–¼‚©‚çƒfƒtƒHƒ‹ƒg’l‚Ö‚Ìƒ}ƒbƒsƒ“ƒO
+      # ¥¢¥È¥ê¥Ó¥å¡¼¥ÈÌ¾¤«¤é¥Ç¥Õ¥©¥ë¥ÈÃÍ¤Ø¤Î¥Þ¥Ã¥Ô¥ó¥°
       @@default_value = {}
       
       # ------------------------- REQUIRED attributes.
@@ -73,7 +73,7 @@ module Lucie
 
       public
       def self.assign_partition(part_list)
-        # set_partition_positions ‚È‚Ç‚Ì‚½‚ß‡˜‚ªd—v
+        # set_partition_positions ¤Ê¤É¤Î¤¿¤á½ç½ø¤¬½ÅÍ×
         part_list.each do |key, part|
           disk = part.disk
           raise StandardError, "Could not read device: /dev/#{disk}" unless @@list.has_key?(disk)
@@ -90,7 +90,7 @@ module Lucie
               end
               @@list[disk].logical_partitions[part.slice_number - 1] = part
             when "extended"
-            # XXX: Ý’èƒtƒ@ƒCƒ‹‚Å extended ‚ð–¾Ž¦Žw’è‚·‚é‚Ì‚Í–¢ƒTƒ|[ƒg
+            # XXX: ÀßÄê¥Õ¥¡¥¤¥ë¤Ç extended ¤òÌÀ¼¨»ØÄê¤¹¤ë¤Î¤ÏÌ¤¥µ¥Ý¡¼¥È
               $stderr.puts "Extended partition is defined in config for #{part.slice}"
               @@list[disk].extended_partitions[part.slice_number - 1] = part
             when nil
@@ -167,7 +167,7 @@ module Lucie
 
       public
       def self.check_settings
-        # XXX: ŠÖ”‚ÌŒÄ‚Ño‚µ‡‚ÉˆË‘¶‚ ‚è
+        # XXX: ´Ø¿ô¤Î¸Æ¤Ó½Ð¤·½ç¤Ë°ÍÂ¸¤¢¤ê
         check_preserve_partition
         check_swap_partition
         check_number_of_bootable_devices
@@ -195,7 +195,7 @@ module Lucie
             raise
           end
         else
-          puts fstab
+          puts fstab unless Test::Unit.run?
         end
       end
       
@@ -231,7 +231,7 @@ SWAPLIST=#{swaps.join(' ')}
             raise
           end
         else
-          puts result
+          puts result unless Test::Unit.run?
         end
       end
 
@@ -316,7 +316,7 @@ SWAPLIST=#{swaps.join(' ')}
         if compact
           parts = (@primary_partitions + @extended_partitions + @logical_partitions).compact
         else
-          # XXX: @logical_partitions ‚ÌƒTƒCƒY‚ªÅ‚à‘å‚«‚¢‚±‚Æ‚ÉˆË‘¶‚µ‚·‚¬
+          # XXX: @logical_partitions ¤Î¥µ¥¤¥º¤¬ºÇ¤âÂç¤­¤¤¤³¤È¤Ë°ÍÂ¸¤·¤¹¤®
           parts = []
           @logical_partitions.each_index do |idx|
             if !@primary_partitions[idx].nil?
@@ -408,7 +408,7 @@ SWAPLIST=#{swaps.join(' ')}
         set_partition_positions
         # change units to sectors
         partitions.each do |each|
-          unless each.preserve   # preserve partition ‚Í check_settings->check_preserve_partition ‚ÅƒRƒs[Ï‚Ý
+          unless each.preserve   # preserve partition ¤Ï check_settings->check_preserve_partition ¤Ç¥³¥Ô¡¼ºÑ¤ß
             each.start_sector = each.start_unit * @disk_unit
             each.end_sector = each.end_unit * @disk_unit - 1
             each.size *= @disk_unit
@@ -508,7 +508,7 @@ SWAPLIST=#{swaps.join(' ')}
       public
       def fdisk
         if partitions.empty?
-          puts "Skipping sfdisk on /dev/#{@name}: there is no partitions" if $commandline_options.verbose
+          message "Skipping sfdisk on /dev/#{@name}: there is no partitions" if $commandline_options.verbose
           return
         end
         sfdisk_table = "# partition table of device: /dev/#{@name}\n\n"
@@ -536,13 +536,13 @@ SWAPLIST=#{swaps.join(' ')}
           end
           printf sfdisk_table if $commandline_options.verbose
         else
-          printf sfdisk_table
+          message sfdisk_table 
         end
         command = "sfdisk -q -uS /dev/#{@name} < #{sfdisk_input_file}"
         if $commandline_options.no_test
           `#{command}`
         else
-          puts command
+          message command
         end
       end
       
@@ -599,7 +599,7 @@ SWAPLIST=#{swaps.join(' ')}
         if number_of_bootable_device == 0
           @@list.each do |key, disk|
             disk.partitions.each do |part|
-            # XXX: /boot ƒp[ƒeƒBƒVƒ‡ƒ“‚ð—Dæ‚·‚×‚«‚È‚Ì‚©H
+            # XXX: /boot ¥Ñ¡¼¥Æ¥£¥·¥ç¥ó¤òÍ¥Àè¤¹¤Ù¤­¤Ê¤Î¤«¡©
               if part.mount_point == "/"
                 disk.bootable_device = true
                 disk.boot_partition = boot_part = part
@@ -658,8 +658,8 @@ SWAPLIST=#{swaps.join(' ')}
           raise StandardError, "There is no space for extended partition"
         end
 =begin
-        # primary ‚ÌŠÔ‚É extended ‚ð“ü‚ê‚é
-        # ‚±‚Ìê‡ extended_partitions ‚ÍŽg—p‚³‚ê‚È‚¢
+        # primary ¤Î´Ö¤Ë extended ¤òÆþ¤ì¤ë
+        # ¤³¤Î¾ì¹ç extended_partitions ¤Ï»ÈÍÑ¤µ¤ì¤Ê¤¤
         slice_num = find_first_nil_idx(@primary_partitions) + 1
         ext_part = partition "#{@name}#{slice_num}_extended" do |part|
           part.slice = "#{@name}#{slice_num}"
@@ -670,7 +670,7 @@ SWAPLIST=#{swaps.join(' ')}
         @primary_partitions[slice_num - 1] = ext_part
         return ext_part
 =end
-        # primary ‚ÌŠÔ‚É extended ‚ð“ü‚ê‚È‚¢
+        # primary ¤Î´Ö¤Ë extended ¤òÆþ¤ì¤Ê¤¤
         slice_num = find_last_nil_idx(@primary_partitions[0, MAX_PRIMARIES]) + 1
         ext_part = partition "#{@name}#{slice_num}_extended" do |part|
           part.slice = "#{@name}#{slice_num}"
@@ -701,13 +701,18 @@ SWAPLIST=#{swaps.join(' ')}
           else
             mp = each.mount_point
           end
-          puts "/dev/#{each.slice} #{mp} start=#{each.start_sector} size=#{each.size} end=#{each.end_sector} id=0x#{each.id.to_s(16)}"
+          message "/dev/#{each.slice} #{mp} start=#{each.start_sector} size=#{each.size} end=#{each.end_sector} id=0x#{each.id.to_s(16)}"
         end
       end
       
       private
       def build_slice_name(num)
         return "#{@name}#{num}"
+      end
+
+      private
+      def message( aString )
+        puts aString unless Test::Unit.run?
       end
       
       private

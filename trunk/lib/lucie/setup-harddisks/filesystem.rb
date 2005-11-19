@@ -5,6 +5,8 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+require "lucie/refactoring"
+
 module Lucie
   module SetupHarddisks
     # Abstract class for specific filesystem: such as ext2, ext3, reiserfs, xfs, swap...
@@ -21,15 +23,13 @@ module Lucie
       attr_accessor :format_options
       attr_accessor :mount_options
       attr_accessor :fstab_options
+
+      method_renamed :has_format_program? => :format_program_exist?
       
       public
       def initialize
-        unless has_format_program?
-          if $commandline_options.no_test
-            raise StandardError, "Cannot find #{@format_program} in the PATH"
-          else
-            $stderr.puts "Cannot find #{@format_program} in the PATH"
-          end
+        if (not format_program_exist?) and $commandline_options.no_test
+          raise StandardError, "Cannot find #{@format_program} in the PATH"
         end
       end
       
@@ -38,14 +38,14 @@ module Lucie
         format_command = build_format_command(slice, label, option)
         msg = "Formatting #{slice} (#{format_command})"
         if $commandline_options.no_test
-          puts msg if $commandline_options.verbose
+          message msg if $commandline_options.verbose
           result = system(format_command)
           if !result
             raise( StandardError,
                    "Some error occurs while running #{format_command}" )
           end
         else
-          puts msg
+          message msg
         end
       end
       
@@ -55,14 +55,14 @@ module Lucie
         mount_command = build_mount_command(slice, mount_point, option)
         msg = "Mounting #{slice} (#{mount_command})"
         if $commandline_options.no_test
-          puts msg if $commandline_options.verbose
+          message msg if $commandline_options.verbose
           result = system(mount_command)
           if !result
             raise( StandardError,
                    "Some error occurs while running #{mount_command}" )
           end
         else
-          puts msg
+          message msg
         end
       end
       
@@ -73,14 +73,14 @@ module Lucie
         mount_command = build_mount_command_with_label(label, mount_point, option)
         msg = "Mounting #{label} (#{mount_command})"
         if $commandline_options.no_test
-          puts msg if $commandline_options.verbose
+          message msg if $commandline_options.verbose
           result = system(mount_command)
           if !result
             raise( StandardError,
                    "Some error occurs while running #{mount_command}" )
           end
         else
-          puts msg
+          message msg
         end
       end
       
@@ -135,7 +135,7 @@ module Lucie
 
       
       private
-      def has_format_program?
+      def format_program_exist?
         found = false
         case RUBY_PLATFORM
         when "i386-linux"
@@ -156,7 +156,12 @@ module Lucie
         return found
       end
       
-    # ------------------------- Debug methods.
+      private
+      def message( aString )
+        puts aString unless Test::Unit.run?
+      end
+
+      # ------------------------- Debug methods.
 
       public
       def dump_format(slice, label = nil)
@@ -176,6 +181,7 @@ module Lucie
     end
   end
 end
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

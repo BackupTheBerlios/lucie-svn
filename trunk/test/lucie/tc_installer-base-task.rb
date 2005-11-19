@@ -79,11 +79,11 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
                   Task[:clobber_installer_base].comment, 
                   ":clobber_installer_base タスクのコメントが設定されていない" )
     
-    assert_not_nil( Task['/var/lib/lucie/installer_base/'],
-                    'var/lib/lucie/installer_base/ ディレクトリタスクが定義されていない' )
+    assert_not_nil( Task['/var/lib/lucie/installer_base'],
+                    '/var/lib/lucie/installer_base ディレクトリタスクが定義されていない' )
 
     assert_not_nil( Task['/var/lib/lucie/installer_base/debian_woody.tgz'],
-                    'var/lib/lucie/installer_base/var/tmp/debian_woody.tgz ファイルタスクが定義されていない' )
+                    '/var/lib/lucie/installer_base/var/tmp/debian_woody.tgz ファイルタスクが定義されていない' )
   end
   
   public

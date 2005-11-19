@@ -1,7 +1,7 @@
 #
 # $Id$
 #
-# Author::   Yoshiaki Sakae (mailto:sakae@is.titech.ac.jp)
+# Author::   Yasuhito Takamiya (mailto:yasuhito@gmail.com)
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 

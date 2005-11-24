@@ -1,0 +1,43 @@
+# package サンプルファイル
+#
+# コメントはハッシュ (#) で始まり行末まで続きます。
+# すべてのコマンドは PACKAGES という単語で始まり、コマンド名が続きます。
+# コマンド名は apt-get と似ています。以下がサポートしているコマンド名の
+# リストです。
+#
+# hold:
+#    パッケージをホールドします。ホールドしたパッケージはアップグレードされませ
+#    ん。
+#    
+# install:
+#    後の行に続くすべてのパッケージがインストールされます。
+#
+# remove:
+#    後の行に続くすべてのパッケージがアンインストールされます。
+#
+# taskinst:
+#    tasksel(1)によって後の行に続くタスクに含まれるすべてのパッケージがインスト
+#    ールされます。
+#
+# dselect-upgrade
+#    後の行に続くパッケージでパッケージセレクションをセットし、指定されたパッケ
+#    ージをインストールもしくはアンインストールします。
+#
+# 設定例:
+# 
+# PACKAGES taskinst
+# german science
+#    
+# PACKAGES install
+# adduser netstd ae
+# less passwd
+#     
+# PACKAGES remove
+# gpm xdm
+#     
+# PACKAGES dselect-upgrade
+# ddd                     install
+# a2ps                    install    
+
+# gnu-hello
+install ( %w(hello) )

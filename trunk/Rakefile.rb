@@ -103,11 +103,11 @@ task :upload_lmp do
   scp_destination = server_uri( 'packages/lmp' )
   
   mkdir_p tmp_dir
-  cp FileList["data/lmp/*.gz"], tmp_dir
-  cp FileList["data/lmp/*.dsc"], tmp_dir
-  cp FileList["data/lmp/*.deb"], tmp_dir
-  cp FileList["data/lmp/*.build"], tmp_dir
-  cp FileList["data/lmp/*.changes"], tmp_dir
+  cp FileList["data/lmp/*.gz"].to_ary, tmp_dir
+  cp FileList["data/lmp/*.dsc"].to_ary, tmp_dir
+  cp FileList["data/lmp/*.deb"].to_ary, tmp_dir
+  cp FileList["data/lmp/*.build"].to_ary, tmp_dir
+  cp FileList["data/lmp/*.changes"].to_ary, tmp_dir
   sh %{cd #{tmp_dir} && apt-ftparchive packages . > Packages}
   sh %{cd #{tmp_dir} && gzip -c9 Packages > Packages.gz}
   sh %{cd #{tmp_dir} && apt-ftparchive sources  . | gzip -c9 > Sources.gz}

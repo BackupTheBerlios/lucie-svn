@@ -9,7 +9,7 @@ spec = LMP::Specification.new do |spec|
   spec.name = "lmp-hello"
   spec.version = "0.0.1"
   spec.maintainer = 'Hideo NISHIMURA <nish@matsulab.is.titech.ac.jp>'
-  spec.short_description = '[Lucie Meta Package] network'
+  spec.short_description = '[Lucie Meta Package] hello'
   spec.extended_description = <<-EXTENDED_DESCRIPTION
   Included packages:
   A Lucie Meta Package to ehco "Hello, world!".

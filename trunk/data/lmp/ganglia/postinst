@@ -1,0 +1,34 @@
+#! /usr/bin/ruby1.8
+#
+# $Id: postinst 925 2005-09-30 07:11:10Z takamiya $
+#
+# Author::   Hideo NISHIMURA (mailto:nish@matsulab.is.titech.ac.jp)
+# Revision:: $Revision: 925 $
+# License::  GPL2
+
+if ENV["DEBIAN_HAS_FRONTEND"] == nil then
+  args = ""
+  for arg in ARGV
+    args << arg << " "
+  end
+  stdout_dup = STDOUT.clone
+  stdin_dup = STDIN.clone
+  ENV["DEBCONF_RUBY_STDOUT"] = "#{stdout_dup.fileno}"
+  ENV["DEBCONF_RUBY_STDIN"] = "#{stdin_dup.fileno}"
+  exec "/usr/share/debconf/frontend #{$0} #{args}"
+end
+
+require 'debconf/client'
+require 'lucie/installer'
+
+include Lucie::Installer
+
+trusted_hosts = Debconf::Client.get('lucie-client/ganglia/trusted_hosts')
+
+system %{ruby1.8 -pi -e "gsub(/%%%TRUSTED_HOSTS%%%/, '#{trusted_hosts}')" /etc/lucie/script/lmp-ganglia/S01}
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:
+

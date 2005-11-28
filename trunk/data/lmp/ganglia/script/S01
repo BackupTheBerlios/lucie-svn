@@ -1,0 +1,15 @@
+#!/usr/bin/cfengine
+
+control:
+        access = ( root )
+        sysadm = ( root )
+
+        actionsequence = (
+                editfiles
+        )
+
+editfiles:
+	any::
+	{ /tmp/target/etc/gmond.conf
+		AppendIfNoSuchLine "trusted_hosts %%%TRUSTED_HOSTS%%%"
+	}

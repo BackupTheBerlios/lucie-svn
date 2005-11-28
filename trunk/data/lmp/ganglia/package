@@ -1,0 +1,13 @@
+#
+# $Id: package 913 2005-09-30 02:17:37Z takamiya $
+#
+# Author::   Hideo NISHIMURA (mailto:nish@matsulab.is.titech.ac.jp)
+# Revision:: $LastChangedRevision: 913 $
+# License::  GPL2
+
+install( 'ganglia-monitor' )
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

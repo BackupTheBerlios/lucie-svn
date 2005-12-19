@@ -13,7 +13,7 @@ include Deft
 template( 'lucie-client/network/hello' ) do |template|
   template.template_type = 'note'
   template.short_description = 'Welcome to lmp-network setup wizard.'
-  template.short_description_ja = 'lmp-networ セットアップウィザードへようこそ'
+  template.short_description_ja = 'lmp-network セットアップウィザードへようこそ'
   template.extended_description = <<-DESCRIPTION
   This metapackage will generate Lucie configuration of networking.
   DESCRIPTION

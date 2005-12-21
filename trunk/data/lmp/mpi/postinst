@@ -1,0 +1,71 @@
+#! /usr/bin/ruby1.8
+#
+# $Id: command-line-options.rb 557 2005-04-13 07:05:05Z takamiya $
+#
+# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Revision:: $Revision: 557 $
+# License::  GPL2
+
+if ENV["DEBIAN_HAS_FRONTEND"] == nil then
+  args = ""
+  for arg in ARGV
+    args << arg << " "
+  end
+  stdout_dup = STDOUT.clone
+  stdin_dup = STDIN.clone
+  ENV["DEBCONF_RUBY_STDOUT"] = "#{stdout_dup.fileno}"
+  ENV["DEBCONF_RUBY_STDIN"] = "#{stdin_dup.fileno}"
+  exec "/usr/share/debconf/frontend #{$0} #{args}"
+end
+
+require 'debconf/client'
+require '/etc/lucie/resource.rb'
+require 'lucie/installer'
+include Lucie::Installer
+include Lucie::Config
+
+if Debconf::Client.get('lucie-client/mpi/machines-file') == 'true' then
+  group = host_group_resource.members
+  # machines_list : list of client's IP addresses
+  # hosts_list : list of client's (IPaddr hostname) pairs
+  machines_list = [Host[group[0]].name]
+  hosts_list = [Host[group[0]].address + " " + Host[group[0]].name]
+  i = 1
+  while i < group.length
+    machines_list << Host[group[i]].name
+    hosts_list << [Host[group[i]].address + " " + Host[group[i]].name]
+    i += 1
+  end
+  machines = machines_list.join("\n")
+  hosts = hosts_list.join("\n")
+else
+  machines = "localhost"
+  hosts = ""
+end
+
+mpi_flavor = Debconf::Client.get('lucie-client/mpi/select-mpi')
+
+case mpi_flavor
+  when 'MPICH'
+     system %{ruby1.8 -pi -e "gsub(/%%%MPI_FLAVOR%%%/, 'mpich-bin')" /etc/lucie/package/lmp-mpi}
+     machine_file_path = "/etc/mpich/machines.LINUX"
+  when 'MPICH-MPD'
+     system %{ruby1.8 -pi -e "gsub(/%%%MPI_FLAVOR%%%/, 'mpich-mpd-bin')" /etc/lucie/package/lmp-mpi}
+     machine_file_path = "/etc/mpich-mpd/machines.LINUX"
+  when 'LAM'
+     system %{ruby1.8 -pi -e "gsub(/%%%MPI_FLAVOR%%%/, 'lam-runtime')" /etc/lucie/package/lmp-mpi}
+     machine_file_path = "/etc/lam/bhost.def"
+  else
+     system %{ruby1.8 -pi -e "gsub(/%%%MPI_FLAVOR%%%/, '')" /etc/lucie/package/lmp-mpi}
+     machine_file_path = ""
+end
+
+system %{ruby1.8 -pi -e "gsub(/%%%MACHINES%%%/, '#{machines}')" /etc/lucie/script/lmp-mpi/S01}
+system %{ruby1.8 -pi -e "gsub(/%%%HOSTS%%%/, '#{hosts}')" /etc/lucie/script/lmp-mpi/S01}
+system %{ruby1.8 -pi -e "gsub(/%%%MACHINE_FILE_PATH%%%/, '#{machine_file_path}')" /etc/lucie/script/lmp-mpi/S01}
+
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

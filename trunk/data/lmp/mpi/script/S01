@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "%%%MACHINES%%%" > /tmp/target%%%MACHINE_FILE_PATH%%%
+echo "%%%MACHINES%%%" > /tmp/target/etc/hosts.equiv
+echo "%%%HOSTS%%%" >> /tmp/target/etc/hosts

@@ -8,18 +8,18 @@
 # ------------------------- LMP の定義.
 
 spec = LMP::Specification.new do |spec|
-  spec.name = "lmp-xen"
-  spec.version = "0.1.0"
+  spec.name = "lmp-mpi"
+  spec.version = "0.0.4"
   spec.maintainer = 'Hideo Nishimura <nish@matsulab.is.titech.ac.jp>'
-  spec.short_description = '[メタパッケージ] XEN'
+  spec.short_description = '[メタパッケージ] MPI'
   spec.extended_description = <<-EXTENDED_DESCRIPTION
   Included packages:
-  A Lucie Meta Package which setups Xen VMM environment.
+  A Lucie Meta Package which setups MPI environment.
   EXTENDED_DESCRIPTION
 end
 
 lmp_package_task = Rake::LMPPackageTask.new( spec ) do |pkg|
-  pkg.package_dir = 'data/lmp/xen'
+  pkg.package_dir = 'data/lmp/mpi'
   pkg.need_deb = true
 end
 

@@ -9,7 +9,7 @@
 
 spec = LMP::Specification.new do |spec|
   spec.name = "lmp-xen"
-  spec.version = "0.0.1"
+  spec.version = "0.1.0"
   spec.maintainer = 'Hideo Nishimura <nish@matsulab.is.titech.ac.jp>'
   spec.short_description = '[メタパッケージ] XEN'
   spec.extended_description = <<-EXTENDED_DESCRIPTION

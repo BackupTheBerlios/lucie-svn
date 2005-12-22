@@ -2,7 +2,7 @@
 
 #--- install kernel
 # TODO : assuming that there's only one kernel
-kernel = $(cd /etc/lucie/kernel; ls kernel-image*)
+kernel=$(cd /etc/lucie/kernel; ls kernel-image*)
 yes 'n' | dpkg --root=/tmp/target -i /etc/lucie/kernel/$kernel
 
 #--- install grub into boot device
@@ -15,8 +15,14 @@ chroot /tmp/target /bin/sh -c '(. /tmp/disk_var.sh; mount -f /; /bin/sh grub-ins
 . /tmp/lucie/disk_var.sh
 
 # TODO : assuming that there's only one kernel
-initrd_img = $(cd /tmp/target/boot; ls initrd.img*)
-vmlinuz = $(cd /tmp/target/boot; ls vmlinuz*)
+
+# if the installed kernel is using an initial ramdisk
+#if [ -L /tmp/target/initrd.img ]; then
+#  initrdopt="initrd=/initrd.img"
+#fi
+
+initrd_img=$(cd /tmp/target/boot; ls initrd.img*)
+vmlinuz=$(cd /tmp/target/boot; ls vmlinuz*)
 
 echo "Creating menu.lst for /vmlinuz"
 cat > /tmp/target/boot/grub/menu.lst <<-EOF

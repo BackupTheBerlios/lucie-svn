@@ -5,8 +5,7 @@
 # Revision:: $LastChangedRevision: 802 $
 # License::  GPL2
 
-install( %w(grub) )
-remove( 'lilo' )
+install( %w(grub initrd-tools) )
 
 ### Local variables:
 ### mode: Ruby

@@ -1,0 +1,34 @@
+#! /bin/sh
+
+#--- install kernel
+# TODO : assuming that there's only one kernel
+kernel = $(cd /etc/lucie/kernel; ls kernel-image*)
+yes 'n' | dpkg --root=/tmp/target -i /etc/lucie/kernel/$kernel
+
+#--- install grub into boot device
+cp /tmp/lucie/disk_var.sh /tmp/target/tmp/
+chroot /tmp/target /bin/sh -c '(. /tmp/disk_var.sh; mount -f /; /bin/sh grub-install $BOOT_DEVICE)'
+
+
+#--- create /boot/grub/menu.lst
+# load variables concerned with disk
+. /tmp/lucie/disk_var.sh
+
+# TODO : assuming that there's only one kernel
+initrd_img = $(cd /tmp/target/boot; ls initrd.img*)
+vmlinuz = $(cd /tmp/target/boot; ls vmlinuz*)
+
+echo "Creating menu.lst for /vmlinuz"
+cat > /tmp/target/boot/grub/menu.lst <<-EOF
+default 0
+timeout 5
+color cyan/blue white/blue
+
+title           Debian
+root            (hd0,0)
+kernel          /boot/$vmlinuz root=$ROOT_PARTITION ro
+initrd          /boot/$initrd_img
+savedefault
+boot
+
+EOF

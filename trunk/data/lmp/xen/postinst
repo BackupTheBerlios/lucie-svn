@@ -1,0 +1,39 @@
+#! /usr/bin/ruby1.8
+#
+# $Id: command-line-options.rb 557 2005-04-13 07:05:05Z takamiya $
+#
+# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Revision:: $Revision: 557 $
+# License::  GPL2
+
+if ENV["DEBIAN_HAS_FRONTEND"] == nil then
+  args = ""
+  for arg in ARGV
+    args << arg << " "
+  end
+  stdout_dup = STDOUT.clone
+  stdin_dup = STDIN.clone
+  ENV["DEBCONF_RUBY_STDOUT"] = "#{stdout_dup.fileno}"
+  ENV["DEBCONF_RUBY_STDIN"] = "#{stdin_dup.fileno}"
+  exec "/usr/share/debconf/frontend #{$0} #{args}"
+end
+
+require 'debconf/client'
+require 'lucie/installer'
+require 'fileutils'
+include Lucie::Installer
+
+# GRUB のデフォルト起動カーネルを設定
+if Debconf::Client.get('lucie-client/xen/kernel') == 'false' then 
+  FileUtils.rm('/etc/lucie/script/lmp-xen/S20' )
+end
+
+# Domain 0 割り当てメモリ量の設定
+memory = Debconf::Client.get('lucie-client/xen/memory')
+system %{ruby1.8 -pi -e "gsub(/%%%MEMORY%%%/, '#{memory}')" /etc/lucie/script/lmp-xen/S10}
+
+FileUtils.mv( '/etc/lucie/file/tmp/xen-3.0.0-install-x86_32.tgz/DEFAULT', "/etc/lucie/file/tmp/xen-3.0.0-install-x86_32.tgz/#{installer_resource.name}" )
+
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

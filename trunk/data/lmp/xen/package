@@ -1,0 +1,13 @@
+#
+# $Id: package 913 2005-09-30 02:17:37Z takamiya $
+#
+# Author::   Hideo NISHIMURA (mailto:nish@matsulab.is.titech.ac.jp)
+# Revision:: $LastChangedRevision: 913 $
+# License::  GPL2
+
+install( %w(iproute python-twisted gcc-3.4 libcurl-dev zlib1g-dev python-dev bridge-utils hotplug) )
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

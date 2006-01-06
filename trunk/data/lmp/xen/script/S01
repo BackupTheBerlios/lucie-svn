@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#--- Install xen from binary tar ball
+cd /tmp/target/tmp
+tar zxf xen-3.0.0-install-x86_32.tgz
+chroot /tmp/target /bin/sh -c '(cd /tmp/xen-3.0.0-install; /bin/sh ./install.sh)' 
+
+#--- Other Config for Xen
+
+# Disable libc for Xen
+# mv /tmp/target/lib/tls /tmp/target/lib/tls.disable
+
+# To run xend when booting linux
+chroot /tmp/target /usr/sbin/update-rc.d xend start 20 2 3 4 5 . stop 20 0 1 6 .
+# To run guest domains in /etc/xen/auto
+chroot /tmp/target /usr/sbin/update-rc.d xendomains start 21 2 3 4 5 . stop 19 0 1 6 .

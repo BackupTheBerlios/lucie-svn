@@ -16,12 +16,6 @@ chroot /tmp/target /bin/sh -c '(. /tmp/disk_var.sh; mount -f /; /bin/sh grub-ins
 
 # TODO : assuming that there's only one kernel
 
-# if the installed kernel is using an initial ramdisk
-#if [ -L /tmp/target/initrd.img ]; then
-#  initrdopt="initrd=/initrd.img"
-#fi
-
-initrd_img=$(cd /tmp/target/boot; ls initrd.img*)
 vmlinuz=$(cd /tmp/target/boot; ls vmlinuz*)
 
 echo "Creating menu.lst for /vmlinuz"
@@ -33,7 +27,17 @@ color cyan/blue white/blue
 title           Debian
 root            (hd0,0)
 kernel          /boot/$vmlinuz root=$ROOT_PARTITION ro
+EOF
+
+# if the installed kernel is using an initial ramdisk
+if [ -L /tmp/target/initrd.img ]; then
+  initrd_img=$(cd /tmp/target/boot; ls initrd.img*)
+  cat >> /tmp/target/boot/grub/menu.lst <<-EOF
 initrd          /boot/$initrd_img
+EOF
+fi
+
+cat >> /tmp/target/boot/grub/menu.lst <<-EOF
 savedefault
 boot
 

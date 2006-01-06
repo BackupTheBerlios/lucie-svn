@@ -7,7 +7,7 @@
 
 spec = LMP::Specification.new do |spec|
   spec.name = "lmp-grub"
-  spec.version = "0.0.1"
+  spec.version = "0.0.2"
   spec.maintainer = 'Hideo NISHIMURA <nish@matsulab.is.titech.ac.jp>'
   spec.short_description = '[Lucie Meta Package] grub'
   spec.extended_description = <<-EXTENDED_DESCRIPTION

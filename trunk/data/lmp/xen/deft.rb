@@ -13,13 +13,20 @@ include Deft
 
 template( 'lucie-client/xen/hello' ) do |template|
   template.template_type = 'note'
+  template.short_description = 'Welcome to lmp-xen setup wizard'
   template.short_description_ja = 'Xen のセットアップウィザードへようこそ'
+  template.extended_description = <<-DESCRIPTION
+  This metapackage will setup Xen 3.0.0.
+
+  This package require lmp-grub metapackage.
+
+  DESCRIPTION
+
   template.extended_description_ja = <<-DESCRIPTION_JA
   このウィザードでは Xen 3.0.0 の設定を行います。
 
   このパッケージをインストールするためには lmp-grub が必要です。
 
-  「次へ」をクリックするとウィザードを開始します。
   DESCRIPTION_JA
 end
 

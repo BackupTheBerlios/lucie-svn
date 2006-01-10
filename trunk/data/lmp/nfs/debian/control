@@ -1,0 +1,12 @@
+Source: lmp-nfs
+Priority: optional   
+Section: misc   
+Maintainer: Hideo Nishimura <nish@matsulab.is.titech.ac.jp>
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.6.0
+      
+Package: lmp-nfs
+Architecture: all
+Description: [メタパッケージ] NFS
+ Included packages:
+ A Lucie Meta Package which generates NFS configuration.

@@ -1,0 +1,10 @@
+Package: lmp-nfs
+Version: 0.0.1
+Section: misc
+Priority: optional
+Architecture: all
+Installed-Size: 88
+Maintainer: Hideo Nishimura <nish@matsulab.is.titech.ac.jp>
+Description: [メタパッケージ] NFS
+ Included packages:
+ A Lucie Meta Package which generates NFS configuration.

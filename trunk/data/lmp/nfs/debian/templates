@@ -1,0 +1,44 @@
+Template: lucie-client/nfs/mount
+Type: string
+Description: Configure mount point
+ Please input local mount point.
+ .
+ ( [Ex] /mnt/dir )
+Description-ja: マウントポイントの指定
+ ローカルのマウントポイントを指定してください。
+ .
+ ( [例] /mnt/dir )
+
+Template: lucie-client/nfs/server
+Type: string
+Description: Configure NFS Server
+ Please input your nfs server address and an entry to be mounted separated by colon (:) .
+ .
+ ( [Ex] nfs-server.example.com:/export/dir )
+Description-ja: NFS サーバの指定
+ NFS サーバのアドレス及びマウントするエントリをコロン(:)で区切って入力してください。
+ .
+ ( [例] nfs-server.example.com:/export/dir )
+
+Template: lucie-client/nfs/buffer
+Type: string
+Default: 8192
+Description: Configure r/w buffer size
+ Please input read/write buffer size.
+Description-ja: バッファサイズの指定
+ バッファのサイズを指定してください。
+
+Template: lucie-client/nfs/hello
+Type: note
+Description: Welcome to lmp-nfs setup wizard
+ This metapackage will generate NFS (Network File Systewm) configuration.
+Description-ja: nfs のセットアップウィザードへようこそ
+ このウィザードでは NFS (Network File System) の設定を行います。
+
+Template: lucie-client/nfs/suid
+Type: boolean
+Default: true
+Description: Configure nosuid option
+ Set nosuid mount option ?
+Description-ja: nosuid オプションの指定
+ nosuid マウントオプションを適用しますか？

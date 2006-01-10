@@ -1,0 +1,116 @@
+#
+# $Id: lucie_vm_template.rb 395 2005-03-10 08:28:02Z takamiya $
+#
+# Author::   Hideo Nishimura (mailto:nish@matsulab.is.titech.ac.jp)
+# Revision:: $LastChangedRevision: 395 $
+# License::  GPL2
+
+require 'deft'
+
+include Deft
+
+# -------------------------
+
+template( 'lucie-client/nfs/hello' ) do |template|
+  template.template_type = 'note'
+  template.short_description = 'Welcome to lmp-nfs setup wizard'
+  template.short_description_ja = 'nfs のセットアップウィザードへようこそ'
+  template.extended_description = <<-DESCRIPTION
+  This metapackage will generate NFS (Network File Systewm) configuration.
+  DESCRIPTION
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  このウィザードでは NFS (Network File System) の設定を行います。
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/nfs/hello' => 'lucie-client/nfs/server' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+  question.first_question = true
+end
+
+# -------------------------
+
+template( 'lucie-client/nfs/server' ) do |template|
+  template.template_type = 'string'
+  template.short_description = 'Configure NFS Server'
+  template.short_description_ja = 'NFS サーバの指定'
+  template.extended_description = <<-DESCRIPTION
+  Please input your nfs server address and an entry to be mounted separated by colon (:) .
+
+  ( [Ex] nfs-server.example.com:/export/dir )
+  DESCRIPTION
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  NFS サーバのアドレス及びマウントするエントリをコロン(:)で区切って入力してください。
+
+  ( [例] nfs-server.example.com:/export/dir )
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/nfs/server' => 'lucie-client/nfs/mount' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+end
+
+# -------------------------
+
+template( 'lucie-client/nfs/mount' ) do |template|
+  template.template_type = 'string'
+  template.short_description = 'Configure mount point'
+  template.short_description_ja = 'マウントポイントの指定'
+  template.extended_description = <<-DESCRIPTION
+  Please input local mount point.
+
+  ( [Ex] /mnt/dir )
+  DESCRIPTION
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  ローカルのマウントポイントを指定してください。
+
+  ( [例] /mnt/dir )
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/nfs/mount' => 'lucie-client/nfs/buffer' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+end
+
+# -------------------------
+
+template( 'lucie-client/nfs/buffer' ) do |template|
+  template.template_type = 'string'
+  template.default = '8192'
+  template.short_description = 'Configure r/w buffer size'
+  template.short_description_ja = 'バッファサイズの指定'
+  template.extended_description = <<-DESCRIPTION
+  Please input read/write buffer size.
+  DESCRIPTION
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  バッファのサイズを指定してください。
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/nfs/buffer' => 'lucie-client/nfs/suid' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+end
+
+# -------------------------
+
+template( 'lucie-client/nfs/suid' ) do |template|
+  template.template_type = 'boolean'
+  template.default = 'true'
+  template.short_description = 'Configure nosuid option'
+  template.short_description_ja = 'nosuid オプションの指定'
+  template.extended_description = <<-DESCRIPTION
+  Set nosuid mount option ?
+  DESCRIPTION
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  nosuid マウントオプションを適用しますか？
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/nfs/suid' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+end
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

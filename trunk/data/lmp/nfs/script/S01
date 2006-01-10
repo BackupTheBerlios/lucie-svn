@@ -1,0 +1,15 @@
+#!/usr/bin/cfengine
+
+control:
+        access = ( root )
+        sysadm = ( root )
+
+        actionsequence = (
+                editfiles
+        )
+
+editfiles:
+        any::
+        { /tmp/target/etc/fstab
+           AppendIfNoSuchLine "%%%SERVER%%% %%%MOUNT%%% nfs rw,rsize=%%%BUFFER%%%,wsize=%%%BUFFER%%%,%%%OPTION%%% 0 0"
+        }

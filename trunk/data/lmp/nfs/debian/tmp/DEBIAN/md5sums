@@ -1,0 +1,5 @@
+23b2fde962eac40c78720f408f8d8274  etc/lucie/package/lmp-nfs
+0eae15fe8f7d5b706f73ffa60be9b468  etc/lucie/script/lmp-nfs/S01
+c8e80a65cbb571f49faba3ef8e6d466c  usr/share/doc/lmp-nfs/README.Debian
+b0f7f10a1a1de95b6cbc45b5533a84d1  usr/share/doc/lmp-nfs/copyright
+3d8e25597c3415fb644d95fbf25d5f42  usr/share/doc/lmp-nfs/changelog.gz

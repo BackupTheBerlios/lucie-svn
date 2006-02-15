@@ -2,7 +2,7 @@
 #
 # $Id: command-line-options.rb 557 2005-04-13 07:05:05Z takamiya $
 #
-# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Author::   Hideo NISHIMURA(mailto:nish@matsulab.is.titech.ac.jp)
 # Revision:: $Revision: 557 $
 # License::  GPL2
 
@@ -23,16 +23,39 @@ require 'lucie/installer'
 require 'fileutils'
 include Lucie::Installer
 
-# Xen $B%P%$%J%j(B tar ball $B$N%3%T!<(B
-FileUtils.mv( '/etc/lucie/file/tmp/lmp-xen/xen_install.sh.template', "/etc/lucie/file/tmp/lmp-xen/xen_install.sh/#{installer_resource.name}" )
-FileUtils.mv( '/tmp/xen.tgz', "/etc/lucie/file/tmp/lmp-xen/installer/xen.tgz/#{installer_resource.name}" )
 
-# GRUB $B$N%G%U%)%k%H5/F0%+!<%M%k$r@_Dj(B
-if Debconf::Client.get('lucie-client/xen/kernel') == 'false' then 
-  FileUtils.rm('/etc/lucie/script/lmp-xen/S20' )
+# config ƒtƒ@ƒCƒ‹‚ÌƒRƒs[
+if FileTest.exist?( "/etc/lucie/xen/config" )
+  config_list =  Dir::entries( "/etc/lucie/xen/config/" )
+  # 2 ‚©‚çŽn‚ß‚é‚Ì‚ÍAu.vu..v‚ðÈ‚­‚½‚ß
+  i = 2
+  while i < config_list.length
+    FileUtils.mkdir_p( "/etc/lucie/file/var/xen/config/#{config_list[ i ]}" )
+    FileUtils.mv( "/etc/lucie/xen/config/#{config_list[ i ]}", "/etc/lucie/file/var/xen/config/#{config_list[ i ]}/#{installe
+r_resource.name}" )
+    i += 1
+  end
 end
 
-# Domain 0 $B3d$jEv$F%a%b%jNL$N@_Dj(B
+
+# disk ƒtƒ@ƒCƒ‹‚ÌƒRƒs[
+if FileTest.exist?( "/etc/lucie/xen/disk" )
+  disk_list =  Dir::entries( "/etc/lucie/xen/disk/" )
+  i = 2
+  while i < disk_list.length
+    FileUtils.mkdir_p( "/etc/lucie/file/var/xen/disk/#{disk_list[ i ]}" )
+    FileUtils.mv( "/etc/lucie/xen/disk/#{disk_list[ i ]}", "/etc/lucie/file/var/xen/disk/#{disk_list[ i ]}/#{installer_resour
+ce.name}" )
+    i += 1
+  end
+end
+
+# GRUB ‚ÌƒfƒtƒHƒ‹ƒg‹N“®ƒJ[ƒlƒ‹‚ðÝ’è
+if Debconf::Client.get('lucie-client/xen/kernel') == 'false' then 
+  FileUtils.rm_f('/etc/lucie/script/lmp-xen/S20' )
+end
+
+# Domain 0 Š„‚è“–‚Äƒƒ‚ƒŠ—Ê‚ÌÝ’è
 memory = Debconf::Client.get('lucie-client/xen/memory')
 system %{ruby1.8 -pi -e "gsub(/%%%MEMORY%%%/, '#{memory}')" /etc/lucie/script/lmp-xen/S10}
 

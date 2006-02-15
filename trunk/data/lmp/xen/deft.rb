@@ -15,28 +15,25 @@ include Lucie::Installer
 template( 'lucie-client/xen/hello' ) do |template|
   template.template_type = 'note'
   template.short_description = 'Welcome to lmp-xen setup wizard'
-  template.short_description_ja = 'Xen ¤Î¥»¥Ã¥È¥¢¥Ã¥×¥¦¥£¥¶¡¼¥É¤Ø¤è¤¦¤³¤½'
+  template.short_description_ja = 'Xen ‚ÌƒZƒbƒgƒAƒbƒvƒEƒBƒU[ƒh‚Ö‚æ‚¤‚±‚»'
   template.extended_description = <<-DESCRIPTION
   This metapackage will setup Xen VMM.
-
-  This package require Xen binary installer (tar ball) which includes "install.sh".
 
   This package require lmp-grub metapackage.
 
   DESCRIPTION
 
   template.extended_description_ja = <<-DESCRIPTION_JA
-  ¤³¤Î¥¦¥£¥¶¡¼¥É¤Ç¤Ï Xen ¤ÎÀßÄê¤ò¹Ô¤¤¤Ş¤¹¡£
+  ‚±‚ÌƒEƒBƒU[ƒh‚Å‚Í Xen ‚Ìİ’è‚ğs‚¢‚Ü‚·B
 
-  ¤³¤Î¥Ñ¥Ã¥±¡¼¥¸¤ò¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¤¿¤á¤Ë¤Ï¡¢install.sh ¤ò´Ş¤ó¤À Xen ¤Î¥Ğ¥¤¥Ê¥ê¥¤¥ó¥¹¥È¡¼¥é(tar ball)¤¬É¬Í×¤Ç¤¹¡£
-
-  ¤³¤Î¥Ñ¥Ã¥±¡¼¥¸¤ò¥¤¥ó¥¹¥È¡¼¥ë¤¹¤ë¤¿¤á¤Ë¤Ï lmp-grub ¤¬É¬Í×¤Ç¤¹¡£
+  ‚±‚ÌƒpƒbƒP[ƒW‚ğƒCƒ“ƒXƒg[ƒ‹‚·‚é‚½‚ß‚É‚Í lmp-grub ‚ª•K—v‚Å‚·B
 
   DESCRIPTION_JA
 end
 
 question( 'lucie-client/xen/hello' =>
 proc do
+  subst 'lucie-client/xen/guest', 'installer_name', "#{installer_resource.name}"
   subst 'lucie-client/xen/bye', 'installer_name', "#{installer_resource.name}"
   'lucie-client/xen/memory' 
 end ) do |question|
@@ -50,12 +47,12 @@ template( 'lucie-client/xen/memory' ) do |template|
   template.template_type = 'string'
   template.default = '131072'
   template.short_description = 'Configure memory amount'
-  template.short_description_ja = '¥á¥â¥êÎÌ¤ÎÀßÄê'
+  template.short_description_ja = 'ƒƒ‚ƒŠ—Ê‚Ìİ’è'
   template.extended_description = <<-DESCRIPTION
   Please enter an amount of memory size used by Xen Domain0. (kbytes)
   DESCRIPTION
   template.extended_description_ja = <<-DESCRIPTION_JA
-  Xen Domain0 ¤Ë³ä¤êÅö¤Æ¤ë¥á¥â¥êÎÌ¤òÆşÎÏ¤·¤Æ¤¯¤À¤µ¤¤¡£(Ã±°Ì: kbytes)
+  Xen Domain0 ‚ÉŠ„‚è“–‚Ä‚éƒƒ‚ƒŠ—Ê‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B(’PˆÊ: kbytes)
   DESCRIPTION_JA
 end
 
@@ -68,16 +65,47 @@ end
 template( 'lucie-client/xen/kernel' ) do |template|
   template.template_type = 'boolean'
   template.short_description = 'Select Kernel'
-  template.short_description_ja = 'Kernel ¤ÎÁªÂò'
+  template.short_description_ja = 'Kernel ‚Ì‘I‘ğ'
   template.extended_description = <<-DESCRIPTION
   Make Xen0 first boot kernel ?
   DESCRIPTION
   template.extended_description_ja = <<-DESCRIPTION_JA
-  µ¯Æ°¤µ¤ì¤ë¥«¡¼¥Í¥ë¤ò Xen0 ¥«¡¼¥Í¥ë¤Ë¤·¤Ş¤¹¤«¡©
+  ‹N“®‚³‚ê‚éƒJ[ƒlƒ‹‚ğ Xen0 ƒJ[ƒlƒ‹‚É‚µ‚Ü‚·‚©H
   DESCRIPTION_JA
 end
 
-question( 'lucie-client/xen/kernel' => 'lucie-client/xen/bye' ) do |question|
+question( 'lucie-client/xen/kernel' => 'lucie-client/xen/guest' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+end
+
+# ------------------------- 
+
+template( 'lucie-client/xen/guest' ) do |template|
+  template.template_type = 'note'
+  template.short_description = 'Configurate guest image'
+  template.short_description_ja = 'ƒQƒXƒg‚Ìİ’è'
+  template.extended_description = <<-DESCRIPTION
+  If you want to deploy your Xen guest image file and config file, put these in directories shown below.
+
+  These files will be copied into /var/xen/ .
+
+   o Image : /etc/lucie/${installer_name}/xen/disk/
+   o Config : /etc/lucie/${installer_name}/xen/config/
+
+  DESCRIPTION
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  ƒQƒXƒgƒhƒƒCƒ“‚Å—p‚¢‚éƒCƒ[ƒWƒtƒ@ƒCƒ‹‚Æİ’èƒtƒ@ƒCƒ‹‚ğ—p‚¢‚½‚¢ê‡AˆÈ‰º‚ÌƒfƒBƒŒƒNƒgƒŠ‚É
+  ‚»‚ê‚ç‚Ìƒtƒ@ƒCƒ‹‚ğ’u‚¢‚Ä‚­‚¾‚³‚¢B
+
+  ‚±‚ê‚ç‚Ìƒtƒ@ƒCƒ‹‚Í /var/xen/ ˆÈ‰º‚ÉƒRƒs[‚³‚ê‚Ü‚·B
+
+   o ƒCƒ[ƒW : /etc/lucie/${installer_name}/xen/disk/
+   o İ’èƒtƒ@ƒCƒ‹ : /etc/lucie/${installer_name}/xen/config/
+  
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/xen/guest' => 'lucie-client/xen/bye' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
 end
 
@@ -86,26 +114,22 @@ end
 template( 'lucie-client/xen/bye' ) do |template|
   template.template_type = 'note'
   template.short_description = 'Important!'
-  template.short_description_ja = '½ÅÍ×¡ª'
+  template.short_description_ja = 'd—vI'
   template.extended_description = <<-DESCRIPTION
-  Put Xen binary installer tar ball as 
-  /var/lib/lucie/nfsroot/${installer_name}/tmp/xen.tgz ]
-  and then, click ok.
-  
-  (If not, install cannot be completed.)
-  (You must put xen.tgz each time you install lmp-xen)
+  Put xen binary installer directory as shown below and then, click OK.
 
-  Note: This tar ball must include Xen intaller (install.sh)
+  /etc/lucie/${installer_name}/xen/installer/
+   (Ex: /etc/lucie/${installer_name}/xen/installer/xen-3.0.0-install/)
+
+  Note: This binary installer directory must include Xen intaller (install.sh).
   DESCRIPTION
   template.extended_description_ja = <<-DESCRIPTION_JA
-  Xen ¤Î¥Ğ¥¤¥Ê¥ê¥¤¥ó¥¹¥È¡¼¥é tar ball ¤ò 
-  /var/lib/lucie/nfsroot/${installer_name}/tmp/xen.tgz
-  ¤È¤·¤ÆÃÖ¤¤¤Æ¤¢¤ë¤Î¤ò³ÎÇ§¤·¡¢OK ¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£
+  Xen ƒoƒCƒiƒŠƒCƒ“ƒXƒg[ƒ‰ƒfƒBƒŒƒNƒgƒŠ‚ªˆÈ‰º‚É‚ ‚é‚±‚Æ‚ğŠm”F‚µA‚n‚j‚ğƒNƒŠƒbƒN‚µ‚Ä‚­‚¾‚³‚¢B
 
-  (xen.tgz ¤¬¤Ê¤¤¤È¥¤¥ó¥¹¥È¡¼¥ë¤ÏÂ³¹Ô½ĞÍè¤Ş¤»¤ó¡£)
-  (xen.tgz ¤Ï lmp-xen ¤Î¥¤¥ó¥¹¥È¡¼¥ë»ş¤Ë¤ÏËè²óÃÖ¤¯É¬Í×¤¬¤¢¤ê¤Ş¤¹¡£)
+  /etc/lucie/${installer_name}/xen/installer/
+   (—á: /etc/lucie/${installer_name}/xen/installer/xen-3.0.0-install/)
 
-  Ãí: tar ball ¤Ï Xen ¥¤¥ó¥¹¥È¡¼¥é (install.sh) ¤ò´Ş¤ó¤Ç¤¤¤ëÉ¬Í×¤¬¤¢¤ê¤Ş¤¹¡£
+  ’: ‚±‚ÌƒoƒCƒiƒŠƒCƒ“ƒXƒg[ƒ‰ƒfƒBƒŒƒNƒgƒŠ‚É‚ÍAXen ƒCƒ“ƒXƒg[ƒ‰ (install.sh) ‚ª’u‚©‚ê‚Ä‚¢‚é•K—v‚ª‚ ‚è‚Ü‚·B
   DESCRIPTION_JA
 end
 

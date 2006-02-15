@@ -5,13 +5,13 @@
 # Revision:: $LastChangedRevision: 395 $
 # License::  GPL2
 
-# ------------------------- LMP ¤ÎÄêµÁ.
+# ------------------------- LMP ¤ÎÄ?Á.
 
 spec = LMP::Specification.new do |spec|
   spec.name = "lmp-xen"
-  spec.version = "0.3.0"
+  spec.version = "0.5.1"
   spec.maintainer = 'Hideo Nishimura <nish@matsulab.is.titech.ac.jp>'
-  spec.short_description = '[¥á¥¿¥Ñ¥Ã¥±¡¼¥¸] XEN'
+  spec.short_description = '[metapackage] XEN'
   spec.extended_description = <<-EXTENDED_DESCRIPTION
   Included packages:
   A Lucie Meta Package which setups Xen VMM environment.

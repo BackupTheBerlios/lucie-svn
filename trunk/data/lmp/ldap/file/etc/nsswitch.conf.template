@@ -1,0 +1,13 @@
+passwd:         files ldap
+group:          files ldap
+shadow:         files ldap
+
+hosts:          files dns
+networks:       files ldap
+
+protocols:      db files
+services:       files ldap
+ethers:         db files
+rpc:            db files
+
+netgroup:       ldap

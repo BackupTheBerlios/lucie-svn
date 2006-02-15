@@ -1,0 +1,50 @@
+#! /usr/bin/ruby1.8
+#
+# $Id: command-line-options.rb 557 2005-04-13 07:05:05Z takamiya $
+#
+# Author::   Hideo NISHIMURA (mailto:nish@matsulab.is.titech.ac.jp)
+# Revision:: $Revision: 557 $
+# License::  GPL2
+
+if ENV["DEBIAN_HAS_FRONTEND"] == nil then
+  args = ""
+  for arg in ARGV
+    args << arg << " "
+  end
+  stdout_dup = STDOUT.clone
+  stdin_dup = STDIN.clone
+  ENV["DEBCONF_RUBY_STDOUT"] = "#{stdout_dup.fileno}"
+  ENV["DEBCONF_RUBY_STDIN"] = "#{stdin_dup.fileno}"
+  exec "/usr/share/debconf/frontend #{$0} #{args}"
+end
+
+require 'debconf/client'
+require 'lucie/installer'
+include Lucie::Installer
+
+server = Debconf::Client.get('lucie-client/ldap/server')
+search = Debconf::Client.get('lucie-client/ldap/search')
+version = Debconf::Client.get('lucie-client/ldap/version')
+root_acc = "cn=admin," << search
+system %{ruby1.8 -pi -e "gsub(/%%%SERVER%%%/, '#{server}')" /etc/lucie/file/etc/libnss-ldap.conf.template}
+system %{ruby1.8 -pi -e "gsub(/%%%SERVER%%%/, '#{server}')" /etc/lucie/file/etc/pam_ldap.conf.template}
+system %{ruby1.8 -pi -e "gsub(/%%%SEARCH_BASE%%%/, '#{search}')" /etc/lucie/file/etc/libnss-ldap.conf.template}
+system %{ruby1.8 -pi -e "gsub(/%%%SEARCH_BASE%%%/, '#{search}')" /etc/lucie/file/etc/pam_ldap.conf.template}
+system %{ruby1.8 -pi -e "gsub(/%%%VERSION%%%/, '#{version}')" /etc/lucie/file/etc/libnss-ldap.conf.template}
+system %{ruby1.8 -pi -e "gsub(/%%%VERSION%%%/, '#{version}')" /etc/lucie/file/etc/pam_ldap.conf.template}
+system %{ruby1.8 -pi -e "gsub(/%%%ROOT%%%/, '#{root_acc}')" /etc/lucie/file/etc/libnss-ldap.conf.template}
+system %{ruby1.8 -pi -e "gsub(/%%%ROOT%%%/, '#{root_acc}')" /etc/lucie/file/etc/pam_ldap.conf.template}
+
+FileUtils.mv( '/etc/lucie/file/etc/libnss-ldap.conf.template', "/etc/lucie/file/etc/libnss-ldap.conf/#{installer_resource.name}" )
+FileUtils.mv( '/etc/lucie/file/etc/pam_ldap.conf.template', "/etc/lucie/file/etc/pam_ldap.conf/#{installer_resource.name}" )
+FileUtils.mv( '/etc/lucie/file/etc/nsswitch.conf.template', "/etc/lucie/file/etc/nsswitch.conf/#{installer_resource.name}" )
+
+# Writing passphrase into ldap.secret in secure
+FileUtils.mv( '/etc/lucie/file/etc/ldap.secret.template', "/etc/lucie/file/etc/ldap.secret/#{installer_resource.name}" )
+FileUtils.chmod( 0600, "/etc/lucie/file/etc/ldap.secret/#{installer_resource.name}" )
+secret = Debconf::Client.get('lucie-client/ldap/secret')
+system %{ruby1.8 -pi -e "gsub(/%%%SECRET%%%/, '#{secret}')" "/etc/lucie/file/etc/ldap.secret/#{installer_resource.name}"}
+
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

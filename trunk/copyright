@@ -1,0 +1,15 @@
+Lucie Copyright (C) Yasuhito Takamiya
+
+"The installation code inside lucie was taken from FAI, the Fully
+Automatic Installation project" written by Thomas Lange. The FAI
+homepage is http://www.informatik.uni-koeln.de/fai/."
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.

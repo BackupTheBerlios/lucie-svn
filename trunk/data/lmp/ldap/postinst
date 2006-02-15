@@ -45,6 +45,7 @@ FileUtils.chmod( 0600, "/etc/lucie/file/etc/ldap.secret/#{installer_resource.nam
 secret = Debconf::Client.get('lucie-client/ldap/secret')
 system %{ruby1.8 -pi -e "gsub(/%%%SECRET%%%/, '#{secret}')" "/etc/lucie/file/etc/ldap.secret/#{installer_resource.name}"}
 
+
 ### mode: Ruby
 ### indent-tabs-mode: nil
 ### End:

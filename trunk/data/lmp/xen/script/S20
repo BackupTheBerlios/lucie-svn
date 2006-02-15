@@ -1,0 +1,22 @@
+#!/usr/bin/cfengine
+
+control:
+        access = ( root )
+        sysadm = ( root )
+
+        actionsequence = (
+                editfiles
+                shellcommands
+        )
+
+editfiles:
+        any::
+        # change the default boot kernel
+        { /tmp/target/boot/grub/menu.lst
+                # TODO : Assuming that there have been only one kernel in menu.lst
+		ReplaceAll "default 0" With "default 1"
+        }
+shellcommands:
+   any::
+
+	"/bin/mv -f /tmp/target/lib/tls /tmp/target/lib/tls.disabled"

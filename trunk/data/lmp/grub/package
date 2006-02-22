@@ -7,6 +7,8 @@
 
 install( %w(grub initrd-tools) )
 
+remove( %w(lilo) )
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil

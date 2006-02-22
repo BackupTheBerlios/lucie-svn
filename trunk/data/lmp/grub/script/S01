@@ -3,7 +3,8 @@
 #--- install kernel
 # TODO : assuming that there's only one kernel
 kernel=$(cd /etc/lucie/kernel; ls kernel-image*)
-yes 'n' | dpkg --root=/tmp/target -i /etc/lucie/kernel/$kernel
+cp /etc/lucie/kernel/$kernel /tmp/target/tmp/
+chroot /tmp/target /bin/sh -c '( kernel=$(cd /tmp; ls kernel-image*); echo -e "n\n" | dpkg -i /tmp/$kernel )'
 
 #--- install grub into boot device
 cp /tmp/lucie/disk_var.sh /tmp/target/tmp/

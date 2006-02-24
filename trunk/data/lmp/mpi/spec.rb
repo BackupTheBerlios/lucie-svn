@@ -5,11 +5,11 @@
 # Revision:: $LastChangedRevision: 395 $
 # License::  GPL2
 
-# ------------------------- LMP ¤ÎÄêµÁ.
+# ------------------------- LMP ¤ÎÄ?Á.
 
 spec = LMP::Specification.new do |spec|
   spec.name = "lmp-mpi"
-  spec.version = "0.0.4"
+  spec.version = "0.0.5"
   spec.maintainer = 'Hideo Nishimura <nish@matsulab.is.titech.ac.jp>'
   spec.short_description = '[¥á¥¿¥Ñ¥Ã¥±¡¼¥¸] MPI'
   spec.extended_description = <<-EXTENDED_DESCRIPTION

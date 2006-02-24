@@ -24,25 +24,6 @@ require 'lucie/installer'
 include Lucie::Installer
 include Lucie::Config
 
-if Debconf::Client.get('lucie-client/mpi/machines-file') == 'true' then
-  group = host_group_resource.members
-  # machines_list : list of client's IP addresses
-  # hosts_list : list of client's (IPaddr hostname) pairs
-  machines_list = [Host[group[0]].name]
-  hosts_list = [Host[group[0]].address + " " + Host[group[0]].name]
-  i = 1
-  while i < group.length
-    machines_list << Host[group[i]].name
-    hosts_list << [Host[group[i]].address + " " + Host[group[i]].name]
-    i += 1
-  end
-  machines = machines_list.join("\n")
-  hosts = hosts_list.join("\n")
-else
-  machines = "localhost"
-  hosts = ""
-end
-
 mpi_flavor = Debconf::Client.get('lucie-client/mpi/select-mpi')
 
 case mpi_flavor
@@ -59,11 +40,6 @@ case mpi_flavor
      system %{ruby1.8 -pi -e "gsub(/%%%MPI_FLAVOR%%%/, '')" /etc/lucie/package/lmp-mpi}
      machine_file_path = ""
 end
-
-system %{ruby1.8 -pi -e "gsub(/%%%MACHINES%%%/, '#{machines}')" /etc/lucie/script/lmp-mpi/S01}
-system %{ruby1.8 -pi -e "gsub(/%%%HOSTS%%%/, '#{hosts}')" /etc/lucie/script/lmp-mpi/S01}
-system %{ruby1.8 -pi -e "gsub(/%%%MACHINE_FILE_PATH%%%/, '#{machine_file_path}')" /etc/lucie/script/lmp-mpi/S01}
-
 
 ### Local variables:
 ### mode: Ruby

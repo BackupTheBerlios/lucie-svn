@@ -31,7 +31,12 @@ end
 
 template( 'lucie-client/ganglia/trusted_hosts' ) do |template|
   template.template_type = 'string'
+  template.short_description = 'Configure Ganglia server.'
   template.short_description_ja = 'Ganglia サーバの設定'
+  template.extended_description = <<-DESCRIPTION
+  Enter addresses of servers which collect ganglia monitoring information divided by SPACE or TAB.
+  (Ex. 192.168.1.1 ganglia.cluster.org)
+  DESCRIPTION
   template.extended_description_ja = <<-DESCRIPTION_JA
   Ganglia の情報を受け取るサーバのアドレスを、スペースで区切って入力してください。
   (例: 192.168.1.1 ganglia.cluster.org)

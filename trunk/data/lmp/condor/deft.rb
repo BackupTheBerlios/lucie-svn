@@ -27,15 +27,15 @@ question( 'lucie-client/condor/hello' => 'lucie-client/condor/central_manager' )
   question.first_question = true
 end
 
-# ------------------------- Central Manager の入力
+# ------------------------- Central Manager の入力 
 
 template( 'lucie-client/condor/central_manager' ) do |template|
   template.template_type = 'string'
   template.short_description_ja = 'Condor セントラルマネージャの設定'
   template.extended_description_ja = <<-DESCRIPTION_JA
-  Condor セントラルマネージャを動作させるクラスタノード名を入力してください。
+  Condor セントラルマネージャを動作させるノードのアドレスを入力してください。
   
-  (例: condor_central_manager)
+  (例: central.manager.net OR 123.456.789.0 )
 
   ジョブをサブミットする際には,このセントラルマネージャを経由して行われます。
   DESCRIPTION_JA

@@ -1,11 +1,10 @@
 #
 # $Id$
 #
-# condor ´Ä¶­¤ò¥»¥Ã¥È¥¢¥Ã¥×¤¹¤ë¤¿¤á¤Î Lucie ¥á¥¿¥Ñ¥Ã¥±¡¼¥¸
+# condor ´Ä¶­¤ò¥»¥Ã¥È¥¢¥Ã¥×¤¹¤?¿¤á¤Î Lucie ¥á¥¿¥Ñ¥Ã¥±¡¼¥¸
 #
 #--
-# XXX: condor central server ¤ÎÌ¾Á°¤Î¼ÁÌä
-#++
+# XXX: condor central server ¤ÎÌ¾Á°¤Î¼ÁÌ?#++
 #
 # Author::   Yasuhito TAKAMIYA (mailto:takamiya@matsulab.is.titech.ac.jp)
 # Revision:: $LastChangedRevision$
@@ -13,7 +12,7 @@
 
 spec = LMP::Specification.new do |spec|
   spec.name = "lmp-condor"
-  spec.version = "0.0.2-1"
+  spec.version = "0.0.3"
   spec.maintainer = 'Yasuhito TAKAMIYA <takamiya@matsulab.is.titech.ac.jp>'
   spec.short_description = '[Lucie Meta Package] condor'
   spec.extended_description = <<-EXTENDED_DESCRIPTION

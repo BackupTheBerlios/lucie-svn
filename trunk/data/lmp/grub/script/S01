@@ -8,7 +8,7 @@ chroot /tmp/target /bin/sh -c '( kernel=$(cd /tmp; ls kernel-image*); echo -e "n
 
 #--- install grub into boot device
 cp /tmp/lucie/disk_var.sh /tmp/target/tmp/
-chroot /tmp/target /bin/sh -c '(. /tmp/disk_var.sh; mount -f /; /bin/sh grub-install $BOOT_DEVICE)'
+chroot /tmp/target /bin/sh -c '(. /tmp/disk_var.sh; mount -f /; /bin/sh grub-install --no-floppy $BOOT_DEVICE)'
 
 
 #--- create /boot/grub/menu.lst

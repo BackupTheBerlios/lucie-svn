@@ -9,5 +9,5 @@ install( %w(ssh hdparm cron linuxlogo tcsh file less cfengine rsync jove rstat-c
 
 ### Local variables:
 ### mode: Ruby
-### indent-tabs-mode: nil
+### indent-tabs-mode: nilx
 ### End:

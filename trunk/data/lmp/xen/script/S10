@@ -19,3 +19,4 @@ module		/boot/vmlinuz-2.6-xen0 root=$ROOT_PARTITION ro console=tty1
 
 EOF
 
+

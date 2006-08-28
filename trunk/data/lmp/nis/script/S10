@@ -1,0 +1,23 @@
+#!/usr/bin/cfengine
+
+control:
+        access = ( root )
+        sysadm = ( root )
+
+        actionsequence = (
+                editfiles
+        )
+
+editfiles:
+        any::
+        { /tmp/target/etc/passwd
+           AppendIfNoSuchLine "+::::::"
+        }
+        
+        { /tmp/target/etc/group
+           AppendIfNoSuchLine "+:::"
+        }
+        
+		{ /tmp/target/etc/nsswitch.conf
+		   ReplaceAll "hosts: files dns" With "hosts: files nis dns"
+		}

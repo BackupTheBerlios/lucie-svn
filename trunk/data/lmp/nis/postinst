@@ -22,10 +22,19 @@ require 'debconf/client'
 require 'lucie/installer'
 include Lucie::Installer
 
-server = Debconf::Client.get('lucie-client/nis/server')
-system %{ruby1.8 -pi -e "gsub(/%%%NIS_SERVER%%%/, '#{server}')" /etc/lucie/file/etc/defaultdomain.template}
+domain = Debconf::Client.get('lucie-client/nis/domain')
+system %{ruby1.8 -pi -e "gsub(/%%%DEFAULT_DOMAIN%%%/, '#{domain}')" /etc/lucie/file/etc/defaultdomain.template}
 
 FileUtils.mv( '/etc/lucie/file/etc/defaultdomain.template', "/etc/lucie/file/etc/defaultdomain/#{installer_resource.name}" )
+
+# yp.conf �̍쐬
+if Debconf::Client.get('lucie-client/nis/qustion') == 'true' then 
+  server = Debconf::Client.get('lucie-client/nis/server')
+  FileUtils.mkdir_p( "/etc/lucie/file/etc/yp.conf" )
+  yp_conf = open( "/etc/lucie/file/etc/yp.conf/#{installer_resource.name}" )
+  yp_conf.puts( "ypserver #{server}" )
+  yp_conf.close
+end
 
 ### mode: Ruby
 ### indent-tabs-mode: nil

@@ -23,26 +23,68 @@ template( 'lucie-client/nis/hello' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-client/nis/hello' => 'lucie-client/nis/server' ) do |question|
+question( 'lucie-client/nis/hello' => 'lucie-client/nis/domain' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
   question.first_question = true
 end
 
 # -------------------------
 
-template( 'lucie-client/nis/server' ) do |template|
+template( 'lucie-client/nis/domain' ) do |template|
   template.template_type = 'string'
-  template.short_description = 'Configure NIS Server'
-  template.short_description_ja = 'NIS サーバの設定'
+  template.short_description = 'Configure default domain'
+  template.short_description_ja = 'デフォルトドメインの設定'
   template.extended_description = <<-DESCRIPTION
-  Please input your nis server address.
+  Please input your NIS default domain.
 
-  ( [Ex] nis-server.example.com )
+  ( [Ex.] cluster_nis )
   DESCRIPTION
   template.extended_description_ja = <<-DESCRIPTION_JA
-  NIS サーバのアドレスを入力して下さい。
+  NIS のデフォルトドメインを入力して下さい。
+  
+  ( [例.] cluster_nis )
+  DESCRIPTION_JA
+end
 
-  ( [例] nis-server.example.com )
+question( 'lucie-client/nis/domain' => 'lucie-client/nis/question' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+end
+
+# -------------------------
+
+template( 'lucie-client/nis/question' ) do |template|
+  template.template_type = 'boolean'
+  template.default = 'false'
+  template.short_description = 'Is your NIS server not local?'
+  template.short_description_ja = 'NIS サーバは複数存在しますか？'
+  template.extended_description = <<-DESCRIPTION
+  Is your NIS server not "local" to your network?
+  DESCRIPTION
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  NISサーバはローカルネットワーク内に複数存在しますか?
+  DESCRIPTION_JA
+end
+
+question( 'lucie-client/nis/question' ) do |question|
+  question.priority = Question::PRIORITY_MEDIUM
+  question.next_question = { 'false' => 'lucie-client/nis/server' }
+end
+
+# -------------------------
+
+template( 'lucie-client/nis/server' ) do |template|
+  template.template_type = 'string'
+  template.short_description = 'Hardcore NIS Server'
+  template.short_description_ja = 'NIS サーバの固定'
+  template.extended_description = <<-DESCRIPTION
+  Please input your NIS server address to hardcore a NIS server there.
+
+  ( [Ex.] 192.168.1.2 )
+  DESCRIPTION
+  template.extended_description_ja = <<-DESCRIPTION_JA
+  NIS サーバを固定するために、NIS サーバのアドレスを入力して下さい。
+  
+  ( [例.] 192.168.1.2 )
   DESCRIPTION_JA
 end
 

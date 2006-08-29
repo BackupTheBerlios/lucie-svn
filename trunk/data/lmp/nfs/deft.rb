@@ -68,45 +68,29 @@ template( 'lucie-client/nfs/mount' ) do |template|
   DESCRIPTION_JA
 end
 
-question( 'lucie-client/nfs/mount' => 'lucie-client/nfs/buffer' ) do |question|
+question( 'lucie-client/nfs/mount' => 'lucie-client/nfs/option' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
 end
 
 # -------------------------
 
-template( 'lucie-client/nfs/buffer' ) do |template|
+template( 'lucie-client/nfs/option' ) do |template|
   template.template_type = 'string'
-  template.default = '8192'
-  template.short_description = 'Configure r/w buffer size'
-  template.short_description_ja = '$B%P%C%U%!%5%$%:$N;XDj(B'
+  template.short_description = 'Configure NFS mount option'
+  template.short_description_ja = 'NFS ¥Þ¥¦¥ó¥È¥ª¥×¥·¥ç¥ó¤ÎÀßÄê'
   template.extended_description = <<-DESCRIPTION
-  Please input read/write buffer size.
+  Input your NFS mount-option comma-delimited.
+  
+  ( [Ex.] ,rsize=8192,wsize=8192,nosuid )
   DESCRIPTION
   template.extended_description_ja = <<-DESCRIPTION_JA
-  $B%P%C%U%!$N%5%$%:$r;XDj$7$F$/$@$5$$!#(B
+  NFS ¥Þ¥¦¥ó¥È¥ª¥×¥·¥ç¥ó¤ò¥«¥ó¥Þ¶èÀÚ¤ê¤ÇÆþÎÏ¤·¤Æ²¼¤µ¤¤¡£
+  
+  ( [Îã.] ,rsize=8192,wsize=8192,nosuid )
   DESCRIPTION_JA
 end
 
-question( 'lucie-client/nfs/buffer' => 'lucie-client/nfs/suid' ) do |question|
-  question.priority = Question::PRIORITY_MEDIUM
-end
-
-# -------------------------
-
-template( 'lucie-client/nfs/suid' ) do |template|
-  template.template_type = 'boolean'
-  template.default = 'true'
-  template.short_description = 'Configure nosuid option'
-  template.short_description_ja = 'nosuid $B%*%W%7%g%s$N;XDj(B'
-  template.extended_description = <<-DESCRIPTION
-  Set nosuid mount option ?
-  DESCRIPTION
-  template.extended_description_ja = <<-DESCRIPTION_JA
-  nosuid $B%^%&%s%H%*%W%7%g%s$rE,MQ$7$^$9$+!)(B
-  DESCRIPTION_JA
-end
-
-question( 'lucie-client/nfs/suid' ) do |question|
+question( 'lucie-client/nfs/option' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
 end
 

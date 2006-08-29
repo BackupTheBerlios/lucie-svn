@@ -11,5 +11,5 @@ control:
 editfiles:
         any::
         { /tmp/target/etc/fstab
-           AppendIfNoSuchLine "%%%SERVER%%% %%%MOUNT%%% nfs rw,rsize=%%%BUFFER%%%,wsize=%%%BUFFER%%%,%%%OPTION%%% 0 0"
+           AppendIfNoSuchLine "%%%SERVER%%% %%%MOUNT%%% nfs rw%%%OPTION%%% 0 0"
         }

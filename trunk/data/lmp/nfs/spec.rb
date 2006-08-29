@@ -9,7 +9,7 @@
 
 spec = LMP::Specification.new do |spec|
   spec.name = "lmp-nfs"
-  spec.version = "0.0.1"
+  spec.version = "0.0.2"
   spec.maintainer = 'Hideo Nishimura <nish@matsulab.is.titech.ac.jp>'
   spec.short_description = '[メタパッケージ] NFS'
   spec.extended_description = <<-EXTENDED_DESCRIPTION

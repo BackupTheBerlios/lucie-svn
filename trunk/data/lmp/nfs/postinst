@@ -28,13 +28,12 @@ system %{ruby1.8 -pi -e "gsub(/%%%SERVER%%%/, '#{server}')" /etc/lucie/script/lm
 mount = Debconf::Client.get('lucie-client/nfs/mount')
 system %{ruby1.8 -pi -e "gsub(/%%%MOUNT%%%/, '#{mount}')" /etc/lucie/script/lmp-nfs/S01}
 
-buffer = Debconf::Client.get('lucie-client/nfs/buffer')
-system %{ruby1.8 -pi -e "gsub(/%%%BUFFER%%%/, '#{buffer}')" /etc/lucie/script/lmp-nfs/S01}
-
-if Debconf::Client.get('lucie-client/nfs/suid') == 'true' then
-  system %{ruby1.8 -pi -e "gsub(/%%%OPTION%%%/, 'nosuid')" /etc/lucie/script/lmp-nfs/S01}
+option = Debconf::Client.get('lucie-client/nfs/option')
+if option == ""
+  system %{ruby1.8 -pi -e "gsub(/%%%OPTION%%%/, '')" /etc/lucie/script/lmp-nfs/S01}
 else
-  system %{ruby1.8 -pi -e "gsub(/,%%%OPTION%%%/, '')" /etc/lucie/script/lmp-nfs/S01}
+  option = "," + option
+  system %{ruby1.8 -pi -e "gsub(/%%%OPTION%%%/, '#{option}')" /etc/lucie/script/lmp-nfs/S01}
 end
 
 ### mode: Ruby

@@ -28,7 +28,7 @@ system %{ruby1.8 -pi -e "gsub(/%%%DEFAULT_DOMAIN%%%/, '#{domain}')" /etc/lucie/f
 FileUtils.mv( '/etc/lucie/file/etc/defaultdomain.template', "/etc/lucie/file/etc/defaultdomain/#{installer_resource.name}" )
 
 # yp.conf �̍쐬
-if Debconf::Client.get('lucie-client/nis/qustion') == 'true' then 
+if Debconf::Client.get('lucie-client/nis/question') == 'true' then 
   server = Debconf::Client.get('lucie-client/nis/server')
   system %{ruby1.8 -pi -e "gsub(/%%%SERVER%%%/, '#{server}')" /etc/lucie/file/etc/yp.conf.template}
   FileUtils.mv( '/etc/lucie/file/etc/yp.conf.template', "/etc/lucie/file/etc/yp.conf/#{installer_resource.name}" )

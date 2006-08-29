@@ -81,12 +81,12 @@ template( 'lucie-client/nfs/option' ) do |template|
   template.extended_description = <<-DESCRIPTION
   Input your NFS mount-option comma-delimited.
   
-  ( [Ex.] ,rsize=8192,wsize=8192,nosuid )
+  ( [Ex.] rsize=8192,wsize=8192,nosuid )
   DESCRIPTION
   template.extended_description_ja = <<-DESCRIPTION_JA
   NFS マウントオプションをカンマ区切りで入力して下さい。
   
-  ( [例.] ,rsize=8192,wsize=8192,nosuid )
+  ( [例.] rsize=8192,wsize=8192,nosuid )
   DESCRIPTION_JA
 end
 

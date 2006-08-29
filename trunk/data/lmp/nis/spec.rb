@@ -9,7 +9,7 @@
 
 spec = LMP::Specification.new do |spec|
   spec.name = "lmp-nis"
-  spec.version = "0.0.2"
+  spec.version = "0.0.3"
   spec.maintainer = 'Hideo Nishimura <nish@matsulab.is.titech.ac.jp>'
   spec.short_description = '[Metapackage] NIS'
   spec.extended_description = <<-EXTENDED_DESCRIPTION

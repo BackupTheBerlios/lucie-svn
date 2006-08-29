@@ -30,10 +30,8 @@ FileUtils.mv( '/etc/lucie/file/etc/defaultdomain.template', "/etc/lucie/file/etc
 # yp.conf �̍쐬
 if Debconf::Client.get('lucie-client/nis/qustion') == 'true' then 
   server = Debconf::Client.get('lucie-client/nis/server')
-  FileUtils.mkdir_p( "/etc/lucie/file/etc/yp.conf" )
-  yp_conf = open( "/etc/lucie/file/etc/yp.conf/#{installer_resource.name}" )
-  yp_conf.puts( "ypserver #{server}" )
-  yp_conf.close
+  system %{ruby1.8 -pi -e "gsub(/%%%SERVER%%%/, '#{server}')" /etc/lucie/file/etc/yp.conf.template}
+  FileUtils.mv( '/etc/lucie/file/etc/yp.conf.template', "/etc/lucie/file/etc/yp.conf/#{installer_resource.name}" )
 end
 
 ### mode: Ruby

@@ -67,7 +67,7 @@ end
 
 question( 'lucie-client/nis/question' ) do |question|
   question.priority = Question::PRIORITY_MEDIUM
-  question.next_question = { 'false' => 'lucie-client/nis/server' }
+  question.next_question = { 'true' => 'lucie-client/nis/server' }
 end
 
 # -------------------------

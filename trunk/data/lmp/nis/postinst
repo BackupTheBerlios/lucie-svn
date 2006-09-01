@@ -37,7 +37,6 @@ end
 # /etc/init.d/nis.ditrib -> /etc/init.d/nis に戻す
 # TODO : アドホックでない解決方法を
 system( "echo sh %{mv /tmp/target/etc/init.d/nis.distrib /tmp/target/etc/init.d/nis} rescue nil >> /usr/lib/ruby/1.8/lucie/installer/finish.rb" )
-
 ### mode: Ruby
 ### indent-tabs-mode: nil
 ### End:

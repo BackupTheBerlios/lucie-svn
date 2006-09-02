@@ -22,3 +22,4 @@ editfiles:
 	{ /tmp/target/etc/nsswitch.conf
 	   ReplaceAll "hosts: files dns" With "hosts: files nis dns"
 	}
+

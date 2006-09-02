@@ -40,3 +40,4 @@ system( "echo sh %{mv /tmp/target/etc/init.d/nis.distrib /tmp/target/etc/init.d/
 ### mode: Ruby
 ### indent-tabs-mode: nil
 ### End:
+

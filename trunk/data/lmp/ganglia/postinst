@@ -25,7 +25,8 @@ include Lucie::Installer
 
 trusted_hosts = Debconf::Client.get('lucie-client/ganglia/trusted_hosts')
 
-system %{ruby1.8 -pi -e "gsub(/%%%TRUSTED_HOSTS%%%/, '#{trusted_hosts}')" /etc/lucie/script/lmp-ganglia/S01}
+system %{ruby1.8 -pi -e "gsub(/%%%TRUSTED_HOSTS%%%/, '#{trusted_hosts}')" /etc/lucie/file/etc/gmod.conf.template}
+FileUtils.mv( "/etc/lucie/file/etc/gmond.conf.template", "/etc/lucie/file/etc/gmond.conf/#{installer_resource.name}" )
 
 ### Local variables:
 ### mode: Ruby

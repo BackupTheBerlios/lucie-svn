@@ -6,7 +6,7 @@
 spec = LMP::Specification.new do |spec|
   spec.name = "lmp-mail" 
   spec.version = "0.0.1" 
-  spec.maintainer = 'Yasuhiko OGATA<ogata@matsulab.is.titech.ac.jp>'
+  spec.maintainer = 'Yasuhiko OGATA <ogata@matsulab.is.titech.ac.jp>'
   spec.short_description = '[Lucie Meta Package] mail'
   spec.extended_description = <<-EXTENDED_DESCRIPTION
 A Lucie Meta Package which setups mailx and postfix.

@@ -1,0 +1,14 @@
+#
+# $Id: package 806 2005-08-01 05:35:40Z takamiya $
+#
+# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Revision:: $LastChangedRevision: 806 $
+# License::  GPL2
+
+# mailx postfix
+install( %w(mailx postfix) )
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

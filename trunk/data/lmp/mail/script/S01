@@ -1,0 +1,42 @@
+#! /usr/bin/ruby1.8
+
+require '/etc/lucie/resource.rb'
+require 'lucie/installer'
+require 'rake'
+
+include Lucie::Installer
+
+hostname = %x(hostname).chomp
+domain_name = installer_resource.dhcp_server.domain_name
+
+File.open( '/tmp/target/etc/postfix/main.cf', 'w+' ) do |file|
+  file.print( <<-EOF )
+# See /usr/share/postfix/main.cf.dist for a commented, more complete version
+
+smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)
+biff = no
+
+# appending .domain is the MUA's job.
+append_dot_mydomain = no
+
+# Uncomment the next line to generate "delayed mail" warnings
+#delay_warning_time = 4h
+
+myhostname = #{hostname}.#{domain_name}
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+mydestination = $(HOSTNAME), #{hostname}.#{domain_name}, localhost.#{domain_name}, lo
+calhost
+relayhost =
+mynetworks = 127.0.0.0/8
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+    EOF
+end
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:
+    

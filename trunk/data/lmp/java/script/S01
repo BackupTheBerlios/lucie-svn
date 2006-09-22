@@ -6,4 +6,3 @@ mv /etc/lucie/java/$jre_dir /tmp/target/usr/lib/
 
 echo "export JAVA_HOME=/usr/lib/$jre_dir" >> /tmp/target/etc/profile
 echo "export PATH=\${JAVA_HOME}/bin:\$PATH" >> /tmp/target/etc/profile
-

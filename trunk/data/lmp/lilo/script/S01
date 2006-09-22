@@ -32,6 +32,7 @@ optional
 $liloappend
 EOF
 
+
 # now call lilo
 # you can also use this
 # $ROOTCMD lilo -v

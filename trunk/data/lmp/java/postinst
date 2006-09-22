@@ -17,7 +17,6 @@ if ENV["DEBIAN_HAS_FRONTEND"] == nil then
   ENV["DEBCONF_RUBY_STDIN"] = "#{stdin_dup.fileno}"
   exec "/usr/share/debconf/frontend #{$0} #{args}"
 end
-
 ### mode: Ruby
 ### indent-tabs-mode: nil
 ### End:

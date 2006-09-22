@@ -12,4 +12,3 @@ chroot /tmp/target /bin/sh -c '(cd /tmp/lmp-xen_installer; ./install.sh )'
 chroot /tmp/target /usr/sbin/update-rc.d xend start 20 2 3 4 5 . stop 20 0 1 6 .
 # To run guest domains in /etc/xen/auto
 chroot /tmp/target /usr/sbin/update-rc.d xendomains start 21 2 3 4 5 . stop 19 0 1 6 .
-

@@ -31,7 +31,7 @@ kernel          /boot/$vmlinuz root=$ROOT_PARTITION ro
 EOF
 
 # if the installed kernel is using an initial ramdisk
-if [ -L /tmp/target/initrd.img ]; then
+if [ -e /tmp/target/boot/initrd.img* ]; then
   initrd_img=$(cd /tmp/target/boot; ls initrd.img*)
   cat >> /tmp/target/boot/grub/menu.lst <<-EOF
 initrd          /boot/$initrd_img

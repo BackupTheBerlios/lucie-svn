@@ -51,13 +51,26 @@ end
 lucieend_file.print <<EOFILE
 require 'socket'
 
-hostname = `cat /tmp/target/etc/hostname`.chomp
-TCPSocket.open( "#{$HOSTNAME}", #{$PORT} ) { |f|
-  f.puts( hostname )
-}
+begin
+  5.times{ |number|
+    begin
+      hostname = `cat /tmp/target/etc/hostname`.chomp
+      TCPSocket.open( "#{$HOSTNAME}", #{$PORT} ) { |f|
+        f.puts( hostname )
+      }
+      break
+    rescue
+      puts "retry"
+    end
+  }
 
-server = TCPServer.new( "0.0.0.0", #{$PORT} )
-server.accept
+  server = TCPServer.new( "0.0.0.0", #{$PORT} )
+  server.accept
+rescue
+  puts "Cannot connect to server"
+  puts "Press ENTER to reboot"
+  STDIN.gets
+end
 
 Dir.chdir('/')
 sh %{sync}
@@ -73,6 +86,8 @@ lucieend_file.close
 #----------------------------------#
 #--- インストール終了の待ち受け ---#
 #----------------------------------#
+
+system( "/etc/init.d/dhcp start" )
 
 wait_server = TCPServer.new( "0.0.0.0", $PORT )
 

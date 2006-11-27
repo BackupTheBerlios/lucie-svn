@@ -18,19 +18,22 @@
 #  if not, write to the Free Software Foundation, Inc., 59 Temple Place,
 #  Suite 330, Boston, MA  02111-1307  USA
 
-module Debconf
 
+# See debconf specification: http://kitenet.net/~joey/talks/debconf-debconf/debconf_specification.html
+module Debconf
   ## TODO: need to implement Exception & Error using exception
   module Exception
     class InvalidParametersException < ::Exception; end
     class UnknownReturnValueException < ::Exception; end
   end
 
+
   module Error
     class SyntaxError < ::SyntaxError; end
     class InternalError < ::RuntimeError; end
     class InternalRubyError < ::RuntimeError; end
   end
+
 
   module Client
     COMMANDS = [
@@ -39,8 +42,24 @@ module Debconf
       "unregister", "subst", "previous_module", "fset",
       "fget", "purge", "metaget", "version", "clear"
     ]
-    
-    # Debconf からのレスポンスをパーズする
+
+
+    @@stdout = STDOUT
+    @@stdin = STDIN
+
+
+    def load_stdout stdout
+      @@stdout = stdout
+    end
+    module_function :load_stdout
+
+
+    def load_stdin stdin
+      @@stdin = stdin
+    end
+    module_function :load_stdin
+
+
     def parse_response( responseString )
       if /(\d+)( (.*))?/ =~ responseString
         case $1.to_i
@@ -51,7 +70,7 @@ module Debconf
         when 20..29
           raise Error::SyntaxError, responseString
         when 30..99
-          ## TODO: needs command specific routines (delegator?)
+          # [TODO] needs command specific routines (delegator?)
           return $1.to_i
         when 100..109
           raise Error::InternalError
@@ -65,26 +84,21 @@ module Debconf
     end
     module_function :parse_response
 
-    STDOUT.sync = true
-    STDIN.sync  = true
-  
-    COMMANDS.each do |command|
+
+    COMMANDS.each do | command |
       eval %-
-        def #{command}( *args )
-          stdout = $stdout_mock ? $stdout_mock : STDOUT
-          stdin  = $stdin_mock  ? $stdin_mock  : STDIN          
-          stdout.print(("#{command.upcase} " + args.join(' ')).rstrip + "\n")
-          response = stdin.gets
-          parse_response( response.chomp ) unless response.nil?
+        def #{ command }( *args )
+          @@stdout.puts( ( "#{ command.upcase } " + args.join( ' ' ) ).rstrip )
+          return parse_response( @@stdin.gets.chomp )
         end
-        module_function :#{command}
+        module_function :#{ command }
       -
     end
   end
 end
 
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil
 ### End:
-

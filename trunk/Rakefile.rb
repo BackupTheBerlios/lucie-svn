@@ -8,45 +8,44 @@
 require 'rake/clean'
 require 'rake/rdoctask'
 require 'rake/testtask'
+require 'rcov/rcovtask'
+
+
+REQUIRE_PATHS = ["lib"]
+
+TEST_VERBOSITY = true
+TEST_FILES = FileList[ "test/**/tc_*.rb" ]
 
 LMP_SERVER_DIR  = %{/var/www/}
 LMP_SERVER      = %{lucie-dev.titech.hpcc.jp}
 LMP_SERVER_URI  = LMP_SERVER + ':' + LMP_SERVER_DIR
 
+
+# Default Task #################################################################
+
 desc "Default Task"
-task :default => [:testall]
+task :default => [ :test ]
 
-# ------------------------- Test Tasks.
 
-# テスト出力の冗長性
-TEST_VERBOSITY = true 
-
-# テストに含まれる全テストスイート
-TEST_SUITES = ['lucie', 'debconf', 'deft', 'lmp', 'depends', 'install_packages']
-
-# すべてのテストは $(TOPDIR)/test/$(テストスイート名)/ というディレクトリを作り
-# tc_*.rb という名前のテストケースに作成する
-def testcase_filelist( testNameString )
-  return FileList[File.join('test', testNameString, 'tc_*.rb')]
-end
+# Test Task ####################################################################
 
 desc "Run all the unit tests."
-Rake::TestTask.new( :testall ) do |t|
-  all_tests = FileList.new
-  TEST_SUITES.each do |each|
-    all_tests << testcase_filelist( each )
-  end
-  t.libs << "lib" << "test"
-  t.test_files = all_tests
+Rake::TestTask.new( :test ) do | t |
+  t.test_files = TEST_FILES
+  t.libs = REQUIRE_PATHS
   t.verbose = TEST_VERBOSITY
 end
 
-TEST_SUITES.each do |each|
-  Rake::TestTask.new( %{test_#{each}}.intern ) do |t|
-    t.test_files = testcase_filelist( each )
-    t.verbose = TEST_VERBOSITY
-  end
+
+# Test Coverage Task ###########################################################
+
+desc "Output a unit test coverage report"
+Rcov::RcovTask.new do | t |
+  t.rcov_opts = [ '-xRakefile', '--text-report' ]
+  t.test_files = TEST_FILES
+  t.verbose = true
 end
+
 
 # ------------------------- RDoc Tasks.
 

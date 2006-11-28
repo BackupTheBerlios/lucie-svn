@@ -82,8 +82,7 @@ class TC_Client < Test::Unit::TestCase
 
   def test_go
     stdout = flexmock( 'stdout' )
-    Debconf::Client.load_stdin StringIO.new( '0 OK' )
-    Debconf::Client.load_stdout stdout
+    debconf_load_io StringIO.new( '0 OK' ), stdout
     stdout.should_receive( :puts ).with( 'GO' ).once.ordered
 
     assert_equal 'OK', Debconf::Client.go
@@ -92,8 +91,7 @@ class TC_Client < Test::Unit::TestCase
 
   def test_get
     stdout = flexmock( 'stdout' )
-    Debconf::Client.load_stdin StringIO.new( '0 OK' )
-    Debconf::Client.load_stdout stdout
+    debconf_load_io StringIO.new( '0 OK' ), stdout
     stdout.should_receive( :puts ).with( 'GET FOOBAR' ).once.ordered
 
     assert_equal 'OK', Debconf::Client.get( 'FOOBAR' )
@@ -102,11 +100,19 @@ class TC_Client < Test::Unit::TestCase
 
   def test_set
     stdout = flexmock( 'stdout' )
-    Debconf::Client.load_stdin StringIO.new( '0 OK' )
-    Debconf::Client.load_stdout stdout
+    debconf_load_io StringIO.new( '0 OK' ), stdout
     stdout.should_receive( :puts ).with( 'SET FOOBAR true' ).once.ordered
 
     assert_equal 'OK', Debconf::Client.set( 'FOOBAR true' )
+  end
+
+
+  private
+
+
+  def debconf_load_io stdin, stdout
+    Debconf::Client.load_stdin stdin
+    Debconf::Client.load_stdout stdout
   end
 end
 

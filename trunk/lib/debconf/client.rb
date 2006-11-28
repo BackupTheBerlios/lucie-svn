@@ -21,7 +21,6 @@
 
 # See debconf specification: http://kitenet.net/~joey/talks/debconf-debconf/debconf_specification.html
 module Debconf
-  ## TODO: need to implement Exception & Error using exception
   module Exception
     class InvalidParametersException < ::Exception; end
     class UnknownReturnValueException < ::Exception; end

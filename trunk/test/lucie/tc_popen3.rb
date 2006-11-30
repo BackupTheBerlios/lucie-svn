@@ -13,8 +13,8 @@ class TC_Popen3 < Test::Unit::TestCase
   def test_wait
     prepare_popen3_no_block_mock
 
-    flexstub( Kernel, 'Kernel' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
-    flexstub( Process, 'Process' ).should_receive( :wait ).with( dummy_pid ).once
+    flexstub( Kernel, 'KERNEL' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
+    flexstub( Process, 'PROCESS' ).should_receive( :wait ).with( dummy_pid ).once
 
     process = Popen3.new( 'COMMAND', 'ARG1', 'ARG2' )
     process.popen3
@@ -25,22 +25,26 @@ class TC_Popen3 < Test::Unit::TestCase
   def test_popen3_no_block
     prepare_popen3_no_block_mock
 
-    flexstub( Kernel, 'Kernel' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
+    flexstub( Kernel, 'KERNEL' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
 
     tochild, fromchild, childerr = Popen3.new( 'COMMAND', 'ARG1', 'ARG2' ).popen3
-    assert_equal 'tochild', tochild.mock_name
-    assert_equal 'fromchild', fromchild.mock_name
-    assert_equal 'childerr', childerr.mock_name
+    assert_equal 'TOCHILD', tochild.mock_name
+    assert_equal 'FROMCHILD', fromchild.mock_name
+    assert_equal 'CHILDERR', childerr.mock_name
   end
 
 
   def test_popen3_with_block
     prepare_popen3_with_block_mock
 
-    flexstub( Kernel, 'Kernel' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
+    flexstub( Kernel, 'KERNEL' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
 
     popen3 = Popen3.new( 'COMMAND', 'ARG1', 'ARG2' )
-    popen3.popen3 do | tochild, fromchild, childerr | end
+    popen3.popen3 do | tochild, fromchild, childerr |
+      assert_equal 'TOCHILD', tochild.mock_name
+      assert_equal 'FROMCHILD', fromchild.mock_name
+      assert_equal 'CHILDERR', childerr.mock_name
+    end
   end
 
 
@@ -48,12 +52,12 @@ class TC_Popen3 < Test::Unit::TestCase
     ncall_pipe = 0
     flexstub( IO, 'IO' ).should_receive( :pipe ).times( 3 ).with_no_args.and_return do
       ncall_pipe += 1
-      child_stdin = flexmock( 'child_stdin' )
-      tochild = flexmock( 'tochild' )
-      fromchild = flexmock( 'fromchild' )
-      child_stdout = flexmock( 'child_stdout' )
-      childerr = flexmock( 'childerr' )
-      child_stderr = flexmock( 'child_stderr' )
+      child_stdin = flexmock( 'CHILD_STDIN' )
+      tochild = flexmock( 'TOCHILD' )
+      fromchild = flexmock( 'FROMCHILD' )
+      child_stdout = flexmock( 'CHILD_STDOUT' )
+      childerr = flexmock( 'CHILDERR' )
+      child_stderr = flexmock( 'CHILD_STDERR' )
 
       case ncall_pipe
       when 1
@@ -108,17 +112,17 @@ class TC_Popen3 < Test::Unit::TestCase
         [ childerr, child_stderr ]
       end
     end
-    flexstub( Kernel, 'Kernel' ).should_receive( :fork ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Kernel, 'KERNEL' ).should_receive( :fork ).with( Proc ).once.ordered.and_return do | block |
       block.call
       dummy_pid
     end
 
     flexstub( STDIN, 'STDIN' ).should_receive( :reopen ).
-      with( on do | mock | mock.mock_name == 'child_stdin' end ).once
+      with( on do | mock | mock.mock_name == 'CHILD_STDIN' end ).once
     flexstub( STDOUT, 'STDOUT' ).should_receive( :reopen ).
-      with( on do | mock | mock.mock_name == 'child_stdout' end ).once
+      with( on do | mock | mock.mock_name == 'CHILD_STDOUT' end ).once
     flexstub( STDERR, 'STDERR' ).should_receive( :reopen ).
-      with( on do | mock | mock.mock_name == 'child_stderr' end ).once
+      with( on do | mock | mock.mock_name == 'CHILD_STDERR' end ).once
   end
 
 
@@ -126,12 +130,12 @@ class TC_Popen3 < Test::Unit::TestCase
     ncall_pipe = 0
     flexstub( IO, 'IO' ).should_receive( :pipe ).times( 3 ).with_no_args.and_return do
       ncall_pipe += 1
-      child_stdin = flexmock( 'child_stdin' )
-      tochild = flexmock( 'tochild' )
-      fromchild = flexmock( 'fromchild' )
-      child_stdout = flexmock( 'child_stdout' )
-      childerr = flexmock( 'childerr' )
-      child_stderr = flexmock( 'child_stderr' )
+      child_stdin = flexmock( 'CHILD_STDIN' )
+      tochild = flexmock( 'TOCHILD' )
+      fromchild = flexmock( 'FROMCHILD' )
+      child_stdout = flexmock( 'CHILD_STDOUT' )
+      childerr = flexmock( 'CHILDERR' )
+      child_stderr = flexmock( 'CHILD_STDERR' )
 
       case ncall_pipe
       when 1
@@ -177,21 +181,21 @@ class TC_Popen3 < Test::Unit::TestCase
         [ childerr, child_stderr ]
       end
     end
-    flexstub( Kernel, 'Kernel' ).should_receive( :fork ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Kernel, 'KERNEL' ).should_receive( :fork ).with( Proc ).once.ordered.and_return do | block |
       block.call
       dummy_pid
     end
 
     flexstub( STDIN, 'STDIN' ).should_receive( :reopen ).
-      with( on do | mock | mock.mock_name == 'child_stdin' end ).once
+      with( on do | mock | mock.mock_name == 'CHILD_STDIN' end ).once
     flexstub( STDOUT, 'STDOUT' ).should_receive( :reopen ).
-      with( on do | mock | mock.mock_name == 'child_stdout' end ).once
+      with( on do | mock | mock.mock_name == 'CHILD_STDOUT' end ).once
     flexstub( STDERR, 'STDERR' ).should_receive( :reopen ).
-      with( on do | mock | mock.mock_name == 'child_stderr' end ).once
+      with( on do | mock | mock.mock_name == 'CHILD_STDERR' end ).once
   end
 
 
   def dummy_pid
-    return 100
+    return 'DUMMY_PID'
   end
 end

@@ -5,6 +5,7 @@ require 'flexmock'
 require 'lucie/popen3'
 require 'test/unit'
 
+
 class TC_Popen3 < Test::Unit::TestCase
   include FlexMock::TestCase
 

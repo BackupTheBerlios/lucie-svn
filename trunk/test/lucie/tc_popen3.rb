@@ -10,79 +10,22 @@ class TC_Popen3 < Test::Unit::TestCase
   include FlexMock::TestCase
 
 
-  def test_popen3_no_block
-    ncall_pipe = 0
-    flexstub( IO, 'IO' ).should_receive( :pipe ).times( 3 ).with_no_args.and_return do
-      ncall_pipe += 1
-      child_stdin = flexmock( 'child_stdin' )
-      tochild = flexmock( 'tochild' )
-      fromchild = flexmock( 'fromchild' )
-      child_stdout = flexmock( 'child_stdout' )
-      childerr = flexmock( 'childerr' )
-      child_stderr = flexmock( 'child_stderr' )
-
-      case ncall_pipe
-      when 1
-        # child process (within fork block) ####################################
-        tochild.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
-        tochild.should_receive( :close ).with_no_args.once.ordered
-
-        child_stdin.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
-        child_stdin.should_receive( :close ).with_no_args.once.ordered
-
-        # Parent process #######################################################
-        child_stdin.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
-        child_stdin.should_receive( :close ).with_no_args.once.ordered
-
-        tochild.should_receive( :sync= ).with( true ).once.ordered
-
-        [ child_stdin, tochild ]
-      when 2
-        # child process (within fork block) ####################################
-        fromchild.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
-        fromchild.should_receive( :close ).with_no_args.once.ordered
-
-        child_stdout.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
-        child_stdout.should_receive( :close ).with_no_args.once.ordered
-
-        # Parent process #######################################################
-        child_stdout.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
-        child_stdout.should_receive( :close ).with_no_args.once.ordered
-
-        [ fromchild, child_stdout ]
-      when 3
-        # child process (within fork block) ####################################
-        childerr.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
-        childerr.should_receive( :close ).with_no_args.once.ordered
-
-        child_stderr.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
-        child_stderr.should_receive( :close ).with_no_args.once.ordered
-
-        # Parent process #######################################################
-        child_stderr.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
-        child_stderr.should_receive( :close ).with_no_args.once.ordered
-
-        [ childerr, child_stderr ]
-      end
-    end
-
-    # Mocking child process behaviour ##########################################
-    flexstub( Kernel, 'Kernel' ).should_receive( :fork ).with( Proc ).once.ordered.and_return do | block |
-      block.call
-      dummy_pid
-    end
-
-    flexstub( STDIN, 'STDIN' ).should_receive( :reopen ).
-      with( on do | mock | mock.mock_name == 'child_stdin' end ).once
-    flexstub( STDOUT, 'STDOUT' ).should_receive( :reopen ).
-      with( on do | mock | mock.mock_name == 'child_stdout' end ).once
-    flexstub( STDERR, 'STDERR' ).should_receive( :reopen ).
-      with( on do | mock | mock.mock_name == 'child_stderr' end ).once
+  def test_wait
+    prepare_popen3_no_block_mock
 
     flexstub( Kernel, 'Kernel' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
+    flexstub( Process, 'Process' ).should_receive( :wait ).with( dummy_pid ).once
 
-    # Mocking parent process behaviour #########################################
-    flexstub( Process, 'Process' ).should_receive( :waitpid ).with( dummy_pid ).once
+    process = Popen3.new( 'COMMAND', 'ARG1', 'ARG2' )
+    process.popen3
+    process.wait
+  end
+
+
+  def test_popen3_no_block
+    prepare_popen3_no_block_mock
+
+    flexstub( Kernel, 'Kernel' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
 
     tochild, fromchild, childerr = Popen3.new( 'COMMAND', 'ARG1', 'ARG2' ).popen3
     assert_equal 'tochild', tochild.mock_name
@@ -92,6 +35,16 @@ class TC_Popen3 < Test::Unit::TestCase
 
 
   def test_popen3_with_block
+    prepare_popen3_with_block_mock
+
+    flexstub( Kernel, 'Kernel' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
+
+    popen3 = Popen3.new( 'COMMAND', 'ARG1', 'ARG2' )
+    popen3.popen3 do | tochild, fromchild, childerr | end
+  end
+
+
+  def prepare_popen3_with_block_mock
     ncall_pipe = 0
     flexstub( IO, 'IO' ).should_receive( :pipe ).times( 3 ).with_no_args.and_return do
       ncall_pipe += 1
@@ -104,7 +57,7 @@ class TC_Popen3 < Test::Unit::TestCase
 
       case ncall_pipe
       when 1
-        # child process (within fork block) ####################################
+        # child process ########################################################
         tochild.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
         tochild.should_receive( :close ).with_no_args.once.ordered
 
@@ -122,7 +75,7 @@ class TC_Popen3 < Test::Unit::TestCase
 
         [ child_stdin, tochild ]
       when 2
-        # child process (within fork block) ####################################
+        # child process ########################################################
         fromchild.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
         fromchild.should_receive( :close ).with_no_args.once.ordered
 
@@ -138,7 +91,7 @@ class TC_Popen3 < Test::Unit::TestCase
 
         [ fromchild, child_stdout ]
       when 3
-        # child process (within fork block) ####################################
+        # child process ########################################################
         childerr.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
         childerr.should_receive( :close ).with_no_args.once.ordered
 
@@ -155,8 +108,6 @@ class TC_Popen3 < Test::Unit::TestCase
         [ childerr, child_stderr ]
       end
     end
-
-    # Mocking child process behaviour ##########################################
     flexstub( Kernel, 'Kernel' ).should_receive( :fork ).with( Proc ).once.ordered.and_return do | block |
       block.call
       dummy_pid
@@ -168,14 +119,75 @@ class TC_Popen3 < Test::Unit::TestCase
       with( on do | mock | mock.mock_name == 'child_stdout' end ).once
     flexstub( STDERR, 'STDERR' ).should_receive( :reopen ).
       with( on do | mock | mock.mock_name == 'child_stderr' end ).once
+  end
 
-    flexstub( Kernel, 'Kernel' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
 
-    # Mocking parent process behaviour #########################################
-    flexstub( Process, 'Process' ).should_receive( :waitpid ).with( dummy_pid ).once
+  def prepare_popen3_no_block_mock
+    ncall_pipe = 0
+    flexstub( IO, 'IO' ).should_receive( :pipe ).times( 3 ).with_no_args.and_return do
+      ncall_pipe += 1
+      child_stdin = flexmock( 'child_stdin' )
+      tochild = flexmock( 'tochild' )
+      fromchild = flexmock( 'fromchild' )
+      child_stdout = flexmock( 'child_stdout' )
+      childerr = flexmock( 'childerr' )
+      child_stderr = flexmock( 'child_stderr' )
 
-    popen3 = Popen3.new( 'COMMAND', 'ARG1', 'ARG2' )
-    popen3.popen3 do | tochild, fromchild, childerr | end
+      case ncall_pipe
+      when 1
+        # child process ########################################################
+        tochild.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
+        tochild.should_receive( :close ).with_no_args.once.ordered
+
+        child_stdin.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
+        child_stdin.should_receive( :close ).with_no_args.once.ordered
+
+        # Parent process #######################################################
+        child_stdin.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
+        child_stdin.should_receive( :close ).with_no_args.once.ordered
+
+        tochild.should_receive( :sync= ).with( true ).once.ordered
+
+        [ child_stdin, tochild ]
+      when 2
+        # child process ########################################################
+        fromchild.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
+        fromchild.should_receive( :close ).with_no_args.once.ordered
+
+        child_stdout.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
+        child_stdout.should_receive( :close ).with_no_args.once.ordered
+
+        # Parent process #######################################################
+        child_stdout.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
+        child_stdout.should_receive( :close ).with_no_args.once.ordered
+
+        [ fromchild, child_stdout ]
+      when 3
+        # child process ########################################################
+        childerr.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
+        childerr.should_receive( :close ).with_no_args.once.ordered
+
+        child_stderr.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
+        child_stderr.should_receive( :close ).with_no_args.once.ordered
+
+        # Parent process #######################################################
+        child_stderr.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
+        child_stderr.should_receive( :close ).with_no_args.once.ordered
+
+        [ childerr, child_stderr ]
+      end
+    end
+    flexstub( Kernel, 'Kernel' ).should_receive( :fork ).with( Proc ).once.ordered.and_return do | block |
+      block.call
+      dummy_pid
+    end
+
+    flexstub( STDIN, 'STDIN' ).should_receive( :reopen ).
+      with( on do | mock | mock.mock_name == 'child_stdin' end ).once
+    flexstub( STDOUT, 'STDOUT' ).should_receive( :reopen ).
+      with( on do | mock | mock.mock_name == 'child_stdout' end ).once
+    flexstub( STDERR, 'STDERR' ).should_receive( :reopen ).
+      with( on do | mock | mock.mock_name == 'child_stderr' end ).once
   end
 
 

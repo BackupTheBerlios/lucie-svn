@@ -12,6 +12,11 @@ class Popen3
   end
 
 
+  def wait
+    Process.wait @pid
+  end
+
+
   def popen3
     # Child process
     @pid = Kernel.fork do
@@ -28,9 +33,6 @@ class Popen3
 
     # Parent
     close_end_of @child_pipe
-
-    Process.waitpid pid
-
     @parent_pipe[ :tochild ].sync = true
 
     if block_given?

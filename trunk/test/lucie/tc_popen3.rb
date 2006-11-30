@@ -5,9 +5,20 @@ require 'flexmock'
 require 'lucie/popen3'
 require 'test/unit'
 
-
 class TC_Popen3 < Test::Unit::TestCase
   include FlexMock::TestCase
+
+
+  def test_kernel_popen3_no_block
+    prepare_popen3_no_block_mock
+
+    flexstub( Kernel, 'KERNEL' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
+
+    tochild, fromchild, childerr = popen3( 'COMMAND', 'ARG1', 'ARG2' )
+    assert_equal 'TOCHILD', tochild.mock_name
+    assert_equal 'FROMCHILD', fromchild.mock_name
+    assert_equal 'CHILDERR', childerr.mock_name
+  end
 
 
   def test_wait
@@ -31,6 +42,19 @@ class TC_Popen3 < Test::Unit::TestCase
     assert_equal 'TOCHILD', tochild.mock_name
     assert_equal 'FROMCHILD', fromchild.mock_name
     assert_equal 'CHILDERR', childerr.mock_name
+  end
+
+
+  def test_kernel_popen3_with_block
+    prepare_popen3_with_block_mock
+
+    flexstub( Kernel, 'KERNEL' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
+
+    popen3( 'COMMAND', 'ARG1', 'ARG2' ) do | tochild, fromchild, childerr |
+      assert_equal 'TOCHILD', tochild.mock_name
+      assert_equal 'FROMCHILD', fromchild.mock_name
+      assert_equal 'CHILDERR', childerr.mock_name
+    end
   end
 
 

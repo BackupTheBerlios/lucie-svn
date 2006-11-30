@@ -67,3 +67,11 @@ class Popen3
              { :stdin => child_stdin, :stdout => child_stdout, :stderr => child_stderr } ]
   end
 end
+
+
+module Kernel
+  def popen3 *command, &block
+    return Popen3.new( *command ).popen3( &block )
+  end
+  module_function :popen3
+end

@@ -5,7 +5,8 @@ class Popen3
   attr_reader :childerr
 
 
-  def initialize *command
+  def initialize env, *command
+    @env = env
     @command = command
     @parent_pipe, @child_pipe = init_pipe
     @tochild, @fromchild, @childerr = @parent_pipe[ :tochild ], @parent_pipe[ :fromchild ], @parent_pipe[ :childerr ]
@@ -28,6 +29,9 @@ class Popen3
 
       close_end_of @child_pipe
 
+      @env.each do | key, value |
+        ENV[ key ]= value
+      end
       Kernel.exec *@command
     end
 
@@ -70,8 +74,8 @@ end
 
 
 module Kernel
-  def popen3 *command, &block
-    return Popen3.new( *command ).popen3( &block )
+  def popen3 env, *command, &block
+    return Popen3.new( env, *command ).popen3( &block )
   end
   module_function :popen3
 end

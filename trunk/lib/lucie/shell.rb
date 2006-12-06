@@ -41,8 +41,8 @@ class Shell
   end
 
 
-  def exec *command
-    process = Popen3.new( *command )
+  def exec env, *command
+    process = Popen3.new( env, *command )
     process.popen3 do | tochild, fromchild, childerr |
       @tochild, @fromchild, @childerr = tochild, fromchild, childerr
 

@@ -22,7 +22,7 @@ class TC_Shell < Test::Unit::TestCase
         shell.on_exit do
           raise ExternalCommandOnExit
         end
-        shell.exec *dummy_command
+        shell.exec dummy_env, *dummy_command
       end
     end
   end
@@ -40,7 +40,7 @@ class TC_Shell < Test::Unit::TestCase
         shell.on_success do
           raise ExternalCommandExecSuccess
         end
-        shell.exec *dummy_command
+        shell.exec dummy_env, *dummy_command
       end
     end
   end
@@ -58,7 +58,7 @@ class TC_Shell < Test::Unit::TestCase
         shell.on_failure do
           raise ExternalCommandExecFailure
         end
-        shell.exec *dummy_command
+        shell.exec dummy_env, *dummy_command
       end
     end
   end
@@ -71,7 +71,7 @@ class TC_Shell < Test::Unit::TestCase
     setup_popen3_mock tochild_mock
 
     shell.open do | shell |
-      shell.exec *dummy_command
+      shell.exec dummy_env, *dummy_command
       shell.puts 'PUTS1'
       shell.puts 'PUTS2'
     end
@@ -87,7 +87,7 @@ class TC_Shell < Test::Unit::TestCase
         ncall_on_stdout += 1
         assert_equal "FROMCHILD_LINE#{ ncall_on_stdout }", line
       end
-      shell.exec *dummy_command
+      shell.exec dummy_env, *dummy_command
     end
     assert_equal 2, ncall_on_stdout
   end
@@ -102,7 +102,7 @@ class TC_Shell < Test::Unit::TestCase
         ncall_on_stderr += 1
         assert_equal "CHILDERR_LINE#{ ncall_on_stderr }", line
       end
-      shell.exec *dummy_command
+      shell.exec dummy_env, *dummy_command
     end
     assert_equal 2, ncall_on_stderr
   end
@@ -135,7 +135,7 @@ class TC_Shell < Test::Unit::TestCase
 
 
   def setup_popen3_mock tochild = tochild_mock, fromchild = fromchild_mock, childerr = childerr_mock
-    flexstub( Popen3, 'POPEN3' ).should_receive( :new ).with( *dummy_command ).once.and_return do
+    flexstub( Popen3, 'POPEN3' ).should_receive( :new ).with( dummy_env, *dummy_command ).once.and_return do
       flexmock( 'POPEN3' ) do | mock |
         mock.should_receive( :popen3 ).with( Proc ).once.ordered.and_return do | block |
           block.call tochild, fromchild, childerr
@@ -157,6 +157,11 @@ class TC_Shell < Test::Unit::TestCase
     return flexmock( 'CHILDERR' ) do | mock |
       mock.should_receive( :gets ).times( 3 ).ordered.and_return( 'CHILDERR_LINE1', 'CHILDERR_LINE2', nil )
     end
+  end
+
+
+  def dummy_env
+    return { 'TEST_ENV_NAME' => 'TEST_ENV_VALUE' }
   end
 
 

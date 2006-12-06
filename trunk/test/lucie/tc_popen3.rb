@@ -13,7 +13,7 @@ class TC_Popen3 < Test::Unit::TestCase
   def test_kernel_popen3_no_block
     prepare_popen3_no_block_mock
 
-    tochild, fromchild, childerr = popen3( 'COMMAND', 'ARG1', 'ARG2' )
+    tochild, fromchild, childerr = popen3( dummy_env, 'COMMAND', 'ARG1', 'ARG2' )
     assert_equal 'TOCHILD', tochild.mock_name
     assert_equal 'FROMCHILD', fromchild.mock_name
     assert_equal 'CHILDERR', childerr.mock_name
@@ -24,7 +24,7 @@ class TC_Popen3 < Test::Unit::TestCase
     prepare_popen3_no_block_mock
     flexstub( Process, 'PROCESS' ).should_receive( :wait ).with( dummy_pid ).once
 
-    process = Popen3.new( 'COMMAND', 'ARG1', 'ARG2' )
+    process = Popen3.new( dummy_env, 'COMMAND', 'ARG1', 'ARG2' )
     process.popen3
     process.wait
   end
@@ -33,7 +33,7 @@ class TC_Popen3 < Test::Unit::TestCase
   def test_popen3_no_block
     prepare_popen3_no_block_mock
 
-    tochild, fromchild, childerr = Popen3.new( 'COMMAND', 'ARG1', 'ARG2' ).popen3
+    tochild, fromchild, childerr = Popen3.new( dummy_env, 'COMMAND', 'ARG1', 'ARG2' ).popen3
     assert_equal 'TOCHILD', tochild.mock_name
     assert_equal 'FROMCHILD', fromchild.mock_name
     assert_equal 'CHILDERR', childerr.mock_name
@@ -43,7 +43,7 @@ class TC_Popen3 < Test::Unit::TestCase
   def test_kernel_popen3_with_block
     prepare_popen3_with_block_mock
 
-    popen3( 'COMMAND', 'ARG1', 'ARG2' ) do | tochild, fromchild, childerr |
+    popen3( dummy_env, 'COMMAND', 'ARG1', 'ARG2' ) do | tochild, fromchild, childerr |
       assert_equal 'TOCHILD', tochild.mock_name
       assert_equal 'FROMCHILD', fromchild.mock_name
       assert_equal 'CHILDERR', childerr.mock_name
@@ -54,7 +54,7 @@ class TC_Popen3 < Test::Unit::TestCase
   def test_popen3_with_block
     prepare_popen3_with_block_mock
 
-    popen3 = Popen3.new( 'COMMAND', 'ARG1', 'ARG2' )
+    popen3 = Popen3.new( dummy_env, 'COMMAND', 'ARG1', 'ARG2' )
     popen3.popen3 do | tochild, fromchild, childerr |
       assert_equal 'TOCHILD', tochild.mock_name
       assert_equal 'FROMCHILD', fromchild.mock_name
@@ -91,9 +91,9 @@ class TC_Popen3 < Test::Unit::TestCase
     childerr.should_receive( :close ).with_no_args.once.ordered
 
     # STDIO repopen
-    flexstub( STDIN, 'STDIN' ).should_receive( :reopen ).with( on do | mock | mock.mock_name == 'CHILD_STDIN' end ).once
-    flexstub( STDOUT, 'STDOUT' ).should_receive( :reopen ).with( on do | mock | mock.mock_name == 'CHILD_STDOUT' end ).once
-    flexstub( STDERR, 'STDERR' ).should_receive( :reopen ).with( on do | mock | mock.mock_name == 'CHILD_STDERR' end ).once
+    flexstub( STDIN, 'STDIN' ).should_receive( :reopen ).with( on do | mock | mock.mock_name == 'CHILD_STDIN' end ).once.ordered
+    flexstub( STDOUT, 'STDOUT' ).should_receive( :reopen ).with( on do | mock | mock.mock_name == 'CHILD_STDOUT' end ).once.ordered
+    flexstub( STDERR, 'STDERR' ).should_receive( :reopen ).with( on do | mock | mock.mock_name == 'CHILD_STDERR' end ).once.ordered
 
     # close_end_of @child_pipe
     child_stdin.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
@@ -103,6 +103,7 @@ class TC_Popen3 < Test::Unit::TestCase
     child_stderr.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
     child_stderr.should_receive( :close ).with_no_args.once.ordered
 
+    flexstub( ENV, 'ENV' ).should_receive( :[]= ).with( 'TEST_ENV_NAME', 'TEST_ENV_VALUE' ).once.ordered
     flexstub( Kernel, 'KERNEL' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
 
     # Parent Process ###########################################################
@@ -155,9 +156,9 @@ class TC_Popen3 < Test::Unit::TestCase
     childerr.should_receive( :close ).with_no_args.once.ordered
 
     # STDIO reopen
-    flexstub( STDIN, 'STDIN' ).should_receive( :reopen ).with( on do | mock | mock.mock_name == 'CHILD_STDIN' end ).once
-    flexstub( STDOUT, 'STDOUT' ).should_receive( :reopen ).with( on do | mock | mock.mock_name == 'CHILD_STDOUT' end ).once
-    flexstub( STDERR, 'STDERR' ).should_receive( :reopen ).with( on do | mock | mock.mock_name == 'CHILD_STDERR' end ).once
+    flexstub( STDIN, 'STDIN' ).should_receive( :reopen ).with( on do | mock | mock.mock_name == 'CHILD_STDIN' end ).once.ordered
+    flexstub( STDOUT, 'STDOUT' ).should_receive( :reopen ).with( on do | mock | mock.mock_name == 'CHILD_STDOUT' end ).once.ordered
+    flexstub( STDERR, 'STDERR' ).should_receive( :reopen ).with( on do | mock | mock.mock_name == 'CHILD_STDERR' end ).once.ordered
 
     # close_end_of @child_pipe
     child_stdin.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
@@ -167,6 +168,7 @@ class TC_Popen3 < Test::Unit::TestCase
     child_stderr.should_receive( :closed? ).with_no_args.once.ordered.and_return( false )
     child_stderr.should_receive( :close ).with_no_args.once.ordered
 
+    flexstub( ENV, 'ENV' ).should_receive( :[]= ).with( 'TEST_ENV_NAME', 'TEST_ENV_VALUE' ).once.ordered
     flexstub( Kernel, 'KERNEL' ).should_receive( :exec ).with( 'COMMAND', 'ARG1', 'ARG2' ).once.ordered
 
     # Parent Process ############################################################
@@ -180,6 +182,11 @@ class TC_Popen3 < Test::Unit::TestCase
     child_stderr.should_receive( :close ).with_no_args.once.ordered
 
     tochild.should_receive( :sync= ).with( true ).once.ordered
+  end
+
+
+  def dummy_env
+    return { 'TEST_ENV_NAME' => 'TEST_ENV_VALUE' }
   end
 
 

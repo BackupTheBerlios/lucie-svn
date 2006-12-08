@@ -46,8 +46,19 @@ class Shell
     process.popen3 do | tochild, fromchild, childerr |
       @tochild, @fromchild, @childerr = tochild, fromchild, childerr
 
-      fromchild_thread.join
-      childerr_thread.join
+      stdout_thread = Thread.new do
+        while line = @fromchild.gets do
+          do_stdout line
+        end
+      end
+      stderr_thread = Thread.new do
+        while line = @childerr.gets do
+          do_stderr line
+        end
+      end
+
+      stdout_thread.join
+      stderr_thread.join
     end
 
     process.wait
@@ -58,24 +69,6 @@ class Shell
 
 
   private
-
-
-  def fromchild_thread
-    return Thread.new do
-      while line = @fromchild.gets do
-        do_stdout line
-      end
-    end
-  end
-
-
-  def childerr_thread
-    Thread.new do
-      while line = @childerr.gets do
-        do_stderr line
-      end
-    end
-  end
 
 
   def handle_exitstatus

@@ -36,6 +36,23 @@ class TC_Debootstrap < Test::Unit::TestCase
   end
 
 
+  def test_new_with_block
+    debootstrap = Debootstrap.new do | option |
+      option.env = { 'TEST_ENV_NAME' => 'TEST_ENV_VALUE' }
+      option.exclude = [ 'dhcp-client', 'info' ]
+      option.suite = 'woody'
+      option.target = '/tmp'
+      option.mirror = 'http://www.debian.or.jp/debian/'
+    end
+
+    assert_equal( { 'TEST_ENV_NAME' => 'TEST_ENV_VALUE' }, debootstrap.env )
+    assert_equal [ 'dhcp-client', 'info' ], debootstrap.exclude
+    assert_equal 'woody', debootstrap.suite
+    assert_equal '/tmp', debootstrap.target
+    assert_equal 'http://www.debian.or.jp/debian/', debootstrap.mirror
+  end
+
+
   def test_commandline
     assert_equal [ "/usr/sbin/debootstrap", "--exclude=dhcp-client,info", "woody", "/tmp", "http://www.debian.or.jp/debian/" ],  @debootstrap.commandline
   end

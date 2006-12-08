@@ -9,6 +9,13 @@ class Debootstrap
   attr_accessor :mirror
 
 
+  def initialize
+    if block_given?
+      yield self
+    end
+  end
+
+
   def option
     yield self
   end

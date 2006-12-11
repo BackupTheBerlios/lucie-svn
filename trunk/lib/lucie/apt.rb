@@ -9,25 +9,14 @@
 require 'lucie/shell'
 
 
-class AptOption
+class Apt
   attr_accessor :root
 
 
-  def initialize
-    yield self
-  end
-end
-
-
-class Apt
-  def initialize option
-    @option = option
-  end
-
-
-  def clean
+  def initialize command, &block
+    block.call self
     Shell.new do | shell |
-      shell.exec( { 'LC_ALL' => 'C' }, 'chroot', @option.root, 'apt-get', 'clean' )
+      shell.exec( { 'LC_ALL' => 'C' }, 'chroot', @root, 'apt-get', command )
     end
   end
 end

@@ -22,8 +22,8 @@ class ChrootShell
   end
 
 
-  # Invoke exec command in chroot environment, and delegate other
-  # methods to Shell object.
+  # Do exec command in chroot environment, and delegate other methods
+  # to Shell object.
   def exec env, *command
     @shell.exec env, 'chroot', @root, *command
   end

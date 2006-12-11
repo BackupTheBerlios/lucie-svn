@@ -22,12 +22,14 @@ class ChrootShell
   end
 
 
-  def method_missing message, *arg
-    @shell.__send__ message, *arg
+  # Invoke exec command in chroot environment, and delegate other
+  # methods to Shell object.
+  def exec env, *command
+    @shell.exec env, 'chroot', @root, *command
   end
 
 
-  def exec env, *command
-    @shell.exec env, 'chroot', @root, *command
+  def method_missing message, *arg
+    @shell.__send__ message, *arg
   end
 end

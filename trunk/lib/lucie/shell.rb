@@ -1,13 +1,30 @@
+#
+# $Id$
+#
+# Author:: Yasuhito Takamiya (mailto:yasuhito@gmail.com)
+# Revision:: $LastChangedRevision$
+# License:: GPL2
+
+
 require 'lucie/popen3'
 require 'English'
 
 
 class Shell
-  attr_writer :child_status
+  def self.open &block
+    shell = self.new
+    return shell.open( &block )
+  end
+
+
+  def child_status
+    @child_status ||= $CHILD_STATUS
+  end
 
 
   def open &block
     block.call self
+    return self
   end
 
 
@@ -72,16 +89,16 @@ class Shell
 
 
   def handle_exitstatus
+    # In test case, child_status is not set.
+    if child_status.nil?
+      return
+    end
+
     if child_status.exitstatus == 0
       do_success
     else
       do_failure
     end
-  end
-
-
-  def child_status
-    return( @child_status ? @child_status : $CHILD_STATUS )
   end
 
 
@@ -119,3 +136,20 @@ class Shell
     end
   end
 end
+
+
+# Abbreviations
+module Kernel
+  def sh *command
+    return Shell.open do | shell |
+      shell.exec( { 'LC_ALL' => 'C' }, *command )
+    end
+  end
+  module_function :sh
+end
+
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

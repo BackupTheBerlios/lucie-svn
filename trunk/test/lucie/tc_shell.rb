@@ -1,3 +1,11 @@
+#
+# $Id$
+#
+# Author:: Yasuhito Takamiya (mailto:yasuhito@gmail.com)
+# Revision:: $LastChangedRevision$
+# License:: GPL2
+
+
 $LOAD_PATH.unshift "../../lib"
 
 
@@ -15,7 +23,7 @@ class TC_Shell < Test::Unit::TestCase
 
 
   def test_on_exit
-    setup_popen3_mock nil
+    setup_popen3_mock
 
     assert_raises( ExternalCommandOnExit ) do
       shell.open do | shell |
@@ -33,7 +41,7 @@ class TC_Shell < Test::Unit::TestCase
 
 
   def test_on_success
-    setup_popen3_mock nil
+    setup_popen3_mock
 
     assert_raises( ExternalCommandExecSuccess ) do
       success_shell.open do | shell |
@@ -51,7 +59,7 @@ class TC_Shell < Test::Unit::TestCase
 
 
   def test_on_failure
-    setup_popen3_mock nil
+    setup_popen3_mock
 
     assert_raises( ExternalCommandExecFailure ) do
       failure_shell.open do | shell |
@@ -68,7 +76,7 @@ class TC_Shell < Test::Unit::TestCase
     tochild_mock = flexmock( 'CHILDERR' ) do | mock |
       mock.should_receive( :puts ).times( 2 ).ordered.and_return( 'PUTS1', 'PUTS2' )
     end
-    setup_popen3_mock tochild_mock
+    setup_popen3_mock( { :tochild => tochild_mock } )
 
     shell.open do | shell |
       shell.exec dummy_env, *dummy_command
@@ -79,7 +87,7 @@ class TC_Shell < Test::Unit::TestCase
 
 
   def test_on_stdout
-    setup_popen3_mock nil
+    setup_popen3_mock
     ncall_on_stdout = 0
 
     shell.open do | shell |
@@ -89,12 +97,13 @@ class TC_Shell < Test::Unit::TestCase
       end
       shell.exec dummy_env, *dummy_command
     end
+
     assert_equal 2, ncall_on_stdout
   end
 
 
   def test_on_stderr
-    setup_popen3_mock nil
+    setup_popen3_mock
     ncall_on_stderr = 0
 
     shell.open do | shell |
@@ -104,7 +113,17 @@ class TC_Shell < Test::Unit::TestCase
       end
       shell.exec dummy_env, *dummy_command
     end
+
     assert_equal 2, ncall_on_stderr
+  end
+
+
+  def test_abbreviation
+    setup_popen3_mock( {}, { 'LC_ALL' => 'C' } )
+
+    shell = sh( 'COMMAND', 'ARG1', 'ARG2' )
+
+    assert_nil shell.child_status
   end
 
 
@@ -128,17 +147,17 @@ class TC_Shell < Test::Unit::TestCase
     shell = Shell.new
     flexmock( 'PROCESS::STATUS' ) do | status_mock |
       status_mock.should_receive( :exitstatus ).at_most.once.and_return( exitstatus )
-      shell.child_status = status_mock
+      shell.instance_variable_set( :@child_status, status_mock )
     end
     return shell
   end
 
 
-  def setup_popen3_mock tochild = tochild_mock, fromchild = fromchild_mock, childerr = childerr_mock
-    flexstub( Popen3, 'POPEN3' ).should_receive( :new ).with( dummy_env, *dummy_command ).once.and_return do
+  def setup_popen3_mock pipe = {}, env = dummy_env, command = dummy_command
+    flexstub( Popen3, 'POPEN3' ).should_receive( :new ).with( env, *command ).once.and_return do
       flexmock( 'POPEN3' ) do | mock |
         mock.should_receive( :popen3 ).with( Proc ).once.ordered.and_return do | block |
-          block.call tochild, fromchild, childerr
+          block.call( pipe[ :tochild ], pipe[ :fromchild ] || fromchild_mock, pipe[ :childerr ] || childerr_mock )
         end
         mock.should_receive( :wait ).with_no_args.once.ordered
       end
@@ -169,3 +188,9 @@ class TC_Shell < Test::Unit::TestCase
     return [ 'COMMAND', 'ARG1', 'ARG2' ]
   end
 end
+
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

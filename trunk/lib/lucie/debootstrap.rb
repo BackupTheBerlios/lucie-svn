@@ -46,7 +46,7 @@ class Debootstrap
 
 
   def exec_shell
-    @shell = Shell.new do | shell |
+    @shell = Shell.open do | shell |
       Thread.new do
         loop do
           shell.puts

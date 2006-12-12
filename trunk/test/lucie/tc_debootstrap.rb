@@ -19,7 +19,7 @@ class TC_Debootstrap < Test::Unit::TestCase
 
 
   def test_new
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = shell_mock
       block.call shell
       shell
@@ -38,7 +38,7 @@ class TC_Debootstrap < Test::Unit::TestCase
 
 
   def test_abbreviation
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = shell_mock
       block.call shell
       shell

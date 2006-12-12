@@ -132,3 +132,9 @@ class TC_Apt < Test::Unit::TestCase
     return shell
   end
 end
+
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

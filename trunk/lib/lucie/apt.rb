@@ -9,6 +9,7 @@
 require 'lucie/shell'
 
 
+# [TODO] apt がエラー終了時にデフォルトで例外を raise するようにする
 class Apt
   attr_accessor :root
 
@@ -55,3 +56,9 @@ module Kernel
   end
   module_function :apt
 end
+
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

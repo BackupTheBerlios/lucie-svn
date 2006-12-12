@@ -1,42 +1,52 @@
+#
+# $Id$
+#
+# Author:: Yasuhito Takamiya (mailto:yasuhito@gmail.com)
+# Revision:: $LastChangedRevision$
+# License:: GPL2
+
+
 require 'lucie/shell'
 
 
+# [TODO] debootstrap がエラー終了時にデフォルトで例外を raise するようにする
 class Debootstrap
-  attr_accessor :env
-  attr_accessor :exclude
-  attr_accessor :suite
-  attr_accessor :target
-  attr_accessor :mirror
+  class DebootstrapOption
+    attr_accessor :env
+    attr_accessor :exclude
+    attr_accessor :suite
+    attr_accessor :target
+    attr_accessor :mirror
 
 
-  def initialize
-    if block_given?
-      yield self
+    def commandline
+      return [ '/usr/sbin/debootstrap', "--exclude=#{ @exclude.join(',') }", @suite, @target, @mirror ]
     end
   end
 
 
-  def option
+  def initialize
+    @option = DebootstrapOption.new
     yield self
+    exec_shell
   end
 
 
-  def commandline
-    return [ '/usr/sbin/debootstrap', "--exclude=#{ @exclude.join(',') }", @suite, @target, @mirror ]
-  end
-end
-
-
-class DebootstrapRunner
-  def load_option debconf
-    @debconf = debconf
+  def child_status
+    return @shell.child_status
   end
 
 
-  # [TODO] 終了処理 (正常、エラー)
-  def run
-    shell = Shell.new
-    shell.open do | shell |
+  def method_missing message, *arg
+    @option.__send__ message, *arg
+  end
+
+
+  private
+
+
+  def exec_shell
+    @shell = Shell.new do | shell |
       Thread.new do
         loop do
           shell.puts
@@ -48,7 +58,22 @@ class DebootstrapRunner
       shell.on_stderr do | line |
         STDERR.puts line
       end
-      shell.exec @debconf.env, *@debconf.commandline
+      shell.exec @option.env, *@option.commandline
     end
   end
 end
+
+
+# Abbrebiations
+module Kernel
+  def debootstrap &block
+    Debootstrap.new &block
+  end
+  module_function :debootstrap
+end
+
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

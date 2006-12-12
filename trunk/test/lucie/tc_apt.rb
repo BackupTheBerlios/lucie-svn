@@ -19,7 +19,7 @@ class TC_Apt < Test::Unit::TestCase
 
 
   def test_clean
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = shell_mock_no_root
       block.call shell
       shell
@@ -32,7 +32,7 @@ class TC_Apt < Test::Unit::TestCase
 
 
   def test_clean_symbol
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = shell_mock_no_root
       block.call shell
       shell
@@ -45,7 +45,7 @@ class TC_Apt < Test::Unit::TestCase
 
 
   def test_clean_with_block_with_root
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = shell_mock
       block.call shell
       shell
@@ -60,7 +60,7 @@ class TC_Apt < Test::Unit::TestCase
 
 
   def test_clean_symbol_with_block_with_root
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = shell_mock
       block.call shell
       shell
@@ -75,7 +75,7 @@ class TC_Apt < Test::Unit::TestCase
 
 
   def test_clean_with_block_with_no_root
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = shell_mock_no_root
       block.call shell
       shell
@@ -90,7 +90,7 @@ class TC_Apt < Test::Unit::TestCase
 
 
   def test_clean_abbreviation
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = shell_mock
       block.call shell
       shell
@@ -105,7 +105,7 @@ class TC_Apt < Test::Unit::TestCase
 
 
   def test_clean_abbreviation_no_block
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = shell_mock_no_root
       block.call shell
       shell

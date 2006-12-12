@@ -33,11 +33,11 @@ class Apt
 
   def exec_shell
     if @root
-      @shell = Shell.new do | shell |
+      @shell = Shell.open do | shell |
         shell.exec( { 'LC_ALL' => 'C' }, 'chroot', @root, 'apt-get', @command )
       end
     else
-      @shell = Shell.new do | shell |
+      @shell = Shell.open do | shell |
         shell.exec( { 'LC_ALL' => 'C' }, 'apt-get', @command )
       end
     end

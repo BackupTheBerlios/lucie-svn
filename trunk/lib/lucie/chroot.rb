@@ -16,9 +16,20 @@ class ChrootShell
   attr_accessor :root
 
 
-  def initialize &block
-    @shell = Shell.new
+  def self.open &block
+    shell = self.new
+    return shell.open( &block )
+  end
+
+
+  def open &block
     block.call self
+    return self
+  end
+
+
+  def initialize
+    @shell = Shell.new
   end
 
 
@@ -33,3 +44,9 @@ class ChrootShell
     @shell.__send__ message, *arg
   end
 end
+
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

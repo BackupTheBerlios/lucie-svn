@@ -25,10 +25,10 @@ class TC_Chroot < Test::Unit::TestCase
     shell_mock.should_receive( :on_success ).once.ordered
     shell_mock.should_receive( :on_failure ).once.ordered
     shell_mock.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'chroot', '/ROOT', 'apt-get', 'clean' ).once.ordered
+    shell_mock.should_receive( :child_status ).once.ordered.and_return( 'CHILD_STATUS' )
     flexstub( Shell, 'SHELL' ).should_receive( :new ).once.ordered.and_return( shell_mock )
 
-    # code to test.
-    ChrootShell.new do | shell |
+    chroot_shell = ChrootShell.open do | shell |
       shell.root = '/ROOT'
       shell.on_stdout do end
       shell.on_stderr do end
@@ -36,6 +36,8 @@ class TC_Chroot < Test::Unit::TestCase
       shell.on_failure do end
       shell.exec( { 'LC_ALL' => 'C' }, 'apt-get', 'clean' )
     end
+
+    assert_equal 'CHILD_STATUS', chroot_shell.child_status
   end
 end
 

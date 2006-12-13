@@ -18,6 +18,21 @@ class TC_Debootstrap < Test::Unit::TestCase
   include FlexMock::TestCase
 
 
+  def test_version
+    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      flexmock( 'SHELL' ) do | shell |
+        shell.should_receive( :on_stdout ).with( Proc ).once.ordered.and_return do | stdout_block |
+          stdout_block.call 'ii  debootstrap    0.2.45-0.2     Bootstrap a basic Debian system'
+        end
+        shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'dpkg', '-l' ).once.ordered
+        block.call shell
+      end
+    end
+
+    assert_match /[\d\.\-]+/, Debootstrap.VERSION
+  end
+
+
   def test_new
     flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = shell_mock

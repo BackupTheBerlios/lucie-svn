@@ -25,6 +25,19 @@ class Debootstrap
   end
 
 
+  # [TODO] バージョンが取得できない場合に例外を raise するようにする
+  def self.VERSION
+    Shell.open do | shell |
+      shell.on_stdout do | line |
+        if /^\S\S\s+debootstrap\s+(\S+)/=~ line
+          return $1
+        end
+      end
+      shell.exec( { 'LC_ALL' => 'C' }, 'dpkg', '-l' )
+    end
+  end
+
+
   def initialize
     @option = DebootstrapOption.new
     yield self

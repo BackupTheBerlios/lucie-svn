@@ -95,7 +95,7 @@ class TC_Debootstrap < Test::Unit::TestCase
         block.call 'STDERR_LINE1'
         block.call 'STDERR_LINE2'
       end
-
+      mock.should_receive( :on_failure ).with( Proc ).once.ordered
       mock.should_receive( :exec ).with( { 'TEST_ENV_NAME' => 'TEST_ENV_VALUE' }, *debootstrap_commandline ).once.ordered
 
       mock.should_receive( :child_status ).once.ordered.and_return( 'CHILD_STATUS' )

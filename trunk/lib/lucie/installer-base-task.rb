@@ -8,7 +8,6 @@
 
 require 'lucie/apt'
 require 'lucie/chroot'
-require 'lucie/command-line-options'
 require 'lucie/debootstrap'
 require 'lucie/shell'
 require 'rake'
@@ -20,6 +19,7 @@ module Rake
     INSTALLER_BASE_DIR = '/var/lib/lucie/installer_base'.freeze
 
 
+    attr_accessor :http_proxy
     attr_accessor :name
     attr_accessor :target_directory
     attr_accessor :mirror
@@ -51,13 +51,6 @@ module Rake
       desc "Force a rebuild of the installer base tarball."
       task paste( "re", @name ) => [ paste( "clobber_", @name ), @name ]
 
-      desc "Remove the installer base tarball."
-      task paste( "clobber_", @name ) do
-        cleanup_temporary_directory
-      end
-
-      task :clobber => [ paste( "clobber_", @name ) ]
-
       directory @target_directory
       task @name => [ installer_base_target ]
 
@@ -65,7 +58,7 @@ module Rake
         info "Creating base system using debootstrap version #{ Debootstrap.VERSION }"
         info "Calling debootstrap #{ suite } #{ target_directory } #{ mirror }"
         Debootstrap.new do | option |
-          option.env = { 'LC_ALL' => 'C' }
+          option.env = env_lc_all.merge( 'http_proxy' => @http_proxy )
           option.exclude = [ 'dhcp-client', 'info' ]
           option.suite = @suite
           option.target = @target_directory
@@ -76,27 +69,24 @@ module Rake
           option.root = @target_directory
         end
 
-        Kernel.sh 'rm', File.join( @target_directory, '/etc/resolv.conf' )
+        Kernel.sh 'rm', '-f', File.join( @target_directory, '/etc/resolv.conf' )
         build_installer_base_tarball
-        cleanup_temporary_directory
       end
+    end
+
+
+    def env_lc_all
+      return { 'LC_ALL' => 'C' }
     end
 
 
     def build_installer_base_tarball
       info "Creating installer base tarball on #{installer_base_target}."
-      Kernel.sh 'tar', '-l', '--directory', @target_directory, '-czvf', installer_base_target, '.'
-    end
-
-
-    def cleanup_temporary_directory
-      info "Removing debootstrap temporary directory."
-      Kernel.sh 'rm', '-rf', @target_directory
+      Kernel.sh 'tar', '--one-file-system', '--directory', @target_directory, '-czvf', installer_base_target, '.'
     end
 
 
     def info( aString )
-      # logger.info aString
       puts aString
     end
 

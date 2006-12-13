@@ -54,13 +54,11 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
 
     assert_kind_of Rake::Task, Task[ :installer_base ]
     assert_kind_of Rake::Task, Task[ :reinstaller_base ]
-    assert_kind_of Rake::Task, Task[ :clobber_installer_base ]
     assert_kind_of Rake::Task, Task[ '/TMP' ]
     assert_kind_of Rake::Task, Task[ '/TMP/DEBIAN_SARGE.tgz' ]
 
     assert_equal( "Build installer base tarball for DEBIAN distribution, version = ``SARGE''.", Task[ :installer_base ].comment )
     assert_equal( "Force a rebuild of the installer base tarball.", Task[ :reinstaller_base ].comment )
-    assert_equal( "Remove the installer base tarball.", Task[ :clobber_installer_base ].comment )
   end
 
 
@@ -71,32 +69,6 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
       task.suite = 'WOODY'
     end
     assert_equal [ '/TMP/DEBIAN_WOODY.tgz' ], Task[ :installer_base ].prerequisites
-  end
-
-
-  def test_clobber_target_prerequisites
-    Rake::InstallerBaseTask.new do | task |
-      task.distribution = 'DEBIAN'
-      task.suite = 'WOODY'
-    end
-    assert_equal [ "clobber_installer_base" ], Task[ :clobber ].prerequisites
-  end
-
-
-  def test_clobber_installer_base_target
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = flexmock( 'SHELL' )
-      shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'rm', '-rf', '/TMP' ).once.ordered
-      block.call shell
-    end
-
-    Rake::InstallerBaseTask.new do | task |
-      task.target_directory = '/TMP'
-      task.mirror = 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/'
-      task.distribution = 'DEBIAN'
-      task.suite = 'SARGE'
-    end
-    Task[ :clobber_installer_base ].execute
   end
 
 
@@ -121,7 +93,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
     end
     flexstub( Debootstrap, 'DEBOOTSTRAP' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
       debootstrap_option_mock = flexmock( 'DEBOOTSTRAP_OPTION' )
-      debootstrap_option_mock.should_receive( :env= ).with( { 'LC_ALL' => 'C' } ).once.ordered
+      debootstrap_option_mock.should_receive( :env= ).with( { 'http_proxy' => nil, 'LC_ALL' => 'C' } ).once.ordered
       debootstrap_option_mock.should_receive( :exclude= ).with( [ 'dhcp-client', 'info' ] ).once.ordered
       debootstrap_option_mock.should_receive( :suite= ).with( 'SARGE' ).once.ordered
       debootstrap_option_mock.should_receive( :target= ).with( '/TMP' ).once.ordered
@@ -137,21 +109,14 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
 
     flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = flexmock( 'SHELL' )
-      shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'rm', '/TMP/etc/resolv.conf' ).once.ordered
+      shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'rm', '-f', '/TMP/etc/resolv.conf' ).once.ordered
       block.call shell
     end
 
     # mocking build_installer_base_tarball
     flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = flexmock( 'SHELL' )
-      shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'tar', '-l', '--directory', '/TMP', '-czvf', '/TMP/DEBIAN_SARGE.tgz', '.' ).once.ordered
-      block.call shell
-    end
-
-    # mocking cleanup_temporary_directory
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = flexmock( 'SHELL' )
-      shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'rm', '-rf', '/TMP' ).once.ordered
+      shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'tar', '--one-file-system', '--directory', '/TMP', '-czvf', '/TMP/DEBIAN_SARGE.tgz', '.' ).once.ordered
       block.call shell
     end
 

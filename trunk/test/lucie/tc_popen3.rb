@@ -204,3 +204,9 @@ class TC_Popen3 < Test::Unit::TestCase
     return 'DUMMY_PID'
   end
 end
+
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

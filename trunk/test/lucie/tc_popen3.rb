@@ -1,6 +1,16 @@
-$LOAD_PATH.unshift "./lib"
+#!/usr/bin/env ruby
+#
+# $Id$
+#
+# Author:: Yasuhito Takamiya (mailto:yasuhito@gmail.com)
+# Revision:: $LastChangedRevision$
+# License:: GPL2
 
 
+$LOAD_PATH.unshift( '../../lib' ) if __FILE__ =~ /\.rb$/
+
+
+require 'rubygems'
 require 'flexmock'
 require 'lucie/popen3'
 require 'test/unit'

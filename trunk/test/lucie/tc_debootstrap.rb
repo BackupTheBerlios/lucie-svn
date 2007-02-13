@@ -6,9 +6,10 @@
 # License:: GPL2
 
 
-$LOAD_PATH.unshift './lib'
+$LOAD_PATH.unshift( '../../lib' ) if __FILE__ =~ /\.rb$/
 
 
+require 'rubygems'
 require 'flexmock'
 require 'lucie/debootstrap'
 require 'test/unit'
@@ -77,9 +78,6 @@ class TC_Debootstrap < Test::Unit::TestCase
       mock.should_receive( :puts ).at_least.once
 
       # fromchild thread
-      flexstub( STDOUT, 'STDOUT' ).should_receive( :puts ).with( 'STDOUT_LINE0' ).once.ordered
-      flexstub( STDOUT, 'STDOUT' ).should_receive( :puts ).with( 'STDOUT_LINE1' ).once.ordered
-      flexstub( STDOUT, 'STDOUT' ).should_receive( :puts ).with( 'STDOUT_LINE2' ).once.ordered
       mock.should_receive( :on_stdout ).with( Proc ).once.ordered.and_return do | block |
         block.call 'STDOUT_LINE0'
         block.call 'STDOUT_LINE1'
@@ -87,9 +85,6 @@ class TC_Debootstrap < Test::Unit::TestCase
       end
 
       # childerr thread
-      flexstub( STDERR, 'STDERR' ).should_receive( :puts ).with( 'STDERR_LINE0' ).once.ordered
-      flexstub( STDERR, 'STDERR' ).should_receive( :puts ).with( 'STDERR_LINE1' ).once.ordered
-      flexstub( STDERR, 'STDERR' ).should_receive( :puts ).with( 'STDERR_LINE2' ).once.ordered
       mock.should_receive( :on_stderr ).with( Proc ).once.ordered.and_return do | block |
         block.call 'STDERR_LINE0'
         block.call 'STDERR_LINE1'

@@ -6,6 +6,7 @@
 # License:: GPL2
 
 
+require 'lucie'
 require 'lucie/shell'
 
 
@@ -73,7 +74,7 @@ class Debootstrap
       end
 
       shell.on_stdout do | line |
-        STDOUT.puts line
+        Lucie.debug line
       end
 
       shell.on_stderr do | line |
@@ -81,7 +82,7 @@ class Debootstrap
         when /\Aln: \S+ File exists/
           raise RuntimeError, line
         end
-        STDERR.puts line
+        Lucie.error line
         error_message.push line
       end
 

@@ -1,3 +1,6 @@
+require 'lucie'
+
+
 class Popen3
   attr_reader :pid
   attr_reader :fromchild
@@ -29,9 +32,13 @@ class Popen3
 
       close_end_of @child_pipe
 
+      env_string = ''
       @env.each do | key, value |
+        env_string += "``#{ key }'' => ``#{ value }''"
         ENV[ key ]= value
       end
+
+      Lucie.info " ENV{ #{ env_string } } #{ @command.join( ' ' ) }"
       Kernel.exec *@command
     end
 

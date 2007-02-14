@@ -23,6 +23,7 @@ module Rake
 
     attr_accessor :distribution
     attr_accessor :http_proxy
+    attr_accessor :include
     attr_accessor :mirror
     attr_accessor :name
     attr_accessor :suite
@@ -119,6 +120,7 @@ module Rake
           option.suite = @suite
           option.target = @target_directory
           option.mirror = @mirror
+          option.include = @include
         end
 
         Apt.new( :clean ) do | option |

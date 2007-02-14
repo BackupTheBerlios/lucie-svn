@@ -18,13 +18,14 @@ class Debootstrap
   class DebootstrapOption
     attr_accessor :env
     attr_accessor :exclude
+    attr_accessor :include
+    attr_accessor :mirror
     attr_accessor :suite
     attr_accessor :target
-    attr_accessor :mirror
 
 
     def commandline
-      return [ '/usr/sbin/debootstrap', "--exclude=#{ @exclude.join(',') }", @suite, @target, @mirror ]
+      return [ '/usr/sbin/debootstrap', "--exclude=#{ @exclude.join( ',' ) }", "--include=#{ @include.join( ',' ) }", @suite, @target, @mirror ]
     end
   end
 

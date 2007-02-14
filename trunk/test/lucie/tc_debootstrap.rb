@@ -48,6 +48,7 @@ class TC_Debootstrap < Test::Unit::TestCase
       option.suite = 'WOODY'
       option.target = '/TMP'
       option.mirror = 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/'
+      option.include = [ 'INCLUDE' ]
     end
 
     assert_equal 'CHILD_STATUS', debootstrap.child_status
@@ -67,6 +68,7 @@ class TC_Debootstrap < Test::Unit::TestCase
       option.suite = 'WOODY'
       option.target = '/TMP'
       option.mirror = 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/'
+      option.include = [ 'INCLUDE' ]
     end
 
     assert_equal 'CHILD_STATUS', debootstrap.child_status
@@ -100,7 +102,7 @@ class TC_Debootstrap < Test::Unit::TestCase
 
 
   def debootstrap_commandline
-    return [ "/usr/sbin/debootstrap", "--exclude=DHCP-CLIENT,INFO", "WOODY", "/TMP", 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/' ]
+    return [ "/usr/sbin/debootstrap", "--exclude=DHCP-CLIENT,INFO", "--include=INCLUDE", "WOODY", "/TMP", 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/' ]
   end
 end
 

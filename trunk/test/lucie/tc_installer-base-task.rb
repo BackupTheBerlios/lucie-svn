@@ -37,12 +37,14 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
       task.mirror = 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/'
       task.distribution = 'DEBIAN'
       task.suite = 'SARGE'
+      task.include = [ 'INCLUDE' ]
     end
     assert_equal :installer_base, installer_base_task.name
     assert_equal '/TMP', installer_base_task.target_directory
     assert_equal 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/', installer_base_task.mirror
     assert_equal 'DEBIAN', installer_base_task.distribution
     assert_equal 'SARGE', installer_base_task.suite
+    assert_equal [ 'INCLUDE' ], installer_base_task.include
   end
 
 
@@ -99,6 +101,8 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
       debootstrap_option_mock.should_receive( :suite= ).with( 'SARGE' ).once.ordered
       debootstrap_option_mock.should_receive( :target= ).with( '/TMP' ).once.ordered
       debootstrap_option_mock.should_receive( :mirror= ).with( 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/' ).once.ordered
+      debootstrap_option_mock.should_receive( :include= ).with( [ 'INCLUDE' ] ).once.ordered
+
       block.call debootstrap_option_mock
     end
 
@@ -128,6 +132,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
       task.mirror = 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/'
       task.distribution = 'DEBIAN'
       task.suite = 'SARGE'
+      task.include = [ 'INCLUDE' ]
     end
     Task[ '/TMP/DEBIAN_SARGE.tgz' ].execute
   end

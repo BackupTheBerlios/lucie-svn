@@ -53,8 +53,8 @@ class Shell
   end
 
 
-  def puts data
-    @tochild.puts data
+  def puts data = ''
+    @tochild && @tochild.puts( data )
   end
 
 
@@ -65,12 +65,12 @@ class Shell
 
       stdout_thread = Thread.new do
         while line = @fromchild.gets do
-          do_stdout line
+          do_stdout line.chomp
         end
       end
       stderr_thread = Thread.new do
         while line = @childerr.gets do
-          do_stderr line
+          do_stderr line.chomp
         end
       end
 
@@ -142,6 +142,10 @@ end
 module Kernel
   def sh *command
     return Shell.open do | shell |
+      shell.on_stderr do | line |
+        Lucie.error line
+      end
+
       shell.exec( { 'LC_ALL' => 'C' }, *command )
     end
   end

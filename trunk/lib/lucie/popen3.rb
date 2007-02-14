@@ -1,3 +1,11 @@
+#
+# $Id: tc_popen3.rb 1096 2007-02-09 07:20:34Z takamiya $
+#
+# Author:: Yasuhito Takamiya (mailto:yasuhito@gmail.com)
+# Revision:: $LastChangedRevision: 1096 $
+# License:: GPL2
+
+
 require 'lucie'
 
 
@@ -32,19 +40,22 @@ class Popen3
 
       close_end_of @child_pipe
 
-      env_string = ''
       @env.each do | key, value |
-        env_string += "``#{ key }'' => ``#{ value }''"
         ENV[ key ]= value
       end
 
-      Lucie.info " ENV{ #{ env_string } } #{ @command.join( ' ' ) }"
       Kernel.exec *@command
     end
 
     # Parent
     close_end_of @child_pipe
     @parent_pipe[ :tochild ].sync = true
+
+    env_string = []
+    @env.each do | key, value |
+      env_string << "``#{ key }'' => ``#{ value }''"
+    end
+    Lucie.info " ENV{ #{ env_string.join( ', ' ) } } #{ @command.join( ' ' ) }"
 
     if block_given?
       begin
@@ -86,3 +97,9 @@ module Kernel
   end
   module_function :popen3
 end
+
+
+### Local variables:
+### mode: Ruby
+### indent-tabs-mode: nil
+### End:

@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 #
 # $Id$
 #
@@ -6,9 +7,10 @@
 # License:: GPL2
 
 
-$LOAD_PATH.unshift './lib'
+$LOAD_PATH.unshift( '../../lib' ) if __FILE__ =~ /\.rb$/
 
 
+require 'rubygems'
 require 'flexmock'
 require 'lucie/apt'
 require 'test/unit'

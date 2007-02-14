@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 #
 # $Id$
 #
@@ -55,7 +56,6 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
 
     assert_kind_of Rake::Task, Task[ :installer_base ]
     assert_kind_of Rake::Task, Task[ :reinstaller_base ]
-    assert_kind_of Rake::Task, Task[ '/TMP' ]
     assert_kind_of Rake::Task, Task[ '/TMP/DEBIAN_SARGE.tgz' ]
 
     assert_equal( "Build installer base tarball for DEBIAN distribution, version = ``SARGE''.", Task[ :installer_base ].comment )
@@ -110,6 +110,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
 
     flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = flexmock( 'SHELL' )
+      shell.should_receive( :on_stderr ).with( Proc ).once.ordered
       shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'rm', '-f', '/TMP/etc/resolv.conf' ).once.ordered
       block.call shell
     end
@@ -117,7 +118,8 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
     # mocking build_installer_base_tarball
     flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = flexmock( 'SHELL' )
-      shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'tar', '--one-file-system', '--directory', '/TMP', '-czvf', '/TMP/DEBIAN_SARGE.tgz', '.' ).once.ordered
+      shell.should_receive( :on_stderr ).with( Proc ).once.ordered
+      shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'tar', '--one-file-system', '--directory', '/TMP', '--exclude', 'DEBIAN_SARGE.tgz', '-czvf', '/TMP/DEBIAN_SARGE.tgz', '.' ).once.ordered
       block.call shell
     end
 

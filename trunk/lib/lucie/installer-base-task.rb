@@ -45,6 +45,12 @@ module Rake
     end
 
 
+    def installer_base_target
+      return target( InstallerBaseTask.target_fname( @distribution, @suite ) )
+    end
+    alias :tgz :installer_base_target
+
+
     private
 
 
@@ -141,11 +147,6 @@ module Rake
     def build_installer_base_tarball
       Lucie.info "Creating installer base tarball on #{installer_base_target}."
       Kernel.sh 'tar', '--one-file-system', '--directory', @target_directory, '--exclude', InstallerBaseTask.target_fname( @distribution, @suite ), '-czvf', installer_base_target, '.'
-    end
-
-
-    def installer_base_target
-      return target( InstallerBaseTask.target_fname( @distribution, @suite ) )
     end
   end
 end

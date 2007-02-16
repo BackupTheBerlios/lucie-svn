@@ -6,19 +6,35 @@
 # License:: GPL2
 
 
+require 'lucie'
 require 'lucie/shell'
 
 
-# [TODO] apt がエラー終了時にデフォルトで例外を raise するようにする
 class Apt
-  attr_accessor :root
+  def self.get command, option = nil
+    self.new command, option
+  end
 
 
-  def initialize command, &block
+  def self.clean option = nil
+    self.new :clean, option
+  end
+
+
+  def self.update option = nil
+    self.new :update, option
+  end
+
+
+  def self.check option = nil
+    self.new :check, option
+  end
+
+
+  def initialize command, option = nil
+    @env = { 'LC_ALL' => 'C' }
     @command = command.to_s
-    if block
-      block.call self
-    end
+    set_option option
     exec_shell
   end
 
@@ -31,30 +47,59 @@ class Apt
   private
 
 
+  def set_option option
+    return unless option
+    if option[ :root ]
+      @root = option[ :root ]
+    end
+    if option[ :env ]
+      @env.merge! option[ :env ]
+    end
+  end
+
+
   def exec_shell
     if @root
-      @shell = Shell.open do | shell |
-        shell.exec( { 'LC_ALL' => 'C' }, 'chroot', @root, 'apt-get', @command )
-      end
+      command_line = [ @env, 'chroot', @root, 'apt-get', @command ]
     else
-      @shell = Shell.open do | shell |
-        shell.exec( { 'LC_ALL' => 'C' }, 'apt-get', @command )
+      command_line = [ @env, 'apt-get', @command ]
+    end
+
+    @shell = Shell.open do | shell |
+      shell.on_stdout do | line |
+        Lucie.debug line
       end
+      shell.on_stderr do | line |
+        Lucie.error line
+      end
+      shell.exec *command_line
     end
   end
 end
 
 
-# Abbreviations
 module Kernel
-  def apt command, &block
-    if block
-      return Apt.new( command, &block )
-    else
-      return Apt.new( command )
-    end
+  def apt command, option
+    return Apt.new( command, option )
   end
-  module_function :apt
+
+
+  def aptget_clean option = nil
+    return apt( :clean, option )
+  end
+  module_function :aptget_clean
+
+
+  def aptget_check option = nil
+    return apt( :check, option )
+  end
+  module_function :aptget_check
+
+
+  def aptget_update option = nil
+    return apt( :update, option )
+  end
+  module_function :aptget_update
 end
 
 

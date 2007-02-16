@@ -20,116 +20,205 @@ class TC_Apt < Test::Unit::TestCase
   include FlexMock::TestCase
 
 
-  def test_clean
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = shell_mock_no_root
+  def test_apt_get_nooption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'LC_ALL' => 'C' }, 'apt-get', '-y dist-upgrade' )
       block.call shell
       shell
     end
 
-    apt = Apt.new( 'clean' )
-
-    assert_equal 'CHILD_STATUS_MOCK', apt.child_status
+    result = Apt.get( '-y dist-upgrade' )
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 
 
-  def test_clean_symbol
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = shell_mock_no_root
+  def test_apt_get_withoption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'ENV_NAME' => 'ENV_VALUE', 'LC_ALL' => 'C' }, 'chroot', '/ROOT', 'apt-get', '-y dist-upgrade' )
       block.call shell
       shell
     end
 
-    apt = Apt.new( :clean )
-
-    assert_equal 'CHILD_STATUS_MOCK', apt.child_status
+    result = Apt.get( '-y dist-upgrade', :root => '/ROOT', :env => { 'ENV_NAME' => 'ENV_VALUE' } )
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 
 
-  def test_clean_with_block_with_root
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = shell_mock
+  ##############################################################################
+  # apt-get check
+  ##############################################################################
+
+
+  def test_check_nooption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'LC_ALL' => 'C' }, 'apt-get', 'check' )
       block.call shell
       shell
     end
 
-    apt = Apt.new( 'clean' ) do | option |
-      option.root = '/ROOT'
-    end
-
-    assert_equal 'CHILD_STATUS_MOCK', apt.child_status
+    result = Apt.check
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 
 
-  def test_clean_symbol_with_block_with_root
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = shell_mock
+  def test_check_withoption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'ENV_NAME' => 'ENV_VALUE', 'LC_ALL' => 'C' }, 'apt-get', 'check' )
       block.call shell
       shell
     end
 
-    apt = Apt.new( :clean ) do | option |
-      option.root = '/ROOT'
-    end
-
-    assert_equal 'CHILD_STATUS_MOCK', apt.child_status
+    result = Apt.check( :env => { 'ENV_NAME' => 'ENV_VALUE' } )
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 
 
-  def test_clean_with_block_with_no_root
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = shell_mock_no_root
+  def test_check_abbreviation_nooption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'LC_ALL' => 'C' }, 'apt-get', 'check' )
       block.call shell
       shell
     end
 
-    apt = Apt.new( 'clean' ) do | option |
-      # do nothing.
-    end
-
-    assert_equal 'CHILD_STATUS_MOCK', apt.child_status
+    result = aptget_check
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 
 
-  def test_clean_abbreviation
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = shell_mock
+  def test_check_abbreviation_withoption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'ENV_NAME' => 'ENV_VALUE', 'LC_ALL' => 'C' }, 'chroot', '/ROOT', 'apt-get', 'check' )
       block.call shell
       shell
     end
 
-    apt = apt( :clean ) do | option |
-      option.root = '/ROOT'
-    end
-
-    assert_equal 'CHILD_STATUS_MOCK', apt.child_status
+    result = aptget_check( :root => '/ROOT', :env => { 'ENV_NAME' => 'ENV_VALUE' } )
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 
 
-  def test_clean_abbreviation_no_block
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = shell_mock_no_root
+  ##############################################################################
+  # apt-get clean
+  ##############################################################################
+
+
+  def test_clean_nooption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'LC_ALL' => 'C' }, 'apt-get', 'clean' )
       block.call shell
       shell
     end
 
-    apt = apt( :clean )
-
-    assert_equal 'CHILD_STATUS_MOCK', apt.child_status
+    result = Apt.clean
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 
 
-  def shell_mock
+  def test_clean_withoption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'ENV_NAME' => 'ENV_VALUE', 'LC_ALL' => 'C' }, 'apt-get', 'clean' )
+      block.call shell
+      shell
+    end
+
+    result = Apt.clean( :env => { 'ENV_NAME' => 'ENV_VALUE' } )
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
+  end
+
+
+  def test_clean_abbreviation_nooption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'LC_ALL' => 'C' }, 'apt-get', 'clean' )
+      block.call shell
+      shell
+    end
+
+    result = aptget_clean
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
+  end
+
+
+  def test_clean_abbreviation_withoption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'ENV_NAME' => 'ENV_VALUE', 'LC_ALL' => 'C' }, 'chroot', '/ROOT', 'apt-get', 'clean' )
+      block.call shell
+      shell
+    end
+
+    result = aptget_clean( :root => '/ROOT', :env => { 'ENV_NAME' => 'ENV_VALUE' } )
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
+  end
+
+
+  ##############################################################################
+  # apt-get update
+  ##############################################################################
+
+
+  def test_update_nooption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'LC_ALL' => 'C' }, 'apt-get', 'update' )
+      block.call shell
+      shell
+    end
+
+    result = Apt.update
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
+  end
+
+
+  def test_update_withoption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'ENV_NAME' => 'ENV_VALUE', 'LC_ALL' => 'C' }, 'apt-get', 'update' )
+      block.call shell
+      shell
+    end
+
+    result = Apt.update( :env => { 'ENV_NAME' => 'ENV_VALUE' } )
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
+  end
+
+
+  def test_update_abbreviation_nooption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'LC_ALL' => 'C' }, 'apt-get', 'update' )
+      block.call shell
+      shell
+    end
+
+    result = aptget_update
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
+  end
+
+
+  def test_update_abbreviation_withoption
+    flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+      shell = shell_mock( { 'ENV_NAME' => 'ENV_VALUE', 'LC_ALL' => 'C' }, 'chroot', '/ROOT', 'apt-get', 'update' )
+      block.call shell
+      shell
+    end
+
+    result = aptget_update( :root => '/ROOT', :env => { 'ENV_NAME' => 'ENV_VALUE' } )
+    assert_equal 'CHILD_STATUS_MOCK', result.child_status
+  end
+
+
+  private
+
+
+  def shell_mock *commandline
+    lucie = flexstub( Lucie, 'LUCIE_CLASS_MOCK' )
+    lucie.should_receive( :debug ).with( 'DUMMY_STDOUT' ).once.ordered
+    lucie.should_receive( :error ).with( 'DUMMY_STDERR' ).once.ordered
+
     shell = flexmock( 'SHELL' )
-    shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'chroot', '/ROOT', 'apt-get', 'clean' )
-    shell.should_receive( :child_status ).once.ordered.and_return( 'CHILD_STATUS_MOCK' )
-    return shell
-  end
-
-
-  def shell_mock_no_root
-    shell = flexmock( 'SHELL' )
-    shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'apt-get', 'clean' )
+    shell.should_receive( :on_stdout ).with( Proc ).once.ordered.and_return do | block |
+      block.call 'DUMMY_STDOUT'
+    end
+    shell.should_receive( :on_stderr ).with( Proc ).once.ordered.and_return do | block |
+      block.call 'DUMMY_STDERR'
+    end
+    shell.should_receive( :exec ).with( *commandline ).once.ordered
     shell.should_receive( :child_status ).once.ordered.and_return( 'CHILD_STATUS_MOCK' )
     return shell
   end

@@ -22,7 +22,7 @@ class TC_Apt < Test::Unit::TestCase
 
   def test_apt_get_nooption
     flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = shell_mock( { 'LC_ALL' => 'C' }, 'apt-get', '-y dist-upgrade' )
+      shell = shell_mock( { 'LC_ALL' => 'C' }, 'apt-get', '-y', 'dist-upgrade' )
       block.call shell
       shell
     end
@@ -34,7 +34,7 @@ class TC_Apt < Test::Unit::TestCase
 
   def test_apt_get_withoption
     flexstub( Shell, 'SHELL_CLASS_MOCK' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = shell_mock( { 'ENV_NAME' => 'ENV_VALUE', 'LC_ALL' => 'C' }, 'chroot', '/ROOT', 'apt-get', '-y dist-upgrade' )
+      shell = shell_mock( { 'ENV_NAME' => 'ENV_VALUE', 'LC_ALL' => 'C' }, 'chroot', '/ROOT', 'apt-get', '-y', 'dist-upgrade' )
       block.call shell
       shell
     end

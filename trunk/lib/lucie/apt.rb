@@ -12,7 +12,7 @@ require 'lucie/shell'
 
 class Apt
   def self.get command, option = nil
-    self.new command, option
+    self.new command.split( ' ' ), option
   end
 
 
@@ -33,7 +33,12 @@ class Apt
 
   def initialize command, option = nil
     @env = { 'LC_ALL' => 'C' }
-    @command = command.to_s
+    case command
+    when String, Symbol
+      @command = [ command.to_s ]
+    when Array
+      @command = command
+    end
     set_option option
     exec_shell
   end
@@ -60,9 +65,9 @@ class Apt
 
   def exec_shell
     if @root
-      command_line = [ @env, 'chroot', @root, 'apt-get', @command ]
+      command_line = [ @env, 'chroot', @root, 'apt-get' ] + @command
     else
-      command_line = [ @env, 'apt-get', @command ]
+      command_line = [ @env, 'apt-get' ] + @command
     end
 
     @shell = Shell.open do | shell |

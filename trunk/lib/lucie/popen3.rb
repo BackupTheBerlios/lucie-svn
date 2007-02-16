@@ -55,7 +55,7 @@ class Popen3
     @env.each do | key, value |
       env_string << "``#{ key }'' => ``#{ value }''"
     end
-    Lucie.info " ENV{ #{ env_string.join( ', ' ) } } #{ @command.join( ' ' ) }"
+    Lucie.debug " ENV{ #{ env_string.join( ', ' ) } } #{ @command.join( ' ' ) }"
 
     if block_given?
       begin

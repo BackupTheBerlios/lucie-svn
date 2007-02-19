@@ -106,11 +106,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
       block.call debootstrap_option_mock
     end
 
-    flexstub( Apt, 'APT' ).should_receive( :new ).with( :clean, Proc ).once.ordered.and_return do | command, block |
-      apt_option_mock = flexmock( 'APT_OPTION' )
-      apt_option_mock.should_receive( :root= ).with( '/TMP' ).once.ordered
-      block.call apt_option_mock
-    end
+    flexstub( Apt, 'APT_CLASS_MOCK' ).should_receive( :new ).with( :clean, { :root => '/TMP' } ).once.ordered
 
     flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = flexmock( 'SHELL' )

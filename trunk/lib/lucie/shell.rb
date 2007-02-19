@@ -140,7 +140,7 @@ end
 
 # Abbreviations
 module Kernel
-  def sh *command
+  def sh_exec *command
     return Shell.open do | shell |
       shell.on_stderr do | line |
         Lucie.error line
@@ -149,7 +149,7 @@ module Kernel
       shell.exec( { 'LC_ALL' => 'C' }, *command )
     end
   end
-  module_function :sh
+  module_function :sh_exec
 end
 
 

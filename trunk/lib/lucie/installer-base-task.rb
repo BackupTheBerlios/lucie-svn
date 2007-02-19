@@ -18,7 +18,12 @@ require 'rake/tasklib'
 
 module Rake
   class InstallerBaseTask < TaskLib
+    include Kernel
+    include Lucie
+
+
     INSTALLER_BASE_DIR = '/var/lib/lucie/installer_base'.freeze
+    MIRROR_URI = 'http://www.debian.or.jp/debian/'.freeze
 
 
     attr_accessor :distribution
@@ -30,15 +35,10 @@ module Rake
     attr_accessor :target_directory
 
 
-    def self.target_fname distribution, suite
-      return distribution + '_' + suite + '.tgz'
-    end
-
-
     def initialize name = :installer_base # :yield: self
       @name = name
       @target_directory = INSTALLER_BASE_DIR
-      @mirror = 'http://www.debian.or.jp/debian/'
+      @mirror = MIRROR_URI
       yield self if block_given?
 
       define_tasks
@@ -46,7 +46,7 @@ module Rake
 
 
     def installer_base_target
-      return target( InstallerBaseTask.target_fname( @distribution, @suite ) )
+      return target( target_fname( @distribution, @suite ) )
     end
     alias :tgz :installer_base_target
 
@@ -96,31 +96,17 @@ module Rake
     def define_task_clobber
       desc "Remove #{ @target_directory }"
       task task_name( :clobber ) do
-        Lucie.info "Removing #{ @target_directory }"
-
-        Kernel.sh 'umount', target( '/dev/pts' )
-
-        ( Dir.glob( target( '/dev/.??*' ) ) + Dir.glob( target( '/*' ) ) ).each do | each |
-          Kernel.sh 'rm', '-rf', each
-        end
-
-        # also remove files nfsroot/.? but not . and ..
-        Shell.open do | shell |
-          shell.on_stdout do | line |
-            Kernel.sh 'rm', '-f', line
-          end
-          shell.exec env_lc_all, 'find', @target_directory, '-xdev', '-maxdepth', '1', '!', '-type', 'd'
-        end
+        sh_exec 'rm', '-rf', @target_directory
       end
     end
 
 
     def define_task_tgz
       file task_name( :tgz ) do
-        Lucie.info "Creating base system using debootstrap version #{ Debootstrap.VERSION }"
-        Lucie.info "Calling debootstrap #{ suite } #{ target_directory } #{ mirror }"
+        info "Creating base system using debootstrap version #{ Debootstrap.VERSION }"
+        info "Calling debootstrap #{ suite } #{ target_directory } #{ mirror }"
 
-        Debootstrap.new do | option |
+        debootstrap do | option |
           option.env = env_lc_all.merge( 'http_proxy' => @http_proxy )
           option.exclude = [ 'dhcp-client', 'info' ]
           option.suite = @suite
@@ -129,24 +115,22 @@ module Rake
           option.include = @include
         end
 
-        Apt.new( :clean ) do | option |
-          option.root = @target_directory
-        end
+        aptget_clean :root => @target_directory
 
-        Kernel.sh 'rm', '-f', target( '/etc/resolv.conf' )
+        sh_exec 'rm', '-f', target( '/etc/resolv.conf' )
         build_installer_base_tarball
       end
     end
 
 
-    def env_lc_all
-      return { 'LC_ALL' => 'C' }
+    def build_installer_base_tarball
+      info "Creating installer base tarball on #{ installer_base_target }."
+      sh_exec 'tar', '--one-file-system', '--directory', @target_directory, '--exclude', target_fname( @distribution, @suite ), '-czvf', installer_base_target, '.'
     end
 
 
-    def build_installer_base_tarball
-      Lucie.info "Creating installer base tarball on #{installer_base_target}."
-      Kernel.sh 'tar', '--one-file-system', '--directory', @target_directory, '--exclude', InstallerBaseTask.target_fname( @distribution, @suite ), '-czvf', installer_base_target, '.'
+    def target_fname distribution, suite
+      return distribution + '_' + suite + '.tgz'
     end
   end
 end

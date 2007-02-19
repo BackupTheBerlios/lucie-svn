@@ -122,7 +122,7 @@ class TC_Shell < Test::Unit::TestCase
   def test_abbreviation
     setup_popen3_mock( {}, { 'LC_ALL' => 'C' } )
 
-    shell = sh( 'COMMAND', 'ARG1', 'ARG2' )
+    shell = sh_exec( 'COMMAND', 'ARG1', 'ARG2' )
 
     assert_nil shell.child_status
   end

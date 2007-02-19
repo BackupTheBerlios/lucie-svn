@@ -28,6 +28,11 @@ module Lucie
   }
 
 
+  ##############################################################################
+  # Logging
+  ##############################################################################
+
+
   def console_color(level, str)
     @@colormap[level][:console] + str + RESET[:console]
   end
@@ -62,4 +67,15 @@ module Lucie
     puts console_color( :debug, "%s: %s" % [ :debug, message ])
   end
   module_function :debug
+
+
+  ##############################################################################
+  # Utility methods
+  ##############################################################################
+
+
+  def env_lc_all
+    return { 'LC_ALL' => 'C' }
+  end
+  module_function :env_lc_all
 end

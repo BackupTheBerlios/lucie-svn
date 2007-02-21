@@ -14,6 +14,7 @@ require 'lucie/installer-base-task'
 
 
 Rake::InstallerBaseTask.new do | task |
+  task.include = [ 'lv' ]
   task.target_directory = '/tmp/debootstrap'
   task.mirror = 'http://ring.asahi-net.or.jp/archives/linux/debian/debian/'
   task.distribution = 'debian'

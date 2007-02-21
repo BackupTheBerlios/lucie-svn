@@ -133,12 +133,17 @@ class TC_Shell < Test::Unit::TestCase
   def test_abbreviation
     flexstub( Popen3::Popen3, 'POPEN3_CLASS_MOCK' ).should_receive( :new ).with( { 'LC_ALL' => 'C' }, 'TEST_COMMAND', 'TEST_ARG1', 'TEST_ARG2' ).and_return do
       flexmock( 'POPEN3_MOCK' ) do | mock |
+        mock.should_receive( :logger= ).once.ordered
         mock.should_receive( :popen3 ).with( Proc ).once.ordered.and_return do | block |
           block.call nil, fromchild_mock, childerr_mock
         end
         mock.should_receive( :wait ).with_no_args.once.ordered
       end
     end
+
+    logger = flexmock( 'LOGGER_MOCK' )
+    logger.should_receive( :error ).with( String ).twice.ordered
+    Popen3::Shell.logger = logger
 
     shell = Kernel.sh_exec( 'TEST_COMMAND', 'TEST_ARG1', 'TEST_ARG2' )
 
@@ -154,6 +159,7 @@ class TC_Shell < Test::Unit::TestCase
   def setup_popen3_mock pipe = {}
     flexstub( Popen3::Popen3, 'POPEN3::POPEN3_CLASS_MOCK' ).should_receive( :new ).with( dummy_env, *dummy_command ).once.and_return do
       flexmock( 'POPEN3_MOCK' ) do | mock |
+        mock.should_receive( :logger= ).once.ordered
         mock.should_receive( :popen3 ).with( Proc ).once.ordered.and_return do | block |
           block.call pipe[ :tochild ], ( pipe[ :fromchild ] || fromchild_mock ), ( pipe[ :childerr ] || childerr_mock )
         end

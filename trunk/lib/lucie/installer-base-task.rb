@@ -7,10 +7,9 @@
 
 
 require 'lucie'
-require 'lucie/apt'
-require 'lucie/chroot'
-require 'lucie/debootstrap'
-require 'lucie/shell'
+require 'popen3/apt'
+require 'popen3/debootstrap'
+require 'popen3/shell'
 require 'rake'
 require 'rake/classic_namespace'
 require 'rake/tasklib'
@@ -39,8 +38,9 @@ module Rake
       @name = name
       @target_directory = INSTALLER_BASE_DIR
       @mirror = MIRROR_URI
+      @http_proxy = nil
       yield self if block_given?
-
+      Popen3::Shell.logger = Lucie
       define_tasks
     end
 
@@ -103,10 +103,11 @@ module Rake
 
     def define_task_tgz
       file task_name( :tgz ) do
-        info "Creating base system using debootstrap version #{ Debootstrap.VERSION }"
+        info "Creating base system using debootstrap version #{ Popen3::Debootstrap.VERSION }"
         info "Calling debootstrap #{ suite } #{ target_directory } #{ mirror }"
 
         debootstrap do | option |
+          option.logger = Lucie
           option.env = env_lc_all.merge( 'http_proxy' => @http_proxy )
           option.exclude = [ 'dhcp-client', 'info' ]
           option.suite = @suite
@@ -115,7 +116,7 @@ module Rake
           option.include = @include
         end
 
-        aptget_clean :root => @target_directory
+        aptget_clean :root => @target_directory, :logger => Lucie
 
         sh_exec 'rm', '-f', target( '/etc/resolv.conf' )
         build_installer_base_tarball

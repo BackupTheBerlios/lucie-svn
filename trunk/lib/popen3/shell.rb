@@ -12,10 +12,29 @@ require 'popen3'
 
 module Popen3
   class Shell
+    @@logger = nil
+
+
+    def self.logger
+      return @@logger
+    end
+
+
+    def self.logger= logger
+      @@logger = logger
+    end
+
+
+    def logger
+      return self.class.logger
+    end
+
+
     def initialize
       @on_stdout = nil
       @on_stderr = nil
       @on_success = nil
+      @on_failure = nil
       @on_exit = nil
 
       yield self
@@ -59,6 +78,7 @@ module Popen3
 
     def exec env, *command
       process = Popen3.new( env, *command )
+      process.logger = @@logger
       process.popen3 do | tochild, fromchild, childerr |
         @tochild, @fromchild, @childerr = tochild, fromchild, childerr
 
@@ -142,9 +162,11 @@ end
 module Kernel
   def sh_exec *command
     Popen3::Shell.new do | shell |
-#       shell.on_stderr do | line |
-#         Lucie.error line
-#       end
+      shell.on_stderr do | line |
+        if shell.logger
+          shell.logger.error line
+        end
+      end
 
       shell.exec( { 'LC_ALL' => 'C' }, *command )
     end

@@ -85,7 +85,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
 
 
   def test_installer_base_target
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Popen3::Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       flexmock( 'SHELL' ) do | shell |
         shell.should_receive( :on_stdout ).with( Proc ).once.ordered.and_return do | stdout_block |
           stdout_block.call 'ii  debootstrap    0.2.45-0.2     Bootstrap a basic Debian system'
@@ -94,7 +94,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
         block.call shell
       end
     end
-    flexstub( Debootstrap, 'DEBOOTSTRAP' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Popen3::Debootstrap, 'DEBOOTSTRAP' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
       debootstrap_option_mock = flexmock( 'DEBOOTSTRAP_OPTION' )
       debootstrap_option_mock.should_receive( :env= ).with( { 'http_proxy' => nil, 'LC_ALL' => 'C' } ).once.ordered
       debootstrap_option_mock.should_receive( :exclude= ).with( [ 'dhcp-client', 'info' ] ).once.ordered
@@ -106,9 +106,9 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
       block.call debootstrap_option_mock
     end
 
-    flexstub( Apt, 'APT_CLASS_MOCK' ).should_receive( :new ).with( :clean, { :root => '/TMP' } ).once.ordered
+    flexstub( Popen3::Apt, 'APT_CLASS_MOCK' ).should_receive( :new ).with( :clean, { :root => '/TMP' } ).once.ordered
 
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Popen3::Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = flexmock( 'SHELL' )
       shell.should_receive( :on_stderr ).with( Proc ).once.ordered
       shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'rm', '-f', '/TMP/etc/resolv.conf' ).once.ordered
@@ -116,7 +116,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
     end
 
     # mocking build_installer_base_tarball
-    flexstub( Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
+    flexstub( Popen3::Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell = flexmock( 'SHELL' )
       shell.should_receive( :on_stderr ).with( Proc ).once.ordered
       shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'tar', '--one-file-system', '--directory', '/TMP', '--exclude', 'DEBIAN_SARGE.tgz', '-czvf', '/TMP/DEBIAN_SARGE.tgz', '.' ).once.ordered

@@ -46,7 +46,6 @@ class TC_Debootstrap < Test::Unit::TestCase
     logger_mock.should_receive( :debug ).with( /\ASTDOUT_LINE\d\Z/ ).times( 3 )
     logger_mock.should_receive( :error ).with( /\ASTDERR_LINE\d\Z/ ).times( 3 )
 
-
     debootstrap = Popen3::Debootstrap.new do | option |
       option.logger = logger_mock
       option.env = { 'TEST_ENV_NAME' => 'TEST_ENV_VALUE' }
@@ -82,7 +81,7 @@ class TC_Debootstrap < Test::Unit::TestCase
 
 
   def shell_mock
-    return flexmock( 'SHELL' ) do | mock |
+    return flexmock( 'SHELL_MOCK' ) do | mock |
       # tochild thread
       mock.should_receive( :puts ).at_least.once
 

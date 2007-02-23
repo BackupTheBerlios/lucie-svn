@@ -24,14 +24,16 @@ module Popen3
 
 
       def commandline
-        return [ '/usr/sbin/debootstrap', "--exclude=#{ @exclude.join( ',' ) }", "--include=#{ @include.join( ',' ) }", @suite, @target, @mirror ]
+        exclude = @exclude ? "--exclude=#{ @exclude.join( ',' ) }" : nil
+        include = @include ? "--include=#{ @include.join( ',' ) }" : nil
+        return [ '/usr/sbin/debootstrap', exclude, include, @suite, @target, @mirror ].compact
       end
     end
 
 
     def self.VERSION
       version = nil
-      ::Popen3::Shell.new do | shell |
+      Shell.new do | shell |
         shell.on_stdout do | line |
           # [XXX] raise an exception if version is not available.
           if /^ii\s+debootstrap\s+(\S+)/=~ line
@@ -68,7 +70,7 @@ module Popen3
     def exec_shell
       error_message = []
 
-      @shell = ::Popen3::Shell.new do | shell |
+      @shell = Shell.new do | shell |
         Thread.new do
           loop do
             shell.puts

@@ -1,34 +1,30 @@
 #
 # $Id$
 #
-# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Author::   Yasuhito Takamiya (mailto:yasuhito@gmail.com)
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
+
+require 'install-packages/command'
+
+
 module InstallPackages
-  module Command
-    class Remove < AbstractCommand
-      public
-      def commandline
-        case @list
-        when String
-          package_list = @list
-        when Array
-          package_list = @list.join(' ')
-        else
-          raise "this shouldn't happen"
-        end
-        return %{#{root_command} apt-get --purge remove #{package_list}}
-      end
+  class RemoveCommand
+    include Command
+
+
+    def initialize aptget
+      @aptget = aptget
+    end
+
+
+    def execute dryRun = false
+      @aptget.remove dryRun
     end
   end
 end
 
-# remove コマンド
-def remove( packageList )
-  remove_command = InstallPackages::Command::Remove.new( packageList )
-  InstallPackages::App.register remove_command
-end
 
 ### Local variables:
 ### mode: Ruby

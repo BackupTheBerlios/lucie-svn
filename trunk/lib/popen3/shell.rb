@@ -37,7 +37,9 @@ module Popen3
       @on_failure = nil
       @on_exit = nil
 
-      yield self
+      if block_given?
+        yield self
+      end
     end
 
 

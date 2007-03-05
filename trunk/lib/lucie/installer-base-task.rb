@@ -11,14 +11,17 @@ require 'popen3/apt'
 require 'popen3/debootstrap'
 require 'popen3/shell'
 require 'rake'
-require 'rake/classic_namespace'
+begin
+  require 'rake/classic_namespace'
+rescue LoadError
+  # This is ok, do nothing.
+end
 require 'rake/tasklib'
 
 
 module Rake
   class InstallerBaseTask < TaskLib
     include Kernel
-    include Lucie
 
 
     INSTALLER_BASE_DIR = '/var/lib/lucie/installer_base'.freeze
@@ -28,6 +31,7 @@ module Rake
     attr_accessor :distribution
     attr_accessor :http_proxy
     attr_accessor :include
+    attr_accessor :logger
     attr_accessor :mirror
     attr_accessor :name
     attr_accessor :suite
@@ -35,12 +39,13 @@ module Rake
 
 
     def initialize name = :installer_base # :yield: self
+      @logger = Lucie
+      @http_proxy = nil
+      @mirror = MIRROR_URI
       @name = name
       @target_directory = INSTALLER_BASE_DIR
-      @mirror = MIRROR_URI
-      @http_proxy = nil
       yield self if block_given?
-      Popen3::Shell.logger = Lucie
+      Popen3::Shell.logger = @logger
       define_tasks
     end
 
@@ -103,12 +108,12 @@ module Rake
 
     def define_task_tgz
       file task_name( :tgz ) do
-        info "Creating base system using debootstrap version #{ Popen3::Debootstrap.VERSION }"
-        info "Calling debootstrap #{ suite } #{ target_directory } #{ mirror }"
+        @logger.info "Creating base system using debootstrap version #{ Popen3::Debootstrap.VERSION }"
+        @logger.info "Calling debootstrap #{ suite } #{ target_directory } #{ mirror }"
 
         debootstrap do | option |
-          option.logger = Lucie
-          option.env = env_lc_all.merge( 'http_proxy' => @http_proxy )
+          option.logger = @logger
+          option.env = { 'LC_ALL' => 'C' }.merge( 'http_proxy' => @http_proxy )
           option.exclude = [ 'dhcp-client', 'info' ]
           option.suite = @suite
           option.target = @target_directory
@@ -116,7 +121,7 @@ module Rake
           option.include = @include
         end
 
-        aptget_clean :root => @target_directory, :logger => Lucie
+        aptget_clean :root => @target_directory, :logger => @logger
 
         sh_exec 'rm', '-f', target( '/etc/resolv.conf' )
         build_installer_base_tarball
@@ -125,7 +130,7 @@ module Rake
 
 
     def build_installer_base_tarball
-      info "Creating installer base tarball on #{ installer_base_target }."
+      @logger.info "Creating installer base tarball on #{ installer_base_target }."
       sh_exec 'tar', '--one-file-system', '--directory', @target_directory, '--exclude', target_fname( @distribution, @suite ), '-czvf', installer_base_target, '.'
     end
 

@@ -30,16 +30,21 @@ module Popen3
     end
 
 
+    def self.open
+      shell = self.new
+      if block_given?
+        yield shell
+      end
+      return shell
+    end
+
+
     def initialize
       @on_stdout = nil
       @on_stderr = nil
       @on_success = nil
       @on_failure = nil
       @on_exit = nil
-
-      if block_given?
-        yield self
-      end
     end
 
 
@@ -163,7 +168,7 @@ end
 # Abbreviations
 module Kernel
   def sh_exec *command
-    Popen3::Shell.new do | shell |
+    Popen3::Shell.open do | shell |
       shell.on_stderr do | line |
         if shell.logger
           shell.logger.error line

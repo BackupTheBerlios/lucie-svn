@@ -11,10 +11,26 @@ require 'rake/testtask'
 require 'rcov/rcovtask'
 
 
-REQUIRE_PATHS = ["lib"]
+REQUIRE_PATHS = [ 'lib', 'test', 'test/popen3', 'test/lucie', 'test/install-packages' ]
 
 TEST_VERBOSITY = true
-TEST_FILES = FileList[ "test/**/tc_*.rb" ]
+TEST_FILES_INSTALL_PACKAGES = [ 'test/install-packages/ts_all.rb' ]
+
+TEST_FILES_HARDDISK = FileList[ 'test/setup-harddisk/tc_*.rb' ]
+TEST_FILES_LIBPOPEN3 = [ 'test/popen3/ts_all.rb' ]
+TEST_FILES_LUCIE = [ "test/lucie/ts_all.rb" ]
+TEST_FILES_LMP = FileList[ "test/lmp/tc_*.rb" ]
+TEST_FILES_LIBDEPENDS = FileList[ "test/depends/tc_*.rb" ]
+TEST_FILES_DEFT = [ "test/deft/test_all.rb" ]
+TEST_FILES_DEBCONF = FileList[ "test/debconf/tc_*.rb" ]
+
+$stderr.puts "WARNING: lucie-vm-pool test suite is temporally disabled."
+$stderr.puts "WARNING: libpopen3 test suite is temporally disabled."
+$stderr.puts "WARNING: Lucie test suite is temporally disabled."
+$stderr.puts "WARNING: Deft test suite is temporally disabled."
+$stderr.puts "WARNING: LMP test suite is temporally disabled."
+$stderr.puts "WARNING: libdepends test suite is temporally disabled."
+TEST_FILES = TEST_FILES_INSTALL_PACKAGES + TEST_FILES_DEBCONF + TEST_FILES_HARDDISK
 
 LMP_SERVER_DIR  = %{/var/www/}
 LMP_SERVER      = %{lucie-dev.titech.hpcc.jp}
@@ -47,25 +63,26 @@ Rcov::RcovTask.new do | t |
 end
 
 
-# ------------------------- RDoc Tasks.
+# RDoc Task ####################################################################
 
 Rake::RDocTask.new( :rdoc ) do |rdoc|
   rdoc.title = 'Lucie documentation'
-  rdoc.template = 'jamis'
+  rdoc.template = 'html'
   rdoc.rdoc_dir = 'doc/rdoc'
-  rdoc.options << '--line-numbers' 
-  rdoc.options << '--inline-source' 
-  rdoc.options << '--charset' << 'eucjp' 
+  rdoc.options << '--line-numbers'
+  rdoc.options << '--inline-source'
+  rdoc.options << '--charset' << 'eucjp'
   # rdoc.options << '--diagram'
-  rdoc.rdoc_files = FileList[ 'lib/*.rb', 'lib/*/*.rb', 'lib/**/*.rb' ]
+  rdoc.rdoc_files = FileList[ 'lib/**/*.rb' ]
 end
 
 desc 'Upload rdoc documents'
 task :upload_rdoc => [:rdoc] do
   sh %{tar --directory doc -czf web.tar rdoc images}
   sh %{scp web.tar #{LMP_SERVER_URI}}
-  sh %{ssh -l takamiya #{LMP_SERVER} "cd #{LMP_SERVER_DIR} && tar xzf web.tar"}   
+  sh %{ssh -l takamiya #{LMP_SERVER} "cd #{LMP_SERVER_DIR} && tar xzf web.tar"}
 end
+
 
 # ------------------------- Installation Tasks.
 

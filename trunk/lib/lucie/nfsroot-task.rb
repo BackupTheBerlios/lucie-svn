@@ -1,456 +1,365 @@
 #
 # $Id$
 #
-# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Author::   Yasuhito Takamiya (mailto:yasuhito@gmail.com)
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'lucie/time-stamp'
+
+require 'lucie'
+require 'lucie/installer-base-task'
+require 'popen3/apt'
 require 'rake'
 require 'rake/tasklib'
 
-Lucie::update(%q$Id$)
 
 module Rake
   class NfsrootTask < TaskLib
-    # NFSroot を作成するトップディレクトリ
-    NFSROOT_DIR = '/var/lib/lucie/nfsroot/'.freeze 
-    # インストール時に使用する設定名。通常は設定名 == インストーラ名。
-    # 差分インストーラ作成の時には設定名 != インストーラ名 となるため、この設定名が必要となる。
-    CONFIGURATION_NAME_STAMP = '/etc/lucie/.configuration_name'.freeze 
-    # インストール時のインストーラの名前
-    INSTALLER_NAME_STAMP = '/etc/lucie/.installer_name'.freeze 
-    # LMP リポジトリが設置してあるサーバの名前
+    include Kernel
+    include Lucie
+
+
+    NFSROOT_DIRECTORY = '/var/lib/lucie/nfsroot/'.freeze
+    CONFIGURATION_NAME_STAMP = '/etc/lucie/.configuration_name'.freeze
+    INSTALLER_NAME_STAMP = '/etc/lucie/.installer_name'.freeze
     LMP_SERVER = 'lucie-dev.titech.hpcc.jp'
 
-    # NFSroot が作成されるディレクトリ
-    attr_accessor :dir
-    # ディストリビューションのバージョン
-    attr_accessor :distribution_version
-    # NFSroot に追加インストールするパッケージの Array
+
+    attr_accessor :target_directory
+    attr_accessor :distribution
+    attr_accessor :suite
     attr_accessor :extra_packages
-    # NFSroot の基となるベースシステム (xxx.tgz) のフルパス
-    attr_accessor :installer_base
-    # インストーラ実行用のカーネルパッケージのフルパス
     attr_accessor :kernel_package
-    # インストーラ実行用のカーネルパッケージのバージョン
-    attr_accessor :kernel_version
-    # NFSroot の名前
+    attr_accessor :mirror
     attr_accessor :name
-    # パッケージサーバの URI
-    attr_accessor :package_server
-    # root パスワードを暗号化したもの
     attr_accessor :root_password
-    # 差分インストールの元となるインストーラ名の Array
-    attr_accessor :source_installer
+    attr_accessor :sources_list
 
-    # 
-    # 以下のようにすることで '/var/lib/lucie/nfsroot/my_installer' 以
-    # 下に nfsroot を構築するための Task が定義される。
-    #
-    #  installer_name = 'my_installer'
-    #  Rake::NfsrootTask.new( 'my_installer' ) do |nfsroot|
-    #    nfsroot.dir = File.join( Rake::NfsrootTask::NFSROOT_DIR, installer_name )
-    #    nfsroot.package_server = 'http://192.168.152.2:9999/debian'
-    #    nfsroot.distribution_version = 'sarge'
-    #    nfsroot.kernel_package = '/etc/lucie/kernel/kernel-image-2.4.27-fai_1_i386.deb'
-    #    nfsroot.kernel_version = '2.4.27-fai'
-    #    nfsroot.root_password = 'h29SP9GgVbLHE'
-    #    nfsroot.installer_base = File.join( Rake::NfsrootTask::INSTALLER_BASE_DIR, 
-    #                                        InstallerBaseTask.target_fname('debian', 'sarge' ))
-    #    nfsroot.extra_packages = ['lv', 'libdevmapper1.01']
-    #  end
-    #
-    public
-    def initialize( name=:nfsroot ) # :yield: self
-      @name = name
-      @dir = NFSROOT_DIR
-      @package_server = 'http://www.debian.or.jp/debian'
-      @distribution_version = 'stable'
-      @root_password = "h29SP9GgVbLHE"
+
+    def initialize name = :nfsroot # :yield: self
       @extra_packages = nil
-      @source_installer = nil
+      @mirror = 'http://www.debian.or.jp/debian'
+      @name = name
+      @root_password = "h29SP9GgVbLHE"
+      @suite = 'stable'
+      @distribution = 'debian'
+      @target_directory = NFSROOT_DIRECTORY
+      @sources_list = []
       yield self if block_given?
-      define
-    end
-    
-    private
-    def define
-      desc "Build the nfsroot filesytem using #{installer_base}"
-      task @name
-      
-      desc "Remove the nfsroot filesystem"
-      task paste("clobber_", @name) do
-        info "Removing old nfsroot filesystem: #{@dir}"
-        sh %{umount #{nfsroot( 'dev/pts' )} 1>/dev/null 2>&1}, sh_option rescue nil
-        sh %{rm -rf #{nfsroot( '.??*' )} #{nfsroot( '*' )}}, sh_option
-        sh %{[ -d #{@dir} ] && find #{@dir} ! -type d -xdev -maxdepth 1 | xargs -r rm -f}, sh_option rescue nil
-      end
-      
-      directory @dir
-      task @name => nfsroot_target
-      
-      file nfsroot_target => [paste("clobber_", @name), @dir] do
-        extract_installer_base        
-        hoax_some_packages
-        upgrade
-        add_additional_packages
-        copy_lucie_files
-        set_timezone
-        make_symlinks
-        save_all_packages_list
-        # TODO: setup_ssh
-        install_kernel_nfsroot
-        setup_dhcp
-        make_stamp
-      end
+
+      define_tasks
     end
 
-    # INSTALLER_NAME_STAMP と CONFIGURATION_NAME_STAMP にスタンプファイルを作成する。
-    # INSTALLER_NAME_STAMP の内容はインストーラ名。
-    # CONFIGURATION_NAME_STAMP の内容は設定名 (設定ファイルとして用いるインストーラ名)
-    # これは差分インストールの時にインストーラ名と設定名が一致しない場合に用いられる。
+
     private
-    def make_stamp
-      File.open( nfsroot(INSTALLER_NAME_STAMP), 'w+' ) do |file|
-        file.print @name
+
+
+    def target path
+      return File.join( @target_directory, path ).gsub( /\/+/, '/' )
+    end
+
+
+    # hoaks some packages
+    # liloconfig, dump and raidtool2 needs these files
+    def hoaks_packages
+      info 'Modifying nfsroot to avoid errors caused by some packages.'
+
+      sh_exec %{echo "#UNCONFIGURED FSTAB FOR BASE SYSTEM" > #{ target( 'etc/fstab' ) }}
+      sh_exec "touch #{ target( 'etc/raidtab' ) }"
+
+      sh_exec %{mkdir -p #{ target( "lib/modules/#{ get_kernel_version }" ) }}
+      sh_exec %{touch #{ target( "lib/modules/#{ get_kernel_version }/modules.dep" ) }}
+      sh_exec %{echo 'NTPSERVERS=""' > #{ target( 'etc/default/ntp-servers' ) }}
+
+      unless FileTest.directory?( target( 'var/state' ) )
+        sh_exec "mkdir #{ target( 'var/state' ) }"
       end
-      File.open( nfsroot(CONFIGURATION_NAME_STAMP), 'w+' ) do |file|
-        if @source_installer
-          file.print @source_installer[0]
-        else
-          file.print @name
+      # [TODO] Configuration option for sources.list (use puppet?).
+      File.open( target( 'etc/apt/sources.list' ), 'w' ) do | sources |
+        sources_list.each do | each |
+          sources.puts each
         end
       end
     end
 
-    private
-    def pxelinux_cfg_fname( ipString )
-      return ipString.split('.').map do |each|
-        sprintf( "%.2x", each ).upcase
-      end.join
+
+    # [TODO] Support configuration option for adding arbitrary /etc/hosts entries.
+    def generate_etc_hosts
+      File.open( target( 'etc/hosts' ), 'w+' ) do | hosts |
+        Popen3::Shell.new do | shell |
+          shell.on_stdout do | line |
+            if /inet addr:(\S+)\s+/=~ line
+              hosts.print `getent hosts #{ $1 }`
+            end
+          end
+          # [FIXME] use env_lc_all.
+          shell.exec( { 'LC_ALL' => 'C' }, 'ifconfig' )
+        end
+      end
     end
 
-    private
+
+    def umount_dirs
+      sh_exec "chroot #{ @target_directory } dpkg-divert --rename --remove /sbin/discover-modprobe"
+      if FileTest.directory?( target( '/proc/self' ) )
+        sh_exec "umount #{ target( '/proc' ) }"
+        sh_exec "umount #{ target( '/dev/pts' ) }"
+      end
+    end
+
+
+    def add_packages_nfsroot
+      info "Adding additional packages to nfsroot."
+      packages = ( [ 'reiserfsprogs', 'discover', 'module-init-tools', 'puppet' ] << @extra_packages ).flatten.uniq.compact
+      info "Adding packages to nfsroot: #{packages.join(', ')}"
+      aptget_update apt_option
+      apt( [ '-y', '--fix-missing', 'install' ] + packages, apt_option )
+      aptget_clean apt_option
+    end
+
+
+    def get_kernel_version
+      kernel_version = nil
+      Popen3::Shell.new do | shell |
+        shell.on_stdout do | line |
+          if /^ Package: \S+\-image\-(\S+)$/=~ line
+            kernel_version = $1
+          end
+        end
+        shell.exec( { 'LC_ALL' => 'C' }, 'dpkg', '--info', @kernel_package )
+      end
+      if kernel_version
+        return kernel_version
+      end
+      raise "Cannot determine kernel version."
+    end
+
+
+    def install_kernel_nfsroot
+      info "Installing kernel on nfsroot."
+      Dir.glob( target( '/boot/*-' + get_kernel_version ) ).each do | each |
+        sh_exec "rm -rf #{ each }"
+      end
+      sh_exec "rm -rf #{ target( '/lib/modules/' + get_kernel_version ) }"
+
+      sh_exec %{echo "do_boot_enable=no" > #{ target( 'etc/kernel-img.conf' ) }}
+      sh_exec %{dpkg -x #{ @kernel_package } #{ @target_directory } }
+      info "Kernel #{ get_kernel_version } installed into the nfsroot."
+      sh_exec %{chroot #{ @target_directory } depmod -qaF /boot/System.map-#{ get_kernel_version } #{ get_kernel_version }}
+    end
+
+
+    def upgrade_nfsroot
+      # [TODO] generate target( 'etc/apt/apt.conf.d/10lucie' ) here.
+      info "Upgrading nfsroot. This may take a long time."
+      if FileTest.file?( '/etc/resolv.conf' )
+        sh_exec "cp -p /etc/resolv.conf #{ target( 'etc/resolv.conf-lucieserver' ) }"
+        sh_exec "cp -p /etc/resolv.conf #{ target( 'etc/resolv.conf' ) }"
+      end
+
+      aptget_update apt_option
+      # $ROOTCMD apt-get -fy install fai-nfsroot
+      unless FileTest.directory?( target( '/usr/lib/ruby/1.8/' ) )
+        sh_exec "mkdir -p #{ target( '/usr/lib/ruby/1.8/' ) }"
+      end
+      sh_exec "cp -pr ../../lib/* #{ target( '/usr/lib/ruby/1.8/' ) }"
+      aptget_check apt_option
+
+      sh_exec "rm -rf #{ target( 'etc/apm' ) }"
+      sh_exec "mount -t proc /proc #{ target( 'proc' ) }"
+
+      dpkg_divert '/sbin/start-stop-daemon', '/sbin/discover-modprobe'
+
+      [ target( 'sbin/lucie-start-stop-daemon'), target( 'sbin/start-stop-daemon') ].each do | each |
+        File.open( each, 'w+' ) do | file |
+          file.puts start_stop_daemon
+        end
+        sh_exec "chmod +x #{ each }"
+      end
+
+      apt [ '-y', 'dist-upgrade' ], apt_option
+    end
+
+
+    def apt_option
+      return { :root => @target_directory, :env => { 'http_proxy' => 'http://proxy.spf.cl.nec.co.jp:3128/' }, :logger => Lucie }
+    end
+
+
     def setup_dhcp
       info "Setting up DHCP and PXE environment."
-      if @source_installer
-        installer = Lucie::Config::Installer[@source_installer[0]]
-      else
-        installer = Lucie::Config::Installer[@name]
+      sh_exec "cp -p #{ target( '/boot/vmlinuz-' + get_kernel_version ) } /srv/tftp/lucie/vmlinuz"
+      sh_exec "cp /usr/lib/syslinux/pxelinux.0 /srv/tftp/lucie/"
+    end
+
+
+    def finish_nfsroot
+      sh_exec "rm #{ target( '/etc/mtab' ) } #{ target( '/dev/MAKEDEV' ) }"
+      sh_exec "ln -s /proc/mounts #{ target( '/etc/mtab' ) }"
+      unless FileTest.directory?( target( '/var/lib/discover' ) )
+        sh_exec "mkdir #{ target( '/var/lib/discover' ) }"
       end
-      dhcp_server = installer.dhcp_server
-      host_group = installer.host_group
-
-      cp( nfsroot("boot/vmlinuz-#{@kernel_version}"),
-          "/tftpboot/#{@name}", {:preserve => true}.merge(sh_option) )
-      cp( "/usr/lib/syslinux/pxelinux.0", "/tftpboot", sh_option )
-      pxelinux_cfg_dir = "/tftpboot/pxelinux.cfg.#{@name}"
-      mkdir_p( pxelinux_cfg_dir, sh_option ) rescue nil
-      host_group.members.each do |each|
-        target = File.join( pxelinux_cfg_dir, pxelinux_cfg_fname( each.address ) )
-        File::open( target, 'w+' ) do |file|
-          file.puts "default #{@name}"
-          file.puts
-          file.puts "label #{@name}"
-          file.puts "\tappend root=/dev/nfs nfsroot=#{@dir} ip=dhcp"
-          file.puts "\tkernel #{@name}"
-        end
-        puts "Generated #{target}."
+      unless FileTest.directory?( target( '/var/discover' ) )
+        sh_exec "mkdir #{ target( '/var/discover' ) }"
       end
-      puts %{Generated #{pxelinux_cfg_dir}.}
-      rm_f '/tftpboot/pxelinux.cfg', sh_option
-      ln_s pxelinux_cfg_dir, '/tftpboot/pxelinux.cfg', sh_option
+      sh_exec "mkdir #{ target( '/etc/sysconfig' ) } #{ target( '/tmp/etc' ) }"
+      sh_exec "cp -p /etc/resolv.conf #{ target( '/tmp/etc' ) }"
+      sh_exec "ln -sf /tmp/etc/resolv.conf #{ target( '/etc/resolv.conf' )}"
+      # sh_exec "ln -s /usr/sbin/fai #{ target( '/etc/init.d/rcS' ) }"
+      sh_exec "cp ../../bin/rcS_lucie #{ target( '/etc/init.d/rcS' ) }"
+      sh_exec "chmod +x #{ target( '/etc/init.d/rcS' ) }"
 
-      dhcpd_conf_file = "/etc/dhcpd.conf.#{@name}"
-      File.open( dhcpd_conf_file, 'w+' ) do |file|
-        file.puts '# /etc/dhcpd.conf'
-        file.puts "# dhcpd configuration for `#{@name}' generated by Lucie"
-        file.puts
-        file.puts 'deny unknown-clients;'
-        file.puts 'option dhcp-max-message-size 2048;'
-        file.puts 'use-host-decl-names on;'
-        file.puts 'not authoritative;'
-        file.puts '#always-reply-rfc1048 on;'
-        file.puts
-        file.puts "shared-network #{@name} {"
-        file.puts indent{ "subnet #{dhcp_server.network} netmask #{dhcp_server.subnet} {" }
-        file.puts indent{ indent{ "option root-path \"#{@dir}\";" }}
-        file.puts indent{ indent{ "option domain-name-servers #{dhcp_server.dns};" }}
-        file.puts indent{ indent{ "option domain-name \"#{dhcp_server.domain_name}\";" }}
-        file.puts indent{ indent{ "option routers #{dhcp_server.gateway};" }}
-        file.puts indent{ indent{ "option nis-domain \"#{dhcp_server.nis_domain_name}\";" }}
-        file.puts        
-        file.puts indent{ indent{ "# hostgroup `#{host_group.name}'" }} # comment
-        host_group.members.each { |each|
-          file.puts indent{ indent{ "host #{each.name} {" }}
-          file.puts indent{ indent{ indent{ "hardware ethernet #{each.mac_address};" }}}
-          file.puts indent{ indent{ indent{ "filename \"/tftpboot/pxelinux.0\";" }}}
-          file.puts indent{ indent{ indent{ "fixed-address #{each.address};" }}}
-          file.puts indent{ indent{ "}" }}
-        }
-        file.puts
-        file.puts indent{ '}' }
-        file.puts '}'
+      # [XXX]: 応急措置
+      sh_exec "cp ../../bin/hwdetect #{ target( '/usr/sbin/hwdetect' ) }"
+      sh_exec "chmod +x #{ target( '/usr/sbin/hwdetect' ) }"
+      sh_exec "cp ../../bin/setup_harddisks #{ target( '/usr/sbin/setup_harddisks' ) }"
+      sh_exec "chmod +x #{ target( '/usr/sbin/setup_harddisks' ) }"
+      sh_exec "cp ../../bin/mount2dir #{ target( '/usr/sbin/mount2dir' ) }"
+      sh_exec "chmod +x #{ target( '/usr/sbin/mount2dir' ) }"
+      sh_exec "cp ../../bin/install_packages #{ target( '/usr/sbin/install_packages' ) }"
+      sh_exec "chmod +x #{ target( '/usr/sbin/install_packages' ) }"
+      sh_exec "mkdir #{ target( '/etc/lucie' ) }"
+      sh_exec "cp ../../doc/example/partition.rb #{ target( '/etc/lucie' ) }"
+      sh_exec "mkdir #{ target( '/etc/lucie/package' ) }"
+      sh_exec "cp ../../doc/example/presto_installer/package/default.ruby #{ target( '/etc/lucie/package/' ) }"
+      # [XXX]: 応急措置おわり
+
+      if FileTest.directory?( target( '/var/yp' ) )
+        sh_exec "ln -s /tmp/binding #{ target( '/var/yp/binding' ) }"
       end
-      puts %{Generated #{dhcpd_conf_file}.}
-      rm_f '/etc/dhcpd.conf', sh_option
-      ln_s dhcpd_conf_file, '/etc/dhcpd.conf', sh_option
-      puts %{Restarting DHCP daemon.}
-      sh %{/etc/init.d/dhcp restart}, sh_option
-
-      exports_file = "/etc/exports.#{@name}"
-      File.open( exports_file, 'w+' ) do |file|
-        file.puts '# /etc/exports'
-        file.puts "# nfs server configuration for `#{@name}' generated by Lucie"
-        host_group.members.each do |each|
-          file.puts %{#{@dir} #{each.name}(ro,no_root_squash,async)}
-        end
-      end
-      puts %{Generated "#{exports_file}".}
-      rm_f '/etc/exports', sh_option
-      ln_s exports_file, '/etc/exports', sh_option
-      puts %{Restarting NFS daemon.}
-      sh %{/etc/init.d/nfs-kernel-server restart}, sh_option
+      sh_exec %{echo "iface lo inet loopback" > #{ target( '/etc/network/interfaces' ) }}
+      sh_exec %{echo "*.* /tmp/syslog.log" > #{ target( '/etc/syslog.conf' ) }}
     end
 
-    private
-    def indent( tabString="\t" )
-      sprintf '%s%s', tabString, yield
-    end
 
-    private
-    def install_kernel_nfsroot
-      # TODO: automatically determine kernel_version using filename.
-      info "Installing kernel on nfsroot."
-      rm_rf nfsroot("boot/*-#{@kernel_version}"), sh_option
-      rm_rf nfsroot("lib/modules/#{@kernel_version}"), sh_option
-      sh %{echo "do_boot_enable=no" > #{nfsroot('etc/kernel-img.conf')}}, sh_option
-      sh %{dpkg -x #{@kernel_package} #{@dir}}, sh_option
-      sh %{umount #{nfsroot('proc')}}, sh_option rescue nil
-      sh %{chroot #{@dir} update-modules}, sh_option
-      sh %{chroot #{@dir} depmod -qaF /boot/System.map-#{@kernel_version} #{@kernel_version} || true}, sh_option
-    end
-    
-    # make little changes to nfsroot. because nfsroot is
-    # read only for the install clients.
-    private 
-    def make_symlinks
-      rm_rf [nfsroot('etc/mtab'), nfsroot('var/run'), nfsroot('etc/sysconfig')], sh_option
-      ln_s  '/proc/mounts', nfsroot('etc/mtab'), sh_option
-      ln_s  '/tmp/var/run', nfsroot('var/run'), sh_option
-      ln_sf '/tmp/var/state/discover', nfsroot('var/state/discover'), sh_option
-      ln_sf '/tmp/var/lib/discover', nfsroot('var/lib/discover'), sh_option
-      ln_s  '/tmp/etc/syslogsocket', nfsroot('dev/log'), sh_option
-      ln_sf '/tmp/etc/resolv.conf', nfsroot('etc/resolv.conf'), sh_option
-      ln_sf '/tmp', nfsroot('etc/sysconfig'), sh_option
-      ln_sf '../../sbin/rcS_lucie', nfsroot('etc/init.d/rcS'), sh_option
-      ln_sf '/dev/null', nfsroot('etc/network/ifstate'), sh_option
-      sh %{[ -d #{nfsroot('var/yp')} ] && ln -s /tmp/binding #{nfsroot('var/yp/binding')}}, sh_option rescue nil
-
-      sh %{[ -d #{nfsroot('var/log/ksymoops')} ] && rm -rf #{nfsroot('var/log/ksymoops')}}, sh_option rescue nil
-      ln_s  '/dev/null', nfsroot('var/log/ksymoops'), sh_option
-
-      sh %{echo "iface lo inet loopback" > #{nfsroot( 'etc/network/interfaces' )}}, sh_option
-
-      sh %{echo "*.* /tmp/lucie/syslog.log" > #{nfsroot( 'etc/syslog.conf' )}}, sh_option
-    end
-    
-    private
-    def nfsroot( filePathName )
-      return File.join( @dir, filePathName )
-    end
-    
-    private
-    def set_timezone
-      info "Setting timezone in nfsroot."
-      timezone = `readlink /etc/localtime | sed 's%^/usr/share/zoneinfo/%%'`.chomp
-      sh %{echo #{timezone} > #{nfsroot('etc/timezone')}}
-      sh %{rm -f #{nfsroot('etc/localtime')} && ln -sf /usr/share/zoneinfo/#{timezone} #{nfsroot('etc/localtime')}}, sh_option
-    end
-    
-    private
-    def add_additional_packages
-      info "Adding additional packages to nfsroot."
-      additional_packages = ['dhcp3-client', 'ruby1.8',
-        'liblog4r-ruby', 'rake', 'perl-modules', 'discover',
-        'libapt-pkg-perl', 'file', 'cfengine']
-      sh_log %{chroot #{@dir} apt-get -y --fix-missing install #{additional_packages.join(' ')} </dev/null 2>&1}, sh_option, &apt_block
-      if @extra_packages
-        info "Adding extra packages to nfsroot: #{@extra_packages.join(', ')}"
-        sh_log %{LC_ALL=C chroot #{@dir} apt-get -y --fix-missing install #{@extra_packages.join(' ')} </dev/null 2>&1}, sh_option, &apt_block
-      end
-      sh_log %{chroot #{@dir} apt-get clean}, sh_option, &apt_block
-    end
-    
-    private
     def copy_lucie_files
-      info "Copying lucie client files."
-      sh %{ruby -pi -e "gsub(/^root::/, 'root:#{@root_password}:')" #{nfsroot('etc/passwd')}}, sh_option
-
-      Lucie::Logger::instance.info "Generating apt.conf on nfsroot"      
-      File.open( nfsroot( 'etc/apt/apt.conf' ), 'w+' ) do |file|
-        file.print <<-APT_CONF
-APT 
-{
-  Cache-Limit "100000000";
-  Get 
-  {
-     Assume-Yes "true";     
-     Fix-Missing "true";     
-     Show-Upgraded "true";
-     Purge "true";		// really purge! Also removes config files
-     List-Cleanup "true";
-     ReInstall "false";
-  };
-};
-
-DPkg 
-{
-  Options {
-	  "--abort-after=4711";	  // a magic number in cologne ;-)
-	  "--force-confnew";
-	  }
-};
-        APT_CONF
-      end
-      Lucie::Logger::instance.info "DONE"
-
-      dpkg_divert '/etc/dhcp3/dhclient-script' rescue nil
-      dpkg_divert '/etc/dhcp3/dhclient.conf' rescue nil      
-      sh_log %{chroot #{@dir} apt-get install lucie-client}, sh_option, &apt_block
-      sh %{chroot #{@dir} cp -p /usr/share/lucie/etc/dhclient.conf /etc/dhcp3/}, sh_option
-      cp '/etc/lucie/resource.rb', nfsroot('etc/lucie'), sh_option
-      if @source_installer
-        sh %{cp -Rp /etc/lucie/#{@source_installer[0]}/* #{nfsroot('etc/lucie')}}, sh_option
-      else
-        sh %{cp -Rp /etc/lucie/#{name}/* #{nfsroot('etc/lucie')}}, sh_option rescue nil # FIXME: /etc/lucie/[インストーラ名] が空のときを rescue
-      end
-      sh %{chroot #{@dir} cp -p /usr/lib/lucie/dhclient-script /etc/dhcp3/}, sh_option      
-      sh %{chroot #{@dir} cp -p /usr/lib/lucie/dhclient-perl /sbin/}, sh_option      
-      sh %{chroot #{@dir} pwconv}, sh_option
-    end
-    
-    private
-    def extract_installer_base
-      info "Extracting installer base tarball. This may take a long time."
-      sh %{tar -C #{@dir} -xzf #{installer_base}}, sh_option
-      cp installer_base, nfsroot( '/var/tmp' ), sh_option
+      sh_exec %{echo "root:#{ @root_password }" | chroot #{ @target_directory } chpasswd --encrypted}
+      sh_exec %{chroot #{ @target_directory } shadowconfig on}
     end
 
-    private
-    def apt_block
-      return lambda do |rd|
-        while (rd.gets)
-          Lucie::Logger::instance.debug $_.chomp
+
+    def define_tasks
+      @installer_base = Rake::InstallerBaseTask.new do | task |
+        task.mirror = @mirror
+        task.distribution = @distribution
+        task.suite = @suite
+        # [FIXME] get proxy URI from config file, not hard coded.
+        task.http_proxy = 'http://proxy.spf.cl.nec.co.jp:3128'
+      end
+
+      desc "Build an nfsroot using #{ @installer_base.tgz }."
+      task @name do
+        info 'Extracting installer base tarball. This may take a long time.'
+        begin
+          sh_exec 'tar', '-C', @target_directory, '-xzf', @installer_base.tgz
+          sh_exec 'cp', @installer_base.tgz, target( '/var/tmp' )
+
+          hoaks_packages
+          generate_etc_hosts
+          upgrade_nfsroot
+          add_packages_nfsroot
+          copy_lucie_files
+          finish_nfsroot
+          install_kernel_nfsroot
+          setup_dhcp
+        ensure
+          umount_dirs
         end
       end
-    end
-    
-    private
-    def upgrade
-      info "Upgrading nfsroot. This may take a long time."
-      cp( '/etc/resolv.conf', nfsroot( 'etc/resolv.conf-lucieserver' ),
-          {:preserve => true }.merge( sh_option ))
-      cp( '/etc/resolv.conf', nfsroot( 'etc/resolv.conf' ),
-          {:preserve => true }.merge( sh_option ))
-      File.open( nfsroot( 'etc/apt/apt.conf' ), 'w+' ) do |file|
-        file.puts 'APT::Cache-Limit "100000000";'
+
+      desc 'Force a rebuild of an nfsroot.'
+      task paste( 're', @name )
+
+      desc "Remove #{ @target_directory }."
+      task paste( 'clobber_', @name ) do
+        info "#{ @target_directory } already exists. Removing #{ @target_directory }"
+
+        sh_exec 'umount', target( '/dev/pts' )
+
+        ( Dir.glob( target( '/dev/.??*' ) ) + Dir.glob( target( '/*' ) ) ).each do | each |
+          sh_exec 'rm', '-rf', each
+        end
+
+        # also remove files nfsroot/.? but not . and ..
+        Popen3::Shell.new do | shell |
+          shell.on_stdout do | line |
+            sh_exec 'rm', '-f', line
+          end
+          shell.exec( { 'LC_ALL' => 'C' }, 'find', @target_directory, '-xdev', '-maxdepth', '1', '!', '-type', 'd' )
+        end
       end
-      sh_log %{chroot #{@dir} apt-get update 2>&1}, sh_option, &apt_block
-      sh_log %{chroot #{@dir} apt-get -fyu install 2>&1}, sh_option, &apt_block
-      sh_log %{chroot #{@dir} apt-get check 2>&1}, sh_option, &apt_block
-      rm_rf nfsroot( 'etc/apm' ), sh_option
-      sh %{mount -t proc /proc #{nfsroot( 'proc' )}}, sh_option rescue nil
 
-      dpkg_divert '/etc/init.d/rcS' rescue nil
-      dpkg_divert '/sbin/start-stop-daemon' rescue nil
-      dpkg_divert '/sbin/discover-modprobe' rescue nil
-      
-      Lucie::Logger::instance.info "Generating fake start-stop-daemon"      
-      File.open( nfsroot( 'sbin/lucie-start-stop-daemon' ), 'w+' ) do |file|
-        file.puts <<-START_STOP_DAEMON
-#! /bin/bash
+      directory @target_directory
 
-for opt in "$@" ; do
-    case "$opt" in
-        --oknodo) oknodo=1 ;;
-        --start) start=1 ;;
-        --stop) stop=1 ;;
+      # define task dependencies.
+      task @name => [ paste( 'clobber_', @name ), @target_directory, :installer_base ]
+    end
+
+
+    def dpkg_divert *path
+      path.each do | each |
+        sh_exec "chroot #{ @target_directory } dpkg-divert --quiet --add --rename #{ each }"
+      end
+    end
+
+
+    def start_stop_daemon
+      return( <<-START_STOP_DAEMON )
+#! /bin/sh
+
+# $Id$
+#*********************************************************************
+#
+# start-stop-daemon -- a version which never starts daemons
+#
+# This script is part of FAI (Fully Automatic Installation)
+# (c) 2000-2006 by Thomas Lange, lange@informatik.uni-koeln.de
+# Universitaet zu Koeln
+#
+#*********************************************************************
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+# 
+# A copy of the GNU General Public License is available as
+# `/usr/share/common-licences/GPL' in the Debian GNU/Linux distribution
+# or on the World Wide Web at http://www.gnu.org/copyleft/gpl.html.  You
+# can also obtain it by writing to the Free Software Foundation, Inc.,
+# 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#*********************************************************************
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        -x|--exec) shift; prog="for $1" ;;
+        -o|--oknodo) oknodo=1 ;;
+        -S|--start) start=1 ;;
+        -K|--stop) stop=1 ;;
         esac
+    shift
 done
+
+case $prog in
+    *udevd) /sbin/start-stop-daemon.distrib --start --quiet --exec /sbin/udevd -- --daemon
+           ;;
+        *) echo ""
+           echo "Warning: Dummy start-stop-daemon called $prog. Doing nothing."
+           ;;
+esac
 
 [ -n "$stop" -a -z "$oknodo" ] && exit 1
 
 exit 0
-        START_STOP_DAEMON
-      end
-      Lucie::Logger::instance.info "DONE"
-      sh %{chmod +x #{nfsroot( 'sbin/lucie-start-stop-daemon' )}}, sh_option
-      ln_sf '/sbin/lucie-start-stop-daemon', nfsroot( 'sbin/start-stop-daemon' ), sh_option
-      sh_log %{chroot #{@dir} apt-get -y dist-upgrade}, sh_option, &apt_block
-    end
-    
-    private
-    def dpkg_divert( fileNameString )
-      sh %{LC_ALL=C chroot #{@dir} dpkg-divert --quiet --package lucie-client --add --rename #{fileNameString} 2>/dev/null}, sh_option
-    end
-    
-    private
-    def save_all_packages_list
-      sh %{chroot #{@dir} dpkg --get-selections | egrep 'install$' | awk '{print $1}' > #{nfsroot( 'var/tmp/base-packages.list' )}}, sh_option
-    end
-    
-    private
-    def hoax_some_packages
-      info "Modifying nfsroot to avoid errors caused by some packages."
-      sh %{echo "#UNCONFIGURED FSTAB FOR BASE SYSTEM" > #{nfsroot('etc/fstab')}}
-      touch nfsroot( 'etc/raidtab' ), sh_option
-
-      mkdir_p nfsroot( "lib/modules/#{@kernel_version}" ), sh_option
-      touch nfsroot( "lib/modules/#{@kernel_version}/modules.dep" ), sh_option
-      lucie_server_kernel_version=`uname -r`.chomp
-      mkdir_p nfsroot( "lib/modules/#{lucie_server_kernel_version}" ), sh_option
-      touch nfsroot( "lib/modules/#{lucie_server_kernel_version}/modules.dep" ), sh_option
-      
-      sh %{echo 'NTPSERVERS=""' > #{nfsroot('etc/default/ntp-servers')}}
-      
-      mkdir nfsroot( 'var/state' ), sh_option rescue nil
-
-      Lucie::Logger::instance.info "Generating sources.list on nfsroot"
-      File.open( nfsroot('etc/apt/sources.list'), 'w+' ) do |file|
-        file.puts "deb #{@package_server} #{@distribution_version} main contrib non-free"
-        file.puts "# lucie-client package"
-        file.puts "deb http://#{LMP_SERVER}/packages/lucie-client/debian/#{@distribution_version}/ ./"
-        file.puts "# lucie meta package"
-        file.puts "deb http://#{LMP_SERVER}/packages/lmp/ ./"
-      end
-      Lucie::Logger::instance.info "DONE"
-
-      sh %{echo "127.0.0.1 localhost" >> #{nfsroot('etc/hosts')}}
-      # FIXME: lookup IP address on each lucie-setup.
-      sh %{echo "163.220.99.220 #{LMP_SERVER}" >> #{nfsroot('etc/hosts')}}
-
-      cp '/etc/apt/preferences',  nfsroot('etc/apt/preferences'), sh_option rescue nil      
-    end
-    
-    private
-    def nfsroot_target
-      return nfsroot( 'lucie/timestamp' )
-    end
-
-    private
-    def sh_option
-       return {:verbose => Lucie::CommandLineOptions.instance.verbose} 
-    end
-
-    private
-    def info( aString )
-      Lucie::Logger::instance.info aString
-      puts aString
+      START_STOP_DAEMON
     end
   end
 end
+
 
 ### Local variables:
 ### mode: Ruby

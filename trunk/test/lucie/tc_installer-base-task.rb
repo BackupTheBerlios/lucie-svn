@@ -28,6 +28,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
 
   def teardown
     Task.clear
+    Popen3::Shell.logger = nil
   end
 
 
@@ -87,6 +88,8 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
   def test_installer_base_target
     logger_mock = flexmock( 'LOGGER' )
     logger_mock.should_receive( :info ).with( String ).at_least.once
+    logger_mock.should_receive( :debug ).with( String ).at_least.once
+    logger_mock.should_receive( :error ).with( String ).at_least.once
 
     flexstub( Popen3::Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       flexmock( 'SHELL' ) do | shell |

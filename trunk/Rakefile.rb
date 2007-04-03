@@ -11,24 +11,24 @@ require 'rake/testtask'
 require 'rcov/rcovtask'
 
 
-REQUIRE_PATHS = [ 'lib', 'test', 'test/popen3', 'test/lucie', 'test/install-packages' ]
+REQUIRE_PATHS = [ 'lib', 'test', 'test/popen3', 'test/lucie', 'test/install-packages', 'test/setup-harddisks', 'test/debconf' ]
 
 TEST_VERBOSITY = true
 TEST_FILES_INSTALL_PACKAGES = [ 'test/install-packages/ts_all.rb' ]
-
-TEST_FILES_HARDDISK = FileList[ 'test/setup-harddisk/tc_*.rb' ]
+TEST_FILES_HARDDISK = FileList[ 'test/setup-harddisks/ts_all.rb' ]
 TEST_FILES_LIBPOPEN3 = [ 'test/popen3/ts_all.rb' ]
+TEST_FILES_DEBCONF = FileList[ "test/debconf/ts_all.rb" ]
+
+$stderr.puts "WARNING: Lucie test suite is temporally disabled."
 TEST_FILES_LUCIE = [ "test/lucie/ts_all.rb" ]
+$stderr.puts "WARNING: LMP test suite is temporally disabled."
 TEST_FILES_LMP = FileList[ "test/lmp/tc_*.rb" ]
+$stderr.puts "WARNING: libdepends test suite is temporally disabled."
 TEST_FILES_LIBDEPENDS = FileList[ "test/depends/tc_*.rb" ]
+$stderr.puts "WARNING: Deft test suite is temporally disabled."
 TEST_FILES_DEFT = [ "test/deft/test_all.rb" ]
-TEST_FILES_DEBCONF = FileList[ "test/debconf/tc_*.rb" ]
 
 $stderr.puts "WARNING: lucie-vm-pool test suite is temporally disabled."
-$stderr.puts "WARNING: Lucie test suite is temporally disabled."
-$stderr.puts "WARNING: Deft test suite is temporally disabled."
-$stderr.puts "WARNING: LMP test suite is temporally disabled."
-$stderr.puts "WARNING: libdepends test suite is temporally disabled."
 
 TEST_FILES = TEST_FILES_INSTALL_PACKAGES + TEST_FILES_DEBCONF + TEST_FILES_HARDDISK + TEST_FILES_LIBPOPEN3
 

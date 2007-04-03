@@ -11,8 +11,6 @@
 
 require 'lucie/setup-harddisks/partition'
 
-Lucie::update(%q$Date$)
-
 # ------------------------- Convenience methods.
 
 def partition ( label, &block )

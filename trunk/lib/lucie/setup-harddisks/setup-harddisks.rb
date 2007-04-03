@@ -9,19 +9,17 @@ require 'English'
 require 'lucie/setup-harddisks/command-line-options'
 require 'lucie/setup-harddisks/disk'
 require 'lucie/setup-harddisks/partition'
-require 'lucie/time-stamp'
 require 'singleton'
 
 include Lucie::SetupHarddisks
 
 module Lucie
-  $svn_date = update(%q$Id$)
   module SetupHarddisks
     class SetupHarddisks
       include Singleton
 
       LUCIE_VERSION = '0.0.1alpha'.freeze
-      VERSION_STRING = ['setup-harddisk', LUCIE_VERSION, '('+$svn_date+')'].join(' ')
+      VERSION_STRING = [ 'setup-harddisk', LUCIE_VERSION ].join(' ')
       
       public
       def main

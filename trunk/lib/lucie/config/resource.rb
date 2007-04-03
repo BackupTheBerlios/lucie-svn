@@ -5,11 +5,8 @@
 # Revision:: $LastChangedRevision$
 # License::  GPL2
 
-require 'lucie/time-stamp'
 
 module Lucie
-  update(%q$Id$)
-
   module Config
     # すべてのリソースクラス
     # * ホスト (Host)

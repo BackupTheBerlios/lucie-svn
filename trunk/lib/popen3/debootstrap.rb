@@ -33,7 +33,7 @@ module Popen3
 
     def self.VERSION
       version = nil
-      Shell.new.start do | shell |
+      Shell.new.open do | shell |
         shell.on_stdout do | line |
           # [XXX] raise an exception if version is not available.
           if /^ii\s+debootstrap\s+(\S+)/=~ line

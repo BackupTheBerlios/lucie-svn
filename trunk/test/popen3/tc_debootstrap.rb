@@ -22,7 +22,7 @@ class TC_Debootstrap < Test::Unit::TestCase
 
   def test_version
     shell = flexmock( 'SHELL_MOCK' )
-    shell.should_receive( :start ).with( Proc ).once.ordered.and_return do | block |
+    shell.should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
       shell.should_receive( :on_stdout ).with( Proc ).once.ordered.and_return do | stdout_block |
         stdout_block.call 'ii  debootstrap    0.2.45-0.2     Bootstrap a basic Debian system'
       end

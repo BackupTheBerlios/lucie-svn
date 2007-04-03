@@ -19,14 +19,12 @@
 require 'runit/error'
 
 
-$stderr.puts "test/mock is obsolete. Please migrate to flexmock."
-
-
 class Mock
     # Creates a new, named mock object. The name is reported in exceptions
     # thrown by the mock object when method invocations are incorrect.
     # 
     def initialize( mock_name = self.to_s )
+        $stderr.puts "WARNING: test/mock is obsolete. Please migrate to flexmock."
         @mock_calls = []
         @next_call = 0
         @name = mock_name

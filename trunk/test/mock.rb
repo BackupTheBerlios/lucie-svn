@@ -19,6 +19,9 @@
 require 'runit/error'
 
 
+$stderr.puts "test/mock is obsolete. Please migrate to flexmock."
+
+
 class Mock
     # Creates a new, named mock object. The name is reported in exceptions
     # thrown by the mock object when method invocations are incorrect.

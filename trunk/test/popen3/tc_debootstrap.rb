@@ -21,8 +21,8 @@ class TC_Debootstrap < Test::Unit::TestCase
 
 
   def test_version
-    flexstub( Popen3::Shell, 'SHELL_CLASS_MOCK' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
-      shell = flexmock( 'SHELL' )
+    shell = flexmock( 'SHELL_MOCK' )
+    shell.should_receive( :start ).with( Proc ).once.ordered.and_return do | block |
       shell.should_receive( :on_stdout ).with( Proc ).once.ordered.and_return do | stdout_block |
         stdout_block.call 'ii  debootstrap    0.2.45-0.2     Bootstrap a basic Debian system'
       end
@@ -31,16 +31,14 @@ class TC_Debootstrap < Test::Unit::TestCase
       block.call shell
     end
 
+    flexstub( Popen3::Shell, 'SHELL_CLASS_MOCK' ).should_receive( :new ).once.ordered.and_return( shell )
+
     assert_match( /[\d\.\-]+/, Popen3::Debootstrap.VERSION )
   end
 
 
   def test_new
-    flexstub( Popen3::Shell, 'SHELL_CLASS' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
-      shell = shell_mock
-      block.call shell
-      shell
-    end
+    setup_shell_mock
 
     logger_mock = flexmock( 'LOGGER_MOCK' )
     logger_mock.should_receive( :debug ).with( /\ASTDOUT_LINE\d\Z/ ).times( 3 )
@@ -61,11 +59,7 @@ class TC_Debootstrap < Test::Unit::TestCase
 
 
   def test_abbreviation
-    flexstub( Popen3::Shell, 'SHELL_CLASS' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
-      shell = shell_mock
-      block.call shell
-      shell
-    end
+    setup_shell_mock
 
     debootstrap = debootstrap do | option |
       option.env = { 'TEST_ENV_NAME' => 'TEST_ENV_VALUE' }
@@ -80,37 +74,40 @@ class TC_Debootstrap < Test::Unit::TestCase
   end
 
 
-  def shell_mock
-    return flexmock( 'SHELL_MOCK' ) do | mock |
+  def setup_shell_mock
+    shell = flexmock( 'SHELL_MOCK' )
+    shell.should_receive( :start ).with( Proc ).once.ordered.and_return do | block |
       # tochild thread
-      mock.should_receive( :puts ).at_least.once
+      shell.should_receive( :puts ).at_least.once
 
       # fromchild thread
-      mock.should_receive( :on_stdout ).with( Proc ).once.ordered.and_return do | block |
+      shell.should_receive( :on_stdout ).with( Proc ).once.ordered.and_return do | block |
         block.call 'STDOUT_LINE0'
         block.call 'STDOUT_LINE1'
         block.call 'STDOUT_LINE2'
       end
 
       # childerr thread
-      mock.should_receive( :on_stderr ).with( Proc ).once.ordered.and_return do | block |
+      shell.should_receive( :on_stderr ).with( Proc ).once.ordered.and_return do | block |
         block.call 'STDERR_LINE0'
         block.call 'STDERR_LINE1'
         block.call 'STDERR_LINE2'
       end
 
-      mock.should_receive( :on_failure ).with( Proc ).once.ordered.and_return do | block |
+      shell.should_receive( :on_failure ).with( Proc ).once.ordered.and_return do | block |
         assert_raises( RuntimeError ) do
           block.call
         end
       end
 
-      mock.should_receive( :exec ).with( { 'TEST_ENV_NAME' => 'TEST_ENV_VALUE' }, *debootstrap_commandline ).once.ordered
+      shell.should_receive( :exec ).with( { 'TEST_ENV_NAME' => 'TEST_ENV_VALUE' }, *debootstrap_commandline ).once.ordered
 
-      mock.should_receive( :child_status ).once.ordered.and_return( 'CHILD_STATUS' )
+      shell.should_receive( :child_status ).once.ordered.and_return( 'CHILD_STATUS' )
+      block.call shell
+      shell
     end
+    flexstub( Popen3::Shell, 'SHELL_CLASS' ).should_receive( :new ).once.ordered.and_return( shell )
   end
-
 
   def debootstrap_commandline
     return [ "/usr/sbin/debootstrap", "--exclude=DHCP-CLIENT,INFO", "--include=INCLUDE", "WOODY", "/TMP", 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/' ]

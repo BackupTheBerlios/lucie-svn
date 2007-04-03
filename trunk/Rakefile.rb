@@ -25,12 +25,12 @@ TEST_FILES_DEFT = [ "test/deft/test_all.rb" ]
 TEST_FILES_DEBCONF = FileList[ "test/debconf/tc_*.rb" ]
 
 $stderr.puts "WARNING: lucie-vm-pool test suite is temporally disabled."
-$stderr.puts "WARNING: libpopen3 test suite is temporally disabled."
 $stderr.puts "WARNING: Lucie test suite is temporally disabled."
 $stderr.puts "WARNING: Deft test suite is temporally disabled."
 $stderr.puts "WARNING: LMP test suite is temporally disabled."
 $stderr.puts "WARNING: libdepends test suite is temporally disabled."
-TEST_FILES = TEST_FILES_INSTALL_PACKAGES + TEST_FILES_DEBCONF + TEST_FILES_HARDDISK
+
+TEST_FILES = TEST_FILES_INSTALL_PACKAGES + TEST_FILES_DEBCONF + TEST_FILES_HARDDISK + TEST_FILES_LIBPOPEN3
 
 LMP_SERVER_DIR  = %{/var/www/}
 LMP_SERVER      = %{lucie-dev.titech.hpcc.jp}
@@ -58,6 +58,7 @@ end
 desc "Output a unit test coverage report"
 Rcov::RcovTask.new do | t |
   t.rcov_opts = [ '-xRakefile', '--text-report' ]
+  t.libs = REQUIRE_PATHS
   t.test_files = TEST_FILES
   t.verbose = true
 end

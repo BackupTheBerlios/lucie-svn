@@ -75,7 +75,7 @@ module Popen3
         command_line = [ @env, 'apt-get' ] + @command
       end
 
-      @shell = Shell.new do | shell |
+      @shell = Shell.new.open do | shell |
         shell.on_stdout do | line |
           if @logger
             @logger.debug line

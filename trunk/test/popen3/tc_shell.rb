@@ -20,6 +20,11 @@ class TC_Shell < Test::Unit::TestCase
   include FlexMock::TestCase
 
 
+  def teardown
+    Popen3::Shell.logger = nil
+  end
+
+
   class ExternalCommandOnExit < ::Exception
   end
 
@@ -27,7 +32,7 @@ class TC_Shell < Test::Unit::TestCase
   def test_on_exit
     setup_popen3_mock
 
-    Popen3::Shell.open do | shell |
+    Popen3::Shell.new.open do | shell |
       shell.on_exit do
         raise ExternalCommandOnExit
       end
@@ -46,7 +51,7 @@ class TC_Shell < Test::Unit::TestCase
   def test_on_success
     setup_popen3_mock
 
-    Popen3::Shell.open do | shell |
+    Popen3::Shell.new.open do | shell |
       flexmock( 'PROCESS::STATUS' ) do | mock |
         mock.should_receive( :exitstatus ).once.ordered.and_return( 0 )
         shell.instance_variable_set( :@child_status, mock )
@@ -69,7 +74,7 @@ class TC_Shell < Test::Unit::TestCase
   def test_on_failure
     setup_popen3_mock
 
-    Popen3::Shell.open do | shell |
+    Popen3::Shell.new.open do | shell |
       flexmock( 'PROCESS::STATUS' ) do | mock |
         mock.should_receive( :exitstatus ).once.ordered.and_return( 1 )
         shell.instance_variable_set( :@child_status, mock )
@@ -91,7 +96,7 @@ class TC_Shell < Test::Unit::TestCase
       setup_popen3_mock( { :tochild => mock } )
     end
 
-    Popen3::Shell.open do | shell |
+    Popen3::Shell.new.open do | shell |
       shell.exec dummy_env, *dummy_command
       shell.puts 'PUTS1'
       shell.puts 'PUTS2'
@@ -103,7 +108,7 @@ class TC_Shell < Test::Unit::TestCase
     setup_popen3_mock
     ncall_on_stdout = 0
 
-    Popen3::Shell.open do | shell |
+    Popen3::Shell.new.open do | shell |
       shell.on_stdout do | line |
         ncall_on_stdout += 1
         assert_equal "FROMCHILD_LINE#{ ncall_on_stdout }", line
@@ -119,7 +124,7 @@ class TC_Shell < Test::Unit::TestCase
     setup_popen3_mock
     ncall_on_stderr = 0
 
-    Popen3::Shell.open do | shell |
+    Popen3::Shell.new.open do | shell |
       shell.on_stderr do | line |
         ncall_on_stderr += 1
         assert_equal "CHILDERR_LINE#{ ncall_on_stderr }", line

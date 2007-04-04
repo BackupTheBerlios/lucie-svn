@@ -21,12 +21,23 @@ class TC_Apt < Test::Unit::TestCase
 
 
   def setup
-    flexstub( Popen3::Shell, 'SHELL_CLASS_MOCK' ).should_receive( :new ).once.ordered.and_return do
+    shell_class_mock = flexmock( 'SHELL_CLASS_MOCK' )
+    shell_class_mock.should_receive( :open ).with( Proc ).once.and_return do | block |
       shell = flexmock( 'SHELL' )
-      shell.should_receive( :open ).with( Proc ).once.ordered.and_return( shell )
+      shell.should_receive( :on_stdout ).with( Proc ).once.ordered
+      shell.should_receive( :on_stderr ).with( Proc ).once.ordered
+      shell.should_receive( :exec ).once.ordered
       shell.should_receive( :child_status ).once.ordered.and_return( 'CHILD_STATUS_MOCK' )
+      block.call shell
       shell
     end
+
+    Popen3::Apt.load_shell shell_class_mock
+  end
+
+
+  def teardown
+    Popen3::Apt.load_shell Popen3::Shell
   end
 
 

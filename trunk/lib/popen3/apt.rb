@@ -11,6 +11,14 @@ require 'popen3/shell'
 
 module Popen3
   class Apt
+    @@shell = Shell
+
+
+    def self.load_shell shell # :nodoc:
+      @@shell = shell
+    end
+
+
     def self.get command, option = nil
       self.new command.split( ' ' ), option
     end
@@ -75,7 +83,7 @@ module Popen3
         command_line = [ @env, 'apt-get' ] + @command
       end
 
-      @shell = Shell.new.open do | shell |
+      @shell = @@shell.open do | shell |
         shell.on_stdout do | line |
           if @logger
             @logger.debug line

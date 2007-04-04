@@ -47,7 +47,7 @@ module Popen3
         Kernel.exec( *@command )
       end
 
-      # Parent
+      # Parent process
       close_end_of @child_pipe
       @parent_pipe[ :tochild ].sync = true
 
@@ -87,8 +87,7 @@ module Popen3
       fromchild, child_stdout = IO.pipe
       childerr, child_stderr = IO.pipe
 
-      return [ { :tochild => tochild, :fromchild => fromchild, :childerr => childerr },
-        { :stdin => child_stdin, :stdout => child_stdout, :stderr => child_stderr } ]
+      return [ { :tochild => tochild, :fromchild => fromchild, :childerr => childerr }, { :stdin => child_stdin, :stdout => child_stdout, :stderr => child_stderr } ]
     end
   end
 end

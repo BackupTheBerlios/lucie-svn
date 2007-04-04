@@ -11,6 +11,9 @@ require 'popen3/shell'
 
 module Popen3
   class Debootstrap
+    @@shell = Shell
+
+
     attr_accessor :logger
 
 
@@ -31,9 +34,14 @@ module Popen3
     end
 
 
+    def self.load_shell shell # :nodoc:
+      @@shell = shell
+    end
+
+
     def self.VERSION
       version = nil
-      Shell.new.open do | shell |
+      @@shell.open do | shell |
         shell.on_stdout do | line |
           # [XXX] raise an exception if version is not available.
           if /^ii\s+debootstrap\s+(\S+)/=~ line
@@ -70,7 +78,7 @@ module Popen3
     def exec_shell
       error_message = []
 
-      @shell = Shell.new.start do | shell |
+      @shell = @@shell.open do | shell |
         Thread.new do
           loop do
             shell.puts

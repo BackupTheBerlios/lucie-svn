@@ -143,9 +143,7 @@ class TC_Shell < Test::Unit::TestCase
     logger.should_receive( :error ).with( String ).twice.ordered
     Popen3::Shell.logger = logger
 
-    shell = Kernel.sh_exec( 'TEST_COMMAND', 'TEST_ARG1', 'TEST_ARG2' )
-
-    assert_nil shell.child_status
+    assert_kind_of Popen3::Shell, Kernel.sh_exec( 'TEST_COMMAND', 'TEST_ARG1', 'TEST_ARG2' )
   end
 
 

@@ -30,6 +30,14 @@ module Popen3
     end
 
 
+    # Clear the Popen3. This cause Popen3 to immediately clear the
+    # logger instance that have been assigned. Normally used in the
+    # unit tests.
+    def self.clear
+      @@logger = nil
+    end
+
+
     def initialize
       @on_stdout = nil
       @on_stderr = nil
@@ -39,11 +47,11 @@ module Popen3
     end
 
 
-    def open
+    def self.open
+      shell = self.new
       if block_given?
-        yield self
+        yield shell
       end
-      return self
     end
 
 
@@ -78,7 +86,9 @@ module Popen3
 
 
     def puts data = ''
-      @tochild && @tochild.puts( data )
+      if @tochild
+        @tochild.puts data
+      end
     end
 
 
@@ -87,22 +97,8 @@ module Popen3
       process.logger = @@logger
       process.popen3 do | tochild, fromchild, childerr |
         @tochild, @fromchild, @childerr = tochild, fromchild, childerr
-
-        stdout_thread = Thread.new do
-          while line = @fromchild.gets do
-            do_stdout line.chomp
-          end
-        end
-        stderr_thread = Thread.new do
-          while line = @childerr.gets do
-            do_stderr line.chomp
-          end
-        end
-
-        stdout_thread.join
-        stderr_thread.join
+        handle_child_output
       end
-
       process.wait
       do_exit
 
@@ -113,8 +109,27 @@ module Popen3
     private
 
 
+    def handle_child_output
+      stdout_thread = Thread.new do
+        while line = @fromchild.gets do
+          do_stdout line.chomp
+        end
+      end
+
+      stderr_thread = Thread.new do
+        while line = @childerr.gets do
+          do_stderr line.chomp
+        end
+      end
+
+      stdout_thread.join
+      stderr_thread.join
+    end
+
+
     def handle_exitstatus
-      # In test case, child_status is not set.
+      # In the unit tests, child_status is not set. Return
+      # immediately.
       if child_status.nil?
         return
       end
@@ -167,7 +182,7 @@ end
 # Abbreviations
 module Kernel
   def sh_exec *command
-    Popen3::Shell.new.open do | shell |
+    Popen3::Shell.open do | shell |
       shell.on_stderr do | line |
         if shell.logger
           shell.logger.error line
@@ -175,6 +190,11 @@ module Kernel
       end
 
       shell.exec( { 'LC_ALL' => 'C' }, *command )
+
+      # Returns a instance of Popen3::Shell as a return value from
+      # this block, in order to get child_status from the return value
+      # of Kernel::sh_exec.
+      shell
     end
   end
   module_function :sh_exec

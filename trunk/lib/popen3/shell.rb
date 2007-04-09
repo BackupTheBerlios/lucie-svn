@@ -181,8 +181,16 @@ end
 
 # Abbreviations
 module Kernel
+  @@shell = Popen3::Shell
+
+
+  def load_shell shell_class
+    @@shell = shell_class
+  end
+
+
   def sh_exec *command
-    Popen3::Shell.open do | shell |
+    @@shell.open do | shell |
       shell.on_stderr do | line |
         if shell.logger
           shell.logger.error line

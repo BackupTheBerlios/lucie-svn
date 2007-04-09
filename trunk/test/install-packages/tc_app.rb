@@ -25,6 +25,11 @@ class TC_App < Test::Unit::TestCase
   end
 
 
+  def teardown
+    InstallPackages::App.instance.invoker = nil
+  end
+
+
   def test_exit_version_option
     option = flexmock( 'OPTION_MOCK' )
     option.should_receive( :version ).once.ordered.and_return( true )

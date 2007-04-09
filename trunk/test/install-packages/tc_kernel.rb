@@ -30,6 +30,7 @@ class TC_Kernel < Test::Unit::TestCase
 
   def teardown
     InstallPackages::App.reset
+    InstallPackages::App.instance.invoker = nil
   end
 
 

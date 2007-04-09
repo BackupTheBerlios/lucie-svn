@@ -6,19 +6,25 @@
 # License::  GPL2
 
 
+require 'install-packages/app'
+
+
+#
+# パッケージインストール設定 DSL 用の関数定義
+#
 module Kernel
-  def install *packages
-    InstallPackages::App.instance.add_command :install, packages
+  def aptget_install *packages
+    InstallPackages::App.instance.add_command :aptget_install, packages
   end
 
 
-  def remove *packages
-    InstallPackages::App.instance.add_command :remove, packages
+  def aptget_remove *packages
+    InstallPackages::App.instance.add_command :aptget_remove, packages
   end
 
 
-  def clean *packages
-    InstallPackages::App.instance.add_command :clean, packages
+  def aptget_clean
+    InstallPackages::App.instance.add_command :aptget_clean
   end
 
 

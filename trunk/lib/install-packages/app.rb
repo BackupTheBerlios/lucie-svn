@@ -14,6 +14,7 @@ require 'install-packages/command/clean'
 require 'install-packages/command/install'
 require 'install-packages/command/remove'
 require 'install-packages/invoker'
+require 'install-packages/kernel'
 require 'singleton'
 
 
@@ -25,7 +26,38 @@ module InstallPackages
     attr_accessor :invoker
 
 
-    def add_command directive, packages
+    def self.load_aptget aptget_class
+      @@aptget = aptget_class
+    end
+
+
+    def self.load_aptitude aptitude
+      @@aptitude = aptitude
+    end
+
+
+    def self.load_command command
+      @@command = command
+    end
+
+
+    def self.reset
+      @@aptget = InstallPackages::AptGet
+      @@aptitude = InstallPackages::Aptitude
+      @@command = {
+        :aptget_install => InstallPackages::InstallCommand,
+        :aptget_remove => InstallPackages::RemoveCommand,
+        :aptget_clean => InstallPackages::CleanCommand,
+        :aptitude => InstallPackages::AptitudeCommand,
+        :aptitude_r => InstallPackages::AptitudeRCommand
+      }
+    end
+
+
+    reset
+
+
+    def add_command directive, packages = nil
       receiver = receiver_command_table[ directive ][ :receiver ].new( packages )
       command = receiver_command_table[ directive ][ :command ].new( receiver )
 
@@ -52,11 +84,11 @@ module InstallPackages
 
     def receiver_command_table
       return receiver_command_table = {
-        :install => { :receiver => InstallPackages::AptGet, :command => InstallPackages::InstallCommand },
-        :remove => { :receiver => InstallPackages::AptGet, :command => InstallPackages::RemoveCommand },
-        :clean => { :receiver => InstallPackages::AptGet, :command => InstallPackages::CleanCommand },
-        :aptitude => { :receiver => InstallPackages::Aptitude, :command => InstallPackages::AptitudeCommand },
-        :aptitude_r => { :receiver => InstallPackages::Aptitude, :command => InstallPackages::AptitudeRCommand }
+        :aptget_install => { :receiver => @@aptget, :command => @@command[ :aptget_install ] },
+        :aptget_remove => { :receiver => @@aptget, :command => @@command[ :aptget_remove ] },
+        :aptget_clean => { :receiver => @@aptget, :command => @@command[ :aptget_clean ] },
+        :aptitude => { :receiver => @@aptitude, :command => @@command[ :aptitude ] },
+        :aptitude_r => { :receiver => @@aptitude, :command => @@command[ :aptitude_r ] }
       }
     end
 
@@ -72,7 +104,6 @@ module InstallPackages
 
 
     def do_install configFile
-      require 'install-packages/kernel'
       load configFile
       @invoker.start @option
     end

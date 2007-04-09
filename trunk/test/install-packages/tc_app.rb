@@ -48,9 +48,9 @@ class TC_App < Test::Unit::TestCase
 
   def test_install_command
     option = option_mock( 'install' )
-    setup_invoker_stub InstallPackages::InstallCommand, option
 
     app = InstallPackages::App.instance
+    app.invoker = invoker_mock( InstallPackages::InstallCommand, option )
     assert_nothing_raised do
       app.main option
     end
@@ -59,9 +59,9 @@ class TC_App < Test::Unit::TestCase
 
   def test_remove_comand
     option = option_mock( 'remove' )
-    setup_invoker_stub InstallPackages::RemoveCommand, option
 
     app = InstallPackages::App.instance
+    app.invoker = invoker_mock( InstallPackages::RemoveCommand, option )
     assert_nothing_raised do
       app.main option
     end
@@ -70,9 +70,9 @@ class TC_App < Test::Unit::TestCase
 
   def test_clean_comand
     option = option_mock( 'clean' )
-    setup_invoker_stub InstallPackages::CleanCommand, option
 
     app = InstallPackages::App.instance
+    app.invoker = invoker_mock( InstallPackages::CleanCommand, option )
     assert_nothing_raised do
       app.main option
     end
@@ -81,9 +81,9 @@ class TC_App < Test::Unit::TestCase
 
   def test_aptitude_command
     option = option_mock( 'aptitude' )
-    setup_invoker_stub InstallPackages::AptitudeCommand, option
 
     app = InstallPackages::App.instance
+    app.invoker = invoker_mock( InstallPackages::AptitudeCommand, option )
     assert_nothing_raised do
       app.main option
     end
@@ -92,9 +92,9 @@ class TC_App < Test::Unit::TestCase
 
   def test_aptitude_r_command
     option = option_mock( 'aptitude-r' )
-    setup_invoker_stub InstallPackages::AptitudeRCommand, option
 
     app = InstallPackages::App.instance
+    app.invoker = invoker_mock( InstallPackages::AptitudeRCommand, option )
     assert_nothing_raised do
       app.main option
     end
@@ -104,13 +104,11 @@ class TC_App < Test::Unit::TestCase
   private
 
 
-  def setup_invoker_stub commandClass, option
-    flexstub( InstallPackages::Invoker, 'INVOKER_CLASS_MOCK' ).should_receive( :new ).once.ordered.and_return do
-      invoker = flexmock( 'INVOKER' )
-      invoker.should_receive( :add_command ).with( commandClass ).once.ordered
-      invoker.should_receive( :start ).with( option ).once.ordered
-      invoker
-    end
+  def invoker_mock commandClass, option
+    invoker_mock = flexmock( 'INVOKER' )
+    invoker_mock.should_receive( :add_command ).with( commandClass ).once.ordered
+    invoker_mock.should_receive( :start ).with( option ).once.ordered
+    return invoker_mock
   end
 
 

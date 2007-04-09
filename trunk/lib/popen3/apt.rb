@@ -11,12 +11,17 @@ require 'popen3/shell'
 
 module Popen3
   class Apt
-    @@shell = Shell
-
-
     def self.load_shell shell # :nodoc:
       @@shell = shell
     end
+
+
+    def self.reset
+      @@shell = Shell
+    end
+
+
+    reset
 
 
     def self.get command, option = nil
@@ -101,28 +106,29 @@ module Popen3
 end
 
 
-module Kernel
+module AptGet
   def apt command, option
     return Popen3::Apt.new( command, option )
   end
+  module_function :apt
 
 
-  def aptget_clean option = nil
+  def clean option = nil
     return apt( :clean, option )
   end
-  module_function :aptget_clean
+  module_function :clean
 
 
-  def aptget_check option = nil
+  def check option = nil
     return apt( :check, option )
   end
-  module_function :aptget_check
+  module_function :check
 
 
-  def aptget_update option = nil
+  def update option = nil
     return apt( :update, option )
   end
-  module_function :aptget_update
+  module_function :update
 end
 
 

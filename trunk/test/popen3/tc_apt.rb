@@ -37,7 +37,7 @@ class TC_Apt < Test::Unit::TestCase
 
 
   def teardown
-    Popen3::Apt.load_shell Popen3::Shell
+    Popen3::Apt.reset
   end
 
 
@@ -71,13 +71,13 @@ class TC_Apt < Test::Unit::TestCase
 
 
   def test_check_abbreviation_nooption
-    result = aptget_check
+    result = AptGet.check
     assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 
 
   def test_check_abbreviation_withoption
-    result = aptget_check( :root => '/ROOT', :env => { 'ENV_NAME' => 'ENV_VALUE' } )
+    result = AptGet.check( :root => '/ROOT', :env => { 'ENV_NAME' => 'ENV_VALUE' } )
     assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 
@@ -100,13 +100,13 @@ class TC_Apt < Test::Unit::TestCase
 
 
   def test_clean_abbreviation_nooption
-    result = aptget_clean
+    result = AptGet.clean
     assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 
 
   def test_clean_abbreviation_withoption
-    result = aptget_clean( :root => '/ROOT', :env => { 'ENV_NAME' => 'ENV_VALUE' } )
+    result = AptGet.clean( :root => '/ROOT', :env => { 'ENV_NAME' => 'ENV_VALUE' } )
     assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 
@@ -129,13 +129,13 @@ class TC_Apt < Test::Unit::TestCase
 
 
   def test_update_abbreviation_nooption
-    result = aptget_update
+    result = AptGet.update
     assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 
 
   def test_update_abbreviation_withoption
-    result = aptget_update( :root => '/ROOT', :env => { 'ENV_NAME' => 'ENV_VALUE' }, :logger => 'LOGGER_MOCK' )
+    result = AptGet.update( :root => '/ROOT', :env => { 'ENV_NAME' => 'ENV_VALUE' }, :logger => 'LOGGER_MOCK' )
     assert_equal 'CHILD_STATUS_MOCK', result.child_status
   end
 end

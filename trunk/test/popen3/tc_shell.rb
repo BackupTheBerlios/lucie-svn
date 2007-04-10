@@ -22,6 +22,8 @@ class TC_Shell < Test::Unit::TestCase
 
   def teardown
     Popen3::Shell.clear
+    Popen3::Shell.reset
+    Kernel.load_shell Popen3::Shell
   end
 
 
@@ -30,7 +32,18 @@ class TC_Shell < Test::Unit::TestCase
 
 
   def test_on_exit
-    setup_popen3_mock
+    popen3_class_mock = flexmock( 'POPEN3_CLASS' )
+    popen3_class_mock.should_receive( :new ).once.and_return do
+      flexmock( 'POPEN3' ) do | mock |
+        mock.should_receive( :logger= ).once.ordered
+        mock.should_receive( :popen3 ).with( Proc ).once.ordered.and_return do | block |
+          block.call nil, fromchild_mock, childerr_mock
+        end
+        mock.should_receive( :wait ).with_no_args.once.ordered
+      end
+    end
+
+    Popen3::Shell.load_popen3 popen3_class_mock
 
     Popen3::Shell.open do | shell |
       shell.on_exit do
@@ -49,7 +62,18 @@ class TC_Shell < Test::Unit::TestCase
 
 
   def test_on_success
-    setup_popen3_mock
+    popen3_class_mock = flexmock( 'POPEN3_CLASS' )
+    popen3_class_mock.should_receive( :new ).once.and_return do
+      flexmock( 'POPEN3' ) do | mock |
+        mock.should_receive( :logger= ).once.ordered
+        mock.should_receive( :popen3 ).with( Proc ).once.ordered.and_return do | block |
+          block.call nil, fromchild_mock, childerr_mock
+        end
+        mock.should_receive( :wait ).with_no_args.once.ordered
+      end
+    end
+
+    Popen3::Shell.load_popen3 popen3_class_mock
 
     Popen3::Shell.open do | shell |
       flexmock( 'PROCESS::STATUS' ) do | mock |
@@ -72,7 +96,18 @@ class TC_Shell < Test::Unit::TestCase
 
 
   def test_on_failure
-    setup_popen3_mock
+    popen3_class_mock = flexmock( 'POPEN3_CLASS' )
+    popen3_class_mock.should_receive( :new ).once.and_return do
+      flexmock( 'POPEN3' ) do | mock |
+        mock.should_receive( :logger= ).once.ordered
+        mock.should_receive( :popen3 ).with( Proc ).once.ordered.and_return do | block |
+          block.call nil, fromchild_mock, childerr_mock
+        end
+        mock.should_receive( :wait ).with_no_args.once.ordered
+      end
+    end
+
+    Popen3::Shell.load_popen3 popen3_class_mock
 
     Popen3::Shell.open do | shell |
       flexmock( 'PROCESS::STATUS' ) do | mock |
@@ -91,10 +126,20 @@ class TC_Shell < Test::Unit::TestCase
 
 
   def test_puts
-    flexmock( 'CHILDERR_MOCK' ) do | mock |
-      mock.should_receive( :puts ).times( 2 ).ordered.and_return( 'PUTS1', 'PUTS2' )
-      setup_popen3_mock( { :tochild => mock } )
+    tochild_mock = flexmock( 'TOCHILD' )
+    tochild_mock.should_receive( :puts ).times( 2 ).ordered.and_return( 'PUTS1', 'PUTS2' )
+
+    popen3_class_mock = flexmock( 'POPEN3_CLASS' )
+    popen3_class_mock.should_receive( :new ).once.and_return do
+      flexmock( 'POPEN3' ) do | popen3 |
+        popen3.should_receive( :logger= ).once.ordered
+        popen3.should_receive( :popen3 ).with( Proc ).once.ordered.and_return do | block |
+          block.call tochild_mock, fromchild_mock, childerr_mock
+        end
+        popen3.should_receive( :wait ).with_no_args.once.ordered
+      end
     end
+    Popen3::Shell.load_popen3 popen3_class_mock
 
     Popen3::Shell.open do | shell |
       shell.exec dummy_env, *dummy_command
@@ -105,7 +150,19 @@ class TC_Shell < Test::Unit::TestCase
 
 
   def test_on_stdout
-    setup_popen3_mock
+    popen3_class_mock = flexmock( 'POPEN3_CLASS' )
+    popen3_class_mock.should_receive( :new ).once.and_return do
+      flexmock( 'POPEN3' ) do | mock |
+        mock.should_receive( :logger= ).once.ordered
+        mock.should_receive( :popen3 ).with( Proc ).once.ordered.and_return do | block |
+          block.call nil, fromchild_mock, childerr_mock
+        end
+        mock.should_receive( :wait ).with_no_args.once.ordered
+      end
+    end
+
+    Popen3::Shell.load_popen3 popen3_class_mock
+
     ncall_on_stdout = 0
 
     Popen3::Shell.open do | shell |
@@ -121,7 +178,19 @@ class TC_Shell < Test::Unit::TestCase
 
 
   def test_on_stderr
-    setup_popen3_mock
+    popen3_class_mock = flexmock( 'POPEN3_CLASS' )
+    popen3_class_mock.should_receive( :new ).once.and_return do
+      flexmock( 'POPEN3' ) do | mock |
+        mock.should_receive( :logger= ).once.ordered
+        mock.should_receive( :popen3 ).with( Proc ).once.ordered.and_return do | block |
+          block.call nil, fromchild_mock, childerr_mock
+        end
+        mock.should_receive( :wait ).with_no_args.once.ordered
+      end
+    end
+
+    Popen3::Shell.load_popen3 popen3_class_mock
+
     ncall_on_stderr = 0
 
     Popen3::Shell.open do | shell |
@@ -137,11 +206,17 @@ class TC_Shell < Test::Unit::TestCase
 
 
   def test_abbreviation
-    setup_popen3_mock( { :tochild => nil }, { 'LC_ALL' => 'C' } )
+    popen3_class_mock = flexmock( 'POPEN3_CLASS' )
+    popen3_class_mock.should_receive( :new ).once.and_return do
+      flexmock( 'POPEN3' ) do | mock |
+        mock.should_receive( :logger= ).once.ordered
+        mock.should_receive( :popen3 ).with( Proc ).once.ordered
+        mock.should_receive( :wait ).with_no_args.once.ordered
+      end
+    end
 
-    logger = flexmock( 'LOGGER_MOCK' )
-    logger.should_receive( :error ).with( String ).twice.ordered
-    Popen3::Shell.logger = logger
+    Kernel.load_shell Popen3::Shell
+    Popen3::Shell.load_popen3 popen3_class_mock
 
     assert_kind_of Popen3::Shell, Kernel.sh_exec( 'TEST_COMMAND', 'TEST_ARG1', 'TEST_ARG2' )
   end
@@ -150,20 +225,6 @@ class TC_Shell < Test::Unit::TestCase
   ##############################################################################
   # Test helper methods
   ##############################################################################
-
-
-  # Mocking all the Popen3 behaviors
-  def setup_popen3_mock mock_pipe = {}, env = nil
-    flexstub( Popen3::Popen3, 'POPEN3_CLASS_MOCK' ).should_receive( :new ).with( env || dummy_env, *dummy_command ).once.and_return do
-      flexmock( 'POPEN3_MOCK' ) do | mock |
-        mock.should_receive( :logger= ).once.ordered
-        mock.should_receive( :popen3 ).with( Proc ).once.ordered.and_return do | block |
-          block.call mock_pipe[ :tochild ], ( mock_pipe[ :fromchild ] || fromchild_mock ), ( mock_pipe[ :childerr ] || childerr_mock )
-        end
-        mock.should_receive( :wait ).with_no_args.once.ordered
-      end
-    end
-  end
 
 
   def fromchild_mock

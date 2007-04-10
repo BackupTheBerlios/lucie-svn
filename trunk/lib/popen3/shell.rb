@@ -15,17 +15,23 @@ module Popen3
     @@logger = nil
 
 
-    def self.logger
+    # [XXX] テスト関連のクラスメソッドを整理
+    def self.logger # :nodoc:
       return @@logger
     end
 
 
-    def self.logger= logger
+    def self.logger= logger # :nodoc:
       @@logger = logger
     end
 
 
-    def logger
+    def self.load_popen3 popen3 # :nodoc:
+      @@popen3 = popen3
+    end
+
+
+    def logger # :nodoc:
       return self.class.logger
     end
 
@@ -33,9 +39,17 @@ module Popen3
     # Clear the Popen3. This cause Popen3 to immediately clear the
     # logger instance that have been assigned. Normally used in the
     # unit tests.
-    def self.clear
+    def self.clear # :nodoc:
       @@logger = nil
     end
+
+
+    def self.reset # :nodoc:
+      @@popen3 = Popen3
+    end
+
+
+    reset
 
 
     def initialize
@@ -93,7 +107,7 @@ module Popen3
 
 
     def exec env, *command
-      process = Popen3.new( env, *command )
+      process = @@popen3.new( env, *command )
       process.logger = @@logger
       process.popen3 do | tochild, fromchild, childerr |
         @tochild, @fromchild, @childerr = tochild, fromchild, childerr
@@ -180,13 +194,20 @@ end
 
 
 # Abbreviations
+
+# [XXX] Kernel モジュールにメソッドを追加するのは極力やめる。Kernel.xxx なメソッド定義がファイル間で分散するので。
 module Kernel
-  @@shell = Popen3::Shell
-
-
-  def load_shell shell_class
+  def load_shell shell_class # :nodoc:
     @@shell = shell_class
   end
+
+
+  def reset # :nodoc:
+    @@shell = Popen3::Shell
+  end
+
+
+  reset
 
 
   def sh_exec *command

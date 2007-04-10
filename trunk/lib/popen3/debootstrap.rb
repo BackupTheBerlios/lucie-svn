@@ -126,12 +126,13 @@ module Debootstrap
   module_function :load_debootstrap
 
 
-  def reset
+  def reset # :nodoc:
     load_debootstrap Popen3::Debootstrap
   end
+  module_function :reset
 
 
-  reset
+  self.reset
 
 
   def debootstrap &block

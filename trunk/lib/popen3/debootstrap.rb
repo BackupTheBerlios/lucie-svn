@@ -11,9 +11,6 @@ require 'popen3/shell'
 
 module Popen3
   class Debootstrap
-    @@shell = Shell
-
-
     attr_accessor :logger
 
 
@@ -37,6 +34,14 @@ module Popen3
     def self.load_shell shell # :nodoc:
       @@shell = shell
     end
+
+
+    def self.reset
+      @@shell = Shell
+    end
+
+
+    reset
 
 
     def self.VERSION
@@ -115,8 +120,21 @@ end
 
 # Abbrebiation
 module Kernel
+  def load_debootstrap debootstrap
+    @@debootstrap = debootstrap
+  end
+
+
+  def reset
+    load_debootstrap Popen3::Debootstrap
+  end
+
+
+  reset
+
+
   def debootstrap &block
-    Popen3::Debootstrap.new( &block )
+    @@debootstrap.new( &block )
   end
   module_function :debootstrap
 end

@@ -38,6 +38,32 @@ module Rake
     attr_accessor :target_directory
 
 
+    def self.load_aptget aptget # :nodoc:
+      @@aptget = aptget
+    end
+
+
+    def self.load_debootstrap debootstrap # :nodoc:
+      Kernel.load_debootstrap debootstrap
+      @@debootstrap = debootstrap
+    end
+
+
+    def self.load_shell shell_class # :nodoc:
+      Kernel.load_shell shell_class
+    end
+
+
+    def self.reset # :nodoc:
+      load_aptget AptGet
+      load_debootstrap Popen3::Debootstrap
+      load_shell Popen3::Shell
+    end
+
+
+    reset
+
+
     def initialize name = :installer_base # :yield: self
       @logger = Lucie
       @http_proxy = nil
@@ -45,7 +71,6 @@ module Rake
       @name = name
       @target_directory = INSTALLER_BASE_DIR
       yield self if block_given?
-      Popen3::Shell.logger = @logger
       define_tasks
     end
 
@@ -108,12 +133,13 @@ module Rake
 
     def define_task_tgz
       file task_name( :tgz ) do
-        @logger.info "Creating base system using debootstrap version #{ Popen3::Debootstrap.VERSION }"
+        @logger.info "Creating base system using debootstrap version #{ @@debootstrap.VERSION }"
         @logger.info "Calling debootstrap #{ suite } #{ target_directory } #{ mirror }"
 
         debootstrap do | option |
           option.logger = @logger
           option.env = { 'LC_ALL' => 'C' }.merge( 'http_proxy' => @http_proxy )
+          # [???] Exclude option is hard-coded. This should be read only for most of users?
           option.exclude = [ 'dhcp-client', 'info' ]
           option.suite = @suite
           option.target = @target_directory
@@ -121,7 +147,7 @@ module Rake
           option.include = @include
         end
 
-        aptget_clean :root => @target_directory, :logger => @logger
+        @@aptget.clean :root => @target_directory, :logger => @logger
 
         sh_exec 'rm', '-f', target( '/etc/resolv.conf' )
         build_installer_base_tarball

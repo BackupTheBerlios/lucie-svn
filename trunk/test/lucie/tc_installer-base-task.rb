@@ -28,7 +28,7 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
 
   def teardown
     Task.clear
-    Popen3::Shell.logger = nil
+    Rake::InstallerBaseTask.reset
   end
 
 
@@ -85,50 +85,53 @@ class TC_InstallerBaseTask < Test::Unit::TestCase
   end
 
 
+  def test_clobber_target
+    shell_mock = flexmock( 'SHELL' )
+    # shell_mock.should_receive( :logger= ).with( FlexMock ).once.ordered
+    shell_mock.should_receive( :open ).with( Proc ).once
+    Rake::InstallerBaseTask.load_shell shell_mock
+
+    Rake::InstallerBaseTask.new do | task |
+      task.logger = nil
+      task.target_directory = '/TMP'
+      task.mirror = 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/'
+      task.distribution = 'DEBIAN'
+      task.suite = 'SARGE'
+      task.include = [ 'INCLUDE' ]
+    end
+    Task[ :clobber_installer_base ].execute
+  end
+
+
   def test_installer_base_target
     logger_mock = flexmock( 'LOGGER' )
     logger_mock.should_receive( :info ).with( String ).at_least.once
     logger_mock.should_receive( :debug ).with( String ).at_least.once
     logger_mock.should_receive( :error ).with( String ).at_least.once
 
-    flexstub( Popen3::Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      flexmock( 'SHELL' ) do | shell |
-        shell.should_receive( :on_stdout ).with( Proc ).once.ordered.and_return do | stdout_block |
-          stdout_block.call 'ii  debootstrap    0.2.45-0.2     Bootstrap a basic Debian system'
-        end
-        shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'dpkg', '-l' ).once.ordered
-        block.call shell
-      end
-    end
-    flexstub( Popen3::Debootstrap, 'DEBOOTSTRAP_CLASS' ).should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
-      debootstrap_mock = flexmock( 'DEBOOTSTRAP' )
-      debootstrap_mock.should_receive( :logger= ).with( logger_mock ).once.ordered
-      debootstrap_mock.should_receive( :env= ).with( { 'http_proxy' => nil, 'LC_ALL' => 'C' } ).once.ordered
-      debootstrap_mock.should_receive( :exclude= ).with( [ 'dhcp-client', 'info' ] ).once.ordered
-      debootstrap_mock.should_receive( :suite= ).with( 'SARGE' ).once.ordered
-      debootstrap_mock.should_receive( :target= ).with( '/TMP' ).once.ordered
-      debootstrap_mock.should_receive( :mirror= ).with( 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/' ).once.ordered
-      debootstrap_mock.should_receive( :include= ).with( [ 'INCLUDE' ] ).once.ordered
+    shell_mock = flexmock( 'SHELL' )
+    shell_mock.should_receive( :logger= ).with( FlexMock ).once.ordered
+    shell_mock.should_receive( :open ).with( Proc ).times( 2 ).ordered
+    Rake::InstallerBaseTask.load_shell shell_mock
 
-      block.call debootstrap_mock
+    debootstrap_mock = flexmock( 'DEBOOTSTRAP' )
+    debootstrap_mock.should_receive( :VERSION ).once.ordered
+    debootstrap_mock.should_receive( :new ).with( Proc ).once.ordered.and_return do | block |
+      option_mock = flexmock( 'DEBOOTSTRAP_OPTION' )
+      option_mock.should_receive( :logger= ).with( logger_mock ).once.ordered
+      option_mock.should_receive( :env= ).with( { 'LC_ALL' => 'C', 'http_proxy' => nil } ).once.ordered
+      option_mock.should_receive( :exclude= ).with( [ 'dhcp-client', 'info' ] ).once.ordered
+      option_mock.should_receive( :suite= ).with( 'SARGE' ).once.ordered
+      option_mock.should_receive( :target= ).with( '/TMP' ).once.ordered
+      option_mock.should_receive( :mirror= ).with( 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/' ).once.ordered
+      option_mock.should_receive( :include= ).with( [ 'INCLUDE' ] ).once.ordered
+      block.call option_mock
     end
+    Rake::InstallerBaseTask.load_debootstrap debootstrap_mock
 
-    flexstub( Kernel, 'KERNEL_MODULE_MOCK' ).should_receive( :aptget_clean ).with( { :root => '/TMP', :logger => logger_mock } ).once
-
-    flexstub( Popen3::Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = flexmock( 'SHELL' )
-      shell.should_receive( :on_stderr ).with( Proc ).once.ordered
-      shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'rm', '-f', '/TMP/etc/resolv.conf' ).once.ordered
-      block.call shell
-    end
-
-    # mocking build_installer_base_tarball
-    flexstub( Popen3::Shell, 'SHELL_CLASS' ).should_receive( :open ).with( Proc ).once.ordered.and_return do | block |
-      shell = flexmock( 'SHELL' )
-      shell.should_receive( :on_stderr ).with( Proc ).once.ordered
-      shell.should_receive( :exec ).with( { 'LC_ALL' => 'C' }, 'tar', '--one-file-system', '--directory', '/TMP', '--exclude', 'DEBIAN_SARGE.tgz', '-czvf', '/TMP/DEBIAN_SARGE.tgz', '.' ).once.ordered
-      block.call shell
-    end
+    aptget_mock = flexmock( 'APTGET' )
+    aptget_mock.should_receive( :clean ).with( { :root => '/TMP', :logger => logger_mock } ).once
+    Rake::InstallerBaseTask.load_aptget aptget_mock
 
     Rake::InstallerBaseTask.new do | task |
       task.logger = logger_mock

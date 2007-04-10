@@ -119,10 +119,11 @@ end
 
 
 # Abbrebiation
-module Kernel
-  def load_debootstrap debootstrap
+module Debootstrap
+  def load_debootstrap debootstrap # :nodoc:
     @@debootstrap = debootstrap
   end
+  module_function :load_debootstrap
 
 
   def reset

@@ -18,6 +18,7 @@ require 'test/unit'
 
 class TC_Debootstrap < Test::Unit::TestCase
   include FlexMock::TestCase
+  include Debootstrap
 
 
   def teardown

@@ -21,7 +21,7 @@ require 'rake/tasklib'
 
 module Rake
   class InstallerBaseTask < TaskLib
-    include Kernel
+    include Debootstrap
 
 
     INSTALLER_BASE_DIR = '/var/lib/lucie/installer_base'.freeze
@@ -44,7 +44,7 @@ module Rake
 
 
     def self.load_debootstrap debootstrap # :nodoc:
-      Kernel.load_debootstrap debootstrap
+      Debootstrap.load_debootstrap debootstrap
       @@debootstrap = debootstrap
     end
 

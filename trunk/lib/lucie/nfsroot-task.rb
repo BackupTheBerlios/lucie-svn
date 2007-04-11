@@ -219,6 +219,22 @@ module Rake
     end
 
 
+    def setup_ssh
+      unless FileTest.exists?( target( '/usr/bin/ssh' ) )
+        return
+      end
+      sh_exec "mkdir -p -m 700 #{ target( '/root/.ssh' ) }"
+
+      # enable root login
+      sh_exec "perl -pi -e 's/PermitRootLogin no/PermitRootLogin yes/' #{ target( 'etc/ssh/sshd_config' ) }"
+      if FileTest.exists?( @ssh_identity )
+        sh_exec "cp #{ @ssh_identity } #{ target( 'root/.ssh/authorized_keys' ) }"
+        sh_exec "chmod 0644 #{ target( 'root/.ssh/authorized_keys' ) }"
+        info "You can log into install clients withou tpassword using #{ @ssh_identity }"
+      end
+    end
+
+
     def setup_dhcp
       pxebin = '/usr/lib/syslinux/pxelinux.0'
       pxecfg_dir = '/srv/tftp/lucie/pxelinux.cfg'
@@ -303,6 +319,7 @@ module Rake
           copy_lucie_files
           finish_nfsroot
           install_kernel_nfsroot
+          setup_ssh
           setup_dhcp
         ensure
           umount_dirs

@@ -224,7 +224,7 @@ module Rake
 
       # enable root login
       sh_exec "perl -pi -e 's/PermitRootLogin no/PermitRootLogin yes/' #{ target( 'etc/ssh/sshd_config' ) }"
-      if FileTest.exists?( @ssh_identity )
+      if @ssh_identity && FileTest.exists?( @ssh_identity )
         sh_exec "cp #{ @ssh_identity } #{ target( 'root/.ssh/authorized_keys' ) }"
         sh_exec "chmod 0644 #{ target( 'root/.ssh/authorized_keys' ) }"
         info "You can log into install clients withou tpassword using #{ @ssh_identity }"

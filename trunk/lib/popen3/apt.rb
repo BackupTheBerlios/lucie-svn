@@ -47,7 +47,7 @@ module Popen3
     def initialize command, option = nil
       @logger = nil
       @root = nil
-      @env = { 'LC_ALL' => 'C' }
+      @env = { 'LC_ALL' => 'C', 'DEBIAN_FRONTEND' => 'noninteractive' }
       case command
       when String, Symbol
         @command = [ command.to_s ]

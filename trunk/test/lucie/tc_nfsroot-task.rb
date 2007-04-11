@@ -11,20 +11,79 @@ $LOAD_PATH.unshift( '../../lib' ) if __FILE__ =~ /\.rb$/
 
 
 require 'rubygems'
+require 'flexmock'
+
+require 'lucie/nfsroot-task'
 require 'rake'
 require 'rake/classic_namespace'
-require 'lucie/nfsroot-task'
 require 'test/unit'
 
 
 class TC_NfsrootTask < Test::Unit::TestCase
+  include FlexMock::TestCase
+
+
   def setup
     Task.clear
+    Rake::NfsrootTask.reset
   end
 
 
   def teardown
     Task.clear
+    Rake::NfsrootTask.reset
+  end
+
+
+  def test_clobber_nfsroot_task
+    shell_mock = flexmock( 'SHELL' )
+    shell_mock.should_receive( :open ).with( Proc ).at_least.once.ordered
+    shell_mock.should_receive( :new ).with( Proc ).once.ordered
+    Rake::NfsrootTask.load_shell shell_mock
+
+    Rake::NfsrootTask.new do | task |
+      task.name = 'NFSROOT'
+      task.mirror = 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/'
+      task.target_directory = '/TMP/NFSROOT'
+      task.distribution = 'DEBIAN'
+      task.suite = 'SARGE'
+      task.extra_packages = [ 'EXTRA_PACKAGE_1', 'EXTRA_PACKAGE_2' ]
+      task.kernel_package = 'KERNEL.DEB'
+      task.root_password = 'XXXXXXXX'
+    end
+
+    Task[ :clobber_NFSROOT ].execute
+  end
+
+
+  def test_nfsroot_task
+    shell_mock = flexmock( 'SHELL' )
+    shell_mock.should_receive( :open ).with( Proc ).at_least.once.and_return( 'DUMMY_RETURN_VALUE' )
+    Rake::NfsrootTask.load_shell shell_mock
+
+    aptget_mock = flexmock( 'APTGET' )
+    aptget_mock.should_receive( :apt ).at_least.once
+    aptget_mock.should_receive( :check ).at_least.once
+    aptget_mock.should_receive( :clean ).at_least.once
+    aptget_mock.should_receive( :update ).at_least.once
+    Rake::NfsrootTask.load_aptget aptget_mock
+
+    file_mock = flexmock( 'FILE' )
+    file_mock.should_receive( :open ).at_least.once
+    Rake::NfsrootTask.load_file file_mock
+
+    Rake::NfsrootTask.new do | task |
+      task.name = 'NFSROOT'
+      task.mirror = 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/'
+      task.target_directory = '/TMP/NFSROOT'
+      task.distribution = 'DEBIAN'
+      task.suite = 'SARGE'
+      task.extra_packages = [ 'EXTRA_PACKAGE_1', 'EXTRA_PACKAGE_2' ]
+      task.kernel_package = 'KERNEL.DEB'
+      task.root_password = 'XXXXXXXX'
+    end
+
+    Task[ :NFSROOT ].execute
   end
 
 
@@ -52,7 +111,7 @@ class TC_NfsrootTask < Test::Unit::TestCase
 
 
   def test_all_targets_defined
-    nfsroot_task = Rake::NfsrootTask.new do | task |
+    Rake::NfsrootTask.new do | task |
       task.name = 'NFSROOT'
       task.mirror = 'HTTP://WWW.DEBIAN.OR.JP/DEBIAN/'
       task.target_directory = '/TMP/NFSROOT'
@@ -70,16 +129,6 @@ class TC_NfsrootTask < Test::Unit::TestCase
     assert_kind_of Rake::Task, Task[ :installer_base ]
     assert_kind_of Rake::Task, Task[ :reinstaller_base ]
     assert_kind_of Rake::Task, Task[ '/var/lib/lucie/installer_base/DEBIAN_SARGE.tgz' ]
-
-#     assert_equal( "Build the nfsroot filesytem using debian_woody.tgz",
-#                   Task[:nfsroot].comment, 
-#                   ":nfsroot タスクのコメントが設定されていない" )
-    
-#     assert_not_nil( Task['/var/lib/lucie/nfsroot/'],
-#                     '/var/lib/lucie/nfsroot/ ディレクトリタスクが定義されていない' )
-                    
-#     assert_not_nil( Task['/var/lib/lucie/nfsroot/lucie/timestamp'],
-#                     '/var/lib/lucie/nfsroot/lucie/timestamp ファイルタスクが定義されていない' )
   end
 end
 

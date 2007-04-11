@@ -15,7 +15,6 @@ require 'rake/tasklib'
 
 module Rake
   class NfsrootTask < TaskLib
-    include Kernel
     include Lucie
 
 
@@ -34,6 +33,32 @@ module Rake
     attr_accessor :name
     attr_accessor :root_password
     attr_accessor :sources_list
+
+
+    def self.load_file file # :nodoc:
+      @@file = file
+    end
+
+
+    def self.load_aptget aptget # :nodoc:
+      @@aptget = aptget
+    end
+
+
+    def self.load_shell shell_class # :nodoc:
+      @@shell = shell_class
+      Kernel.load_shell shell_class
+    end
+
+
+    def self.reset # :nodoc:
+      load_file File
+      load_aptget AptGet
+      load_shell Popen3::Shell
+    end
+
+
+    reset
 
 
     def initialize name = :nfsroot # :yield: self
@@ -74,8 +99,7 @@ module Rake
       unless FileTest.directory?( target( 'var/state' ) )
         sh_exec "mkdir #{ target( 'var/state' ) }"
       end
-      # [TODO] Configuration option for sources.list (use puppet?).
-      File.open( target( 'etc/apt/sources.list' ), 'w' ) do | sources |
+      @@file.open( target( 'etc/apt/sources.list' ), 'w' ) do | sources |
         sources_list.each do | each |
           sources.puts each
         end
@@ -85,8 +109,8 @@ module Rake
 
     # [TODO] Support configuration option for adding arbitrary /etc/hosts entries.
     def generate_etc_hosts
-      File.open( target( 'etc/hosts' ), 'w+' ) do | hosts |
-        Popen3::Shell.new do | shell |
+      @@file.open( target( 'etc/hosts' ), 'w+' ) do | hosts |
+        @@shell.open do | shell |
           shell.on_stdout do | line |
             if /inet addr:(\S+)\s+/=~ line
               hosts.print `getent hosts #{ $1 }`
@@ -111,22 +135,20 @@ module Rake
     def add_packages_nfsroot
       info "Adding additional packages to nfsroot."
       packages = ( [ 'reiserfsprogs', 'discover', 'module-init-tools', 'puppet' ] << @extra_packages ).flatten.uniq.compact
-      info "Adding packages to nfsroot: #{packages.join(', ')}"
-      aptget_update apt_option
-      apt( [ '-y', '--fix-missing', 'install' ] + packages, apt_option )
-      aptget_clean apt_option
+      info "Adding packages to nfsroot: #{ packages.join( ', ' ) }"
+      @@aptget.update apt_option
+      @@aptget.apt( [ '-y', '--fix-missing', 'install' ] + packages, apt_option )
+      @@aptget.clean apt_option
     end
 
 
     def get_kernel_version
-      kernel_version = nil
-      Popen3::Shell.new do | shell |
+      kernel_version = @@shell.open do | shell |
         shell.on_stdout do | line |
-          if /^ Package: \S+\-image\-(\S+)$/=~ line
-            kernel_version = $1
-          end
+          /^ Package: \S+\-image\-(\S+)$/=~ line
         end
         shell.exec( { 'LC_ALL' => 'C' }, 'dpkg', '--info', @kernel_package )
+        $1
       end
       if kernel_version
         return kernel_version
@@ -157,30 +179,30 @@ module Rake
         sh_exec "cp -p /etc/resolv.conf #{ target( 'etc/resolv.conf' ) }"
       end
 
-      aptget_update apt_option
-      # $ROOTCMD apt-get -fy install fai-nfsroot
-      unless FileTest.directory?( target( '/usr/lib/ruby/1.8/' ) )
-        sh_exec "mkdir -p #{ target( '/usr/lib/ruby/1.8/' ) }"
-      end
-      sh_exec "cp -pr ../../lib/* #{ target( '/usr/lib/ruby/1.8/' ) }"
-      aptget_check apt_option
+      @@aptget.update apt_option
+#       unless FileTest.directory?( target( '/usr/lib/ruby/1.8/' ) )
+#         sh_exec "mkdir -p #{ target( '/usr/lib/ruby/1.8/' ) }"
+#       end
+#       sh_exec "cp -pr ../../lib/* #{ target( '/usr/lib/ruby/1.8/' ) }"
+      @@aptget.check apt_option
 
       sh_exec "rm -rf #{ target( 'etc/apm' ) }"
       sh_exec "mount -t proc /proc #{ target( 'proc' ) }"
 
       dpkg_divert '/sbin/start-stop-daemon', '/sbin/discover-modprobe'
 
-      [ target( 'sbin/lucie-start-stop-daemon'), target( 'sbin/start-stop-daemon') ].each do | each |
-        File.open( each, 'w+' ) do | file |
+      [ target( 'sbin/lucie-start-stop-daemon' ), target( 'sbin/start-stop-daemon' ) ].each do | each |
+        @@file.open( each, 'w+' ) do | file |
           file.puts start_stop_daemon
         end
         sh_exec "chmod +x #{ each }"
       end
 
-      apt [ '-y', 'dist-upgrade' ], apt_option
+      @@aptget.apt [ '-y', 'dist-upgrade' ], apt_option
     end
 
 
+    # [XXX] Eliminate hard-coded proxy URI and logger.
     def apt_option
       return { :root => @target_directory, :env => { 'http_proxy' => 'http://proxy.spf.cl.nec.co.jp:3128/' }, :logger => Lucie }
     end
@@ -281,7 +303,7 @@ module Rake
         end
 
         # also remove files nfsroot/.? but not . and ..
-        Popen3::Shell.new do | shell |
+        @@shell.new do | shell |
           shell.on_stdout do | line |
             sh_exec 'rm', '-f', line
           end

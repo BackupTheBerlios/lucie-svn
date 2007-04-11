@@ -11,7 +11,7 @@ $VERBOSE = true
 
 
 require 'tc_installer-base-task'
-# require 'tc_nfsroot-task'
+require 'tc_nfsroot-task'
 
 
 ### Local variables:

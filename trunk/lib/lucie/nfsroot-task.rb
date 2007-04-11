@@ -69,7 +69,6 @@ module Rake
       @suite = 'stable'
       @distribution = 'debian'
       @target_directory = NFSROOT_DIRECTORY
-      @sources_list = []
       yield self if block_given?
       @@shell.logger = Lucie
 
@@ -101,9 +100,7 @@ module Rake
         sh_exec "mkdir #{ target( 'var/state' ) }"
       end
       @@file.open( target( 'etc/apt/sources.list' ), 'w' ) do | sources |
-        sources_list.each do | each |
-          sources.puts each
-        end
+        sources.puts "deb #{ @mirror } #{ suite } main contrib non-free"
       end
     end
 

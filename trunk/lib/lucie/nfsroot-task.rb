@@ -227,7 +227,7 @@ module Rake
       if @ssh_identity && FileTest.exists?( @ssh_identity )
         sh_exec "cp #{ @ssh_identity } #{ target( 'root/.ssh/authorized_keys' ) }"
         sh_exec "chmod 0644 #{ target( 'root/.ssh/authorized_keys' ) }"
-        info "You can log into install clients withou tpassword using #{ @ssh_identity }"
+        info "You can log into install clients without password using #{ @ssh_identity }"
       end
     end
 

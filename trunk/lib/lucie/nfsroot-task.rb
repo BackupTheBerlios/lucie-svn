@@ -189,10 +189,7 @@ module Rake
       end
 
       @@aptget.update apt_option
-#       unless FileTest.directory?( target( '/usr/lib/ruby/1.8/' ) )
-#         sh_exec "mkdir -p #{ target( '/usr/lib/ruby/1.8/' ) }"
-#       end
-#       sh_exec "cp -pr ../../lib/* #{ target( '/usr/lib/ruby/1.8/' ) }"
+      # [TODO] apt-get -fy install lucie-nfsroot
       @@aptget.check apt_option
 
       sh_exec "rm -rf #{ target( 'etc/apm' ) }"

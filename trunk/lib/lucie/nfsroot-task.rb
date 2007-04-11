@@ -303,7 +303,7 @@ module Rake
         end
 
         # also remove files nfsroot/.? but not . and ..
-        @@shell.new do | shell |
+        @@shell.open do | shell |
           shell.on_stdout do | line |
             sh_exec 'rm', '-f', line
           end

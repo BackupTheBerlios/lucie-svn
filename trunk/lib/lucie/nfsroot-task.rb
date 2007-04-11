@@ -24,15 +24,16 @@ module Rake
     LMP_SERVER = 'lucie-dev.titech.hpcc.jp'
 
 
-    attr_accessor :target_directory
     attr_accessor :distribution
-    attr_accessor :suite
     attr_accessor :extra_packages
     attr_accessor :kernel_package
     attr_accessor :mirror
     attr_accessor :name
     attr_accessor :root_password
     attr_accessor :sources_list
+    attr_accessor :ssh_identity
+    attr_accessor :suite
+    attr_accessor :target_directory
 
 
     def self.load_file file # :nodoc:

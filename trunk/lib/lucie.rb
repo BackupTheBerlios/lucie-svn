@@ -40,31 +40,31 @@ module Lucie
 
 
   def fatal message
-    puts console_color( :fatal, "%s: %s" % [ :fatal, message ])
+    $stderr.puts console_color( :fatal, "%s: %s" % [ :fatal, message ])
   end
   module_function :fatal
 
 
   def error message
-    puts console_color( :error, "%s: %s" % [ :error, message ])
+    $stderr.puts console_color( :error, "%s: %s" % [ :error, message ])
   end
   module_function :error
 
 
   def warn message
-    puts console_color( :warn, "%s: %s" % [ :warn, message ])
+    $stderr.puts console_color( :warn, "%s: %s" % [ :warn, message ])
   end
   module_function :warn
 
 
   def info message
-    puts console_color( :info, "%s: %s" % [ :info, message ])
+    $stderr.puts console_color( :info, "%s: %s" % [ :info, message ])
   end
   module_function :info
 
 
   def debug message
-    puts console_color( :debug, "%s: %s" % [ :debug, message ])
+    $stderr.puts console_color( :debug, "%s: %s" % [ :debug, message ])
   end
   module_function :debug
 

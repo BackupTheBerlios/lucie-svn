@@ -14,6 +14,7 @@ require 'lucie/installer-base-task'
 
 
 Rake::InstallerBaseTask.new do | task |
+  task.kernel_package = '/usr/lib/fai/kernel/linux-image-2.6.17-fai-kernels_1_i386.deb'
   task.include = [ 'lv' ]
   task.target_directory = '/tmp/debootstrap'
   task.mirror = 'http://ring.asahi-net.or.jp/archives/linux/debian/debian/'

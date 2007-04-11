@@ -132,7 +132,7 @@ module Rake
 
     def add_packages_nfsroot
       info "Adding additional packages to nfsroot."
-      packages = ( [ 'reiserfsprogs', 'discover', 'module-init-tools', 'puppet' ] << @extra_packages ).flatten.uniq.compact
+      packages = ( [ 'reiserfsprogs', 'discover', 'module-init-tools', 'puppet', 'ssh' ] << @extra_packages ).flatten.uniq.compact
       info "Adding packages to nfsroot: #{ packages.join( ', ' ) }"
       @@aptget.update apt_option
       @@aptget.apt( [ '-y', '--fix-missing', 'install' ] + packages, apt_option )

@@ -27,7 +27,13 @@ module Popen3
     end
 
 
+    def self.logging_on
+      @@logger = @@logger_old
+    end
+
+
     def self.logging_off
+      @@logger_old = @@logger
       @@logger = nil
     end
 
@@ -39,6 +45,11 @@ module Popen3
 
     def logger= logger
       self.class.logger = logger
+    end
+
+
+    def logging_on
+      self.class.logging_on
     end
 
 

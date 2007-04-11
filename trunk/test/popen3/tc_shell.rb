@@ -49,6 +49,10 @@ class TC_Shell < Test::Unit::TestCase
     shell.logging_off
     assert_nil Popen3::Shell.logger
     assert_nil shell.logger
+
+    shell.logging_on
+    assert_equal 'DUMMY_LOGGER_2', Popen3::Shell.logger
+    assert_equal 'DUMMY_LOGGER_2', shell.logger
   end
 
 

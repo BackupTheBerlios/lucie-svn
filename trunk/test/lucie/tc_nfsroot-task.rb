@@ -37,6 +37,7 @@ class TC_NfsrootTask < Test::Unit::TestCase
 
   def test_clobber_nfsroot_task
     shell_mock = flexmock( 'SHELL' )
+    shell_mock.should_receive( :logger= ).with( Lucie ).once.ordered
     shell_mock.should_receive( :open ).with( Proc ).at_least.once.ordered
     shell_mock.should_receive( :new ).with( Proc ).once.ordered
     Rake::NfsrootTask.load_shell shell_mock
@@ -58,6 +59,7 @@ class TC_NfsrootTask < Test::Unit::TestCase
 
   def test_nfsroot_task
     shell_mock = flexmock( 'SHELL' )
+    shell_mock.should_receive( :logger= ).with( Lucie ).once
     shell_mock.should_receive( :open ).with( Proc ).at_least.once.and_return( 'DUMMY_RETURN_VALUE' )
     Rake::NfsrootTask.load_shell shell_mock
 

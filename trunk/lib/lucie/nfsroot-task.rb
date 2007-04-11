@@ -71,6 +71,7 @@ module Rake
       @target_directory = NFSROOT_DIRECTORY
       @sources_list = []
       yield self if block_given?
+      @@shell.logger = Lucie
 
       define_tasks
     end
@@ -144,11 +145,14 @@ module Rake
 
     def get_kernel_version
       kernel_version = @@shell.open do | shell |
+        kv = nil
         shell.on_stdout do | line |
-          /^ Package: \S+\-image\-(\S+)$/=~ line
+          if /^ Package: \S+\-image\-(\S+)$/=~ line
+            kv = $1
+          end
         end
         shell.exec( { 'LC_ALL' => 'C' }, 'dpkg', '--info', @kernel_package )
-        $1
+        kv
       end
       if kernel_version
         return kernel_version

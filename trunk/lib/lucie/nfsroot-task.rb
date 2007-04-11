@@ -27,6 +27,7 @@ module Rake
     attr_accessor :distribution
     attr_accessor :extra_packages
     attr_accessor :kernel_package
+    attr_accessor :logging_level
     attr_accessor :mirror
     attr_accessor :name
     attr_accessor :root_password
@@ -70,8 +71,11 @@ module Rake
       @suite = 'stable'
       @distribution = 'debian'
       @target_directory = NFSROOT_DIRECTORY
+      @logging_level = :info
       yield self if block_given?
+
       @@shell.logger = Lucie
+      Lucie.logging_level = @logging_level
 
       define_tasks
     end

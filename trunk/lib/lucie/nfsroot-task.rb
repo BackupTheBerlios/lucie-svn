@@ -220,9 +220,18 @@ module Rake
 
 
     def setup_dhcp
-      info "Setting up DHCP and PXE environment."
-      sh_exec "cp -p #{ target( '/boot/vmlinuz-' + get_kernel_version ) } /srv/tftp/lucie/vmlinuz"
-      sh_exec "cp /usr/lib/syslinux/pxelinux.0 /srv/tftp/lucie/"
+      pxebin = '/usr/lib/syslinux/pxelinux.0'
+      pxecfg_dir = '/srv/tftp/lucie/pxelinux.cfg'
+      tftp_kernel_target = '/srv/tftp/lucie/vmlinuz-install'
+
+      info 'Setting up DHCP and PXE environment.'
+      sh_exec "cp -p #{ target( '/boot/vmlinuz-' + get_kernel_version ) } #{ tftp_kernel_target }"
+      info "Kernel #{ get_kernel_version } copied to #{ tftp_kernel_target }"
+      sh_exec "cp #{ pxebin } /srv/tftp/lucie/"
+      unless FileTest.directory?( pxecfg_dir )
+        sh_exec "mkdir -p #{ pxecfg_dir }"
+      end
+      info "DHCP environment prepared. If you want to use it, you have to enable the dhcpd and the tftp-hpa daemon."
     end
 
 

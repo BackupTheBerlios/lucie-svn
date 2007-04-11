@@ -12,39 +12,43 @@ require 'popen3'
 
 module Popen3
   class Shell
-    @@logger = nil
-
-
-    # [XXX] テスト関連のクラスメソッドを整理
-    def self.logger # :nodoc:
-      return @@logger
-    end
-
-
-    def self.logger= logger # :nodoc:
-      @@logger = logger
-    end
-
-
     def self.load_popen3 popen3 # :nodoc:
       @@popen3 = popen3
     end
 
 
-    def logger # :nodoc:
-      return self.class.logger
+    def self.logger
+      return @@logger
     end
 
 
-    # Clear the Popen3. This cause Popen3 to immediately clear the
-    # logger instance that have been assigned. Normally used in the
-    # unit tests.
-    def self.clear # :nodoc:
+    def self.logger= logger
+      @@logger = logger
+    end
+
+
+    def self.logging_off
       @@logger = nil
     end
 
 
+    def logger
+      return self.class.logger
+    end
+
+
+    def logger= logger
+      self.class.logger = logger
+    end
+
+
+    def logging_off
+      self.class.logging_off
+    end
+
+
     def self.reset # :nodoc:
+      @@logger = nil
       @@popen3 = Popen3
     end
 

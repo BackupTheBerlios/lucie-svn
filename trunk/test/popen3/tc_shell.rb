@@ -20,10 +20,35 @@ class TC_Shell < Test::Unit::TestCase
   include FlexMock::TestCase
 
 
+  def setup
+    Popen3::Shell.reset
+  end
+
+
   def teardown
-    Popen3::Shell.clear
     Popen3::Shell.reset
     Kernel.load_shell Popen3::Shell
+  end
+
+
+  def test_logger
+    shell = Popen3::Shell.new
+
+    assert_nil Popen3::Shell.logger
+
+    Popen3::Shell.logger = 'DUMMY_LOGGER_1'
+    assert_equal 'DUMMY_LOGGER_1', Popen3::Shell.logger
+
+    Popen3::Shell.logging_off
+    assert_nil Popen3::Shell.logger
+    assert_nil shell.logger
+
+    shell.logger = 'DUMMY_LOGGER_2'
+    assert_equal 'DUMMY_LOGGER_2', shell.logger
+
+    shell.logging_off
+    assert_nil Popen3::Shell.logger
+    assert_nil shell.logger
   end
 
 

@@ -144,6 +144,10 @@ module Rake
 
 
     def get_kernel_version
+      if @kernel_package.nil?
+        raise "Option ``kernel_package'' is not set."
+      end
+
       kernel_version = @@shell.open do | shell |
         kv = nil
         shell.on_stdout do | line |
@@ -156,6 +160,7 @@ module Rake
         shell.logging_on
         kv
       end
+
       if kernel_version
         return kernel_version
       end

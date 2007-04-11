@@ -19,7 +19,7 @@ TEST_FILES_INSTALL_PACKAGES = [ 'test/install-packages/ts_all.rb' ]
 TEST_FILES_HARDDISK = FileList[ 'test/setup-harddisks/ts_all.rb' ]
 TEST_FILES_LIBPOPEN3 = [ 'test/popen3/ts_all.rb' ]
 TEST_FILES_DEBCONF = FileList[ "test/debconf/ts_all.rb" ]
-TEST_FILES_LUCIE = [ "test/lucie/ts_all.rb" ]
+TEST_FILES_LUCIE = [ "test/tc_lucie.rb", "test/lucie/ts_all.rb" ]
 
 $stderr.puts "WARNING: LMP test suite is temporally disabled."
 TEST_FILES_LMP = FileList[ "test/lmp/tc_*.rb" ]

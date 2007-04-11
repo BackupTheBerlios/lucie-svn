@@ -151,7 +151,9 @@ module Rake
             kv = $1
           end
         end
+        shell.logging_off
         shell.exec( { 'LC_ALL' => 'C' }, 'dpkg', '--info', @kernel_package )
+        shell.logging_on
         kv
       end
       if kernel_version

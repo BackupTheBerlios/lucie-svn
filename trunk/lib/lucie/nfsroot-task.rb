@@ -26,6 +26,7 @@ module Rake
 
     attr_accessor :distribution
     attr_accessor :extra_packages
+    attr_accessor :http_proxy
     attr_accessor :kernel_package
     attr_accessor :logging_level
     attr_accessor :mirror
@@ -72,6 +73,7 @@ module Rake
       @distribution = 'debian'
       @target_directory = NFSROOT_DIRECTORY
       @logging_level = :info
+      @http_proxy = nil
       yield self if block_given?
 
       @@shell.logger = Lucie
@@ -214,7 +216,7 @@ module Rake
 
     # [XXX] Eliminate hard-coded proxy URI and logger.
     def apt_option
-      return { :root => @target_directory, :env => { 'http_proxy' => 'http://proxy.spf.cl.nec.co.jp:3128/' }, :logger => Lucie }
+      return { :root => @target_directory, :env => { 'http_proxy' => @http_proxy }, :logger => Lucie }
     end
 
 
@@ -301,7 +303,7 @@ module Rake
         task.distribution = @distribution
         task.suite = @suite
         # [FIXME] get proxy URI from config file, not hard coded.
-        task.http_proxy = 'http://proxy.spf.cl.nec.co.jp:3128'
+        task.http_proxy = @http_proxy
       end
 
       desc "Build an nfsroot using #{ @installer_base.tgz }."

@@ -99,6 +99,7 @@ class TC_NfsrootTask < Test::Unit::TestCase
       task.extra_packages = [ 'EXTRA_PACKAGE_1', 'EXTRA_PACKAGE_2' ]
       task.kernel_package = 'KERNEL.DEB'
       task.root_password = 'XXXXXXXX'
+      task.http_proxy = 'HTTP://PROXY/'
     end
 
     assert_equal 'NFSROOT', nfsroot_task.name
@@ -109,6 +110,7 @@ class TC_NfsrootTask < Test::Unit::TestCase
     assert_equal [ 'EXTRA_PACKAGE_1', 'EXTRA_PACKAGE_2' ], nfsroot_task.extra_packages
     assert_equal 'KERNEL.DEB', nfsroot_task.kernel_package
     assert_equal 'XXXXXXXX', nfsroot_task.root_password
+    assert_equal 'HTTP://PROXY/', nfsroot_task.http_proxy
   end
 
 

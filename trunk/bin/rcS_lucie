@@ -14,11 +14,13 @@ Lucie.logging_level = :debug
 
 include Lucie
 
+
 info "Creating a writable area on the install client."
 
 sh_exec "mount -n -t proc proc /proc"
 sh_exec "mount -t tmpfs tmpfs /tmp"
 sh_exec "mkdir -p /tmp/etc /tmp/target"
+
 
 def mkrw dirs
   dirs.each do | each |
@@ -31,15 +33,17 @@ def mkrw dirs
       next
     end
 
-    tempfile = `mktemp`
-    sh_exec "tar -C #{ each } -cf #{ tempfile } ."
-    sh_exec "mount -n -o size=10m tmpfs tmpfs #{ each }"
+    tmpfile = `mktemp`.chomp
+    sh_exec "tar -C #{ each } -cf #{ tmpfile } ."
+    sh_exec "mount -n -o size=10m -t tmpfs tmpfs #{ each }"
     sh_exec "tar -C #{ each } -xf #{ tmpfile }"
     sh_exec "rm -f #{ tmpfile }"
   end
 end
 
+
 mkrw %w(/dev /var/run /var/log /var/lock /var/discover /var/lib/discover /etc/sysconfig /etc/lvm)
+mkrw %w(/var/lib/cfengine2 /var/lib/heardbeat)
 
 
 ################################################################################

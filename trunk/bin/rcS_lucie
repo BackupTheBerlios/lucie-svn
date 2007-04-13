@@ -23,9 +23,11 @@ sh_exec "mkdir -p /tmp/etc /tmp/target"
 def mkrw dirs
   dirs.each do | each |
     unless FileTest.directory?( each )
+      debug "WARNING: #{ each } is not a directory. Cannot make it writeable."
       next
     end
     if FileTest.writable?( each )
+      debug "#{ each } is already writable."
       next
     end
 

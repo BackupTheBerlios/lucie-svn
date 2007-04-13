@@ -18,7 +18,7 @@ sh_exec "mount -n -t proc proc /proc"
 sh_exec "mount -t tmpfs tmpfs /tmp"
 sh_exec "mkdir -p /tmp/etc /tmp/target"
 
-def mkrw *dirs
+def mkrw dirs
   dirs.each do | each |
     unless FileTest.directory?( each )
       next

@@ -10,6 +10,8 @@
 require 'lucie'
 require 'popen3/shell'
 
+Lucie.logging_level = :debug
+
 include Lucie
 
 info "Creating a writable area on the install client."
@@ -36,6 +38,28 @@ def mkrw dirs
 end
 
 mkrw %w(/dev /var/run /var/log /var/lock /var/discover /var/lib/discover /etc/sysconfig /etc/lvm)
+
+
+################################################################################
+# init
+
+sh_exec 'mount -t sysfs sysfs /sys'
+if FileTest.executable?( '/etc/init.d/udev' )
+  sh_exec '/etc/init.d/udev start'
+end
+unless FileTest.directory?( '/var/run/network' )
+  sh_exec 'mkdir /var/run/network'
+end
+unless FileTest.directory?( '/dev/shm/network' )
+  sh_exec 'mkdir /dev/shm/network'
+end
+sh_exec 'ifup lo'
+if FileTest.executable?( '/sbin/portmap' )
+  sh_exec '/sbin/portmap'
+end
+sh_exec 'mount -t devpts devpts /dev/pts'
+
+sh_exec 'mount -o remount,noatime,ro /dev/root /'
 
 
 ### Local variables:

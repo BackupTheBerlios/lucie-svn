@@ -34,7 +34,7 @@ class TC_Shell < Test::Unit::TestCase
   def test_logger
     shell = Popen3::Shell.new
 
-    assert_nil Popen3::Shell.logger
+    assert_equal Lucie, Popen3::Shell.logger
 
     Popen3::Shell.logger = 'DUMMY_LOGGER_1'
     assert_equal 'DUMMY_LOGGER_1', Popen3::Shell.logger

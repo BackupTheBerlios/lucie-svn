@@ -7,6 +7,7 @@
 
 
 require 'English'
+require 'lucie'
 require 'popen3'
 
 
@@ -59,7 +60,7 @@ module Popen3
 
 
     def self.reset # :nodoc:
-      @@logger = nil
+      @@logger = Lucie
       @@popen3 = Popen3
     end
 

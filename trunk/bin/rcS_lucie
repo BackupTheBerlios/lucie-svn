@@ -1,29 +1,42 @@
-#! /usr/bin/ruby1.8
+#!/usr/bin/ruby1.8
 #
 # $Id: command-line-options.rb 557 2005-04-13 07:05:05Z takamiya $
 #
-# Author::   Yasuhito Takamiya (mailto:takamiya@matsulab.is.titech.ac.jp)
+# Author::   Yasuhito Takamiya (mailto:yasuhito@gmail.com)
 # Revision:: $Revision: 557 $
 # License::  GPL2
 
-require 'rake'
-require 'lucie/installer'
 
-include Lucie::Installer
+require 'lucie'
+require 'popen3/shell'
 
-init
-require 'lucie/installer/confdir'
-require 'lucie/installer/setup'
-require 'lucie/installer/hwdetect'
-require 'lucie/installer/partition'
-require 'lucie/installer/mountdisks'
-require 'lucie/installer/extrbase'
-require 'lucie/installer/updatebase'
-require 'lucie/installer/instsoft'
-require 'lucie/installer/file'
-require 'lucie/installer/configure'
-require 'lucie/installer/finish'
-require 'lucie/installer/lucieend'
+include Lucie
+
+info "Creating a writable area on the install client."
+
+sh_exec "mount -n -t proc proc /proc"
+sh_exec "mount -t tmpfs tmpfs /tmp"
+sh_exec "mkdir -p /tmp/etc /tmp/target"
+
+def mkrw *dirs
+  dirs.each do | each |
+    unless FileTest.directory?( each )
+      next
+    end
+    if FileTest.writable?( each )
+      next
+    end
+
+    tempfile = `mktemp`
+    sh_exec "tar -C #{ each } -cf #{ tempfile } ."
+    sh_exec "mount -n -o size=10m tmpfs tmpfs #{ each }"
+    sh_exec "tar -C #{ each } -xf #{ tmpfile }"
+    sh_exec "rm -f #{ tmpfile }"
+  end
+end
+
+mkrw %w(/dev /var/run /var/log /var/lock /var/discover /var/lib/discover /etc/sysconfig /etc/lvm)
+
 
 ### Local variables:
 ### mode: Ruby

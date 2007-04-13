@@ -26,7 +26,7 @@ def mkrw dirs
       debug "WARNING: #{ each } is not a directory. Cannot make it writeable."
       next
     end
-    if FileTest.writable?( each )
+    if sh_exec( "mktemp -q -p #{ each }").child_status.exitstatus == 0
       debug "#{ each } is already writable."
       next
     end

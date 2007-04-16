@@ -69,10 +69,20 @@ sh_exec 'mount -o remount,noatime,ro /dev/root /'
 
 
 ################################################################################
-# confdir
+# task_confdir
 
 sh_exec 'syslogd -m 0'
 sh_exec 'cp -p /etc/resolv.conf-lucieserver /tmp/etc/resolv.conf'
+
+
+################################################################################
+# task_setup
+
+# create two virtual terminals; access via alt-F2 and alt-F3
+sh_exec 'openvt -c2 /bin/bash'
+sh_exec 'openvt -c3 /bin/bash'
+
+sh_exec '/usr/sbin/sshd'
 
 
 ### Local variables:

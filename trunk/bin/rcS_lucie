@@ -68,6 +68,13 @@ sh_exec 'mount -t devpts devpts /dev/pts'
 sh_exec 'mount -o remount,noatime,ro /dev/root /'
 
 
+################################################################################
+# confdir
+
+sh_exec 'syslogd -m 0'
+sh_exec 'cp -p /etc/resolv.conf-lucieserver /tmp/etc/resolv.conf'
+
+
 ### Local variables:
 ### mode: Ruby
 ### indent-tabs-mode: nil
